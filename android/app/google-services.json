@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "930447149134",
+    "project_id": "shortplex-edd87",
+    "storage_bucket": "shortplex-edd87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930447149134:android:90eebaffc525b571135b1f",
+        "android_client_info": {
+          "package_name": "com.shortplex.shortplex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyGMF9-txJPalMSrJM9wqjWCiqPYOtZvA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

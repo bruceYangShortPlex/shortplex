@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'StringTableData.dart';
 import 'JsonTypeReader.dart';
+import 'package:http/http.dart' as http;
 
 class StringTable
 {
@@ -24,6 +25,7 @@ class StringTable
       return;
 
     Table = await readJson('assets/json/string.json') as Map<int?, String>?;
+    //Table = await downloadJSON('ddd');
   }
 }
 
@@ -43,18 +45,24 @@ Future<Map<int?, String>> readJson(String _path) async {
   return datas;
 }
 
-// Future<String> GetStringTable(int _id) async
-// {
-//   var list = await readJson('assets/json/string.json');
-//   String result = '';
-//   for (int i = 0; i < list!.length; ++i)
-//   {
-//     var item = list[i];
-//     if (item?.id == _id)
-//     {
-//       result = item?.kor;
-//       break;
-//     }
-//   }
-//   return result;
-// }
+Future<Map<int?, String>> downloadJSON(String _uri) async {
+  //var uri = 'https://your-web-hard.com/your-json-file.json';
+  final response = await http.get(Uri.parse(_uri));
+
+  if (response.statusCode == 200)
+  {
+    var _placeList = JsonTypeReader.fromJson(response.body, StringTableData.fromJson);
+    Map<int?, String> datas = {}; // Map<int?, StringTable>();
+    for (int i = 0; i < _placeList.listTableDatas!.length; ++i)
+    {
+      var item = _placeList.listTableDatas![i];
+      datas[item.id] = item.kor!;
+    }
+    return datas;
+  }
+  else
+  {
+    throw Exception('Failed to download .json file.');
+  }
+}
+

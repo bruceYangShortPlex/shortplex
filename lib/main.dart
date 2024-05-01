@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'table/StringTable.dart';
+import 'sub/FirebaseSetting.dart';
 
-void main() async{
+void main() async {
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+
+  StringTable().InitTable();
+  // if (kDebugMode)
+  // {
+  //   print(StringTable().Table![100003]);
+  // }
+
+  FirebaseSetting().Setup();
 
   runApp(const MyApp());
 }
@@ -130,3 +136,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+

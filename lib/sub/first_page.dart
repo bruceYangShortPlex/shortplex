@@ -19,6 +19,7 @@ class FirstPage extends StatelessWidget
               SizedBox(height: 20,),
               CupertinoButton
               (
+                color: Colors.blue,
                 child: Text('Cupertino Button'),
                 onPressed: ()
                 {

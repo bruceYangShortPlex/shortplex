@@ -2,23 +2,6 @@ import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
-
-String videoUrlLandscape =
-    "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4";
-String videoUrlPortrait =
-    'https://assets.mixkit.co/videos/preview/mixkit-a-girl-blowing-a-bubble-gum-at-an-amusement-park-1226-large.mp4';
-String longVideo =
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-
-String video720 =
-    "https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4";
-
-String video480 =
-    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
-
-String video240 =
-    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
-
 // void main() {
 //   runApp(const MyApp());
 // }
@@ -42,9 +25,9 @@ String video240 =
 // }
 
 class MoviePlayerPage extends StatefulWidget {
-  const MoviePlayerPage({super.key, required this.longviedoUri ,required this.MiddelResolution ,required this.LowResolution});
+  const MoviePlayerPage({super.key, required this.LongVodeoUri ,required this.MiddelResolution ,required this.LowResolution});
 
-  final String longviedoUri;
+  final String LongVodeoUri;
   final String MiddelResolution;
   final String LowResolution;
 
@@ -63,17 +46,17 @@ class _MoviePlayerPageState extends State<MoviePlayerPage> {
   final CustomVideoPlayerSettings _customVideoPlayerSettings =
   const CustomVideoPlayerSettings(showSeekButtons: true);
 
-  final CustomVideoPlayerWebSettings _customVideoPlayerWebSettings =
-  CustomVideoPlayerWebSettings(
-    src: longVideo,
-  );
+  // final CustomVideoPlayerWebSettings _customVideoPlayerWebSettings =
+  // CustomVideoPlayerWebSettings(
+  //   src: longVideo,
+  //);
 
   @override
   void initState() {
     super.initState();
 
     _videoPlayerController = CachedVideoPlayerController.network(
-      widget.longviedoUri,
+      widget.LongVodeoUri,
     )..initialize().then((value) => setState(() {}));
     _videoPlayerController2 = CachedVideoPlayerController.network(widget.LowResolution);
     _videoPlayerController3 = CachedVideoPlayerController.network(widget.MiddelResolution);
@@ -87,10 +70,13 @@ class _MoviePlayerPageState extends State<MoviePlayerPage> {
         "720p": _videoPlayerController,
       },
     );
-
     _customVideoPlayerWebController = CustomVideoPlayerWebController(
-      webVideoPlayerSettings: _customVideoPlayerWebSettings,
+      webVideoPlayerSettings: CustomVideoPlayerWebSettings(src: widget.LongVodeoUri),
     );
+    // _customVideoPlayerWebController = CustomVideoPlayerWebController(
+    //   webVideoPlayerSettings: _customVideoPlayerWebSettings,
+    // );
+    _customVideoPlayerController.videoPlayerController.play();
   }
 
   @override
@@ -138,3 +124,19 @@ class _MoviePlayerPageState extends State<MoviePlayerPage> {
   }
 }
 
+
+// String videoUrlLandscape =
+//     "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4";
+// String videoUrlPortrait =
+//     'https://assets.mixkit.co/videos/preview/mixkit-a-girl-blowing-a-bubble-gum-at-an-amusement-park-1226-large.mp4';
+// String longVideo =
+//     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+//
+// String video720 =
+//     "https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4";
+//
+// String video480 =
+//     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+//
+// String video240 =
+//     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";

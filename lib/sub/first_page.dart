@@ -22,7 +22,7 @@ class FirstPage extends StatelessWidget
                 child: Text('Cupertino Button'),
                 onPressed: ()
                 {
-                  Get.to(MoviePlayerPage(longviedoUri: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  Get.to(MoviePlayerPage(LongVodeoUri: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                       MiddelResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
                       LowResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"),);
                 },

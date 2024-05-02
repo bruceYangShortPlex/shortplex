@@ -24,10 +24,10 @@ class _LogoPageState extends State<LogoPage> {
       });
     }
 
-    // Timer(Duration(seconds: 7), ()
-    // {
-    //   Get.off(CuperinoTabBar(), transition: Transition.fadeIn);
-    // });
+    Timer(Duration(seconds: 7), ()
+    {
+      Get.off(CuperinoTabBar(), transition: Transition.fadeIn);
+    });
   }
 
   @override
@@ -47,7 +47,7 @@ class _LogoPageState extends State<LogoPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'assets/images/flutter.png',
+                'assets/images/shortplex.png',
                 width: 200,
                 height: 100,
                 fit: BoxFit.contain,

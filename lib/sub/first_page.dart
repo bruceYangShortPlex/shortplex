@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatefulWidget
+{
   const HomePage({super.key});
 
   @override
@@ -23,29 +23,30 @@ class _HomePageState extends State<HomePage>
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     print('change');
+    // var seleect = Get.find<RootBottomNavgationBarController>().selectedIndex.value;
+    // print('select : ${seleect}' );
   }
 
-  @override
-  void didUpdateWidget(covariant HomePage oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    print('update : oldWidget = ${oldWidget.reactive}, current : ${widget}');
-  }
+  // @override
+  // void didUpdateWidget(covariant HomePage oldWidget) {
+  //   // TODO: implement didUpdateWidget
+  //   super.didUpdateWidget(oldWidget);
+  //   print('update : oldWidget = ${oldWidget.reactive}, current : ${widget}');
+  // }
 
-  @override
-  void deactivate() {
-    // TODO: implement deactivate
-    super.deactivate();
-    print('deactive');
-  }
+  // @override
+  // void deactivate() {
+  //   // TODO: implement deactivate
+  //   super.deactivate();
+  //   print('deactive');
+  // }
 
-  void Refresh()
-  {
-    print('refresh');
-    setState(() {
-      print('setState');
-    });
-  }
+  // @override
+  // void activate()
+  // {
+  //   super.activate();
+  //   print('activate');
+  // }
 
   @override
   Widget build(BuildContext context)

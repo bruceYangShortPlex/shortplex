@@ -30,7 +30,7 @@ class _LogoPageState extends State<LogoPage> {
   {
     Timer(Duration(seconds: 7), ()
     {
-      Get.off(() => CuperinoTabBar(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
+      Get.off(() => CupertinoMain(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
     });
 
     return Scaffold

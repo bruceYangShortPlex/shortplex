@@ -43,6 +43,7 @@ dependencies:
   firebase_analytics: ^10.10.4
   chewie: ^1.8.1
   video_player:
+  kakao_flutter_sdk_user: ^1.9.1+2
 
 dev_dependencies:
   flutter_test:

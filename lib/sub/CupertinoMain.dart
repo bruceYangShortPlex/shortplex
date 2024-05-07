@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:shortplex/sub/UserInfoPage.dart';
 import 'first_page.dart';
 import 'second_page.dart';
 
@@ -44,7 +45,10 @@ class _CuperinoTabBarState extends State<CuperinoTabBar>
           switch(value)
           {
             case 0:
-              return FirstPage();
+              {
+                //통신하고 값전달해서 띄우는게 좋을까나?
+                return HomePage();
+              }
             case 1:
               return SecondPage();
             case 2:
@@ -64,13 +68,7 @@ class _CuperinoTabBarState extends State<CuperinoTabBar>
                 ),
               );
             case 4:
-              return Container
-                (
-                child: Center
-                  (
-                  child: Text('cupretino tab 4'),
-                ),
-              );
+              return UserInfoPage();
             default:
               return Placeholder();
           }

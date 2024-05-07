@@ -3,15 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'LoginPage.dart';
 
-void main() {
-  runApp(UserInfoPage());
-}
+// void main() {
+//   runApp(UserInfoPage());
+// }
 
-class UserInfoPage extends StatelessWidget {
+class UserInfoPage extends StatefulWidget {
   const UserInfoPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<UserInfoPage> createState() => _UserInfoPageState();
+}
+
+
+
+class _UserInfoPageState extends State<UserInfoPage>
+{
+  @override
+  Widget build(BuildContext context)
+  {
     return GetCupertinoApp(
       home: SafeArea(
         child: Padding(

@@ -12,6 +12,16 @@ class _LogoPageState extends State<LogoPage> {
   String text = '';
   final String fullText = 'SHORT FLEX';
 
+  Completer<void> completer = Completer<void>();
+
+  Future<void> waitUntilCondition() async {
+    // Completer가 완료될 때까지 대기합니다.
+    await completer.future;
+
+    // 조건이 충족되면 실행할 함수를 호출합니다.
+    Get.off(() => CupertinoMain(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -20,18 +30,35 @@ class _LogoPageState extends State<LogoPage> {
       Future.delayed(Duration(milliseconds: 500 * (i + 2)), () {
         setState(() {
           text += fullText[i];
+          if (text.length == fullText.length)
+          {
+            Future.delayed(Duration(seconds: 2));
+            completer.complete();
+          }
         });
       });
     }
+
+    // WidgetsBinding.instance.addPostFrameCallback((_)
+    // {
+    //
+    // });
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    await waitUntilCondition();
   }
 
   @override
   Widget build(BuildContext context)
   {
-    Timer(Duration(seconds: 7), ()
-    {
-      Get.off(() => CupertinoMain(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
-    });
+    // Timer(Duration(seconds: 7), ()
+    // {
+    //   Get.off(() => CupertinoMain(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
+    // });
 
     return Scaffold
       (

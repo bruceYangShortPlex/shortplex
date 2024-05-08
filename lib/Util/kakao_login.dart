@@ -5,13 +5,6 @@ import 'social_login.dart';
 
 class Kakao_Login implements Social_Login
 {
-  Kakao_Login._privateConstructor();
-  static final Kakao_Login _instance = Kakao_Login._privateConstructor();
-  factory Kakao_Login()
-  {
-    return _instance;
-  }
-
   @override
   late bool isLogin = false;
   @override

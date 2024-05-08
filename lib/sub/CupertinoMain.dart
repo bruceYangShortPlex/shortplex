@@ -12,7 +12,7 @@ class CupertinoMain extends StatelessWidget{
     SecondPage(),
     HomePage(),
     SecondPage(),
-    HomePage(),
+    UserInfoPage(),
   ];
 
   @override
@@ -20,7 +20,7 @@ class CupertinoMain extends StatelessWidget{
 
     // 페이지 전환을 위한 MyBottomNavgationBarController 인스턴스화 (의존성 주입)
     // Get.put : 수명이 페이지와 같음
-    Get.put(RootBottomNavgationBarController());
+    Get.put(MainBottomNavgationBarController());
 
     return Scaffold(
       backgroundColor: context.theme.colorScheme.background,
@@ -30,18 +30,18 @@ class CupertinoMain extends StatelessWidget{
       body: Obx(() => SafeArea(
           child:
           // static 변수를 이용해 컨트롤러 접근
-          tabPages[RootBottomNavgationBarController.to.selectedIndex.value])),
+          tabPages[MainBottomNavgationBarController.to.selectedIndex.value])),
       // 2번에서 만든 BottomNavgationBar 컴포넌트
-      bottomNavigationBar: MyBottomNavgationBar(),
+      bottomNavigationBar: MainBottomNavgationBar(),
     );
   }
 }
 
 // BottomNavigationBar 상태 관리를 위한 GetX controller
-class RootBottomNavgationBarController extends GetxController with GetSingleTickerProviderStateMixin
+class MainBottomNavgationBarController extends GetxController with GetSingleTickerProviderStateMixin
 {
   // Get.fine 대신 클래스명 사용 가능
-  static RootBottomNavgationBarController get to => Get.find();
+  static MainBottomNavgationBarController get to => Get.find();
 
   // 현재 선택된 탭 아이템 번호 저장
   final RxInt selectedIndex = 1.obs;
@@ -52,8 +52,8 @@ class RootBottomNavgationBarController extends GetxController with GetSingleTick
   }
 }
 
-class MyBottomNavgationBar extends GetView<RootBottomNavgationBarController> {
-  const MyBottomNavgationBar({Key? key}) : super(key: key);
+class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
+  const MainBottomNavgationBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +70,8 @@ class MyBottomNavgationBar extends GetView<RootBottomNavgationBarController> {
         selectedItemColor: Colors.green, //context.theme.colorScheme.onBackground,
         unselectedItemColor: context.theme.colorScheme.onSurfaceVariant,
         // 선택에 따라 label text style 변경
-        unselectedLabelStyle: TextStyle(fontSize: 10),
-        selectedLabelStyle: TextStyle(fontSize: 10),
+        //unselectedLabelStyle: TextStyle(fontSize: 10),
+        //selectedLabelStyle: TextStyle(fontSize: 10),
         // 탭 애니메이션 변경 (fixed: 없음)
         type: BottomNavigationBarType.fixed,
         backgroundColor: context.theme.colorScheme.background,

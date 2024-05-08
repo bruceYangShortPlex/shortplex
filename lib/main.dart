@@ -10,8 +10,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   StringTable().InitTable();
   FirebaseSetting().Setup();
+  //카카오 로그인이 필요할때 init해준다. 기존에 뭐로 거시기 했는지
   KakaoSdk.init(nativeAppKey: 'fb25da9b9589891ac497820e14c180d7');
-  await Kakao_Login().LoginCheck();
+  Get.lazyPut(() => Kakao_Login());
+  //카카오 로그인을 했었다는 근거가 있을때 체크하도록 코드 추가해야하한다.
+  var kakaolgin = Get.find<Kakao_Login>();
+  await kakaolgin.LoginCheck();
+
   runApp(const MyApp());
 }
 
@@ -28,6 +33,15 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LogoPage(),
+      // initialRoute: "/",
+      // getPages:
+      // [
+      //   GetPage(name: "/",page: () => CupertinoMain()),
+      //   GetPage(name: "/second",page: () => SecondPage()),
+      //   GetPage(name: "/userinfo",page: () => UserInfoPage()),
+      //   GetPage(name: "/loginpage",page: () => LoginPage()),
+      // ]
+
     );
   }
 }

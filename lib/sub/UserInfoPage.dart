@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'LoginPage.dart';
 
-// void main() {
-//   runApp(UserInfoPage());
-// }
-
 class UserInfoPage extends StatefulWidget {
   const UserInfoPage({super.key});
 
@@ -14,17 +10,15 @@ class UserInfoPage extends StatefulWidget {
   State<UserInfoPage> createState() => _UserInfoPageState();
 }
 
-
-
 class _UserInfoPageState extends State<UserInfoPage>
 {
   @override
   Widget build(BuildContext context)
   {
-    return GetCupertinoApp(
+    return CupertinoApp(
       home: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(top: 30),
+          padding: const EdgeInsets.only(top: 0),
           child: Column(
             children: [
               SizedBox(
@@ -39,11 +33,12 @@ class _UserInfoPageState extends State<UserInfoPage>
 
                     SizedBox(
                       width: 80,
-                      height: 30,
+                      height: 40,
                       child: CupertinoButton(
                         child: Text('Login'),
                         color: Colors.yellow,
                         onPressed: () {
+                          //Get.toNamed('/loginpage');
                           Get.to(() => LoginPage());
                           print('Click');
                         },

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/Util/LoginMananger.dart';
+import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/Util/kakao_login.dart';
 
 class LoginPage extends StatefulWidget {
@@ -36,7 +38,8 @@ class _LoginPageState extends State<LoginPage>
                 IconButton(
                   onPressed: _buttonEnabled ? () async {
                     _buttonEnabled = false;
-                    var result = await Get.find<Kakao_Login>().Login();
+                    Get.put(() => LoginMananger(Kakao_Login()));
+                    var result = await Get.find<LoginMananger>().LogIn();
                     if (result)
                     {
                        //var token = Get.find<Kakao_Login>().token;
@@ -50,9 +53,17 @@ class _LoginPageState extends State<LoginPage>
                   height: 5,
                 ),
                 IconButton(
-                  onPressed: () {
-                    print('click2');
-                  },
+                  onPressed: _buttonEnabled ? () async {
+                    _buttonEnabled = false;
+                    Get.put(() => LoginMananger(Google_Login()));
+                    var result = await Get.find<LoginMananger>().LogIn();
+                    if (result)
+                    {
+                      //var token = Get.find<Google_Login>().token;
+                      //서버에 주고 로그인.
+                      _buttonEnabled = true;
+                    }
+                  } : null,
                   icon: Image.asset('assets/images/kakao_login.kor.png'),
                 ),
                 SizedBox(

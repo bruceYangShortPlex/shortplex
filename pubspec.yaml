@@ -44,6 +44,7 @@ dependencies:
   chewie: ^1.8.1
   video_player:
   kakao_flutter_sdk_user: ^1.9.1+2
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:

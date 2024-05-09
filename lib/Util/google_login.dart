@@ -33,9 +33,9 @@ class Google_Login implements Social_Login
   }
 
   @override
-  Future<bool> LoginCheck() {
-    // TODO: implement LoginCheck
-    throw UnimplementedError();
+  Future<bool> LoginCheck() async {
+    var user = FirebaseAuth.instance.currentUser;
+    return user != null;
   }
 
   @override

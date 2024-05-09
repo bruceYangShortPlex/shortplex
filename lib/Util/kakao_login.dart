@@ -56,16 +56,14 @@ class Kakao_Login implements Social_Login
 
   @override
   Future<bool> Logout() async {
-    // TODO: implement Logout
     try {
       await UserApi.instance.unlink();
-      isLogin = true;
+      isLogin = false;
     } catch (e) {
       print(e);
-      isLogin = false;
-    }
-
-    return isLogin;
+      isLogin = true;
+    };
+    return !isLogin;
   }
 
   @override

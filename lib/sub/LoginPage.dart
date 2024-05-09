@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _buttonEnabled
                             ? () async {
                                 _buttonEnabled = false;
-                                Get.put(() => LoginMananger(Kakao_Login()));
+                                Get.put(LoginMananger(Kakao_Login()));
                                 var result =
                                     await Get.find<LoginMananger>().LogIn();
                                 if (result) {
@@ -54,6 +54,8 @@ class _LoginPageState extends State<LoginPage> {
                                   //서버에 주고 로그인.
                                 }
                                 _buttonEnabled = true;
+
+                                setState(() {});
                               }
                             : null,
                         icon: Image.asset('assets/images/Kakao_PNG.png'),
@@ -69,11 +71,12 @@ class _LoginPageState extends State<LoginPage> {
                                 var result =
                                     await Get.find<LoginMananger>().LogIn();
                                 if (result) {
-                                  setState(() {});
                                   //var token = Get.find<Google_Login>().token;
                                   //서버에 주고 로그인.
                                 }
                                 _buttonEnabled = true;
+
+                                setState(() {});
                               }
                             : null,
                         icon: Image.asset('assets/images/Google_PNG.png'),

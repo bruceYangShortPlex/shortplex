@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/Util/LoginMananger.dart';
 import 'CupertinoMain.dart';
 
 class LogoPage extends StatefulWidget {
@@ -14,9 +15,15 @@ class _LogoPageState extends State<LogoPage> {
 
   Completer<void> completer = Completer<void>();
 
-  Future<void> waitUntilCondition() async {
+  Future<void> waitUntilCondition() async
+  {
     // Completer가 완료될 때까지 대기합니다.
     await completer.future;
+
+    await Future.delayed(Duration(seconds: 1));
+
+    var loginMananger = Get.find<LoginMananger>();
+    await Future.doWhile(() async => loginMananger.isCheckComplete);
 
     // 조건이 충족되면 실행할 함수를 호출합니다.
     Get.off(() => CupertinoMain(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
@@ -32,7 +39,6 @@ class _LogoPageState extends State<LogoPage> {
           text += fullText[i];
           if (text.length == fullText.length)
           {
-            Future.delayed(Duration(seconds: 2));
             completer.complete();
           }
         });

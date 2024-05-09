@@ -3,19 +3,17 @@ import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/sub/LogoPage.dart';
+import 'Util/kakao_login.dart';
 import 'table/StringTable.dart';
-import 'sub/FirebaseSetting.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   StringTable().InitTable();
 
-  await FirebaseSetting().Setup();
-
-  //TODO : 뭐로 로그인했었는지 알아오는 걸로해서 로그인 메니저에서 작업쳐야함.
-  Get.lazyPut(() => LoginMananger(Google_Login()));
-  var loginManager = Get.find<LoginMananger>();
-  await loginManager.Check();
+  Get.lazyPut(() => Kakao_Login());
+  Get.lazyPut(() => Google_Login());
+  Get.lazyPut(() => LoginMananger());
+  Get.find<LoginMananger>().Check();
 
   runApp(const MyApp());
 }

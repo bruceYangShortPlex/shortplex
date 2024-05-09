@@ -1,25 +1,24 @@
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-
 import 'social_login.dart';
 
-class Kakao_Login implements Social_Login
-{
+class Kakao_Login implements Social_Login {
+
+  late User user;
   @override
   late bool isLogin = false;
   @override
   late String token;
 
   @override
-  Future<bool> Login() async
-  {
+  Future<bool> Login() async {
     // TODO: implement Login
+
+    OAuthToken? accessToken;
+
     if (await isKakaoTalkInstalled()) {
       try {
-        var kakaotoken = await UserApi.instance.loginWithKakaoTalk();
-        token = kakaotoken.accessToken;
-
-        print('카카오톡으로 로그인 성공 토큰 1 : ${token}');
+        accessToken = await UserApi.instance.loginWithKakaoTalk();
         isLogin = true;
       } catch (error) {
         print('카카오톡으로 로그인 실패 1 $error');
@@ -31,8 +30,7 @@ class Kakao_Login implements Social_Login
         }
         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
         try {
-          var kakaotoken = await UserApi.instance.loginWithKakaoAccount();
-          print('카카오톡으로 로그인 성공 토큰 2 : ${kakaotoken.accessToken}');
+          accessToken = await UserApi.instance.loginWithKakaoAccount();
           isLogin = true;
         } catch (error) {
           print('카카오계정으로 로그인 실패 2 $error');
@@ -42,8 +40,7 @@ class Kakao_Login implements Social_Login
       }
     } else {
       try {
-        var kakaotoken = await UserApi.instance.loginWithKakaoAccount();
-        print('카카오톡으로 로그인 성공 토큰 3 : ${kakaotoken.accessToken}');
+        accessToken = await UserApi.instance.loginWithKakaoAccount();
         isLogin = true;
       } catch (error) {
         print(await KakaoSdk.origin);
@@ -51,6 +48,15 @@ class Kakao_Login implements Social_Login
         isLogin = false;
       }
     }
+
+    if (isLogin)
+    {
+      if (accessToken != null)
+        token = accessToken.accessToken;
+
+      await UserApi.instance.me().then((value) => user = value);
+    }
+
     return isLogin;
   }
 
@@ -59,45 +65,37 @@ class Kakao_Login implements Social_Login
     try {
       await UserApi.instance.unlink();
       isLogin = false;
+      token = '';
     } catch (e) {
       print(e);
       isLogin = true;
     };
+
     return !isLogin;
   }
 
   @override
-  Future<bool> LoginCheck() async
-  {
-    if (await AuthApi.instance.hasToken())
-    {
-      try
-      {
+  Future<bool> LoginCheck() async {
+    if (await AuthApi.instance.hasToken()) {
+      try {
         AccessTokenInfo tokenInfo = await UserApi.instance.accessTokenInfo();
-        print('토큰 유효성 체크 성공 ${tokenInfo.id} ${tokenInfo.expiresIn}');
+        print('토큰 유효성 체크 성공 / tokenInfo.id : ${tokenInfo.id} / tokenInfo.expiresIn : ${tokenInfo.expiresIn}');
+        await UserApi.instance.me().then((value) => user = value);
+        print(user);
         isLogin = true;
-      }
-      catch (error)
-      {
-        if (error is KakaoException && error.isInvalidTokenError())
-        {
+      } catch (error) {
+        if (error is KakaoException && error.isInvalidTokenError()) {
           print('토큰 만료 $error');
-        }
-        else
-        {
+        } else {
           print('토큰 정보 조회 실패 $error');
         }
 
         isLogin = false;
       }
+    } else {
+      print('토큰이 없습니다.');
     }
-    else
-      {
-        print('토큰이 없습니다.');
-      }
 
     return isLogin;
   }
 }
-
-

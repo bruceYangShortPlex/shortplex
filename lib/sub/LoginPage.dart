@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
-import 'package:shortplex/Util/google_login.dart';
-import 'package:shortplex/Util/kakao_login.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -46,9 +44,8 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _buttonEnabled
                             ? () async {
                                 _buttonEnabled = false;
-                                Get.put(LoginMananger(Kakao_Login()));
                                 var result =
-                                    await Get.find<LoginMananger>().LogIn();
+                                    await loginManager.LogIn(LoginType.kakao);
                                 if (result) {
                                   //var token = Get.find<Kakao_Login>().token;
                                   //서버에 주고 로그인.
@@ -67,9 +64,8 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _buttonEnabled
                             ? () async {
                                 _buttonEnabled = false;
-                                Get.put(() => LoginMananger(Google_Login()));
                                 var result =
-                                    await Get.find<LoginMananger>().LogIn();
+                                    await loginManager.LogIn();
                                 if (result) {
                                   //var token = Get.find<Google_Login>().token;
                                   //서버에 주고 로그인.

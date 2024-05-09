@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "930447149134-oii7p3s1j3id6vuom5fk29o4s5blkdnf.apps.googleusercontent.com",
+          "client_id": "930447149134-9ch1nol6m25ec50qlb23rrm267b2poma.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.shortplex.shortplex",
-            "certificate_hash": "360ad03c87d129c4cea81f766496ef39f83cd61c"
+            "certificate_hash": "d422ae421d1212de3877cdf158fe2f3d6ffb52ff"
+          }
+        },
+        {
+          "client_id": "930447149134-l4150n37npc5t5a71geofsve8ce2qkpd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shortplex.shortplex",
+            "certificate_hash": "b6d09988919ec6776eb183fdcea03fab65aaad40"
+          }
+        },
+        {
+          "client_id": "930447149134-r21raobuj54cpaiq8e9ig7sqshm8op83.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shortplex.shortplex",
+            "certificate_hash": "0d2638ff0eb2866836806cabadc8a770d15467c2"
           }
         },
         {

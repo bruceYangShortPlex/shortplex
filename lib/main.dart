@@ -11,7 +11,7 @@ import 'sub/FirebaseSetting.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   StringTable().InitTable();
-  FirebaseSetting().Setup();
+  await FirebaseSetting().Setup();
 
   KakaoSdk.init(nativeAppKey: 'fb25da9b9589891ac497820e14c180d7');
   //TODO : 뭐로 로그인했었는지 알아오는 걸로해서 로그인 메니저에서 작업쳐야함.

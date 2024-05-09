@@ -12,9 +12,10 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
-{
+class _LoginPageState extends State<LoginPage> {
   bool _buttonEnabled = true;
+
+  var loginManager = Get.find<LoginMananger>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,55 +36,83 @@ class _LoginPageState extends State<LoginPage>
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                IconButton(
-                  onPressed: _buttonEnabled ? () async {
-                    _buttonEnabled = false;
-                    Get.put(() => LoginMananger(Kakao_Login()));
-                    var result = await Get.find<LoginMananger>().LogIn();
-                    if (result)
-                    {
-                       //var token = Get.find<Kakao_Login>().token;
-                       //서버에 주고 로그인.
-                       _buttonEnabled = true;
-                    }
-                  } : null,
-                  icon: Image.asset('assets/images/kakao_login.kor.png'),
+                Visibility(
+                  visible: !loginManager.isLogin,
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.end,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: _buttonEnabled
+                            ? () async {
+                                _buttonEnabled = false;
+                                Get.put(() => LoginMananger(Kakao_Login()));
+                                var result =
+                                    await Get.find<LoginMananger>().LogIn();
+                                if (result) {
+                                  //var token = Get.find<Kakao_Login>().token;
+                                  //서버에 주고 로그인.
+                                }
+                                _buttonEnabled = true;
+                              }
+                            : null,
+                        icon: Image.asset('assets/images/Kakao_PNG.png'),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      IconButton(
+                        onPressed: _buttonEnabled
+                            ? () async {
+                                _buttonEnabled = false;
+                                Get.put(() => LoginMananger(Google_Login()));
+                                var result =
+                                    await Get.find<LoginMananger>().LogIn();
+                                if (result) {
+                                  setState(() {});
+                                  //var token = Get.find<Google_Login>().token;
+                                  //서버에 주고 로그인.
+                                }
+                                _buttonEnabled = true;
+                              }
+                            : null,
+                        icon: Image.asset('assets/images/Google_PNG.png'),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          print('click3');
+                        },
+                        icon: Image.asset('assets/images/kakao_login.kor.png'),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          print('click4');
+                        },
+                        icon: Image.asset('assets/images/kakao_login.kor.png'),
+                      )
+                    ],
+                  ),
                 ),
-                SizedBox(
-                  height: 5,
+                Visibility(
+                  visible: loginManager.isLogin,
+                  child: IconButton(
+                    onPressed: _buttonEnabled
+                        ? () async {
+                            await loginManager.LogOut();
+                            _buttonEnabled = true;
+                            setState(() {});
+                            print('Logout');
+                          }
+                        : null,
+                    icon: Image.asset('assets/images/kakao_login.kor.png'),
+                  ),
                 ),
-                IconButton(
-                  onPressed: _buttonEnabled ? () async {
-                    _buttonEnabled = false;
-                    Get.put(() => LoginMananger(Google_Login()));
-                    var result = await Get.find<LoginMananger>().LogIn();
-                    if (result)
-                    {
-                      //var token = Get.find<Google_Login>().token;
-                      //서버에 주고 로그인.
-                      _buttonEnabled = true;
-                    }
-                  } : null,
-                  icon: Image.asset('assets/images/kakao_login.kor.png'),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                IconButton(
-                  onPressed: () {
-                    print('click3');
-                  },
-                  icon: Image.asset('assets/images/kakao_login.kor.png'),
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                IconButton(
-                  onPressed: () {
-                    print('click4');
-                  },
-                  icon: Image.asset('assets/images/kakao_login.kor.png'),
-                )
               ],
             ),
           ),

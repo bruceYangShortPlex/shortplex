@@ -26,7 +26,7 @@ class Google_Login implements Social_Login
     }
     catch (e)
     {
-      print('error fail : ${e}');
+      print('error google login fail : ${e}');
     }
     isLogin = false;
     return isLogin;
@@ -42,6 +42,7 @@ class Google_Login implements Social_Login
   Future<bool> Logout () async
   {
     var resutl = await GoogleSignIn().signOut();
+    print(resutl);
     return true;
   }
 }

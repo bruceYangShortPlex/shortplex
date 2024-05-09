@@ -12,28 +12,39 @@ class LoginMananger
   User? user;
 
   get token => user != null ? user?.uid : _social_login.token;
+  get isLogin => user != null ? true : _social_login.isLogin;
 
   Future<bool> LogIn() async
   {
-    return await _social_login.Login();
+    try {
+      await _social_login.Login();
+    }
+    catch (e)
+    {
+      print('Login Failed : ${e}');
+    }
+    user = FirebaseAuth.instance.currentUser;
+    return isLogin;
   }
 
   Future<bool> LogOut() async
   {
+    if (!isLogin) {
+      print('already logout return');
+      return true;
+    }
     await FirebaseAuth.instance.signOut();
+    await _social_login.Logout();
+    user = null;
 
-    return await _social_login.Logout();
+    return isLogin;
   }
 
   Future<bool> Check() async
   {
     user = FirebaseAuth.instance.currentUser;
-    if (user != null)
-    {
-      return true;
-    }
-
-    return await _social_login.LoginCheck();
+    print('user : ${user}');
+    print('user uid : ${user?.uid}');
+    return user != null;
   }
-
 }

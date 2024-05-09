@@ -42,8 +42,7 @@ class Google_Login implements Social_Login
   Future<bool> Logout () async
   {
     var resutl = await GoogleSignIn().signOut();
-    return true
-    ;
+    return true;
   }
 }
 

@@ -8,7 +8,7 @@ class Kakao_Login implements Social_Login {
   @override
   late bool isLogin = false;
   @override
-  late String token;
+  late String token = '';
 
   @override
   Future<bool> Login() async {
@@ -51,10 +51,8 @@ class Kakao_Login implements Social_Login {
 
     if (isLogin)
     {
-      if (accessToken != null)
-        token = accessToken.accessToken;
-
       await UserApi.instance.me().then((value) => user = value);
+      token = user.id.toString();
     }
 
     return isLogin;

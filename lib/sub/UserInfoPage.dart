@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'LoginPage.dart';
 
 class UserInfoPage extends StatefulWidget {
@@ -22,15 +24,14 @@ class _UserInfoPageState extends State<UserInfoPage>
           child: Column(
             children: [
               SizedBox(
-                width: 400,
+                width: 1.sw,
                 height: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Image.asset('assets/images/shortplex.png',
-                        width: 30, height: 30, fit: BoxFit.contain
-                    ),
-
+                  children:
+                  [
+                    _profile(),
+                    _nickName(),
                     SizedBox(
                       width: 80,
                       height: 40,
@@ -47,10 +48,51 @@ class _UserInfoPageState extends State<UserInfoPage>
                   ],
                 ),
               ),
+              _TestBox(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _profile() => Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Container(
+      width: 50.w,
+      height: 50.h,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: Obx(() => Get.find<UserData>().photoUrl.value.isEmpty ? Container(color: Colors.black,) : Image.network('${Get.find<UserData>().photoUrl.value}', fit: BoxFit.cover),
+        ),
+      ),
+    ),
+  );
+
+  Widget _nickName() => Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Obx(() =>
+        Text('${Get.find<UserData>().name.value}',style: TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 20),),
+    ),
+  );
+
+  Widget _TestBox()
+  {
+    return Align(alignment: Alignment.bottomCenter, child: Padding(padding: EdgeInsets.only(bottom: 0), child: Container(width: 0.5.sw, height: 1  .sw, color: Colors.green,),) , );
+  }
+}
+
+class UserData extends GetxController
+{
+  RxString name = 'Guest'.obs;
+  RxString photoUrl = ''.obs;
+
+  InitValue()
+  {
+    name.value = 'Guest';
+    photoUrl.value = '';
   }
 }

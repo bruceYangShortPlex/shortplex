@@ -11,7 +11,7 @@ class LogoPage extends StatefulWidget {
 
 class _LogoPageState extends State<LogoPage> {
   String text = '';
-  final String fullText = 'SHORT FLEX';
+  final String fullText = 'SHORTPLEX';
 
   Completer<void> completer = Completer<void>();
 

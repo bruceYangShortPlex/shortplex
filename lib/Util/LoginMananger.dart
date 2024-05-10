@@ -6,6 +6,7 @@ import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/Util/kakao_login.dart';
 import 'package:shortplex/Util/social_login.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/UserInfoPage.dart';
 
 import '../sub/FirebaseSetting.dart';
 
@@ -66,11 +67,20 @@ class LoginMananger
       print('Login Failed : ${e}');
     }
 
-    if (type == LoginType.kakao) {
+    if (type == LoginType.kakao)
+    {
       kakaoUser = Get.find<Kakao_Login>().user;
-    } else {
-      User = FirebaseAuth.instance.currentUser;
+      Get.find<UserData>().name.value = kakaoUser!.kakaoAccount!.profile!.nickname as String;
+      Get.find<UserData>().photoUrl.value = kakaoUser!.kakaoAccount!.profile!.profileImageUrl as String;
     }
+    else
+    {
+      User = FirebaseAuth.instance.currentUser;
+      Get.find<UserData>().name.value = User!.displayName as String;
+      Get.find<UserData>().photoUrl.value = User!.photoURL as String;
+    }
+
+    print('token : ${token}');
 
     return isLogin;
   }
@@ -86,6 +96,8 @@ class LoginMananger
     await _social_login?.Logout();
     User = null;
     kakaoUser = null;
+    Get.find<UserData>().InitValue();
+
     return isLogin;
   }
 
@@ -102,9 +114,19 @@ class LoginMananger
       _social_login = Get.find<Kakao_Login>();
       await _social_login!.LoginCheck();
       kakaoUser = Get.find<Kakao_Login>().user;
+
+      Get.find<UserData>().name.value = kakaoUser!.kakaoAccount!.profile!.nickname as String;
+      Get.find<UserData>().photoUrl.value = kakaoUser!.kakaoAccount!.profile!.profileImageUrl as String;
+    }
+    else
+    {
+      Get.find<UserData>().name.value = User!.displayName as String;
+      Get.find<UserData>().photoUrl.value = User!.photoURL as String;
     }
 
     isCheckComplete = true;
+
+    print('token : ${token}');
 
     return User != null;
   }

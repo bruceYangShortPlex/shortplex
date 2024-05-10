@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
+import 'package:shortplex/table/StringTable.dart';
 import 'first_page.dart';
 import 'second_page.dart';
 
@@ -59,7 +60,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 100,
+      height: 80,
 
       child: Obx(() => BottomNavigationBar(
         // 현재 인덱스를 selectedIndex에 저장
@@ -82,7 +83,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
               icon: controller.selectedIndex.value == 0
                   ? Icon(CupertinoIcons.add_circled)
                   : Icon(CupertinoIcons.add_circled_solid),
-              label: "tap1"),
+              label: StringTable().Table![100001],),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 1
                   ?

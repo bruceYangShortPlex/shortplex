@@ -27,11 +27,11 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: Align(
-          alignment: Alignment.bottomCenter,
+          alignment: Alignment.topCenter,
           child: Padding(
-            padding: EdgeInsets.only(bottom: 50.0),
+            padding: EdgeInsets.only(bottom: 0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Visibility(
@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                             ? () async {
                                 _buttonEnabled = false;
                                 var result =
-                                    await loginManager.LogIn();
+                                    await loginManager.LogIn(LoginType.google);
                                 if (result) {
                                   //var token = Get.find<Google_Login>().token;
                                   //서버에 주고 로그인.

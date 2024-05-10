@@ -14,11 +14,9 @@ class Kakao_Login implements Social_Login {
   Future<bool> Login() async {
     // TODO: implement Login
 
-    OAuthToken? accessToken;
-
     if (await isKakaoTalkInstalled()) {
       try {
-        accessToken = await UserApi.instance.loginWithKakaoTalk();
+        var accessToken = await UserApi.instance.loginWithKakaoTalk();
         isLogin = true;
       } catch (error) {
         print('카카오톡으로 로그인 실패 1 $error');
@@ -30,7 +28,7 @@ class Kakao_Login implements Social_Login {
         }
         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
         try {
-          accessToken = await UserApi.instance.loginWithKakaoAccount();
+          var accessToken = await UserApi.instance.loginWithKakaoAccount();
           isLogin = true;
         } catch (error) {
           print('카카오계정으로 로그인 실패 2 $error');
@@ -40,7 +38,7 @@ class Kakao_Login implements Social_Login {
       }
     } else {
       try {
-        accessToken = await UserApi.instance.loginWithKakaoAccount();
+        var accessToken = await UserApi.instance.loginWithKakaoAccount();
         isLogin = true;
       } catch (error) {
         print(await KakaoSdk.origin);

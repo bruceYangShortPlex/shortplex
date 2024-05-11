@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">shortplex</string>
+    <string name="app_name">ShortPlex</string>
     <string name="facebook_app_id">1518795238994583</string>
     <string name="fb_login_protocol_scheme">fb1518795238994583</string>
     <string name="facebook_client_token">534e99091cc707700287b3000dfe787c</string>

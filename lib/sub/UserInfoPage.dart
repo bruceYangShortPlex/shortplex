@@ -89,10 +89,12 @@ class UserData extends GetxController
 {
   RxString name = 'Guest'.obs;
   RxString photoUrl = ''.obs;
+  RxBool loginComplete = false.obs;
 
   InitValue()
   {
     name.value = 'Guest';
     photoUrl.value = '';
+    loginComplete.value = false;
   }
 }

@@ -2,13 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart' as firebaseUser;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as KakaoUser;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:shortplex/Util/facebook_login.dart';
 import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/Util/kakao_login.dart';
 import 'package:shortplex/Util/social_login.dart';
 import 'package:get/get.dart';
-import 'package:shortplex/sub/UserInfoPage.dart';
 
 import '../sub/FirebaseSetting.dart';
+import '../sub/UserInfoPage.dart';
 
 enum LoginType
 {
@@ -40,6 +41,10 @@ class LoginMananger
 
   Future<bool> LogIn([LoginType type = LoginType.google]) async
   {
+    Get.lazyPut(() => Kakao_Login());
+    Get.lazyPut(() => Google_Login());
+    Get.lazyPut(()=> FaceBook_Login());
+
     try
     {
       switch (type)
@@ -53,8 +58,9 @@ class LoginMananger
         // TODO: Handle this case.
         case LoginType.apple:
           break;
-        // TODO: Handle this case.
+
         case LoginType.facebook:
+          _social_login = Get.find<FaceBook_Login>();
           break;
         default:
           print('not found case ${type}');
@@ -81,7 +87,7 @@ class LoginMananger
     }
 
     print('token : ${token}');
-
+    Get.find<UserData>().loginComplete.value = isLogin;
     return isLogin;
   }
 
@@ -103,6 +109,10 @@ class LoginMananger
 
   Future<bool> Check() async
   {
+    Get.lazyPut(() => Kakao_Login());
+    Get.lazyPut(() => Google_Login());
+    Get.lazyPut(()=> FaceBook_Login());
+
     await FirebaseSetting().Setup();
 
     User = FirebaseAuth.instance.currentUser;
@@ -125,7 +135,7 @@ class LoginMananger
     }
 
     isCheckComplete = true;
-
+    Get.find<UserData>().loginComplete.value = isLogin;
     print('token : ${token}');
 
     return User != null;

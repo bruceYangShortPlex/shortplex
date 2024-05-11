@@ -4,9 +4,9 @@ import 'package:video_player/video_player.dart';
 import 'theme.dart';
 import 'dart:io';
 
-void main() => runApp(const VideoPage(LongVodeoUri: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-          MiddelResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          LowResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+// void main() => runApp(const VideoPage(LongVodeoUri: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+//           MiddelResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+//           LowResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key, required this.LongVodeoUri ,required this.MiddelResolution ,required this.LowResolution});

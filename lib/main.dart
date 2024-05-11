@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
-import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
-import 'Util/kakao_login.dart';
 import 'table/StringTable.dart';
 
 void main() async
@@ -13,8 +11,6 @@ void main() async
   WidgetsFlutterBinding.ensureInitialized();
   StringTable().InitTable();
 
-  Get.lazyPut(() => Kakao_Login());
-  Get.lazyPut(() => Google_Login());
   Get.lazyPut(() => LoginMananger());
   Get.lazyPut(()=> UserData());
   Get.find<LoginMananger>().Check();

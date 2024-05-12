@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +8,8 @@ void main() async
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(HttpProtocolManager());
   var manager = Get.find<HttpProtocolManager>();
-  manager.getData();
+  //manager.getData();
+  manager.postData();
   runApp(const HttpTest());
 }
 
@@ -31,35 +30,56 @@ class HttpProtocolManager
 
   getData() async
   {
-    var heads = {'apikey' : ApiKey, '' : ''};
+    //var heads = {'apikey' : ApiKey, '' : ''};
+    var heads = {'Authorization' : 'KakaoAK 7223322857794c79fd6f7467272f8f9c'};
     try
     {
-      var res = await http.get(
-          Uri.parse('https://quadra-server.web.app/docs/tag/api-routes/get/api/v1/oping'),);
+      //var uri = 'https://quadra-server.web.app/docs/tag/api-routes/get/api/v1/oping';
+      //var uri = 'www.google.com';
+      var uri = 'https://dapi.kakao.com/v3/search/book?target=title&query=doit';
+
+      var res = await http.get(Uri.parse(uri),headers: heads);
+
       print('resutl : ${res.body}');
-      print('json decode ${jsonDecode(res.body)}');
+      //print('json decode ${jsonDecode(res.body)}');
     }
     catch (e)
     {
-      print('error ${e}');
+      print('get error ${e}');
     }
   }
 
-// POST (https://pub.dev/documentation/http/latest/)
   postData() async {
-    var url = Uri.https('example.com', 'whatsit/create');
-    var response = await http.post(url, body: {'name': 'doodle', 'color': 'blue'});
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    print(await http.read(Uri.https('example.com', 'foobar.txt')));
+    try {
+     //var url = Uri.https('https://quadra-server.web.app', '/api/v1/status');
+      var uri = 'https://quadra-server.web.app/api/v1/status';
+      var heads = {'apikey': ApiKey};
+      //var response = await http.post(url, headers: heads);
+      var response = await http.post(Uri.parse(uri));
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+    catch (e)
+    {
+      print('post error ${e}');
+    }
+   // print(await http.read(Uri.https('https://quadra-server.web.app/api/v1/status', 'foobar.txt')));
   }
 
   var oauthLogin = OAuthLogin(email: '');
 
   sendOAuthLogin() async
   {
-    var url = Uri.https('example.com', 'whatsit/create');
-    var response = await http.post(url, body: oauthLogin.toJson());
-    print(response);
+    try
+    {
+      var heads = {'apikey': ApiKey, 'Authorization': 'Bearer YourToken'};
+      var url = Uri.https('https://quadra-server.web.app/api/v1/account/oauth_login');
+      var response = await http.post(url, headers: heads, body: oauthLogin.toJson());
+      print(response);
+    }
+    catch (e)
+    {
+      print('sendOAuthLogin error : ${e}');
+    }
   }
 }

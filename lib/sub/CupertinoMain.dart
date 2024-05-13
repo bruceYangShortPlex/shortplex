@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
@@ -59,23 +60,25 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      height: 80,
-
-      child: Obx(() => BottomNavigationBar(
+      width: 1.sw,
+      height: 60,
+      color: Colors.black,
+      child: Obx(() =>
+        BottomNavigationBar
+        (
         // 현재 인덱스를 selectedIndex에 저장
         currentIndex: controller.selectedIndex.value,
         // 요소(item)을 탭 할 시 실행)
         onTap: controller.changeIndex,
         // 선택에 따라 icon·label 색상 변경
         selectedItemColor: Colors.green, //context.theme.colorScheme.onBackground,
-        unselectedItemColor: context.theme.colorScheme.onSurfaceVariant,
+        unselectedItemColor: Colors.white,
         // 선택에 따라 label text style 변경
         //unselectedLabelStyle: TextStyle(fontSize: 10),
         //selectedLabelStyle: TextStyle(fontSize: 10),
         // 탭 애니메이션 변경 (fixed: 없음)
         type: BottomNavigationBarType.fixed,
-        backgroundColor: context.theme.colorScheme.background,
+        backgroundColor: Colors.transparent,
         // Bar에 보여질 요소. icon과 label로 구성.
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -84,7 +87,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
                   ? Icon(CupertinoIcons.add_circled)
                   : Icon(CupertinoIcons.add_circled_solid),
               label: StringTable().Table![100001],),
-          BottomNavigationBarItem(
+              BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 1
                   ?
               // Image.asset(

@@ -21,68 +21,72 @@ class _LoginPageState extends State<LoginPage> {
   var loginManager = Get.find<LoginMananger>();
 
   @override
-  Widget build(BuildContext context) {
-    return CupertinoApp(
-      home: CupertinoPageScaffold(
-        backgroundColor: Colors.black,
-        navigationBar: CupertinoNavigationBar(backgroundColor: Colors.transparent,
-          leading: CupertinoNavigationBarBackButton(
-            color: Colors.white,
-            //previousPageTitle: StringTable().Table![100019],
-            onPressed: () {
-              Get.back();
-            },
+  Widget build(BuildContext context)
+  {
+    return
+      CupertinoApp
+      (
+        home: CupertinoPageScaffold
+        (
+          backgroundColor: Colors.black,
+          navigationBar: CupertinoNavigationBar(backgroundColor: Colors.transparent,
+            leading: CupertinoNavigationBarBackButton(
+              color: Colors.white,
+              //previousPageTitle: StringTable().Table![100019],
+              onPressed: () {
+                Get.back();
+              },
+            ),
           ),
-        ),
-        child: Align(
-          alignment: Alignment.topCenter,
-            child : Stack(  children:
-            [
-              Container( width: 1.sw,
-              height: 1.sw,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(-0.00, 1.00),
-                  end: Alignment(0, -1),
-                  colors: [Colors.black, Colors.black54],
-                ),
-              ),),
-              Container(
-                  width: 1.sw,
-                  height: 1.sw,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                    begin: Alignment(1, 1),
-                    end: Alignment(1, -3),
-                    colors: [Color(0x000F60), Color(0xFF00FFBF),],
+          child: Align(
+            alignment: Alignment.topCenter,
+              child : Stack(  children:
+              [
+                Container( width: 1.sw,
+                height: 1.sw,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(-0.00, 1.00),
+                    end: Alignment(0, -1),
+                    colors: [Colors.black, Colors.black54],
                   ),
-                ),
-              ),
-              Container
-              (
-                  child: Align(alignment: Alignment.center,
-                    child:
-                    Column
-                    (
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children:
-                      [
-                        LogoImage(),
-                        Text(StringTable().Table![400062]!,style: TextStyle(color: Colors.white, fontSize: 16),),
-                        Text(StringTable().Table![400063]!,style: TextStyle(color: Colors.white, fontSize: 16),),
-                        SizedBox(height: 50,),
-                        _LoginButtons(),
-                      ],
+                ),),
+                Container(
+                    width: 1.sw,
+                    height: 1.sw,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                      begin: Alignment(1, 1),
+                      end: Alignment(1, -3),
+                      colors: [Color(0x000F60), Color(0xFF00FFBF),],
                     ),
                   ),
                 ),
-              ],
+                Container
+                (
+                    child: Align(alignment: Alignment.center,
+                      child:
+                      Column
+                      (
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:
+                        [
+                          LogoImage(),
+                          Text(StringTable().Table![400062]!,style: TextStyle(color: Colors.white, fontSize: 16),),
+                          Text(StringTable().Table![400063]!,style: TextStyle(color: Colors.white, fontSize: 16),),
+                          SizedBox(height: 50,),
+                          _LoginButtons(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-    );
-  }
+      );
+    }
 
   Widget LogoImage() => Column(children:
   [

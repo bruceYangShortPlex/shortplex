@@ -61,7 +61,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
   Widget build(BuildContext context) {
     return Container(
       width: 1.sw,
-      height: 60,
+      height: 80,
       color: Colors.black,
       child: Obx(() =>
         BottomNavigationBar
@@ -71,46 +71,43 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
         // 요소(item)을 탭 할 시 실행)
         onTap: controller.changeIndex,
         // 선택에 따라 icon·label 색상 변경
-        selectedItemColor: Colors.green, //context.theme.colorScheme.onBackground,
+        selectedItemColor: Color(0xFF00FFBF), //context.theme.colorScheme.onBackground,
         unselectedItemColor: Colors.white,
         // 선택에 따라 label text style 변경
-        //unselectedLabelStyle: TextStyle(fontSize: 10),
-        //selectedLabelStyle: TextStyle(fontSize: 10),
+        unselectedLabelStyle: TextStyle(fontSize: 12),// fontFamily: 'NotoSans', fontWeight: FontWeight.w100, color: Colors.white),
+        selectedLabelStyle: TextStyle(fontSize: 12),//fontFamily: 'NotoSans', fontWeight: FontWeight.w100, color: Colors.green),
         // 탭 애니메이션 변경 (fixed: 없음)
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
         // Bar에 보여질 요소. icon과 label로 구성.
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+          BottomNavigationBarItem
+            (
             // 선택된 탭은 채워진 아이콘, 나머지는 line 아이콘
               icon: controller.selectedIndex.value == 0
-                  ? Icon(CupertinoIcons.add_circled)
-                  : Icon(CupertinoIcons.add_circled_solid),
-              label: StringTable().Table![100001],),
+                  ? Image.asset('assets/images/home_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/home_off.png', height: 50, width: 50,),
+              label: StringTable().Table![100001]),
               BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 1
-                  ?
-              // Image.asset(
-              //   'assets/icons/menu2_solid.svg',
-              // )
-              Icon(CupertinoIcons.alarm)  :
-              Icon(CupertinoIcons.alarm_fill),
-              label: "tap2"),
+                  ? Image.asset('assets/images/pick_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/pick_off.png', height: 50, width: 50,),
+                  label: StringTable().Table![100002]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 2
-                  ? Icon(CupertinoIcons.ant_circle)
-                  : Icon(CupertinoIcons.ant_circle_fill),
-              label: "tap3"),
+                  ? Image.asset('assets/images/open_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/open_off.png', height: 50, width: 50,),
+              label: StringTable().Table![100003]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 3
-                  ? Icon(CupertinoIcons.app_badge)
-                  : Icon(CupertinoIcons.app_badge_fill),
-              label: "tap4"),
+                  ? Image.asset('assets/images/reword_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/reword_off.png', height: 50, width: 50,),
+              label: StringTable().Table![100004]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 4
-                  ? Icon(CupertinoIcons.arrow_clockwise_circle)
-                  : Icon(CupertinoIcons.arrow_clockwise_circle_fill),
-              label: "tap5"),
+                  ? Image.asset('assets/images/my_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/my_off.png', height: 50, width: 50,),
+              label: StringTable().Table![100005]),
         ],
       )),
     );

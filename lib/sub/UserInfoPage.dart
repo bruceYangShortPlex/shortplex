@@ -97,10 +97,10 @@ class _UserInfoPageState extends State<UserInfoPage>
       (
         border: Border
           (
-            left: BorderSide(color: Colors.green, width: 2),
-            right:BorderSide(color: Colors.green, width: 2),
-            top :BorderSide(color: Colors.green, width: 2),
-            bottom:BorderSide(color: Colors.green, width: 2),
+            left: BorderSide(color: Color(0xFF00FFBF), width: 2),
+            right:BorderSide(color: Color(0xFF00FFBF), width: 2),
+            top :BorderSide(color: Color(0xFF00FFBF), width: 2),
+            bottom:BorderSide(color: Color(0xFF00FFBF), width: 2),
         ),
         //borderRadius: BorderRadius.circular(15),
         shape: BoxShape.circle,

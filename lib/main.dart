@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
+import 'package:shortplex/sub/LoginPage.dart';
 import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
 import 'table/StringTable.dart';
@@ -10,7 +11,6 @@ void main() async
 {
   WidgetsFlutterBinding.ensureInitialized();
   StringTable().InitTable();
-
   Get.lazyPut(() => LoginMananger());
   Get.lazyPut(()=> UserData());
   Get.find<LoginMananger>().Check();
@@ -25,22 +25,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context)
   {
     // 화면 크기 초기화
-    return ScreenUtilInit(child: GetMaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+    return ScreenUtilInit
+      (
+        child: GetMaterialApp
+        (
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
         ),
         home: LogoPage(),
-        // initialRoute: "/",
-        // getPages:
-        // [
-        //   GetPage(name: "/",page: () => CupertinoMain()),
-        //   GetPage(name: "/second",page: () => SecondPage()),
-        //   GetPage(name: "/userinfo",page: () => UserInfoPage()),
-        //   GetPage(name: "/loginpage",page: () => LoginPage()),
-        // ]
-
       ), designSize: Size(390, 844));
   }
 }

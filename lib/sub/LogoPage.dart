@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
@@ -10,8 +11,8 @@ class LogoPage extends StatefulWidget {
 }
 
 class _LogoPageState extends State<LogoPage> {
-  String text = '';
-  final String fullText = 'SHORTPLEX';
+  // String text = '';
+  // final String fullText = 'SHORTPLEX';
 
   Completer<void> completer = Completer<void>();
 
@@ -26,29 +27,13 @@ class _LogoPageState extends State<LogoPage> {
     await Future.doWhile(() async => loginMananger.isCheckComplete);
 
     // 조건이 충족되면 실행할 함수를 호출합니다.
-    Get.off(() => CupertinoMain(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
+    Get.off(() => CupertinoMain(), transition: Transition.noTransition,); //duration: Duration(seconds: 1));
   }
 
   @override
   void initState() {
     super.initState();
-    //Future.delayed(Duration(seconds: 2));
-    for (int i = 0; i < fullText.length; i++) {
-      Future.delayed(Duration(milliseconds: 500 * (i + 2)), () {
-        setState(() {
-          text += fullText[i];
-          if (text.length == fullText.length)
-          {
-            completer.complete();
-          }
-        });
-      });
-    }
-
-    // WidgetsBinding.instance.addPostFrameCallback((_)
-    // {
-    //
-    // });
+    Future.delayed(Duration(seconds: 1)).then((value) => completer.complete());
   }
 
   @override
@@ -61,34 +46,33 @@ class _LogoPageState extends State<LogoPage> {
   @override
   Widget build(BuildContext context)
   {
-    // Timer(Duration(seconds: 7), ()
-    // {
-    //   Get.off(() => CupertinoMain(), transition: Transition.fadeIn, duration: Duration(seconds: 1));
-    // });
-
     return Scaffold
-      (
+    (
       backgroundColor: Colors.black,
-      body: Container(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/shortplex.png',
-                width: 200,
-                height: 100,
-                fit: BoxFit.contain,
-              ),
-              Text(
-                text,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: 'NotoSans', fontWeight: FontWeight.w100, fontSize: 30, color: Colors.white),
-              )
-            ],
-          ),
+      body: Align
+        (
+        alignment: Alignment.center,
+        child: Column
+        (
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [LogoImage(),],
         ),
       ),
     );
   }
+
+  Widget LogoImage() => Column(children:
+  [
+    Image.asset(
+      'assets/images/shortplex.png',
+      width: 82.w,
+      height: 100.w,
+      fit: BoxFit.contain,),
+    SizedBox(height: 25,),
+    Image.asset('assets/images/Shortplex_text_logo.png',width: 140.w, height: 21.w, fit: BoxFit.contain,),
+    SizedBox(height: 15,),
+  ],);
 }
+
+

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
+import 'package:shortplex/table/StringTable.dart';
 
 import 'UserInfoPage.dart';
 
@@ -21,8 +24,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return CupertinoApp(
       home: CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
+        backgroundColor: Colors.black,
+        navigationBar: CupertinoNavigationBar(backgroundColor: Colors.transparent,
           leading: CupertinoNavigationBarBackButton(
+            color: Colors.white,
+            //previousPageTitle: StringTable().Table![100019],
             onPressed: () {
               Get.back();
             },
@@ -30,107 +36,131 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Align(
           alignment: Alignment.topCenter,
-          child: Padding(
-            padding: EdgeInsets.only(top: 400),
-            child: _LoginButtons(),
+            child : Stack(  children:
+            [
+              Container( width: 1.sw,
+              height: 1.sw,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(-0.00, 1.00),
+                  end: Alignment(0, -1),
+                  colors: [Colors.black, Colors.black54],
+                ),
+              ),),
+              Container(
+                  width: 1.sw,
+                  height: 1.sw,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                    begin: Alignment(1, 1),
+                    end: Alignment(1, -3),
+                    colors: [Color(0x000F60), Color(0xFF00FFBF),],
+                  ),
+                ),
+              ),
+              Container
+              (
+                  child: Align(alignment: Alignment.center,
+                    child:
+                    Column
+                    (
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children:
+                      [
+                        LogoImage(),
+                        Text(StringTable().Table![400062]!,style: TextStyle(color: Colors.white, fontSize: 16),),
+                        Text(StringTable().Table![400063]!,style: TextStyle(color: Colors.white, fontSize: 16),),
+                        SizedBox(height: 50,),
+                        _LoginButtons(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
     );
-
-    //   body: Align(
-    //     alignment: Alignment.bottomCenter,
-    //     child: Padding(
-    //       padding: EdgeInsets.only(bottom: 50.0), // 원하는 거리를 설정하세요.
-    //       child: ElevatedButton(
-    //         onPressed: () {
-    //           // 버튼이 눌렸을 때 수행할 작업을 여기에 작성하세요.
-    //         },
-    //         child: Text('버튼'),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 
-  Widget _LoginButtons() => Padding(
-    padding: const EdgeInsets.all(8.0),
-    child:Obx(() => Get.find<UserData>().loginComplete.value ?
-    IconButton(
-      onPressed: _buttonEnabled
-          ? () async {
-        await loginManager.LogOut();
-        _buttonEnabled = true;
-        print('Logout');
-      } : null,
-      icon: Image.asset('assets/images/kakao_login.kor.png'),) :
-    Column(
-      children:
-      [
-        IconButton(
-          onPressed: _buttonEnabled
-              ? () async {
-            _buttonEnabled = false;
-            var result =
-            await loginManager.LogIn(LoginType.kakao);
-            if (result) {
-              //var token = Get.find<Kakao_Login>().token;
-              //서버에 주고 로그인.
-            }
-            _buttonEnabled = true;
-          }
-              : null,
-          icon: Image.asset('assets/images/Kakao_PNG.png'),
+  Widget LogoImage() => Column(children:
+  [
+    Image.asset(
+    'assets/images/shortplex.png',
+    width: 82.w,
+    height: 100.w,
+    fit: BoxFit.contain,),
+    SizedBox(height: 25,),
+    Image.asset('assets/images/Shortplex_text_logo.png',width: 140.w, height: 21.w, fit: BoxFit.contain,),
+    SizedBox(height: 15,),
+  ],);
+
+
+  Widget loginButton(String _imagePath, LoginType _type, int _stringTableID) =>
+      Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: SizedBox(
+          width: 200,
+          height: 50,
+          child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.center,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    _imagePath,
+                  ),
+                  Text(
+                    StringTable().Table![_stringTableID]!,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 13,
+                        fontFamily: 'NotoSans',
+                        fontWeight: FontWeight.w200),
+                  )
+                ],
+              ),
+              onPressed: _buttonEnabled
+                  ? () async {
+                      _buttonEnabled = false;
+                      var result = await loginManager.LogIn(_type);
+                      if (result) {
+                        //var token = Get.find<Kakao_Login>().token;
+                        //서버에 주고 로그인.
+                      }
+                      _buttonEnabled = true;
+                    }
+                  : null),
         ),
-        SizedBox(
-          height: 5,
-        ),
-        IconButton(
-          onPressed: _buttonEnabled
-              ? () async {
-            _buttonEnabled = false;
-            var result =
-            await loginManager.LogIn(LoginType.google);
-            if (result) {
-              //var token = Get.find<Google_Login>().token;
-              //서버에 주고 로그인.
-            }
-            _buttonEnabled = true;
-          }
-              : null,
-          icon: Image.asset('assets/images/Google_PNG.png'),
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        IconButton(
-          onPressed:  _buttonEnabled
-              ? () async {
-            _buttonEnabled = false;
-            var result =
-            await loginManager.LogIn(LoginType.facebook);
-            if (result) {
-              //var token = Get.find<Google_Login>().token;
-              //서버에 주고 로그인.
-            }
-            _buttonEnabled = true;
-          }
-              : null,
-          icon: Image.asset('assets/images/Facebook_PNG.png'),
-        ),
-        SizedBox(
-          height: 5,
-        ),
-        IconButton(
-          onPressed: () {
-            print('click4');
-          },
-          icon: Image.asset('assets/images/kakao_login.kor.png'),
-        )
-      ],
-    )
-    ),
-  );
+      );
+
+  Widget _LoginButtons() =>
+      Obx(() => Get.find<UserData>().loginComplete.value == true
+          ? IconButton(
+              onPressed: _buttonEnabled
+                  ? () async {
+                      await loginManager.LogOut();
+                      _buttonEnabled = true;
+                      print('Logout');
+                    }
+                  : null,
+              icon: Image.asset('assets/images/kakao_login.kor.png'),
+            )
+          : Column(
+              children: [
+                loginButton(
+                    'assets/images/Kakao_PNG.png', LoginType.kakao, 400064),
+                loginButton('assets/images/Facebook_PNG.png',
+                    LoginType.facebook, 400066),
+                loginButton(
+                    'assets/images/Google_PNG.png', LoginType.google, 400067),
+                loginButton(
+                    'assets/images/Apple_PNG.png', LoginType.apple, 400068),
+
+              ],
+            ));
 }
 
 // Obx(() => Get.find<UserData>().photoUrl.value.isEmpty ? Container(color: Colors.black,) : Image.network('${Get.find<UserData>().photoUrl.value}', fit: BoxFit.cover),

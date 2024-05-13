@@ -36,7 +36,8 @@ class OAuthLogin {
     this.remark,
   });
 
-  factory OAuthLogin.fromJson(Map<String, dynamic> json) => OAuthLogin(
+  factory OAuthLogin.fromJson(Map<String, dynamic> json) => OAuthLogin
+    (
         email: json["email"],
         displayname: json["kor"],
         providerid: json['providerid'],

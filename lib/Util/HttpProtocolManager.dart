@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -49,13 +51,18 @@ class HttpProtocolManager
     }
   }
 
-  postData() async {
+  postData() async
+  {
     try {
-     //var url = Uri.https('https://quadra-server.web.app', '/api/v1/status');
-      var uri = 'https://quadra-server.web.app/api/v1/status';
-      var heads = {'apikey': ApiKey};
-      //var response = await http.post(url, headers: heads);
-      var response = await http.post(Uri.parse(uri));
+      var uri = 'https://quadra-server.web.app/docs/tag/api-routes/post/api/v1/status';
+
+      var data = {
+        "id" : "ID0205",
+      };
+      var body = jsonEncode(data);
+
+      var heads = {'apikey': ApiKey, 'Content-Type': 'application/json'};
+      var response = await http.post(Uri.parse(uri), headers: heads, body: body);
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
@@ -66,14 +73,14 @@ class HttpProtocolManager
    // print(await http.read(Uri.https('https://quadra-server.web.app/api/v1/status', 'foobar.txt')));
   }
 
-  var oauthLogin = OAuthLogin(email: '');
-
   sendOAuthLogin() async
   {
+    var oauthLogin = OAuthLogin(email: '');
+
     try
     {
-      var heads = {'apikey': ApiKey, 'Authorization': 'Bearer YourToken'};
-      var url = Uri.https('https://quadra-server.web.app/api/v1/account/oauth_login');
+      var heads = {'apikey': ApiKey, "Content-Type": "application/json", 'Authorization': ''};
+      var url = Uri.parse('https://quadra-server.web.app/docs/tag/api-routes/post/api/v1/account/oauth_login');
       var response = await http.post(url, headers: heads, body: oauthLogin.toJson());
       print(response);
     }

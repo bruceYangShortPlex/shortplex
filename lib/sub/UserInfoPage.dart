@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
@@ -19,11 +20,16 @@ class _UserInfoPageState extends State<UserInfoPage>
   {
     return CupertinoApp(
       home: SafeArea(
-        child: Padding(
+        child:
+        Padding
+        (
           padding: const EdgeInsets.only(top: 0),
           child: Column(
-            children: [
-              SizedBox(
+            children:
+            [
+              Container
+              (
+                color: Colors.black,
                 width: 1.sw,
                 height: 100,
                 child: Row(
@@ -40,7 +46,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                         color: Colors.yellow,
                         onPressed: () {
                           //Get.toNamed('/loginpage');
-                          Get.to(() => LoginPage());
+                          Get.to(() => LoginPage(),transition: Transition.noTransition);
                           print('Click');
                         },
                       ),
@@ -48,10 +54,18 @@ class _UserInfoPageState extends State<UserInfoPage>
                   ],
                 ),
               ),
-              _TestBox(),
+              Container
+                (
+                color: Colors.black,
+                width: 1.sw,
+                height: 1.sw,
+                child:
+                Column(children: [_walletInfo(),],),),
+
             ],
           ),
         ),
+
       ),
     );
   }
@@ -61,8 +75,18 @@ class _UserInfoPageState extends State<UserInfoPage>
     child: Container(
       width: 50.w,
       height: 50.h,
-      decoration: const BoxDecoration(
+      decoration: const BoxDecoration
+      (
+        border: Border
+          (
+            left: BorderSide(color: Colors.green, width: 2),
+            right:BorderSide(color: Colors.green, width: 2),
+            top :BorderSide(color: Colors.green, width: 2),
+            bottom:BorderSide(color: Colors.green, width: 2),
+        ),
+        //borderRadius: BorderRadius.circular(15),
         shape: BoxShape.circle,
+        color: Color(0xFF00FFBF),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
@@ -79,10 +103,41 @@ class _UserInfoPageState extends State<UserInfoPage>
     ),
   );
 
-  Widget _TestBox()
-  {
-    return Align(alignment: Alignment.bottomCenter, child: Padding(padding: EdgeInsets.only(bottom: 0), child: Container(width: 0.5.sw, height: 1  .sw, color: Colors.green,),) , );
-  }
+  Widget _walletInfo() => Stack
+    (
+    children:
+    [
+      Container
+        (
+          width: 356.w,
+          height: 135.w,
+          decoration: ShapeDecoration(
+            gradient: LinearGradient(
+              begin: Alignment(-1.00, 0.5),
+              end: Alignment(1, 0.5),
+              colors: [Color(0x330006A5).withOpacity(0.22), Color(0xFF00FFBF).withOpacity(0.22),],
+            ),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children:
+        [
+          Padding(
+            padding: EdgeInsets.only(left: 30, ),
+            child:  Text('나의 지값', style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 18),),),
+
+        ],
+        ),
+      ),
+    ],
+  );
+
 }
 
 class UserData extends GetxController

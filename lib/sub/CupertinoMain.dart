@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
-import 'first_page.dart';
+import 'HomePage.dart';
 import 'second_page.dart';
 
 class CupertinoMain extends StatelessWidget{

@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
   Widget _LoginButtons() =>
-      Obx(() => Get.find<UserData>().loginComplete.value == true
+      Obx(() => Get.find<UserData>().isLogin.value == true
           ? IconButton(
               onPressed: _buttonEnabled
                   ? () async {
@@ -150,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                       print('Logout');
                     }
                   : null,
-              icon: Image.asset('assets/images/kakao_login.kor.png'),
+              icon: Icon(Icons.cable_outlined),
             )
           : Column(
               children: [

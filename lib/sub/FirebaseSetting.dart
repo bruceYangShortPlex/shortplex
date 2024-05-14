@@ -22,7 +22,7 @@ class FirebaseSetting {
     );
 
     final fcmToken = await FirebaseMessaging.instance.getToken();
-    print(fcmToken);
+    print('Firebase Message fcmToken : ${fcmToken}');
 
     var messaging = FirebaseMessaging.instance;
 

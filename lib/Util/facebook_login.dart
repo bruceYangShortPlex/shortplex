@@ -27,8 +27,9 @@ class FaceBook_Login implements Social_Login
     catch (e)
     {
       print('error facebook login fail : ${e}');
+      isLogin = false;
     }
-    isLogin = false;
+
     return isLogin;
   }
 
@@ -58,7 +59,7 @@ Future<UserCredential> signInFaceBook() async {
 
   print('credential.token : ${credential.token} / credential.accessToken : ${credential.accessToken}');
 
-  final UserCredential ce = await FirebaseAuth.instance.signInWithCredential(credential);
+  //final UserCredential ce = await FirebaseAuth.instance.signInWithCredential(credential);
 
   // Once signed in, return the UserCredential
   return await FirebaseAuth.instance.signInWithCredential(credential);

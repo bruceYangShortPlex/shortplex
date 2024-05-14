@@ -7,6 +7,11 @@ import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'LoginPage.dart';
 
+enum UserInfoSubPageType
+{
+  WALLET_CHARGE,
+}
+
 class UserInfoPage extends StatefulWidget {
   const UserInfoPage({super.key});
 
@@ -60,12 +65,11 @@ class _UserInfoPageState extends State<UserInfoPage>
                         height: 40,
                         child: CupertinoButton
                           (
-                          child: Text('Login'),
+                          child: Text('Login', style: TextStyle(fontSize: 10),),
                           color: Colors.yellow,
-                          onPressed: () {
-                            //Get.toNamed('/loginpage');
+                          onPressed: ()
+                          {
                             Get.to(() => LoginPage(),transition: Transition.noTransition);
-                            print('Click');
                           },
                         ),
                       ),
@@ -129,7 +133,7 @@ class _UserInfoPageState extends State<UserInfoPage>
               children:
               [
                 Text('${Get.find<UserData>().name.value}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 20,),),
-                Text('${Get.find<UserData>().uid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 15,),),
+                Text('UID : ${Get.find<UserData>().providerUid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 15,),),
               ],
             ),
       ),
@@ -163,15 +167,48 @@ class _UserInfoPageState extends State<UserInfoPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children:
           [
-            Padding
+            Row
             (
-              padding: EdgeInsets.only(left: 30, ),
-              child:  Text('나의 지값', style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 18),),
+              children:
+              [
+                Padding
+                (
+                  padding: EdgeInsets.only(left: 30, ),
+                  child:  Text('나의 지값', style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 18),),
+                ),
+
+              ],
             ),
+
           ],
         ),
       ),
     ],
+  );
+
+  Widget moveButton(UserInfoSubPageType _type) => Padding
+  (
+    padding: EdgeInsets.only(top: 10),
+    child:
+    SizedBox
+    (
+      height: 20,
+      width: 20,
+      child: IconButton(icon: const Icon(Icons.arrow_forward_ios), onPressed: ()
+      {
+          switch(_type)
+          {
+            case UserInfoSubPageType.WALLET_CHARGE:
+              //Get.to(()=>);
+              break;
+            default:
+              print('not found type ${_type}');
+              break;
+          }
+
+      },
+      ),
+    ),
   );
 }
 
@@ -179,14 +216,23 @@ class UserData extends GetxController
 {
   RxString name = 'Guest'.obs;
   RxString photoUrl = ''.obs;
-  RxBool loginComplete = false.obs;
-  String uid = 'UID : ';
+  RxBool isLogin = false.obs;
+  String email = '';
+  String providerid = '';
+  String privacypolicies = 'true';
+  String providerUid = '';
+
+  String id = '';//barer token.
+  String userId = ''; //server id
 
   InitValue()
   {
     name.value = 'Guest';
     photoUrl.value = '';
-    loginComplete.value = false;
-    uid = 'UID : ';
+    isLogin.value = false;
+    providerUid = '';
+    email = '';
+    providerid = '';
+    privacypolicies = 'true';
   }
 }

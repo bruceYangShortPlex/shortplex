@@ -17,8 +17,8 @@ class Google_Login implements Social_Login
     try
     {
       var result = await signInWithGoogle();
-
-      if (result.user != null) {
+      if (result.user != null)
+      {
         token = result.user!.uid;
         print('google login token : ${token}');
         isLogin = true;
@@ -27,8 +27,9 @@ class Google_Login implements Social_Login
     catch (e)
     {
       print('error google login fail : ${e}');
+      isLogin = false;
     }
-    isLogin = false;
+
     return isLogin;
   }
 

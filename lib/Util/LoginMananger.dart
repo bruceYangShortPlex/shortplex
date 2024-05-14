@@ -1,13 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart' as firebaseUser;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as KakaoUser;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/facebook_login.dart';
 import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/Util/kakao_login.dart';
 import 'package:shortplex/Util/social_login.dart';
 import 'package:get/get.dart';
 
+import '../Network/OAuthLogin.dart';
 import '../sub/FirebaseSetting.dart';
 import '../sub/UserInfoPage.dart';
 
@@ -22,32 +22,29 @@ enum LoginType
 class LoginMananger
 {
   late Social_Login? _social_login;
-
   bool isCheckComplete = false;
+  bool isLogin = false;
 
-  firebaseUser.User? User;
-  KakaoUser.User? kakaoUser;
+  // bool get isLogin
+  // {
+  //   if (User == null && _social_login == null)
+  //   {
+  //     return false;
+  //   }
+  //
+  //   return User != null ? true : _social_login!.isLogin;
+  // }
 
-  get token => User != null ? User?.uid : _social_login?.token;
-  bool get isLogin
-  {
-    if (User == null && _social_login == null)
-    {
-      return false;
-    }
-
-    return User != null? true : _social_login!.isLogin;
-  }
-
-  Future<bool> LogIn([LoginType type = LoginType.google]) async
+  Future<bool> LogIn([LoginType _loginType = LoginType.google]) async
   {
     Get.lazyPut(() => Kakao_Login());
     Get.lazyPut(() => Google_Login());
     Get.lazyPut(()=> FaceBook_Login());
+    Get.lazyPut(() => HttpProtocolManager());
 
     try
     {
-      switch (type)
+      switch (_loginType)
       {
         case LoginType.kakao:
           _social_login = Get.find<Kakao_Login>();
@@ -58,36 +55,25 @@ class LoginMananger
         // TODO: Handle this case.
         case LoginType.apple:
           break;
-
         case LoginType.facebook:
           _social_login = Get.find<FaceBook_Login>();
           break;
         default:
-          print('not found case ${type}');
+          print('not found case ${_loginType}');
           break;
       }
-      await _social_login?.Login();
+
+      await _social_login!.Login();
+      isLogin = _social_login!.isLogin;
+      print('LogIn result : ${isLogin}');
     }
     catch (e)
     {
       print('Login Failed : ${e}');
+      return false;
     }
 
-    if (type == LoginType.kakao)
-    {
-      kakaoUser = Get.find<Kakao_Login>().user;
-      Get.find<UserData>().name.value = kakaoUser!.kakaoAccount!.profile!.nickname as String;
-      Get.find<UserData>().photoUrl.value = kakaoUser!.kakaoAccount!.profile!.profileImageUrl as String;
-    }
-    else
-    {
-      User = FirebaseAuth.instance.currentUser;
-      Get.find<UserData>().name.value = User!.displayName as String;
-      Get.find<UserData>().photoUrl.value = User!.photoURL as String;
-    }
-
-    print('token : ${token}');
-    Get.find<UserData>().loginComplete.value = isLogin;
+    Send_OAuthLogin(_loginType);
     return isLogin;
   }
 
@@ -99,45 +85,137 @@ class LoginMananger
       return true;
     }
     await FirebaseAuth.instance.signOut();
-    await _social_login?.Logout();
-    User = null;
-    kakaoUser = null;
-    Get.find<UserData>().InitValue();
+    isLogin = (await _social_login?.Logout())!;
+    print('Logout result : ${isLogin}');
+
+    if (!isLogin)
+      Get.find<UserData>().InitValue();
 
     return isLogin;
   }
 
   Future<bool> Check() async
   {
+    print('Login Manager Check Start');
+
     Get.lazyPut(() => Kakao_Login());
     Get.lazyPut(() => Google_Login());
     Get.lazyPut(()=> FaceBook_Login());
+    Get.lazyPut(() => HttpProtocolManager());
 
     await FirebaseSetting().Setup();
-
-    User = FirebaseAuth.instance.currentUser;
-    print('user : ${User}');
-    if (User == null)
+    var loginType = LoginType.google;
+    try
     {
-      //카카오체크해야한다.
-      KakaoSdk.init(nativeAppKey: 'fb25da9b9589891ac497820e14c180d7');
-      _social_login = Get.find<Kakao_Login>();
-      await _social_login!.LoginCheck();
-      kakaoUser = Get.find<Kakao_Login>().user;
+      var firebaseUser = FirebaseAuth.instance.currentUser;
+      if (firebaseUser == null)
+      {
+        //카카오체크해야한다.
+        KakaoSdk.init(nativeAppKey: 'fb25da9b9589891ac497820e14c180d7');
+        _social_login = Get.find<Kakao_Login>();
+        var result = await _social_login!.LoginCheck();
+        if (result) {
+          loginType = LoginType.kakao;
+        }
+        isLogin = _social_login!.isLogin;
+      }
+      else
+      {
+        final providerId = firebaseUser.providerData[0].providerId;
+        if (providerId == 'google.com')
+        {
+          loginType = LoginType.google;
+        }
+        else if (providerId == 'facebook.com')
+        {
+          loginType = LoginType.facebook;
+        }
+        else
+        {
+          print('User signed in with $providerId');
+        }
 
-      Get.find<UserData>().name.value = kakaoUser!.kakaoAccount!.profile!.nickname as String;
-      Get.find<UserData>().photoUrl.value = kakaoUser!.kakaoAccount!.profile!.profileImageUrl as String;
+        isLogin = true;
+      }
     }
-    else
+    catch (e)
     {
-      Get.find<UserData>().name.value = User!.displayName as String;
-      Get.find<UserData>().photoUrl.value = User!.photoURL as String;
+      print('login check Error : ${e}');
     }
 
     isCheckComplete = true;
-    Get.find<UserData>().loginComplete.value = isLogin;
-    print('token : ${token}');
 
-    return User != null;
+    Send_OAuthLogin(loginType);
+    print('Login Manager Check Complete');
+    return isLogin;
+  }
+
+  Send_OAuthLogin(LoginType loginType) async
+  {
+    var userData = SetUserData(loginType);
+    if (userData.isLogin == false)
+    {
+      print('is Login false return');
+      return;
+    }
+
+    var manager = Get.find<HttpProtocolManager>();
+    var oauthLogin = OAuthLogin
+    (
+      email: userData.email,
+      displayname: userData.name.value,
+      photourl: userData.photoUrl.value,
+      privacypolicies: userData.privacypolicies,
+      providerid: userData.providerid,
+      provideruserid: userData.providerUid,
+    );
+
+    userData.isLogin.value = isLogin;
+    var result = await manager.send_OAuthLogin(oauthLogin);
+    if (result != null)
+    {
+      userData.userId = result.userId!;
+      userData.id = result.id!;
+      print('Login Sucess! ${userData}');
+    }
+
+    // var jsonstring = await manager.send_GetUserData();
+    // var jsonData = jsonDecode(jsonstring);
+    // var providerid = jsonData['providerid'];
+    // print('providerid');
+  }
+
+  UserData SetUserData(LoginType _loginType)
+  {
+    var userData = Get.find<UserData>();
+    var providerid = _loginType.toString().replaceAll('LoginType.', '');
+    userData.providerid = providerid;
+    if (_loginType == LoginType.kakao)
+    {
+      var kakaoUser = Get.find<Kakao_Login>().user;
+      userData.name.value = kakaoUser.kakaoAccount!.profile!.nickname!;
+      userData.photoUrl.value = kakaoUser.kakaoAccount!.profile!.profileImageUrl!;
+      userData.email = kakaoUser.kakaoAccount!.email!;
+      userData.providerUid = kakaoUser.id.toString();
+      userData.privacypolicies = 'true';
+    }
+    else
+    {
+      var firebaseUser = FirebaseAuth.instance.currentUser;
+      if (firebaseUser != null)
+      {
+        userData.name.value = firebaseUser.displayName!;
+        userData.photoUrl.value = firebaseUser.photoURL!;
+        userData.email = firebaseUser.email!;
+        userData.providerUid = firebaseUser.uid;
+        userData.privacypolicies = 'true';
+      }
+    }
+
+    print('Set User Data / isLogin : ${isLogin} / _loginType : ${_loginType}');
+    userData.isLogin.value = isLogin;
+
+    print(userData);
+    return userData;
   }
 }

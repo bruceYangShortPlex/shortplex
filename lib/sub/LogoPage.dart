@@ -24,8 +24,9 @@ class _LogoPageState extends State<LogoPage> {
     await Future.delayed(Duration(seconds: 1));
 
     var loginMananger = Get.find<LoginMananger>();
-    await Future.doWhile(() async => loginMananger.isCheckComplete);
-
+    print('login Check Start / loginMananger.isCheckComplete : ${loginMananger.isCheckComplete}');
+    await Future.doWhile(() async => !loginMananger.isCheckComplete);
+    print('login Check End');
     // 조건이 충족되면 실행할 함수를 호출합니다.
     Get.off(() => CupertinoMain(), transition: Transition.noTransition,); //duration: Duration(seconds: 1));
   }

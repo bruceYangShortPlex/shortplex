@@ -104,7 +104,7 @@ class HttpProtocolManager
     try
     {
       var res = await http.get(Uri.parse(uri), headers: heads);
-      print('send_GetUserData resutl : ${res.body}');
+      print('send_GetUserData resutl : ${res.body} / res.statusCode : ${res.statusCode}');
       return res.body;
     }
     catch (e)

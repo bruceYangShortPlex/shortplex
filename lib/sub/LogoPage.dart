@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:shortplex/Util/LoginMananger.dart';
 import 'CupertinoMain.dart';
 
 class LogoPage extends StatefulWidget {
@@ -14,19 +13,20 @@ class _LogoPageState extends State<LogoPage> {
   // String text = '';
   // final String fullText = 'SHORTPLEX';
 
-  Completer<void> completer = Completer<void>();
+  //Completer<void> completer = Completer<void>();
 
   Future<void> waitUntilCondition() async
   {
     // Completer가 완료될 때까지 대기합니다.
-    await completer.future;
+    //await completer.future;
 
+    //로고씬에서 1초 머무르자.
     await Future.delayed(Duration(seconds: 1));
 
-    var loginMananger = Get.find<LoginMananger>();
-    print('login Check Start / loginMananger.isCheckComplete : ${loginMananger.isCheckComplete}');
-    await Future.doWhile(() async => !loginMananger.isCheckComplete);
-    print('login Check End');
+    //var loginMananger = Get.find<LoginMananger>();
+    //print('login Check Start / loginMananger.isCheckComplete : ${loginMananger.isCheckComplete}');
+    //await Future.doWhile(() async => !loginMananger.isCheckComplete);
+    //print('login Check End');
     // 조건이 충족되면 실행할 함수를 호출합니다.
     Get.off(() => CupertinoMain(), transition: Transition.noTransition,); //duration: Duration(seconds: 1));
   }
@@ -34,7 +34,7 @@ class _LogoPageState extends State<LogoPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 1)).then((value) => completer.complete());
+    //Future.delayed(Duration(seconds: 1)).then((value) => completer.complete());
   }
 
   @override

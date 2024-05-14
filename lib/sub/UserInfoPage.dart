@@ -218,7 +218,7 @@ class UserData extends GetxController
   RxString photoUrl = ''.obs;
   RxBool isLogin = false.obs;
   String email = '';
-  String providerid = '';
+  String providerid = 'guest';
   String privacypolicies = 'true';
   String providerUid = '';
 
@@ -230,7 +230,7 @@ class UserData extends GetxController
     name.value = 'Guest';
     photoUrl.value = '';
     isLogin.value = false;
-    providerUid = '';
+    providerUid = 'guest';
     email = '';
     providerid = '';
     privacypolicies = 'true';

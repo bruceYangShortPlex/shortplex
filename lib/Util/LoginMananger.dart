@@ -13,6 +13,7 @@ import '../sub/UserInfoPage.dart';
 
 enum LoginType
 {
+  guest,
   kakao,
   google,
   apple,
@@ -84,8 +85,29 @@ class LoginMananger
       print('already logout return');
       return true;
     }
-    await FirebaseAuth.instance.signOut();
-    isLogin = (await _social_login?.Logout())!;
+
+    try {
+      var userData = Get.find<UserData>();
+
+      if (userData.providerid == 'kakao')
+      {
+        if (_social_login != null) {
+          isLogin = await _social_login!.Logout();
+        }
+      }
+      else
+      {
+        await FirebaseAuth.instance.signOut();
+        isLogin = false;
+      }
+
+
+    }
+    catch (e)
+    {
+      print('Log Out Fail ${e}');
+    }
+
     print('Logout result : ${isLogin}');
 
     if (!isLogin)
@@ -104,7 +126,7 @@ class LoginMananger
     Get.lazyPut(() => HttpProtocolManager());
 
     await FirebaseSetting().Setup();
-    var loginType = LoginType.google;
+    var loginType = LoginType.guest;
     try
     {
       var firebaseUser = FirebaseAuth.instance.currentUser;
@@ -145,7 +167,9 @@ class LoginMananger
 
     isCheckComplete = true;
 
-    Send_OAuthLogin(loginType);
+    if (isLogin)
+      Send_OAuthLogin(loginType);
+
     print('Login Manager Check Complete');
     return isLogin;
   }

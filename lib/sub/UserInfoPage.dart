@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -5,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:shortplex/Util/LoginMananger.dart';
+import '../Util/HttpProtocolManager.dart';
 import 'LoginPage.dart';
 
 enum UserInfoSubPageType
@@ -21,6 +25,27 @@ class UserInfoPage extends StatefulWidget {
 
 class _UserInfoPageState extends State<UserInfoPage>
 {
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
+
+  @override
+  void didUpdateWidget(covariant UserInfoPage oldWidget) async
+  {
+    super.didUpdateWidget(oldWidget);
+
+    var manager = Get.find<HttpProtocolManager>();;
+    manager.send_GetUserData().then((value)
+    {
+      //유저정보 불러와서 비동기로 데이터 체우기.
+      var jsonData = jsonDecode(value);
+      var providerid = jsonData['providerid'];
+      print('providerid');
+    });
+  }
+
   @override
   Widget build(BuildContext context)
   {
@@ -96,7 +121,7 @@ class _UserInfoPageState extends State<UserInfoPage>
     padding: const EdgeInsets.all(8.0),
     child: Container(
       width: 50.w,
-      height: 50.h,
+      height: 50.w,
       decoration: const BoxDecoration
       (
         border: Border
@@ -133,13 +158,12 @@ class _UserInfoPageState extends State<UserInfoPage>
               children:
               [
                 Text('${Get.find<UserData>().name.value}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 20,),),
-                Text('UID : ${Get.find<UserData>().providerUid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 15,),),
+                Text('UID : ${Get.find<UserData>().providerUid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 12,),),
               ],
             ),
       ),
     ),
   );
-
 
   Widget _walletInfo() => Stack
   (
@@ -234,5 +258,32 @@ class UserData extends GetxController
     email = '';
     providerid = '';
     privacypolicies = 'true';
+  }
+
+  String GetProviderIcon()
+  {
+    String IconPath= '';
+    if (providerid == 'guest')
+    {
+      IconPath = '';
+    }
+    else if (providerid == 'google')
+    {
+      IconPath = '';
+    }
+    else if (providerid == 'kakako')
+    {
+      IconPath = '';
+    }
+    else if (providerid == 'facebook')
+    {
+      IconPath = '';
+    }
+    else 
+    {
+      print('아이콘을 찾지 못했습니다.');
+    }
+
+    return IconPath;
   }
 }

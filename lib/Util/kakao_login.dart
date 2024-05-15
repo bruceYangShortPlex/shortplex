@@ -58,8 +58,11 @@ class Kakao_Login implements Social_Login {
 
     if (isLogin)
     {
-      await UserApi.instance.me().then((value) => user = value);
-      token = user.id.toString();
+      await UserApi.instance.me().then((value)
+      {
+        user = value;
+        token = user.id.toString();
+      });
     }
 
     return isLogin;
@@ -92,8 +95,7 @@ class Kakao_Login implements Social_Login {
       {
         AccessTokenInfo tokenInfo = await UserApi.instance.accessTokenInfo();
         print('토큰 유효성 체크 성공 / tokenInfo.id : ${tokenInfo.id} / tokenInfo.expiresIn : ${tokenInfo.expiresIn}');
-        await UserApi.instance.me().then((value) => user = value);
-        print(user);
+        await UserApi.instance.me().then((value) => {user = value});
         isLogin = true;
       }
       catch (error)

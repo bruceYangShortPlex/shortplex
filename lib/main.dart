@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
             theme:
             ThemeData
               (
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, background: Colors.black,),
+              colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFBF), background: Colors.black,),
               useMaterial3: true,
               ),
         home: LogoPage(),

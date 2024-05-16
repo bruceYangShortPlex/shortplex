@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/table/StringTable.dart';
 
-import 'UserInfoPage.dart';
+import '../table/UserData.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
   Widget _LoginButtons() =>
-      Obx(() => Get.find<UserData>().isLogin.value == true
+      Obx(() => UserData.to.isLogin.value == true
           ? IconButton(
               onPressed: _buttonEnabled
                   ? () async {

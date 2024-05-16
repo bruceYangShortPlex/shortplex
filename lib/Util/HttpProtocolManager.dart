@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shortplex/Network/OAuthLogin.dart';
-import 'package:shortplex/sub/UserInfoPage.dart';
 
 import '../Network/OAuth_Res.dart';
+import '../table/UserData.dart';
 
 // import 'package:flutter/cupertino.dart';
 // import 'package:get/get.dart';

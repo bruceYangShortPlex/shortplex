@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 
 import '../Network/OAuthLogin.dart';
 import '../sub/FirebaseSetting.dart';
-import '../sub/UserInfoPage.dart';
+import '../table/UserData.dart';
 
 enum LoginType
 {
@@ -211,7 +211,7 @@ class LoginMananger
 
   UserData SetUserData(LoginType _loginType)
   {
-    var userData = Get.find<UserData>();
+    var userData = UserData.to;
     var providerid = _loginType.toString().replaceAll('LoginType.', '');
     userData.providerid = providerid;
     if (_loginType == LoginType.kakao)

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/state_manager.dart';
+import 'package:shortplex/sub/SettingPage.dart';
 import '../Util/HttpProtocolManager.dart';
 import '../table/StringTable.dart';
 import '../table/UserData.dart';
@@ -17,6 +18,7 @@ import 'LoginPage.dart';
 enum UserInfoSubPageType
 {
   WALLET_CHARGE,
+  SETTING,
 }
 
 class UserInfoPage extends StatefulWidget {
@@ -38,6 +40,9 @@ class UserInfoPage extends StatefulWidget {
       {
         case UserInfoSubPageType.WALLET_CHARGE:
         //Get.to(()=>);
+          break;
+        case UserInfoSubPageType.SETTING:
+          Get.to(() => SettingPage());
           break;
         default:
           print('not found type ${_type}');
@@ -68,7 +73,8 @@ class _UserInfoPageState extends State<UserInfoPage>
   Widget build(BuildContext context)
   {
     Get.put(UserInfoMainListView());
-    return CupertinoApp(
+    return CupertinoApp
+    (
       home:
       SafeArea
       (
@@ -76,30 +82,32 @@ class _UserInfoPageState extends State<UserInfoPage>
         (
           backgroundColor: context.theme.colorScheme.background,
           child:
-          Container
-          (
-            width: 390.w,
-            height: 844.w,
-            //color: Colors.red,
-            child:
-            Column
-            (
-              children:
-              [
-                _UserAccountInfo(),
-                _subscription(),
-                SizedBox(height: 10,),
-                _walletInfo(),
-                Divider(height: 40, color: Colors.white24, indent: 10, endIndent: 10, thickness: 1,),
-                //UserInfoMainListView.to._option(),
-                _mainListView(),
-              ],
-            ),
+              SingleChildScrollView
+              (
+                child:
+                Container
+                (
+                  width: 390.w,
+                  height: 844.w,
+                  //color: Colors.red,
+                  child:
+                  Column
+                    (
+                    children:
+                    [
+                      _UserAccountInfo(),
+                      _subscription(),
+                      SizedBox(height: 10,),
+                      _walletInfo(),
+                      Divider(height: 40, color: Colors.white24, indent: 10, endIndent: 10, thickness: 1,),
+                      _mainListView(),
+                    ],
+                  ),
+                ),
+              ),
           ),
         ),
-
-      ),
-    );
+      );
   }
 
   Widget _UserAccountInfo() =>
@@ -226,7 +234,7 @@ class _UserInfoPageState extends State<UserInfoPage>
           visible: !Get.find<UserData>().isSubscription.value,
           child:
           Container
-            (
+          (
             width: 356.w,
             height: 50,
             decoration: ShapeDecoration(
@@ -395,7 +403,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                           //color: Colors.cyan,
                           width: 235,
                           height: 92 * 0.5,
-                          alignment: Alignment.center,
+                          alignment: Alignment.centerLeft,
                           child:
                           Row
                           (
@@ -449,7 +457,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                         Container
                         (
                           //color: Colors.green,
-                          width: 235.w,
+                          width: 235,
                           height: 92 * 0.5,
                           child:
                           Row
@@ -579,18 +587,13 @@ class UserInfoMainListView extends GetxController
   {
     super.onInit();
     Get.put(UserInfoPage());
-    list.add(defaultInfo());
-    list.add(defaultInfo());
-    list.add(_option());
-    list.add(_option());
+    list.add(defaultInfo(400010, 400010, 400010));
+    list.add(defaultInfo(400011,400011,400011));
+    list.add(_option(400012, UserInfoSubPageType.WALLET_CHARGE));
+    list.add(_option(400013, UserInfoSubPageType.SETTING));
   }
 
-  void AddItem()
-  {
-    //list.add(defaultInfo());
-  }
-
-  Widget _option() =>
+  Widget _option(int _titleID, UserInfoSubPageType _type) =>
   Column
   (
     mainAxisAlignment: MainAxisAlignment.center,
@@ -616,15 +619,16 @@ class UserInfoMainListView extends GetxController
               width: 280,
               //color: Colors.yellow,
               alignment: Alignment.centerLeft,
-              child: Text(StringTable().Table![400003]!,
-                style:
-                TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+              child:
+              Text(StringTable().Table![_titleID]!,
+              style:
+              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
             ),
           ),
           Padding
           (
             padding:EdgeInsets.only(right: 20),
-            child: Get.find<UserInfoPage>()._moveButton(UserInfoSubPageType.WALLET_CHARGE),
+            child: Get.find<UserInfoPage>()._moveButton(_type),
           ),
         ],
       ),
@@ -632,7 +636,7 @@ class UserInfoMainListView extends GetxController
     ],
   );
 
-  Widget defaultInfo() =>
+  Widget defaultInfo(int _titleID, int _contents1id, int _contents2id ) =>
   Container
   (
     width: 100,
@@ -649,8 +653,8 @@ class UserInfoMainListView extends GetxController
           children:
           [
             Padding
-              (
-              padding: const EdgeInsets.only(left: 10, top: 10),
+            (
+              padding: const EdgeInsets.only(left: 15, top: 10),
               child: Container
                 (
                 width: 20,
@@ -662,14 +666,14 @@ class UserInfoMainListView extends GetxController
             ),
             Padding
               (
-              padding: const EdgeInsets.only(left: 5.0, top: 10),
+              padding: const EdgeInsets.only(left: 10.0, top: 10),
               child: Container
                 (
-                alignment: Alignment.center,
-                width: 100,
+                alignment: Alignment.centerLeft,
+                width: 300,
                 height: 32,
                 //color: Colors.red,
-                child: Text(StringTable().Table![400003]!,
+                child: Text(StringTable().Table![_titleID]!,
                   style:
                   TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
               ),
@@ -685,7 +689,7 @@ class UserInfoMainListView extends GetxController
             //color: Colors.blue,
             height: 40,
             width: 200,
-            child: Text(StringTable().Table![400003]!,
+            child: Text(StringTable().Table![_contents1id]!,
               style:
               TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
           ),
@@ -699,7 +703,7 @@ class UserInfoMainListView extends GetxController
             //color: Colors.blue,
             height: 40,
             width: 200,
-            child: Text(StringTable().Table![400003]!,
+            child: Text(StringTable().Table![_contents2id]!,
               style:
               TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
           ),
@@ -722,12 +726,11 @@ class UserInfoMainListView extends GetxController
               child:
               GestureDetector
               (
-                child: Text(StringTable().Table![400003]!,
+                child: Text(StringTable().Table![400010]!,
                   style:
                   TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
                 onTap: ()
                 {
-                  //UserInfoMainListView.to.AddItem();
                   print('todo~ work');
                 },
               ),

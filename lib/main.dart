@@ -24,18 +24,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context)
   {
     // 화면 크기 초기화
-    return ScreenUtilInit
+    return
+    ScreenUtilInit
+    (
+      child:
+      GetMaterialApp
       (
-        child: GetMaterialApp
-        (
-            theme:
-            ThemeData
-              (
-              colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFBF), background: Colors.black,),
-              useMaterial3: true,
-              ),
-        home: LogoPage(),
-      ), designSize: Size(390, 844));
+          theme:
+          ThemeData
+            (
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.black12, background: Colors.black,),
+            useMaterial3: true,
+            ),
+      home: LogoPage(),
+    ), designSize: Size(390, 844));
   }
 }
 

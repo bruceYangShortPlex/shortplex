@@ -8,7 +8,7 @@ import 'package:shortplex/Util/social_login.dart';
 import 'package:get/get.dart';
 
 import '../Network/OAuthLogin.dart';
-import '../sub/FirebaseSetting.dart';
+import 'FirebaseSetting.dart';
 import '../table/UserData.dart';
 
 enum LoginType
@@ -100,8 +100,6 @@ class LoginMananger
         await FirebaseAuth.instance.signOut();
         isLogin = false;
       }
-
-
     }
     catch (e)
     {

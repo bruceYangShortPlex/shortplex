@@ -29,13 +29,17 @@ class _LoginPageState extends State<LoginPage> {
         home: CupertinoPageScaffold
         (
           backgroundColor: Colors.black,
-          navigationBar: CupertinoNavigationBar(backgroundColor: Colors.transparent,
-            leading: CupertinoNavigationBarBackButton(
-              color: Colors.white,
-              //previousPageTitle: StringTable().Table![100019],
-              onPressed: () {
-                Get.back();
-              },
+          navigationBar:
+          CupertinoNavigationBar(backgroundColor: Colors.transparent,
+            leading:
+            CupertinoNavigationBarBackButton
+            (
+                color: Colors.white,
+                //previousPageTitle: StringTable().Table![100019],
+                onPressed: ()
+                {
+                  Get.back();
+                },
             ),
           ),
           child: Align(

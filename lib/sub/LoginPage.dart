@@ -58,7 +58,9 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                     width: 1.sw,
                     height: 1.sw,
-                    decoration: BoxDecoration(
+                    decoration:
+                    BoxDecoration
+                    (
                       gradient: LinearGradient(
                       begin: Alignment(1, 1),
                       end: Alignment(1, -3),

@@ -17,7 +17,7 @@ import 'LoginPage.dart';
 
 enum UserInfoSubPageType
 {
-  WALLET_CHARGE,
+  WALLET_INFO,
   SETTING,
 }
 
@@ -38,7 +38,7 @@ class UserInfoPage extends StatefulWidget {
     {
       switch(_type)
       {
-        case UserInfoSubPageType.WALLET_CHARGE:
+        case UserInfoSubPageType.WALLET_INFO:
         //Get.to(()=>);
           break;
         case UserInfoSubPageType.SETTING:
@@ -377,7 +377,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                     padding: EdgeInsets.only(left: 20, top: 5),
                     child:  Text(StringTable().Table![400005]!, style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 18),),
                   ),
-                  widget._moveButton(UserInfoSubPageType.WALLET_CHARGE),
+                  widget._moveButton(UserInfoSubPageType.WALLET_INFO),
                 ],
               ),
             ),
@@ -589,7 +589,7 @@ class UserInfoMainListView extends GetxController
     Get.put(UserInfoPage());
     list.add(defaultInfo(400010, 400010, 400010));
     list.add(defaultInfo(400011,400011,400011));
-    list.add(_option(400012, UserInfoSubPageType.WALLET_CHARGE));
+    list.add(_option(400012, UserInfoSubPageType.WALLET_INFO));
     list.add(_option(400013, UserInfoSubPageType.SETTING));
   }
 

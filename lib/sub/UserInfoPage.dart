@@ -10,6 +10,7 @@ import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/state_manager.dart';
 import 'package:shortplex/sub/SettingPage.dart';
+import 'package:shortplex/sub/WalletInfoPage.dart';
 import '../Util/HttpProtocolManager.dart';
 import '../table/StringTable.dart';
 import '../table/UserData.dart';
@@ -18,6 +19,7 @@ import 'LoginPage.dart';
 enum UserInfoSubPageType
 {
   WALLET_INFO,
+  CS,
   SETTING,
 }
 
@@ -39,7 +41,7 @@ class UserInfoPage extends StatefulWidget {
       switch(_type)
       {
         case UserInfoSubPageType.WALLET_INFO:
-        //Get.to(()=>);
+          Get.to(()=> WalletInfoPage());
           break;
         case UserInfoSubPageType.SETTING:
           Get.to(() => SettingPage());
@@ -80,34 +82,35 @@ class _UserInfoPageState extends State<UserInfoPage>
       (
         child: CupertinoPageScaffold
         (
-          backgroundColor: context.theme.colorScheme.background,
+          backgroundColor: Colors.black,//context.theme.colorScheme.background,
           child:
-              SingleChildScrollView
+          SingleChildScrollView
+          (
+            child:
+              Container
               (
+                width: 390.w,
+                height: 844.w,
+                //color: Colors.red,
                 child:
-                Container
+                Column
                 (
-                  width: 390.w,
-                  height: 844.w,
-                  //color: Colors.red,
-                  child:
-                  Column
-                    (
-                    children:
-                    [
-                      _UserAccountInfo(),
-                      _subscription(),
-                      SizedBox(height: 10,),
-                      _walletInfo(),
-                      Divider(height: 40, color: Colors.white24, indent: 10, endIndent: 10, thickness: 1,),
-                      _mainListView(),
-                    ],
-                  ),
-                ),
+                children:
+                [
+                  _UserAccountInfo(),
+                  _subscription(),
+                  SizedBox(height: 10,),
+                  _walletInfo(),
+                  SizedBox(height: 10,),
+                  Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 0.5,),
+                  _mainListView(),
+                ],
               ),
+            ),
           ),
         ),
-      );
+      ),
+    );
   }
 
   Widget _UserAccountInfo() =>
@@ -413,12 +416,13 @@ class _UserInfoPageState extends State<UserInfoPage>
                               Padding
                               (
                                   padding: const EdgeInsets.only(left: 10.0),
-                                  child: Image.asset
+                                  child:
+                                  Image.asset
                                   (
                                     alignment: Alignment.center,
-                                    width: 20,
-                                    height: 20,
-                                    'assets/images/shortplex.png',
+                                    width: 32,
+                                    height: 32,
+                                    'assets/images/my_popcon.png',
                                     fit: BoxFit.fitHeight,
                                   ),
                                 ),
@@ -471,9 +475,9 @@ class _UserInfoPageState extends State<UserInfoPage>
                                 child: Image.asset
                                   (
                                   alignment: Alignment.center,
-                                  width: 20,
-                                  height: 20,
-                                  'assets/images/shortplex.png',
+                                  width: 32,
+                                  height: 32,
+                                  'assets/images/my_bonus.png',
                                   fit: BoxFit.fitHeight,
                                 ),
                               ),
@@ -560,7 +564,7 @@ class _UserInfoPageState extends State<UserInfoPage>
     width: 390.w,
     height: 405.w,
     //color: Colors.green,
-    //alignment: Alignment.center,
+    alignment: Alignment.center,
     child:
     Obx
     (() =>
@@ -579,6 +583,7 @@ class _UserInfoPageState extends State<UserInfoPage>
 
 class UserInfoMainListView extends GetxController
 {
+
   static UserInfoMainListView get to => Get.find();
   RxList<Widget> list = <Widget>[].obs;
 
@@ -587,68 +592,76 @@ class UserInfoMainListView extends GetxController
   {
     super.onInit();
     Get.put(UserInfoPage());
-    list.add(defaultInfo(400010, 400010, 400010));
-    list.add(defaultInfo(400011,400011,400011));
-    list.add(_option(400012, UserInfoSubPageType.WALLET_INFO));
-    list.add(_option(400013, UserInfoSubPageType.SETTING));
+    list.add(defaultInfo(400010, 400010, 400010,CupertinoIcons.bell));
+    list.add(defaultInfo(400011,400011,400011, CupertinoIcons.heart));
+    list.add(_option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO));
+    list.add(_option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING));
   }
 
-  Widget _option(int _titleID, UserInfoSubPageType _type) =>
-  Column
+  Widget _option(int _titleID, IconData _icon, UserInfoSubPageType _type) =>
+  Align
   (
-    mainAxisAlignment: MainAxisAlignment.center,
-    children:
-    [
-      Row
-      (
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children:
-        [
-          Padding
-          (
-            padding:EdgeInsets.only(left: 20),
-            child: Icon(Icons.headphones),
-          ),
-          Padding
-            (
-            padding:EdgeInsets.only(left: 10),
-            child:
-            Container
-            (
-              height: 30,
-              width: 280,
-              //color: Colors.yellow,
-              alignment: Alignment.centerLeft,
+    alignment: Alignment.topCenter,
+    child:
+    Column
+    (
+      mainAxisAlignment: MainAxisAlignment.start,
+      children:
+      [
+        Row
+        (
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children:
+          [
+            Padding
+              (
+              padding:EdgeInsets.only(left: 20),
               child:
-              Text(StringTable().Table![_titleID]!,
-              style:
-              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+              Icon(_icon, color: Colors.white,),
             ),
-          ),
-          Padding
-          (
-            padding:EdgeInsets.only(right: 20),
-            child: Get.find<UserInfoPage>()._moveButton(_type),
-          ),
-        ],
-      ),
-      Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
-    ],
+            Padding
+              (
+              padding:EdgeInsets.only(left: 10),
+              child:
+              Container
+                (
+                height: 30,
+                width: 280,
+                //color: Colors.yellow,
+                alignment: Alignment.centerLeft,
+                child:
+                Text(StringTable().Table![_titleID]!,
+                  style:
+                  TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+              ),
+            ),
+            Padding
+              (
+              padding:EdgeInsets.only(right: 20),
+              child: Get.find<UserInfoPage>()._moveButton(_type),
+            ),
+          ],
+        ),
+        Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
+      ],
+    ),
   );
 
-  Widget defaultInfo(int _titleID, int _contents1id, int _contents2id ) =>
+  Widget defaultInfo(int _titleID, int _contents1id, int _contents2id, IconData _icon ) =>
   Container
   (
-    width: 100,
+    width: 390.w,
+    height: 190,
     //color: Colors.white,
     child:
     Column
-      (
+    (
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children:
       [
         Row
-          (
+        (
           mainAxisAlignment: MainAxisAlignment.start,
           children:
           [
@@ -660,57 +673,61 @@ class UserInfoMainListView extends GetxController
                 width: 20,
                 height: 20,
                 //color: Colors.red,
-                child: Image.asset('assets/images/shortplex.png', fit: BoxFit.fitHeight,),
-
+                child:
+                Icon
+                (
+                  _icon, size: 20,
+                  color: Colors.white,
+                )
               ),
             ),
             Padding
-              (
+            (
               padding: const EdgeInsets.only(left: 10.0, top: 10),
               child: Container
-                (
+              (
                 alignment: Alignment.centerLeft,
                 width: 300,
-                height: 32,
+                height: 22,
                 //color: Colors.red,
                 child: Text(StringTable().Table![_titleID]!,
                   style:
-                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
               ),
             ),
           ],
         ),
         Padding
-          (
-          padding: const EdgeInsets.only(top: 8.0, left: 50),
+        (
+          padding: const EdgeInsets.only(top: 10, left: 50),
           child:
           Container
-            (
-            //color: Colors.blue,
+          (
+            //color: Colors.red,
             height: 40,
-            width: 200,
+            width: 200.w,
             child: Text(StringTable().Table![_contents1id]!,
               style:
               TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
           ),
         ),
         Padding
-          (
+        (
           padding: const EdgeInsets.only(top: 8.0, left: 50),
           child:
           Container
-            (
+          (
             //color: Colors.blue,
             height: 40,
-            width: 200,
+            width: 200.w,
             child: Text(StringTable().Table![_contents2id]!,
               style:
-              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
           ),
         ),
         Padding
-          (
-            padding: const EdgeInsets.only(top: 20.0, left: 50),
+        (
+            padding: const EdgeInsets.only(top: 10.0, left: 50),
             child:
             Container
             (
@@ -736,9 +753,10 @@ class UserInfoMainListView extends GetxController
               ),
             )
         ),
-        Padding(
+        Padding
+        (
           padding: const EdgeInsets.only(top: 20.0),
-          child: Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
+          child: Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
         ),
       ],
     ),

@@ -51,7 +51,7 @@ class FaceBook_Login implements Social_Login
 Future<UserCredential> signInFaceBook() async {
   // Trigger the authentication flow
   final LoginResult result = await FacebookAuth.instance.login();
-  final String accessToken = result.accessToken!.token;
+  final String accessToken = result.accessToken!.tokenString;
 
   final OAuthCredential credential = FacebookAuthProvider.credential(accessToken);
 

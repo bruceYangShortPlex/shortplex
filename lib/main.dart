@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/table/UserData.dart';
+import 'Util/theme.dart';
 import 'table/StringTable.dart';
 
 void main() async
@@ -30,12 +31,12 @@ class MyApp extends StatelessWidget {
       child:
       GetMaterialApp
       (
-          theme:
-          ThemeData
-            (
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.black12, background: Colors.black,),
-            useMaterial3: true,
-            ),
+          theme: ThemeData.dark(useMaterial3: true),
+          // ThemeData
+          //   (
+          //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.black12, background: Colors.black,),
+          //   useMaterial3: true,
+          //   ),
       home: LogoPage(),
     ), designSize: Size(390, 844));
   }

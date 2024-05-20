@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/ChargeHistoryPage.dart';
+import 'package:shortplex/sub/UsedHistoryPage.dart';
 
 import '../table/StringTable.dart';
 import '../table/UserData.dart';
+import 'BonusHistoryPage.dart';
 
 void main() async
 {
@@ -11,6 +14,14 @@ void main() async
   Get.lazyPut(()=>UserData());
   await StringTable().InitTable();
   runApp(WalletInfoPage());
+}
+
+enum WalletSubPageType
+{
+  NONE,
+  CHARGET_HISTORY,
+  BONUS_HISTORY,
+  USED_HISTORY,
 }
 
 class WalletInfoPage extends StatefulWidget
@@ -47,7 +58,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
               children:
               [
                 Container
-                  (
+                (
                   width: MediaQuery.of(context).size.width * 0.3,
                   height: 50,
                   //color: Colors.blue,
@@ -253,14 +264,20 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                               child:
                               Text(StringTable().Table![400007]!,
                                 style:
-                                TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                                const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
                             ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  Divider(height: 50, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+                  SizedBox(height: 20,),
+                  //Divider(height: 50, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+                  _option(400017, WalletSubPageType.CHARGET_HISTORY),
+                  _option(400018, WalletSubPageType.BONUS_HISTORY),
+                  _option(400019, WalletSubPageType.USED_HISTORY),
+                  _option(400020, WalletSubPageType.NONE, true),
+                  Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
                 ],
               ),
             ),
@@ -299,4 +316,91 @@ class _WalletInfoPageState extends State<WalletInfoPage>
       ),
     ),
   );
+
+  Widget _option(int _titleID, WalletSubPageType _moveSubpageType, [bool _isToggle = false]) =>
+      Column
+        (
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:
+        [
+          Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+          Row
+            (
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children:
+            [
+              Padding
+                (
+                padding:EdgeInsets.only(left: 30),
+                child:
+                Container
+                  (
+                  height: 30,
+                  width: 280,
+                  //color: Colors.yellow,
+                  alignment: Alignment.centerLeft,
+                  child:
+                  Text(StringTable().Table![_titleID]!,
+                    style:
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                ),
+              ),
+              Padding
+                (
+                padding:EdgeInsets.only(right: 20),
+                child: _isToggle ? _toggleButton() : _moveButton(_moveSubpageType),
+              ),
+            ],
+          ),
+        ],
+      );
+
+  bool _isChecked = true;
+  Widget _toggleButton() =>
+      Transform.scale
+        (
+        scale: 0.7,
+        child:
+        CupertinoSwitch
+          (
+          value: _isChecked,
+          activeColor: Color(0xFF00FFBF),
+          onChanged: (bool? value)
+          {
+            //TODO : 서버에 알리기
+            setState(()
+            {
+              _isChecked = value ?? false;
+            });
+          },
+        ),
+      );
+
+  Widget _moveButton(WalletSubPageType _type) =>
+      IconButton
+        (
+        padding: EdgeInsets.only(right: 0, top: 5),
+        alignment: Alignment.center,
+        color: Colors.white,
+        iconSize: 20,
+        icon: const Icon(Icons.arrow_forward_ios),
+        onPressed: ()
+        {
+          switch(_type)
+          {
+            case WalletSubPageType.CHARGET_HISTORY:
+              Get.to(()=> ChargeHistoryPage(PageTitle: StringTable().Table![400017]!));
+              break;
+            case WalletSubPageType.BONUS_HISTORY:
+              Get.to(()=> BonusHistoryPage(PageTitle:StringTable().Table![400018]!));
+              break;
+            case WalletSubPageType.USED_HISTORY:
+              Get.to(()=> UsedHistoryPage(PageTitle:StringTable().Table![400019]!));
+              break;
+            default:
+              print('not found type ${_type}');
+              break;
+          }
+        },
+      );
 }

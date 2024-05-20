@@ -539,12 +539,13 @@ class _UserInfoPageState extends State<UserInfoPage>
                       (
                         child:
                         Container
-                          (
+                        (
                           child:
                           Text(StringTable().Table![400009]!, style: TextStyle(fontSize: 14, color: Colors.white,fontFamily: 'NotoSans',),),
                         ),
                         onTap: ()
                         {
+                          //TODO dialog work and go to shop
                           Get.to(() => LoginPage(),transition: Transition.noTransition);
                         },
                       ),

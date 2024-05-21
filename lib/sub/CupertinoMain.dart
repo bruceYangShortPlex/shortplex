@@ -85,28 +85,28 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
             (
             // 선택된 탭은 채워진 아이콘, 나머지는 line 아이콘
               icon: controller.selectedIndex.value == 0
-                  ? Image.asset('assets/images/home_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/home_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/home_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/main/home_off.png', height: 50, width: 50,),
               label: StringTable().Table![100001]),
               BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 1
-                  ? Image.asset('assets/images/pick_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/pick_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/pick_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/main/pick_off.png', height: 50, width: 50,),
                   label: StringTable().Table![100002]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 2
-                  ? Image.asset('assets/images/open_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/open_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/open_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/main/open_off.png', height: 50, width: 50,),
               label: StringTable().Table![100003]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 3
-                  ? Image.asset('assets/images/reword_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/reword_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/reword_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/main/reword_off.png', height: 50, width: 50,),
               label: StringTable().Table![100004]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 4
-                  ? Image.asset('assets/images/my_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/my_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/my_on.png', height: 50, width: 50,)
+                  : Image.asset('assets/images/main/my_off.png', height: 50, width: 50,),
               label: StringTable().Table![100005]),
         ],
       )),

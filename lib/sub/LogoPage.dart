@@ -66,12 +66,12 @@ class _LogoPageState extends State<LogoPage> {
   Widget LogoImage() => Column(children:
   [
     Image.asset(
-      'assets/images/shortplex.png',
+      'assets/images/main/shortplex.png',
       width: 82.w,
       height: 100.h,
       fit: BoxFit.contain,),
     SizedBox(height: 25,),
-    Image.asset('assets/images/Shortplex_text_logo.png',width: 140.w, height: 21.w, fit: BoxFit.contain,),
+    Image.asset('assets/images/main/Shortplex_text_logo.png',width: 140.w, height: 21.w, fit: BoxFit.contain,),
     SizedBox(height: 15,),
   ],);
 }

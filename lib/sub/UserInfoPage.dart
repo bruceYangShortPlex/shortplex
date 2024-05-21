@@ -198,10 +198,14 @@ class _UserInfoPageState extends State<UserInfoPage>
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
-        child: Obx(() => Get.find<UserData>().photoUrl.value.isEmpty ?
-                      Container(color: Colors.black,) :
-                      Image.network('${Get.find<UserData>().photoUrl.value}',
-                      fit: BoxFit.cover),
+        child:
+        Obx(() => Get.find<UserData>().photoUrl.value.isEmpty ?
+              Container
+              (
+                color: Colors.black,
+                child: Image.asset('assets/images/User/my_picture.png', fit: BoxFit.cover,),) :
+              Image.network('${Get.find<UserData>().photoUrl.value}',
+              fit: BoxFit.cover),
         ),
       ),
     ),
@@ -421,7 +425,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                     alignment: Alignment.center,
                                     width: 32,
                                     height: 32,
-                                    'assets/images/my_popcon.png',
+                                    'assets/images/User/my_popcon.png',
                                     fit: BoxFit.fitHeight,
                                   ),
                                 ),
@@ -476,7 +480,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                   alignment: Alignment.center,
                                   width: 32,
                                   height: 32,
-                                  'assets/images/my_bonus.png',
+                                  'assets/images/User/my_bonus.png',
                                   fit: BoxFit.fitHeight,
                                 ),
                               ),

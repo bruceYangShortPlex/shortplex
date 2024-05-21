@@ -97,12 +97,12 @@ class _LoginPageState extends State<LoginPage> {
   Widget LogoImage() => Column(children:
   [
     Image.asset(
-    'assets/images/shortplex.png',
+    'assets/images/main/shortplex.png',
     width: 82.w,
     height: 100.h,
     fit: BoxFit.contain,),
     SizedBox(height: 25,),
-    Image.asset('assets/images/Shortplex_text_logo.png',width: 140.w, height: 21.h, fit: BoxFit.contain,),
+    Image.asset('assets/images/main/Shortplex_text_logo.png',width: 140.w, height: 21.h, fit: BoxFit.contain,),
     SizedBox(height: 15,),
   ],);
 
@@ -161,13 +161,13 @@ class _LoginPageState extends State<LoginPage> {
           : Column(
               children: [
                 loginButton(
-                    'assets/images/Kakao_PNG.png', LoginType.kakao, 400064),
-                loginButton('assets/images/Facebook_PNG.png',
+                    'assets/images/Public/Kakao_PNG.png', LoginType.kakao, 400064),
+                loginButton('assets/images/Public/Facebook_PNG.png',
                     LoginType.facebook, 400066),
                 loginButton(
-                    'assets/images/Google_PNG.png', LoginType.google, 400067),
+                    'assets/images/Public/Google_PNG.png', LoginType.google, 400067),
                 loginButton(
-                    'assets/images/Apple_PNG.png', LoginType.apple, 400068),
+                    'assets/images/Public/Apple_PNG.png', LoginType.apple, 400068),
 
               ],
             ));

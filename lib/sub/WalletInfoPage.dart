@@ -146,7 +146,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                                       children:
                                       [
-                                        _moneyInfo('assets/images/shortplex.png', Get.find<UserData>().GetPopupcornCount().$1),
+                                        _moneyInfo('assets/images/main/shortplex.png', Get.find<UserData>().GetPopupcornCount().$1),
 
                                         Padding
                                         (
@@ -179,7 +179,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                             ),
                                           ),
                                         ),
-                                        _moneyInfo('assets/images/shortplex.png', Get.find<UserData>().GetPopupcornCount().$2),
+                                        _moneyInfo('assets/images/main/shortplex.png', Get.find<UserData>().GetPopupcornCount().$2),
                                       ],
                                     ),
                                     Padding

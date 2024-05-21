@@ -4,9 +4,9 @@ import 'package:video_player/video_player.dart';
 import 'theme.dart';
 import 'dart:io';
 
-// void main() => runApp(const VideoPage(LongVodeoUri: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-//           MiddelResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-//           LowResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
+void main() => runApp(const VideoPage(LongVodeoUri: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          MiddelResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          LowResolution: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"));
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key, required this.LongVodeoUri ,required this.MiddelResolution ,required this.LowResolution});
@@ -32,7 +32,8 @@ class _VideoPageState extends State<VideoPage> {
   List<String> srcs = [];
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
 
     srcs = [widget.LongVodeoUri,widget.MiddelResolution, widget.LowResolution];
@@ -41,14 +42,16 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   @override
-  void dispose() {
+  void dispose()
+  {
     _videoPlayerController1.dispose();
     _videoPlayerController2.dispose();
     _chewieController?.dispose();
     super.dispose();
   }
 
-  Future<void> initializePlayer() async {
+  Future<void> initializePlayer() async
+  {
     _videoPlayerController1 =
         VideoPlayerController.networkUrl(Uri.parse(srcs[currPlayIndex]));
     _videoPlayerController2 =
@@ -174,15 +177,17 @@ class _VideoPageState extends State<VideoPage> {
   Widget build(BuildContext context)
   {
     return MaterialApp(
-      title: widget.title,
+      //title: widget.title,
       theme: AppTheme.dark.copyWith(
         platform: _platform ?? Theme.of(context).platform,
       ),
       home: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Column(
+        // appBar: AppBar(
+        //   title: Text(widget.title),
+        // ),
+        backgroundColor: Colors.black,
+        body:
+        Column(
           children: <Widget>[
             Expanded(
               child: Center(

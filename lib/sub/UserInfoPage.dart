@@ -10,6 +10,7 @@ import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/state_manager.dart';
 import 'package:shortplex/sub/SettingPage.dart';
+import 'package:shortplex/sub/ShopPage.dart';
 import 'package:shortplex/sub/WalletInfoPage.dart';
 import '../Util/HttpProtocolManager.dart';
 import '../table/StringTable.dart';
@@ -134,14 +135,13 @@ class _UserInfoPageState extends State<UserInfoPage>
             ),
 
             Flexible
-              (
+            (
               child: _nickName(),
               fit: FlexFit.tight,
               flex: 2,
             ),
-
             Padding
-              (
+            (
               padding: const EdgeInsets.only(right: 22.0),
               child:
               Visibility
@@ -160,10 +160,14 @@ class _UserInfoPageState extends State<UserInfoPage>
                   ),
                   child:
                   GestureDetector
+                  (
+                    child:
+                    Text
                     (
-                    child: Text(StringTable().Table![400003]!,
+                      StringTable().Table![400003]!,
                       style:
-                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    ),
                     onTap: ()
                     {
                       Get.to(() => LoginPage(),transition: Transition.noTransition);
@@ -196,7 +200,9 @@ class _UserInfoPageState extends State<UserInfoPage>
         shape: BoxShape.circle,
         color: Color(0xFF00FFBF),
       ),
-      child: ClipRRect(
+      child:
+      ClipRRect
+      (
         borderRadius: BorderRadius.circular(100),
         child:
         Obx(() => Get.find<UserData>().photoUrl.value.isEmpty ?
@@ -204,8 +210,8 @@ class _UserInfoPageState extends State<UserInfoPage>
               (
                 color: Colors.black,
                 child: Image.asset('assets/images/User/my_picture.png', fit: BoxFit.cover,),) :
-              Image.network('${Get.find<UserData>().photoUrl.value}',
-              fit: BoxFit.cover),
+                Image.network('${Get.find<UserData>().photoUrl.value}',
+                fit: BoxFit.cover),
         ),
       ),
     ),
@@ -217,15 +223,16 @@ class _UserInfoPageState extends State<UserInfoPage>
     child: Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child:
-            Obx(() => Column
-            (
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:
-              [
-                Text('${Get.find<UserData>().name.value}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 20,),),
-                Text('UID : ${Get.find<UserData>().providerUid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 12,),),
-              ],
-            ),
+      Obx(() =>
+        Column
+        (
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:
+          [
+            Text('${Get.find<UserData>().name.value}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 20,),),
+            Text('UID : ${Get.find<UserData>().providerUid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 12,),),
+          ],
+        ),
       ),
     ),
   );
@@ -328,7 +335,20 @@ class _UserInfoPageState extends State<UserInfoPage>
                           ),
                           onTap: ()
                           {
-                            Get.to(() => LoginPage(),transition: Transition.noTransition);
+                            // if (Get.find<UserData>().isLogin.value)
+                            // {
+                            //   Get.to(() => ShopPage());
+                            // }
+                            // else
+                            // {
+                            //   showDialogTwoButton(400003, 400003,
+                            //   () =>
+                            //   {
+                            //       Get.to(() => LoginPage(), transition: Transition.noTransition),
+                            //   });
+                            // }
+
+                            Get.to(() => ShopPage());
                           },
                         ),
                       ),
@@ -548,8 +568,20 @@ class _UserInfoPageState extends State<UserInfoPage>
                         ),
                         onTap: ()
                         {
-                          //TODO dialog work and go to shop
-                          Get.to(() => LoginPage(),transition: Transition.noTransition);
+                          // if (Get.find<UserData>().isLogin.value)
+                          // {
+                          //   Get.to(() => ShopPage());
+                          // }
+                          // else
+                          // {
+                          //   showDialogTwoButton(400003, 400003,
+                          //   () =>
+                          //   {
+                          //       Get.to(() => LoginPage(), transition: Transition.noTransition),
+                          //   });
+                          // }
+
+                          Get.to(() => ShopPage());
                         },
                       ),
                     ),

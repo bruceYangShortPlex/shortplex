@@ -2,20 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shortplex/Util/ShortplexTools.dart';
+import 'package:shortplex/sub/BuySubscriptionPage.dart';
 import '../table/StringTable.dart';
-import '../table/UserData.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
-
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  Get.lazyPut(()=>UserData());
-  await StringTable().InitTable();
-  runApp(ShopPage());
-}
 
 class ShopPage extends StatelessWidget
 {
@@ -109,9 +100,9 @@ class ShopPage extends StatelessWidget
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children:
                       [
-                        Goods(400060,'','assets/images/User/my_popcon.png', '₩1,900'),
-                        Goods(400060,'+2보너스','assets/images/Shop/my_popcon2.png', '₩3,900'),
-                        Goods(400060,'+2보너스','assets/images/Shop/my_popcon3.png', '₩7,900'),
+                        Goods(SetStringArg(400060, ['20']),'','assets/images/User/my_popcon.png', '₩1,900'),
+                        Goods(SetStringArg(400060, ['40']),SetStringArg(400008, ['+2']),'assets/images/Shop/my_popcon2.png', '₩3,900'),
+                        Goods(SetStringArg(400060, ['80']),SetStringArg(400008, ['+8']),'assets/images/Shop/my_popcon3.png', '₩7,900'),
                       ],
                     ),
                     SizedBox(height: 20,),
@@ -120,9 +111,9 @@ class ShopPage extends StatelessWidget
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children:
                       [
-                        Goods(400060,'+21보너스','assets/images/Shop/my_popcon4.png', '₩13,900'),
-                        Goods(400060,'+40보너스','assets/images/Shop/my_popcon5.png', '₩19,900'),
-                        Goods(400060,'+90보너스','assets/images/Shop/my_popcon6.png', '₩29,900'),
+                        Goods(SetStringArg(400060, ['140']),SetStringArg(400008, ['+21']),'assets/images/Shop/my_popcon4.png', '₩13,900'),
+                        Goods(SetStringArg(400060, ['200']),SetStringArg(400008, ['+40']),'assets/images/Shop/my_popcon5.png', '₩19,900'),
+                        Goods(SetStringArg(400060, ['300']),SetStringArg(400008, ['+90']),'assets/images/Shop/my_popcon6.png', '₩29,900'),
                       ],
                     ),
                     SizedBox(height: 20,),
@@ -148,19 +139,26 @@ class ShopPage extends StatelessWidget
                       ),
                     ),
                     SizedBox(height: 30,),
-                    Container
+                    Stack
                     (
-                      alignment: Alignment.centerLeft,
-                      width: MediaQuery.of(context).size.width * 330 / 390,
-                      height: 20,
-                      //color: Colors.blueGrey,
-                      child:
-                      Text
-                      (
-                        StringTable().Table![400032]!,
-                        style:
-                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
-                      ),
+                      alignment: Alignment.center,
+                      children:
+                      [
+                        Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
+                        Container
+                        (
+                          color: Colors.black,
+                          padding: EdgeInsets.only(bottom: 3, left: 10, right: 10),
+                          child:
+                          Text
+                          (
+                            textAlign: TextAlign.center,
+                            StringTable().Table![400032]!,
+                            style:
+                            TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          ),
+                        ),
+                      ],
                     ),
                     Container
                     (
@@ -174,7 +172,7 @@ class ShopPage extends StatelessWidget
                       (
                         StringTable().Table![400033]!,
                         style:
-                        TextStyle(fontSize: 13, color: Color(0xffA0A0A0), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
                       ),
                     )
                   ],
@@ -191,7 +189,7 @@ class ShopPage extends StatelessWidget
     return mainWiget(context);
   }
 
-  Widget Goods(int _titleID, String _bonus, String _iconPath, String _price) =>
+  Widget Goods(String _title, String _bonus, String _iconPath, String _price) =>
   Stack
   (
     alignment: Alignment.center,
@@ -220,7 +218,7 @@ class ShopPage extends StatelessWidget
               child:
               Text
               (
-                StringTable().Table![_titleID]!,
+                _title,
                 style:
                 TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
               ),
@@ -304,9 +302,14 @@ class ShopPage extends StatelessWidget
             //color: Colors.yellow,
             alignment: Alignment.centerLeft,
             child:
-            Text(StringTable().Table![400031]!,
-              style:
-              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+
+                Text
+                (
+                  StringTable().Table![400031]!,
+                  style:
+                  TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                ),
+
           ),
         ),
         Padding
@@ -321,6 +324,7 @@ class ShopPage extends StatelessWidget
             icon: const Icon(Icons.arrow_forward_ios),
             onPressed: ()
             {
+              Get.to(() => BuySubscriptionPage(), arguments: ['₩39,900']);
               print('go subscription');
             },
           ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
+import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'AccountInfoPage.dart';
 
@@ -25,13 +26,15 @@ class SettingPage extends StatefulWidget
 
   @override
   State<SettingPage> createState() => _SettingPageState();
+
+
 }
 
 class _SettingPageState extends State<SettingPage>
 {
   bool _isChecked = true;
   String cacheSize = '';
-  final VoidCallback _callback = () {};
+  //final VoidCallback _callback = () {};
 
   @override
   Widget build(BuildContext context)
@@ -114,10 +117,13 @@ class _SettingPageState extends State<SettingPage>
                   _option(400045, SettingSubPageType.LEGAL_NOTICE),
                   _option(400046, SettingSubPageType.ACCOUNT_DELETE),
                   _option(400047, SettingSubPageType.LOG_OUT),
-                  Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
-                  Text('Ver 1.00' ,
+                  Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
+                  Text
+                  (
+                    'Ver 1.00' ,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white.withOpacity(0.4), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                    TextStyle(fontSize: 15, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
                 ],
               ),
             ),
@@ -223,68 +229,4 @@ class _SettingPageState extends State<SettingPage>
       },
     ),
   );
-
-  void showDialogTwoButton(int _titieID, int _contentID, VoidCallback _callback)
-  {
-    Get.defaultDialog
-    (
-      backgroundColor: Color(0x1E1E1E).withOpacity(1),
-      title: StringTable().Table![_titieID]!,
-      titleStyle:
-      TextStyle
-      (
-        fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
-        titlePadding: EdgeInsets.only(top: 30),
-        contentPadding: _contentID == 0 ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 30),
-        content : _contentID != 0 ?
-        Text(StringTable().Table![_contentID]!, style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),) : Text(''),
-        actions:
-        [
-          ElevatedButton
-          (
-            style:
-            ButtonStyle
-            (
-              backgroundColor:
-              MaterialStatePropertyAll<Color>(Color(0x1E1E1E).withOpacity(1)),
-              fixedSize: MaterialStateProperty.all(Size(100, 40)),
-              //padding: MaterialStateProperty.all(EdgeInsets.only(left: 10)),
-            ),
-            onPressed: ()
-            {
-              Get.back();
-            },
-            child:
-            Text
-            (
-                StringTable().Table![600008]!,
-                style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
-            ),
-          ),
-          SizedBox(width: 10,),
-          ElevatedButton
-          (
-            style:
-            ButtonStyle
-              (
-              backgroundColor:
-              MaterialStatePropertyAll<Color>(Color(0x1E1E1E).withOpacity(1)),
-              fixedSize: MaterialStateProperty.all(Size(100, 40)),
-              //padding: MaterialStateProperty.all(EdgeInsets.only(left: 10)),
-            ),
-            onPressed: ()
-            {
-              Get.back();
-              _callback();
-            },
-            child:
-            Text
-            (
-              StringTable().Table![600007]!,
-              style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
-            ),
-          ),
-        ],
-      );
-    }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/ChargeHistoryPage.dart';
+import 'package:shortplex/sub/ShopPage.dart';
 import 'package:shortplex/sub/UsedHistoryPage.dart';
 
 import '../table/StringTable.dart';
@@ -200,13 +201,18 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                         child:
 
                                         GestureDetector
+                                        (
+                                          child:
+                                          Padding
                                           (
-                                          child: Text(StringTable().Table![400009]!,
-                                            style:
-                                            TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                                            padding: const EdgeInsets.only(bottom: 3),
+                                            child: Text(StringTable().Table![400009]!,
+                                              style:
+                                              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                                          ),
                                           onTap: ()
                                           {
-                                            print('Clic go to shop');
+                                            Get.to(() => ShopPage());
                                           },
                                         ),
                                       ),

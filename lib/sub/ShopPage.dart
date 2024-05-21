@@ -100,9 +100,9 @@ class ShopPage extends StatelessWidget
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children:
                       [
-                        Goods(SetStringArg(400060, ['20']),'','assets/images/User/my_popcon.png', '₩1,900'),
-                        Goods(SetStringArg(400060, ['40']),SetStringArg(400008, ['+2']),'assets/images/Shop/my_popcon2.png', '₩3,900'),
-                        Goods(SetStringArg(400060, ['80']),SetStringArg(400008, ['+8']),'assets/images/Shop/my_popcon3.png', '₩7,900'),
+                        Goods(SetStringArg(400060, ['20']),'','assets/images/User/my_popcon.png', '₩1,900', ''),
+                        Goods(SetStringArg(400060, ['40']),SetStringArg(400008, ['+2']),'assets/images/Shop/my_popcon2.png', '₩3,900', SetStringArg(400028, [' 5'])),
+                        Goods(SetStringArg(400060, ['80']),SetStringArg(400008, ['+8']),'assets/images/Shop/my_popcon3.png', '₩7,900', SetStringArg(400028, ['10'])),
                       ],
                     ),
                     SizedBox(height: 20,),
@@ -111,9 +111,9 @@ class ShopPage extends StatelessWidget
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children:
                       [
-                        Goods(SetStringArg(400060, ['140']),SetStringArg(400008, ['+21']),'assets/images/Shop/my_popcon4.png', '₩13,900'),
-                        Goods(SetStringArg(400060, ['200']),SetStringArg(400008, ['+40']),'assets/images/Shop/my_popcon5.png', '₩19,900'),
-                        Goods(SetStringArg(400060, ['300']),SetStringArg(400008, ['+90']),'assets/images/Shop/my_popcon6.png', '₩29,900'),
+                        Goods(SetStringArg(400060, ['140']),SetStringArg(400008, ['+21']),'assets/images/Shop/my_popcon4.png', '₩13,900', SetStringArg(400028, ['15'])),
+                        Goods(SetStringArg(400060, ['200']),SetStringArg(400008, ['+40']),'assets/images/Shop/my_popcon5.png', '₩19,900', SetStringArg(400028, ['20'])),
+                        Goods(SetStringArg(400060, ['300']),SetStringArg(400008, ['+90']),'assets/images/Shop/my_popcon6.png', '₩29,900', SetStringArg(400028, ['30'])),
                       ],
                     ),
                     SizedBox(height: 20,),
@@ -189,7 +189,7 @@ class ShopPage extends StatelessWidget
     return mainWiget(context);
   }
 
-  Widget Goods(String _title, String _bonus, String _iconPath, String _price) =>
+  Widget Goods(String _title, String _bonus, String _iconPath, String _price, String _sale) =>
   Stack
   (
     alignment: Alignment.center,
@@ -270,12 +270,38 @@ class ShopPage extends StatelessWidget
           ),
         ),
       ),
-      SvgPicture.asset
+      Visibility
       (
-        'assets/images/shop/my_shop_1.svg',
-        width: 94,
-        height: 150,
-      ),
+        visible: _bonus != '',
+        child:
+        Stack
+        (
+          alignment: Alignment.center,
+          children:
+          [
+            SvgPicture.asset
+            (
+              alignment: Alignment.center,
+              'assets/images/shop/my_shop_1.svg',
+              width: 94,
+              height: 150,
+            ),
+
+              Transform
+              (
+                transform: Matrix4.identity()..translate(41, -67.0)..rotateZ(0.79),
+                child:
+                Text
+                (
+                  _sale,
+                  style:
+                  TextStyle(fontSize: 9, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                ),
+              ),
+          ],
+        ),
+      )
+
       // Text
       // (
       //   '+5%',

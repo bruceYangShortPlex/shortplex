@@ -145,10 +145,12 @@ class _UserInfoPageState extends State<UserInfoPage>
               padding: const EdgeInsets.only(right: 22.0),
               child:
               Visibility
-                (
+              (
                 visible: !Get.find<UserData>().isLogin.value,
-                child: Container
-                  (
+                child:
+                Container
+                (
+                  padding: EdgeInsets.only(bottom: 2),
                   alignment: Alignment.center,
                   width: 90,
                   height: 26,
@@ -451,6 +453,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                 ),
                                 Container
                                 (
+                                  padding: EdgeInsets.only(bottom: 2),
                                   alignment: Alignment.center,
                                   width: 49,
                                   height: 24,
@@ -465,7 +468,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                 ),
                               //),
                               Padding
-                                (
+                              (
                                 padding: const EdgeInsets.only(right: 20.0),
                                 child:
                                 Container
@@ -505,7 +508,8 @@ class _UserInfoPageState extends State<UserInfoPage>
                                 ),
                               ),
                               Container
-                                (
+                              (
+                                padding: EdgeInsets.only(bottom: 1),
                                 alignment: Alignment.center,
                                 width: 49,
                                 height: 24,
@@ -563,6 +567,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                         child:
                         Container
                         (
+                          padding: EdgeInsets.only(bottom: 2),
                           child:
                           Text(StringTable().Table![400009]!, style: TextStyle(fontSize: 14, color: Colors.white,fontFamily: 'NotoSans',),),
                         ),
@@ -767,6 +772,7 @@ class UserInfoMainListView extends GetxController
             child:
             Container
             (
+              padding: EdgeInsets.only(bottom: 1),
               alignment: Alignment.center,
               width: 90,
               height: 26,
@@ -779,7 +785,8 @@ class UserInfoMainListView extends GetxController
               child:
               GestureDetector
               (
-                child: Text(StringTable().Table![400010]!,
+                child:
+                Text(StringTable().Table![400010]!,
                   style:
                   TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
                 onTap: ()

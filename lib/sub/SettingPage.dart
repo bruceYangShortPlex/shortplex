@@ -168,7 +168,6 @@ class _SettingPageState extends State<SettingPage>
   Widget _moveButton(SettingSubPageType _type) =>
   IconButton
   (
-    padding: EdgeInsets.only(right: 0, top: 5),
     alignment: Alignment.center,
     color: Colors.white,
     iconSize: 20,

@@ -161,7 +161,7 @@ class _AccountInfoPageState extends State<AccountInfoPage>
         [
           Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
           Row
-            (
+          (
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children:
             [

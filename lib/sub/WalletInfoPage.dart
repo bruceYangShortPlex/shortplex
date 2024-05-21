@@ -377,9 +377,8 @@ class _WalletInfoPageState extends State<WalletInfoPage>
       );
 
   Widget _moveButton(WalletSubPageType _type) =>
-      IconButton
-        (
-        padding: EdgeInsets.only(right: 0, top: 5),
+    IconButton
+      (
         alignment: Alignment.center,
         color: Colors.white,
         iconSize: 20,

@@ -46,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
             alignment: Alignment.topCenter,
               child : Stack(  children:
               [
-                Container( width: 1.sw,
-                height: 1.sw,
+                Container( width: 390.w,
+                height: 844.h,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment(-0.00, 1.00),
@@ -56,8 +56,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),),
                 Container(
-                    width: 1.sw,
-                    height: 1.sw,
+                    width: 390.w,
+                    height: 844.h,
                     decoration:
                     BoxDecoration
                     (
@@ -99,10 +99,10 @@ class _LoginPageState extends State<LoginPage> {
     Image.asset(
     'assets/images/shortplex.png',
     width: 82.w,
-    height: 100.w,
+    height: 100.h,
     fit: BoxFit.contain,),
     SizedBox(height: 25,),
-    Image.asset('assets/images/Shortplex_text_logo.png',width: 140.w, height: 21.w, fit: BoxFit.contain,),
+    Image.asset('assets/images/Shortplex_text_logo.png',width: 140.w, height: 21.h, fit: BoxFit.contain,),
     SizedBox(height: 15,),
   ],);
 

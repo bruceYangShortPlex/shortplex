@@ -68,7 +68,7 @@ class _LogoPageState extends State<LogoPage> {
     Image.asset(
       'assets/images/shortplex.png',
       width: 82.w,
-      height: 100.w,
+      height: 100.h,
       fit: BoxFit.contain,),
     SizedBox(height: 25,),
     Image.asset('assets/images/Shortplex_text_logo.png',width: 140.w, height: 21.w, fit: BoxFit.contain,),

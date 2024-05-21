@@ -60,7 +60,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 1.sw,
+      width: 390.w,
       height: 80,
       color: Colors.black,
       child: Obx(() =>

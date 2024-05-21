@@ -90,7 +90,7 @@ class _UserInfoPageState extends State<UserInfoPage>
               Container
               (
                 width: 390.w,
-                height: 844.w,
+                height: 844.h,
                 //color: Colors.red,
                 child:
                 Column
@@ -120,7 +120,7 @@ class _UserInfoPageState extends State<UserInfoPage>
     [
         Container
         (
-        width: 1.sw,
+        width: 390.w,
         height: 100,
         child:
         Row
@@ -183,7 +183,7 @@ class _UserInfoPageState extends State<UserInfoPage>
     padding: const EdgeInsets.all(8.0),
     child: Container(
       width: 50.w,
-      height: 50.w,
+      height: 50.h,
       decoration: const BoxDecoration
       (
         border: Border
@@ -563,7 +563,7 @@ class _UserInfoPageState extends State<UserInfoPage>
   Container
   (
     width: 390.w,
-    height: 405.w,
+    height: 405.h,
     //color: Colors.green,
     alignment: Alignment.center,
     child:

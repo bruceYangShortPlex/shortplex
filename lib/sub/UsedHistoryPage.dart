@@ -2,16 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/HistoryPage.dart';
-// import '../table/StringTable.dart';
-// import '../table/UserData.dart';
-//
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   Get.lazyPut(()=>UserData());
-//   await StringTable().InitTable();
-//   runApp(UsedHistoryPage(PageTitle:StringTable().Table![400019]!));
-// }
 
 class UsedHistoryPage extends HistoryPage
 {

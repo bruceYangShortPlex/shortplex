@@ -15,17 +15,17 @@ class HistoryPage extends StatefulWidget
 
   Widget HistoryBuild(BuildContext context) =>
       SafeArea
-        (
+      (
         child:
         CupertinoApp
-          (
+        (
           home:
           CupertinoPageScaffold
-            (
+          (
             backgroundColor: Colors.black,
             navigationBar:
             CupertinoNavigationBar
-              (
+            (
               backgroundColor: Colors.transparent,
               leading:
               Row

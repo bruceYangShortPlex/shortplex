@@ -7,7 +7,7 @@ allprojects {
 
 rootProject.buildDir = '../build'
 
-ext.kotlin_version = '<latest-version>'
+ext.kotlin_version = '2.0.0'
 
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"

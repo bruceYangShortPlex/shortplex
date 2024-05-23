@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/FeaturedPage.dart';
 import '../firebase_options.dart';
-import '../sub/second_page.dart';
 
 class FirebaseSetting {
   FirebaseSetting._privateConstructor();
@@ -64,7 +64,7 @@ class FirebaseSetting {
 
     void _handleMessage(RemoteMessage message)
     {
-      Get.to(() => SecondPage(), transition: Transition.fadeIn);
+      Get.to(() => FeaturedPage(), transition: Transition.fadeIn);
 
       print("_handleMessage: ${message.data}");
 

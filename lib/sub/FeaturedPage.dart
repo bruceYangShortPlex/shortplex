@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:shortplex/sub/ContentInfoPage.dart';
+import 'package:get/get.dart';
 import '../table/StringTable.dart';
 
 // void main() async
@@ -136,6 +137,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                     (
                       onTap: ()
                       {
+                        Get.to(()=>ContentInfoPage());
                         print('F on tap');
                       },
                       child:

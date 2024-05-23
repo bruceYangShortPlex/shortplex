@@ -207,7 +207,7 @@ class _VideoPageState extends State<VideoPage>
     ),
   );
 
-  Widget mainWiget(BuildContext context)=>
+  Widget mainWidget(BuildContext context)=>
   SafeArea
   (
     child:
@@ -233,6 +233,6 @@ class _VideoPageState extends State<VideoPage>
   @override
   Widget build(BuildContext context)
   {
-    return mainWiget(context);
+    return mainWidget(context);
   }
 }

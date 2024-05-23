@@ -185,4 +185,88 @@ Future<int> _getDirectorySize(Directory dir) async
   return size;
 }
 
+// Widget mainWidget(BuildContext context)=>
+//     SafeArea
+//       (
+//       child:
+//       CupertinoApp
+//         (
+//         home:
+//         CupertinoPageScaffold
+//           (
+//           backgroundColor: Colors.black,
+//           navigationBar:
+//           CupertinoNavigationBar
+//             (
+//             backgroundColor: Colors.transparent,
+//             leading:
+//             Row
+//               (
+//               mainAxisAlignment: MainAxisAlignment.start,
+//               children:
+//               [
+//                 Container
+//                   (
+//                   width: MediaQuery.of(context).size.width * 0.3,
+//                   height: 50,
+//                   //color: Colors.blue,
+//                   padding: EdgeInsets.zero,
+//                   alignment: Alignment.centerLeft,
+//                   child:
+//                   CupertinoNavigationBarBackButton
+//                     (
+//                     color: Colors.white,
+//                     onPressed: ()
+//                     {
+//                       Get.back();
+//                     },
+//                   ),
+//                 ),
+//                 Container
+//                   (
+//                   width: MediaQuery.of(context).size.width * 0.3,
+//                   height: 50,
+//                   //color: Colors.green,
+//                   alignment: Alignment.center,
+//                   child:
+//                   Text
+//                     (
+//                     StringTable().Table![400021]!,
+//                     style:
+//                     TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+//                   ),
+//                 ),
+//                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
+//               ],
+//             ),
+//           ),
+//           child:
+//           Container
+//             (
+//             width: MediaQuery.of(context).size.width,
+//             height: MediaQuery.of(context).size.height,
+//             //color: Colors.blue,
+//
+//           ),
+//         ),
+//       ),
+//     );
 
+
+//List<bool> _selections = List.generate(3, (_) => false);
+// ToggleButtons
+// (
+// children: <Widget>
+// [
+// Icon(Icons.add_comment),
+// Icon(Icons.airline_seat_individual_suite),
+// Icon(Icons.add_location),
+// ],
+// isSelected: _selections,
+// onPressed: (int index)
+// {
+// setState(() {
+// _selections[index] = !_selections[index];
+// });
+// },
+// )

@@ -176,9 +176,12 @@ class _AccountInfoPageState extends State<AccountInfoPage>
                   //color: Colors.yellow,
                   alignment: Alignment.centerLeft,
                   child:
-                  Text(StringTable().Table![_titleID]!,
+                  Text
+                  (
+                    StringTable().Table![_titleID]!,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
                 ),
               ),
               Padding

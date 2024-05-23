@@ -24,7 +24,7 @@ class BuySubscriptionPage extends StatelessWidget
 
   //var data = Get.arguments;
 
-  Widget mainWiget(BuildContext context)=>
+  Widget mainWidget(BuildContext context)=>
       SafeArea
         (
         child:
@@ -129,7 +129,7 @@ class BuySubscriptionPage extends StatelessWidget
                     Text
                     (
                       textAlign: TextAlign.center,
-                      SetStringArg(400035, ['39,900']),
+                      SetTableStringArgument(400035, ['39,900']),
                       style:
                       TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
                     ),
@@ -181,6 +181,6 @@ class BuySubscriptionPage extends StatelessWidget
   @override
   Widget build(BuildContext context)
   {
-    return mainWiget(context);
+    return mainWidget(context);
   }
 }

@@ -51,7 +51,7 @@ class _LogoPageState extends State<LogoPage> {
     (
       backgroundColor: Colors.black,
       body: Align
-        (
+      (
         alignment: Alignment.center,
         child: Column
         (

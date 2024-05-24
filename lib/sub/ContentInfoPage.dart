@@ -1,6 +1,9 @@
+import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
@@ -25,12 +28,50 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   bool check = false;
 
   List<bool> _selections = List.generate(3, (_) => false);
+  var episodeGroupList = <String>[];
+  List<bool> episodeGroupSelections = <bool>[];
+  late Map<int, List<EpisodeContentData>> mapEpisodeContentsData = {};
+  List<EpisodeContentData> episodeContentsList = <EpisodeContentData>[];
+
+
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
-    setState(() {
+
+    episodeGroupList.add('1~20화');
+    episodeGroupList.add('21~40화');
+    episodeGroupList.add('41~60화');
+    episodeGroupList.add('41~60화');
+    episodeGroupList.add('41~60화');
+    episodeGroupList.add('41~60화');
+    episodeGroupList.add('41~60화');
+    episodeGroupList.add('41~60화');
+    episodeGroupList.add('41~60화');
+
+    var data1 = EpisodeContentData();
+    data1.path = '';
+    data1.open = true;
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+    episodeContentsList.add(data1);
+
+    mapEpisodeContentsData[0] = episodeContentsList;
+
+    episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
+
+    setState(()
+    {
       _selections[0] = true;
+      episodeGroupSelections[0] = true;
     });
   }
 
@@ -90,6 +131,41 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 top(),
                 SizedBox(height: 20,),
                 tabButtons(),
+                Visibility
+                (
+                  visible: _selections[1],
+                  child:
+                  Column
+                  (
+                    children:
+                    [
+                      CommantWidget
+                      (
+                        0,'', SetTableStringArgument(100022, ['11']),'홍길동',
+                        '24.05.09',
+                        true,
+                        '뭐라도 적겠지',
+                            (index)
+                        {
+                          print(index);
+                        },
+                      ),
+                      CommantWidget
+                      (
+                        1,'', SetTableStringArgument(100022, ['11']),'홍길동',
+                        '24.05.09',
+                        false,
+                        '뭐라도 적겠지',
+                            (index)
+                        {
+                          print(index);
+                        },
+                      ),
+                    ],
+                  ),
+
+                ),
+                    episodeInfo(),
               ],
             ),
           ),
@@ -174,6 +250,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     setState(()
                     {
                       check = !check;
+                      //TODO Server work Like
                     });
                   },
                 ),
@@ -197,10 +274,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   Icon(CupertinoIcons.share, size: 27, color: Colors.white,),
                   onPressed: ()
                   {
-                    setState(()
-                    {
-
-                    });
+                    print('to do share');
                   },
                 ),
                 SizedBox(height: 3,),
@@ -239,6 +313,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             selectedPoint(),
             ToggleButtons
             (
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               fillColor: Colors.transparent,
               //focusColor: Colors.red,
               //borderColor: Colors.red,
@@ -255,7 +330,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   width: 75,
                   child:
                   Text
-                    (
+                  (
                     StringTable().Table![100025]!,
                     style:
                     TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
@@ -279,7 +354,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   width: 75,
                   child:
                   Text
-                    (
+                  (
                     StringTable().Table![100027]!,
                     style:
                     TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
@@ -357,4 +432,218 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       ),
     ],
   );
+
+  Widget episodeInfo() =>
+  Visibility
+  (
+    visible: _selections[0],
+    child:
+    Container
+    (
+      width: 390,
+      child:
+      Column
+      (
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:
+        [
+          Container
+          (
+            width: 390,
+            height: 26,
+            //color: Colors.green,
+            child:
+            SingleChildScrollView
+            (
+              scrollDirection: Axis.horizontal,
+              child:
+              ToggleButtons
+              (
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                fillColor: Colors.transparent,
+                //focusColor: Colors.red,
+                //borderColor: Colors.red,
+                //disabledColor: Colors.red,
+                renderBorder: false,
+                selectedBorderColor: Colors.transparent,
+                color: Colors.white.withOpacity(0.6),
+                selectedColor: Colors.white,
+                children: <Widget>
+                [
+                  for(int i = 0 ; i < episodeGroupList.length; ++i)
+                    episodeGroup(episodeGroupList[i], episodeGroupSelections[i]),
+
+                ],
+                isSelected: episodeGroupSelections,
+                onPressed: (int index)
+                {
+                  setState(()
+                  {
+                    for(int i = 0 ; i < episodeGroupSelections.length ; ++i)
+                    {
+                      episodeGroupSelections[i] = i == index;
+                    }
+                  });
+                },
+              ),
+            ),
+          ),
+          SizedBox(height: 20,),
+          episodeWrap(),
+        ],
+      ),
+    ),
+  );
+
+
+  Widget episodeGroup(String _title, bool _select) =>
+  Padding
+  (
+    padding: const EdgeInsets.only(left: 5, right: 5),
+    child: _select ?
+    Container
+    (
+      width: 73,
+      height: 26,
+      decoration: ShapeDecoration
+      (
+        color: Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(bottom: 2),
+      child:
+      Text
+      (
+        _title,
+        style:
+        TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+      ),
+    ) 
+        :
+    Container
+    (
+      width: 73,
+      height: 26,
+      decoration: ShapeDecoration
+      (
+        color: Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(width: 1.50, color: Color(0xFF999999)),
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(bottom: 2),
+      child:
+      Text
+      (
+        _title,
+        style:
+        TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+      ),
+    ),
+  );
+
+  Widget episodeWrap()
+  {
+    var data = episodeGroupSelections.asMap().entries.firstWhere((element) => element.value);
+    print(data.key);
+    var index = data.key;
+
+    if (!mapEpisodeContentsData.containsKey(data.key))
+    {
+      return Container();
+    }
+
+    var list = mapEpisodeContentsData[index];
+    return
+    Wrap
+    (
+    direction: Axis.horizontal,  // 가로 방향으로 배치
+    children: <Widget>
+    [
+      for (var i = 0; i < list!.length; i++)
+        Container
+        (
+          height: 137,
+          width: 390 / 4,
+          //color: Colors.grey,
+          child:
+          Column
+          (
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children:
+            [
+              GestureDetector
+              (
+                onTap: ()
+                {
+                  print('click');
+                },
+                child:
+                Stack
+                (
+                  children:
+                  [
+                    Container
+                    (
+                      width: 77,
+                      height: 107,
+                      color: Colors.yellow,
+                    ),
+                    Visibility
+                    (
+                      visible: list[i].open == false,
+                      child:
+                      Container
+                      (
+                        width: 77,
+                        height: 107,
+                        color: Colors.black.withOpacity(0.7),
+                        child:
+                        SizedBox
+                          (
+                          child:
+                          SvgPicture.asset
+                            (
+                            'assets/images/pick/pick_lock.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding
+              (
+                padding: const EdgeInsets.only(top: 5),
+                child:
+                Text
+                (
+                  SetTableStringArgument(100034, ['${i + 1}']),
+                  style:
+                  TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                ),
+              ),
+            ],
+          ),
+          // 화면 너비의 1/4 크기로 설정
+          //child: Image.network('이미지 URL', fit: BoxFit.cover,),  // '이미지 URL' 부분을 실제 이미지 URL로 교체해야 합니다.
+        ),
+      ],
+    );
+  }
+
+}
+
+class EpisodeContentData
+{
+  String? path;
+  bool? open;
 }

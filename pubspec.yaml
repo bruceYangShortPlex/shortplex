@@ -81,6 +81,7 @@ flutter:
     - assets/images/Public/
     - assets/images/Shop/
     - assets/images/User/
+    - assets/images/pick/
     - assets/json/
 
   # An image asset can refer to one or more resolution-specific "variants", see

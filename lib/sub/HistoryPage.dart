@@ -79,7 +79,7 @@ class HistoryPage extends StatefulWidget
               Obx
                 (() => HistoryListController.to.mainlist.length == 0 ? Container() :
               ListView.builder
-                (
+              (
                 padding: EdgeInsets.all(0),
                 itemCount: HistoryListController.to.mainlist.length,
                 itemBuilder: (context, index)

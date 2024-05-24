@@ -184,9 +184,12 @@ class _UserInfoPageState extends State<UserInfoPage>
     ],
   );
 
-  Widget _profile() => Padding(
+  Widget _profile() => Padding
+  (
     padding: const EdgeInsets.all(8.0),
-    child: Container(
+    child:
+    Container
+    (
       width: 50.w,
       height: 50.h,
       decoration: const BoxDecoration

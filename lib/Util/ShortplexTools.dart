@@ -289,7 +289,7 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
                   {
                     callback(index);
                   },
-                  icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart, color: Colors.white,size: 20,),
+                  icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart, color: Colors.white,size: 15,),
                 ),
               ),
 

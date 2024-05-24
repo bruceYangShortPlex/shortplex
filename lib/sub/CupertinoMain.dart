@@ -2,18 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/FeaturedPage.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 import 'HomePage.dart';
-import 'second_page.dart';
 
 class CupertinoMain extends StatelessWidget{
   // 탭별 화면
   static List<Widget> tabPages = <Widget>[
     HomePage(), // 외부 클래스로 정의
-    SecondPage(),
+    FeaturedPage(),
     HomePage(),
-    SecondPage(),
+    HomePage(),
     UserInfoPage(),
   ];
 

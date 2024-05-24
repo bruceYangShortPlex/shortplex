@@ -243,6 +243,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               //focusColor: Colors.red,
               //borderColor: Colors.red,
               //disabledColor: Colors.red,
+              borderColor: Colors.transparent,
               selectedBorderColor: Colors.transparent,
               color: Colors.white.withOpacity(0.6),
               selectedColor: Colors.white,

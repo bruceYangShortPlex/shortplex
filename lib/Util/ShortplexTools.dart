@@ -88,7 +88,7 @@ String SetStringArgument(String _source, List<String> list)
 }
 
 Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
-    String _name, String _date, bool _likeCheck, String _commant, Function(int) callback)
+    String _name, String _date, bool _likeCheck, String _commant, Function(int) _callClickLike, Function(int) _callOpenCommant,Function(int) _callDelete)
 {
   var index = _index;
   return
@@ -96,7 +96,7 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
   (
     width: 310,
     //height: 92,
-    //color: Colors.yellow,
+    color: Colors.yellow,
     child:
     Column
     (
@@ -278,21 +278,61 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children:
             [
-              Transform.scale
+              Padding
               (
-                scale: 1,
+                padding: const EdgeInsets.only(left: 32),
                 child:
-                IconButton
+                Container
                 (
-                  padding: EdgeInsets.zero,
-                  onPressed: ()
-                  {
-                    callback(index);
-                  },
-                  icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart, color: Colors.white,size: 15,),
+                  //color: Colors.blue,
+                  child: IconButton
+                  (
+                    padding: EdgeInsets.zero,
+                    onPressed: ()
+                    {
+                      _callClickLike(index);
+                    },
+                    icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
+                                color: Colors.white,size: 15,),
+                  ),
                 ),
               ),
-
+              Padding
+              (
+                padding: const EdgeInsets.only(right: 80),
+                child:
+                Container
+                (
+                  //color: Colors.blue,
+                  child: IconButton
+                  (
+                    padding: EdgeInsets.zero,
+                    onPressed: ()
+                    {
+                      _callOpenCommant(index);
+                    },
+                    icon: Icon( CupertinoIcons.ellipses_bubble, color: Colors.white,size: 15,),
+                  ),
+                ),
+              ),
+              Padding
+              (
+                padding: const EdgeInsets.only(right: 0),
+                child:
+                Container
+                (
+                  //color: Colors.blue,
+                  child: IconButton
+                  (
+                    padding: EdgeInsets.zero,
+                    onPressed: ()
+                    {
+                      _callOpenCommant(index);
+                    },
+                    icon: Icon( CupertinoIcons.delete, color: Colors.white,size: 15,),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -131,41 +131,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 top(),
                 SizedBox(height: 20,),
                 tabButtons(),
-                Visibility
-                (
-                  visible: _selections[1],
-                  child:
-                  Column
-                  (
-                    children:
-                    [
-                      CommantWidget
-                      (
-                        0,'', SetTableStringArgument(100022, ['11']),'홍길동',
-                        '24.05.09',
-                        true,
-                        '뭐라도 적겠지',
-                            (index)
-                        {
-                          print(index);
-                        },
-                      ),
-                      CommantWidget
-                      (
-                        1,'', SetTableStringArgument(100022, ['11']),'홍길동',
-                        '24.05.09',
-                        false,
-                        '뭐라도 적겠지',
-                            (index)
-                        {
-                          print(index);
-                        },
-                      ),
-                    ],
-                  ),
-
-                ),
-                    episodeInfo(),
+                episodeInfo(),
+                contentCommant(),
+                SizedBox(height: 20,),
+                contentEventAnnounce(),
               ],
             ),
           ),
@@ -607,10 +576,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                         color: Colors.black.withOpacity(0.7),
                         child:
                         SizedBox
-                          (
+                        (
                           child:
                           SvgPicture.asset
-                            (
+                          (
                             'assets/images/pick/pick_lock.svg',
                             fit: BoxFit.scaleDown,
                           ),
@@ -640,6 +609,144 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     );
   }
 
+  Widget contentCommant() =>
+  Visibility
+  (
+    visible: _selections[1],
+    child:
+    Column
+    (
+      children:
+      [
+        CommantWidget
+        (
+          0,'', SetTableStringArgument(100022, ['11']),'홍길동',
+          '24.05.09',
+          true,
+          '뭐라도 적겠지',
+          (id)
+          {
+            //TODO : 좋아요 버튼 처리
+            print(id);
+          },
+          (id)
+          {
+            //TODO : 댓글의 답글 열기 버튼 처리
+          },
+          (id)
+          {
+            //TODO : 삭제 버튼 처리
+          },
+        ),
+        CommantWidget
+        (
+          1,'', SetTableStringArgument(100022, ['11']),'고길동',
+          '24.05.10',
+          false,
+          '뭐라도 적겠지2',
+          (id)
+          {
+            //TODO : 좋아요 버튼 처리
+            print(id);
+          },
+          (id)
+          {
+            //TODO : 댓글의 답글 열기 버튼 처리
+          },
+          (id)
+          {
+            //TODO : 삭제 버튼 처리
+          },
+        ),
+      ],
+    ),
+  );
+
+  Widget contentEventAnnounce([bool _active = true])
+  {
+    String title = _active ? StringTable().Table![800001]! : '안함';
+    return
+    Visibility
+    (
+      visible: _selections[2],
+      child:
+      SizedBox
+      (
+        width: 390,
+        child:
+        Column
+        (
+          mainAxisAlignment: MainAxisAlignment.start,
+          children:
+          [
+            Row
+            (
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:
+              [
+                Icon(Icons.event, size: 26,),
+                Padding
+                (
+                  padding: const EdgeInsets.only(right: 16),
+                  child:
+                  Text
+                  (
+                    title,
+                    style:
+                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
+                ),
+              ],
+            ),
+            Text
+            (
+              textAlign: TextAlign.center,
+              SetTableStringArgument(800002, ['24.05.04', '24.06.03', '<황후마마가 돌아왔다>']),
+              style:
+              TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+            ),
+            SizedBox(height: 30,),
+            Stack
+            (
+              alignment: Alignment.center,
+              children:
+              [
+                Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
+                Container
+                (
+                  color: Colors.black,
+                  padding: EdgeInsets.only(bottom: 3, left: 10, right: 10),
+                  child:
+                  Text
+                  (
+                    textAlign: TextAlign.center,
+                    StringTable().Table![800003]!,
+                    style:
+                    TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20,),
+            Container
+            (
+              alignment: Alignment.centerLeft,
+              color: Colors.black,
+              padding: EdgeInsets.only(bottom: 3, left: 30, right: 10),
+              child:
+              Text
+              (
+                textAlign: TextAlign.start,
+                StringTable().Table![800004]!,
+                style:
+                TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class EpisodeContentData

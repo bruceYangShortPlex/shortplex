@@ -359,7 +359,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             ),
           ],
         )
-
       ),
     ),
   );
@@ -611,7 +610,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 child:
                 Text
                 (
-                  SetTableStringArgument(100034, ['${i + 1}']),
+                  SetTableStringArgument(100033, ['${i + 1}']),
                   style:
                   TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
                 ),

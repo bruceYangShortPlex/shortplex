@@ -11,15 +11,36 @@ class HomePage extends StatefulWidget
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-{
+class _HomePageState extends State<HomePage> {
+  late PageController _pageController;
+  List<Widget> pageList = <Widget>[];
+  var pageIndex = 0;
+  var tweenInitBlock = true;
+
   @override
-  void initState() {
-    // TODO: implement initState
+  void initState()
+  {
     super.initState();
     print('init');
+
+    _pageController = PageController
+    (
+        initialPage: 4,
+        viewportFraction: 0.7
+    )
+      ..addListener(() {
+        setState(() {
+          pageIndex = _pageController.page!.round();
+        });
+      });
+
+    pageIndex = _pageController.initialPage;
+
+    for(int i = 0; i < 10; ++i)
+      pageList.add(pageItem(i));
+
   }
-  
+
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -51,37 +72,112 @@ class _HomePageState extends State<HomePage>
   // }
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return
-    CupertinoApp
-    (
-      home: CupertinoPageScaffold
+      CupertinoApp
       (
-        child:
-        Center
+        home: CupertinoPageScaffold
         (
           child:
-          Column
+          Center
           (
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>
-            [
-              Text('This is a text'),
-              SizedBox(height: 20,),
-              CupertinoButton
-                (
-                color: Colors.blue,
-                child: Text('Cupertino Button'),
-                onPressed: ()
-                {
-                  print('Click Move');
-                },
-              ),
-            ],
+            child:
+            Column
+            (
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>
+              [
+                homPageView(),
+                SizedBox(height: 20,),
+              ],
+            ),
           ),
         ),
+      );
+  }
+
+  Widget homPageView()
+  {
+    return
+    Container
+    (
+      width: 390,
+      height: 410,
+      color: Colors.green,
+      child:
+      Stack
+      (
+        children:
+        [
+          PageView.builder
+          (
+            //physics: AlwaysScrollableScrollPhysics(),
+            itemCount: pageList.length,
+            controller: _pageController,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index)
+            {
+              double startScale = 0.9;
+              double  endScale = 0.9;
+
+              if (index == pageIndex)
+              {
+                 endScale = 1;
+                 if (tweenInitBlock == true)
+                 {
+                   startScale = 1;
+                   tweenInitBlock = false;
+                 }
+              }
+
+              return
+              TweenAnimationBuilder<double>
+              (
+                tween: Tween<double>(begin: startScale, end: endScale),
+                duration: Duration(milliseconds: 150),
+                builder: (BuildContext context, double size, Widget? child)
+                {
+                  return
+                  Transform.scale
+                  (
+                    scale: size,
+                    child:
+                    Card
+                    (
+                      child:
+                      Center
+                      (
+                        child:
+                        pageList[index],
+                      ),
+                    ),
+                  );
+                }
+              );
+            },
+          ),
+        ]
       ),
     );
+  }
+
+  Widget pageItem(int _id)
+  {
+    var id = _id;
+
+    return
+
+          Container
+          (
+            width: 260,
+            height: 410,
+            decoration: ShapeDecoration(
+            color: Color(0xFFC4C4C4),
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            ),
+            ),
+          );
+
   }
 }

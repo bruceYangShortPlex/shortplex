@@ -131,7 +131,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                   (
                     width: MediaQuery.of(context).size.width,
                     height: 125,
-                    color: Colors.transparent,
+                    color: Colors.blue,
                     child:
                     GestureDetector
                     (

@@ -1,19 +1,17 @@
-import 'dart:html';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
+import 'package:shortplex/sub/CommentPage.dart';
 import '../table/StringTable.dart';
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  await StringTable().InitTable();
-  runApp(ContentInfoPage());
-}
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await StringTable().InitTable();
+//   runApp(ContentInfoPage());
+// }
 
 class ContentInfoPage extends StatefulWidget
 {
@@ -32,8 +30,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   List<bool> episodeGroupSelections = <bool>[];
   late Map<int, List<EpisodeContentData>> mapEpisodeContentsData = {};
   List<EpisodeContentData> episodeContentsList = <EpisodeContentData>[];
-
-
+  List<EpisodeCommentData> episodeCommentList = <EpisodeCommentData>[];
 
   @override
   void initState()
@@ -65,8 +62,26 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     episodeContentsList.add(data1);
 
     mapEpisodeContentsData[0] = episodeContentsList;
-
     episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
+
+    for(int i = 0; i < 20; ++i)
+      {
+        var commentData = EpisodeCommentData
+        (
+          name: '황후마마가 돌아왔다.',
+          commant: '이건 재미있다. 무조건 된다고 생각한다.',
+          date: '24.09.06',
+          episodeNumber: '11',
+          iconUrl: '',
+          ID: i,
+          isLikeCheck: i % 2 == 0,
+          likeCount: '12',
+          replyCount: '3',
+          isOwner: i == 0,
+          isBest: true,
+        );
+        episodeCommentList.add(commentData);
+      }
 
     setState(()
     {
@@ -519,6 +534,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   Widget episodeWrap()
   {
+    //어떤회차 그룹을 선택했는지 인덱스를 찾아온다. 1~20화 를 눌렀다면 0번이 true이므로 0번을 찾는다.
     var data = episodeGroupSelections.asMap().entries.firstWhere((element) => element.value);
     print(data.key);
     var index = data.key;
@@ -618,46 +634,35 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     (
       children:
       [
-        CommantWidget
-        (
-          0,'', SetTableStringArgument(100022, ['11']),'홍길동',
-          '24.05.09',
-          true,
-          '뭐라도 적겠지',
-          (id)
-          {
-            //TODO : 좋아요 버튼 처리
-            print(id);
-          },
-          (id)
-          {
-            //TODO : 댓글의 답글 열기 버튼 처리
-          },
-          (id)
-          {
-            //TODO : 삭제 버튼 처리
-          },
-        ),
-        CommantWidget
-        (
-          1,'', SetTableStringArgument(100022, ['11']),'고길동',
-          '24.05.10',
-          false,
-          '뭐라도 적겠지2',
-          (id)
-          {
-            //TODO : 좋아요 버튼 처리
-            print(id);
-          },
-          (id)
-          {
-            //TODO : 댓글의 답글 열기 버튼 처리
-          },
-          (id)
-          {
-            //TODO : 삭제 버튼 처리
-          },
-        ),
+        for(int i = 0; i < episodeCommentList.length; ++i)
+          CommentWidget
+          (
+            episodeCommentList[i].ID,
+            episodeCommentList[i].iconUrl!,
+            episodeCommentList[i].episodeNumber!,
+            episodeCommentList[i].date!,
+            episodeCommentList[i].name!,
+            episodeCommentList[i].isLikeCheck!,
+            episodeCommentList[i].commant!,
+            episodeCommentList[i].likeCount!,
+            episodeCommentList[i].replyCount!,
+            episodeCommentList[i].isOwner!,
+            episodeCommentList[i].isBest!,
+            (id)
+            {
+              //TODO : 좋아요 버튼 처리
+              print(id);
+            },
+                (id)
+            {
+              //TODO : 댓글의 답글 열기 버튼 처리
+              Get.to(() => CommantPage(), arguments: episodeCommentList[i]);
+            },
+                (id)
+            {
+              //TODO : 삭제 버튼 처리
+            },
+          ),
       ],
     ),
   );
@@ -753,4 +758,36 @@ class EpisodeContentData
 {
   String? path;
   bool? open;
+}
+
+class EpisodeCommentData
+{
+  int ID = 0;
+  String? iconUrl;
+  String? episodeNumber;
+  String? name;
+  String? date;
+  bool? isLikeCheck;
+  String? commant;
+  String? replyCount;
+  String? likeCount;
+  bool? isOwner;
+  bool? isBest;
+
+  EpisodeCommentData
+  (
+    {
+      required this.ID,
+      required this.iconUrl,
+      required this.episodeNumber,
+      required this.name,
+      required this.date,
+      required this.isLikeCheck,
+      required this.commant,
+      required this.replyCount,
+      required this.likeCount,
+      required this.isOwner,
+      required this.isBest,
+    }
+  );
 }

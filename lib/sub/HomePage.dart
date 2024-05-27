@@ -53,10 +53,17 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context)
   {
-    return CupertinoApp(
-      home: CupertinoPageScaffold(
-        child: Center(
-          child: Column(
+    return
+    CupertinoApp
+    (
+      home: CupertinoPageScaffold
+      (
+        child:
+        Center
+        (
+          child:
+          Column
+          (
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>
             [

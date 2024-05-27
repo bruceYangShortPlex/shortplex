@@ -84,32 +84,28 @@ class _UserInfoPageState extends State<UserInfoPage>
         (
           backgroundColor: Colors.black,//context.theme.colorScheme.background,
           child:
-          SingleChildScrollView
+          Container
           (
+            width: 390.w,
+            height: 844.h,
+            //color: Colors.red,
             child:
-              Container
-              (
-                width: 390.w,
-                height: 844.h,
-                //color: Colors.red,
-                child:
-                Column
-                (
-                children:
-                [
-                  _UserAccountInfo(),
-                  _subscription(),
-                  SizedBox(height: 10,),
-                  _walletInfo(),
-                  SizedBox(height: 10,),
-                  Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 0.5,),
-                  _mainListView(),
-                ],
-              ),
-            ),
+            Column
+            (
+            children:
+            [
+              _UserAccountInfo(),
+              _subscription(),
+              SizedBox(height: 10,),
+              _walletInfo(),
+              SizedBox(height: 10,),
+              Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 0.5,),
+              _mainListView(),
+            ],
           ),
         ),
-      ),
+          ),
+        ),
     );
   }
 
@@ -122,18 +118,18 @@ class _UserInfoPageState extends State<UserInfoPage>
         (
         width: 390.w,
         height: 100,
+        //color: Colors.green,
         child:
         Row
-          (
+        (
           mainAxisAlignment: MainAxisAlignment.start,
           children:
           [
             Padding
-              (
+            (
               padding: const EdgeInsets.only(left: 20.0),
               child: _profile(),
             ),
-
             Flexible
             (
               child: _nickName(),
@@ -190,8 +186,8 @@ class _UserInfoPageState extends State<UserInfoPage>
     child:
     Container
     (
-      width: 50.w,
-      height: 50.h,
+      width: 50,
+      height: 50,
       decoration: const BoxDecoration
       (
         border: Border
@@ -273,7 +269,7 @@ class _UserInfoPageState extends State<UserInfoPage>
               children:
               [
                 Row
-                  (
+                (
                   mainAxisAlignment: MainAxisAlignment.start,
                   children:
                   [
@@ -603,10 +599,13 @@ class _UserInfoPageState extends State<UserInfoPage>
   );
 
   Widget _mainListView() =>
+  Expanded
+  (
+    child:
   Container
   (
     width: 390.w,
-    height: 405.h,
+    //height: 443.h,
     //color: Colors.green,
     alignment: Alignment.center,
     child:
@@ -614,6 +613,7 @@ class _UserInfoPageState extends State<UserInfoPage>
     (() =>
       ListView.builder
       (
+        //physics: ClampingScrollPhysics(),
         itemCount: UserInfoMainListView.to.list.length,
         itemBuilder: (context, index)
         {
@@ -622,6 +622,7 @@ class _UserInfoPageState extends State<UserInfoPage>
         },
       ),
     ),
+  ),
   );
 }
 

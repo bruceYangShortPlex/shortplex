@@ -138,7 +138,6 @@ class _FeaturedPageState extends State<FeaturedPage>
                       onTap: ()
                       {
                         Get.to(()=>ContentInfoPage());
-                        print('F on tap');
                       },
                       child:
                       Row

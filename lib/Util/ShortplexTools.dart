@@ -87,8 +87,20 @@ String SetStringArgument(String _source, List<String> list)
   return dest;
 }
 
-Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
-    String _name, String _date, bool _likeCheck, String _commant, Function(int) _callClickLike, Function(int) _callOpenCommant,Function(int) _callDelete)
+Widget CommentWidget
+      (
+        int _index,
+        String _iconUrl,
+        String _episodeNumber,
+        String _name,
+        String _date,
+        bool _likeCheck,
+        String _commant,
+        String _replyCount,
+        String _likeCount,
+        bool _isOwner,
+        bool _isBest,
+        Function(int) _callClickLike, Function(int) _callOpenCommant,Function(int) _callDelete)
 {
   var index = _index;
   return
@@ -96,7 +108,7 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
   (
     width: 310,
     //height: 92,
-    color: Colors.yellow,
+    //color: Colors.yellow,
     child:
     Column
     (
@@ -161,32 +173,37 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
                     (
                       children:
                       [
-                        Padding
+                        Visibility
                         (
-                          padding: const EdgeInsets.only(left: 2, top: 2),
+                          visible: _isBest,
                           child:
-                          Container
+                          Padding
                           (
-                            width: 34,
-                            height: 13,
-                            decoration: ShapeDecoration(
-                              color: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(width: 0.80, color: Color(0xFF00FFBF)),
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                            ),
+                            padding: const EdgeInsets.only(left: 2, top: 2),
                             child:
-                            FittedBox
+                            Container
                             (
-                              alignment: Alignment.center,
-                              child:
-                              Text
-                              (
-                                'BEST',
-                                style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                              width: 34,
+                              height: 13,
+                              decoration: ShapeDecoration(
+                                color: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(width: 0.80, color: Color(0xFF00FFBF)),
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
                               ),
-                              fit: BoxFit.contain,
+                              child:
+                              FittedBox
+                              (
+                                alignment: Alignment.center,
+                                child:
+                                Text
+                                (
+                                  'BEST',
+                                  style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                ),
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ),
@@ -203,7 +220,7 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
                             child:
                             Text
                             (
-                              _episodeNumber,
+                              SetTableStringArgument(100034, [_episodeNumber]),
                               style: TextStyle(fontSize: 12, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
                             ),
                           ),
@@ -275,7 +292,7 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
           Row
           (
             //crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children:
             [
               Padding
@@ -297,9 +314,20 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
                   ),
                 ),
               ),
+              Container
+              (
+                width: 40,
+                child:
+                Text
+                (
+                  textAlign: TextAlign.start,
+                  _likeCount,
+                  style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                ),
+              ),
               Padding
               (
-                padding: const EdgeInsets.only(right: 80),
+                padding: const EdgeInsets.only(left: 0),
                 child:
                 Container
                 (
@@ -315,21 +343,43 @@ Widget CommantWidget(int _index, String _iconUrl, String _episodeNumber,
                   ),
                 ),
               ),
-              Padding
+              Container
               (
-                padding: const EdgeInsets.only(right: 0),
+                //color: Colors.blue,
+                width: 40,
                 child:
-                Container
+                Text
                 (
-                  //color: Colors.blue,
-                  child: IconButton
+                  textAlign: TextAlign.start,
+                  _replyCount,
+                  style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                ),
+              ),
+              Visibility
+              (
+                visible: _isOwner,
+                child:
+                Align
+                (
+                  alignment: Alignment.centerRight,
+                  child:
+                  Padding
                   (
-                    padding: EdgeInsets.zero,
-                    onPressed: ()
-                    {
-                      _callOpenCommant(index);
-                    },
-                    icon: Icon( CupertinoIcons.delete, color: Colors.white,size: 15,),
+                    padding: const EdgeInsets.only(right: 0),
+                    child:
+                    Container
+                    (
+                      //color: Colors.blue,
+                      child: IconButton
+                      (
+                        padding: EdgeInsets.zero,
+                        onPressed: ()
+                        {
+                          _callOpenCommant(index);
+                        },
+                        icon: Icon( CupertinoIcons.delete, color: Colors.white,size: 15,),
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -268,9 +268,12 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                 ),
                               ),
                               child:
-                              Text(StringTable().Table![400007]!,
+                              Text
+                              (
+                                StringTable().Table![400007]!,
                                 style:
-                                const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                                const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                              ),
                             ),
                           ],
                         ),

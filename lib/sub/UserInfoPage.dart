@@ -5,16 +5,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/state_manager.dart';
+import 'package:shortplex/sub/BuySubscriptionPage.dart';
 import 'package:shortplex/sub/SettingPage.dart';
 import 'package:shortplex/sub/ShopPage.dart';
 import 'package:shortplex/sub/WalletInfoPage.dart';
 import '../Util/HttpProtocolManager.dart';
+import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import '../table/UserData.dart';
+import 'HomePage.dart';
 import 'LoginPage.dart';
 
 enum UserInfoSubPageType
@@ -57,17 +61,20 @@ class UserInfoPage extends StatefulWidget {
 class _UserInfoPageState extends State<UserInfoPage>
 {
   @override
-  void didUpdateWidget(covariant UserInfoPage oldWidget) async
+  void didUpdateWidget(covariant UserInfoPage oldWidget)
   {
     super.didUpdateWidget(oldWidget);
 
-    var manager = Get.find<HttpProtocolManager>();;
+    var manager = HttpProtocolManager.to;
     manager.send_GetUserData().then((value)
     {
-      //유저정보 불러와서 비동기로 데이터 체우기.
-      var jsonData = jsonDecode(value);
-      var providerid = jsonData['providerid'];
-      print('providerid');
+      print('send GetUserData value ${value}');
+      if (value != '') {
+        //유저정보 불러와서 비동기로 데이터 체우기.
+        var jsonData = jsonDecode(value);
+        var providerid = jsonData['providerid'];
+        print('providerid');
+      }
     });
   }
 
@@ -245,7 +252,7 @@ class _UserInfoPageState extends State<UserInfoPage>
       Obx(()=>
         Visibility
         (
-          visible: !Get.find<UserData>().isSubscription.value,
+          visible: Get.find<UserData>().isSubscription.value,
           child:
           Container
           (
@@ -349,7 +356,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                             //   });
                             // }
 
-                            Get.to(() => ShopPage());
+                            Get.to(() => BuySubscriptionPage());
                           },
                         ),
                       ),
@@ -808,4 +815,228 @@ class UserInfoMainListView extends GetxController
       ],
     ),
   );
+
+  Widget contentsView(List<contentData> _list, [bool _buttonVisible = false])
+  {
+    if (_list.length == 0)
+      return SizedBox();
+
+    return
+      Container
+        (
+        width: 390,
+        child:
+        Column
+          (
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:
+          [
+            Row
+              (
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children:
+              [
+                Text
+                  (
+                  _list[0].title!,
+                  style:
+                  const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                ),
+                SizedBox(height: 10,),
+                SizedBox
+                  (
+                  width: 40,
+                  child:
+                  Visibility
+                    (
+                    visible: _buttonVisible,
+                    child:
+                    IconButton
+                      (
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        iconSize: 20,
+                        icon: const Icon(Icons.arrow_forward_ios),
+                        onPressed: ()
+                        {
+                          print('Click Move All Contents');
+                        }
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10,),
+            SingleChildScrollView
+              (
+              scrollDirection: Axis.horizontal,
+              child:
+              Row
+                (
+                mainAxisAlignment: MainAxisAlignment.start,
+                children:
+                [
+                  for(var item in _list)
+                    contentItem(item),
+                ],
+              ),
+            ),
+            SizedBox(height: 30,),
+          ],
+        ),
+      );
+  }
+
+  Widget contentItem(contentData _data)
+  {
+    return
+      Padding
+        (
+        padding: const EdgeInsets.only(right: 10),
+        child:
+        Column
+          (
+          children:
+          [
+            GestureDetector
+              (
+              onTap: ()
+              {
+                if (_data.isWatching!)
+                {
+                  print(_data.id);
+                  print('go to content player');
+                }
+                else
+                {
+                  print('go to info page');
+                  print(_data.id);
+                }
+              },
+              child:
+              Stack
+                (
+                alignment: _data.isWatching! ? Alignment.center : Alignment.topRight,
+                children:
+                [
+                  Container
+                    (
+                    width: 105,
+                    height: 160,
+                    decoration: ShapeDecoration
+                      (
+                      color: Color(0xFFC4C4C4),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                    ),
+                  ),
+                  Visibility
+                    (
+                    visible: _data.isWatching!,
+                    child:
+                    Container
+                      (
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(left: 3.5),
+                      width: 50,
+                      height: 50,
+                      decoration: ShapeDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        shape: OvalBorder(
+                          side: BorderSide(
+                            width: 1.50,
+                            strokeAlign: BorderSide.strokeAlignCenter,
+                            color: Color(0xFF00FFBF),
+                          ),
+                        ),
+                      ),
+                      child: Icon(CupertinoIcons.play_arrow_solid, size: 28, color: Colors.white,),
+                    ),
+                  ),
+                  Visibility
+                    (
+                    visible: _data.isNew!,
+                    child:
+                    Container
+                      (
+                      width: 29,
+                      height: 14,
+                      alignment: Alignment.center,
+                      decoration: ShapeDecoration
+                        (
+                        color: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 0.80, color: Color(0xFF00FFBF)),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                      child:
+                      Text
+                        (
+                        'NEW',
+                        style:
+                        const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
+                    ),
+                  ),
+                  Padding
+                    (
+                    padding: const EdgeInsets.only(top: 160 - 42, right: 105 - 42),
+                    child:
+                    Visibility
+                      (
+                        visible: _data.rank != 0,
+                        child:
+                        Container
+                          (
+                          //alignment: Alignment.center,
+                          //width: 42,height: 42, color: Colors.red,
+                          child: SvgPicture.asset('assets/images/home/home_frame.svg', fit: BoxFit.contain,),
+                        )
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Visibility
+              (
+              visible: _data.isWatching!,
+              child:
+              SizedBox
+                (
+                width: 105,
+                child:
+                Row
+                  (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:
+                  [
+                    Padding
+                      (
+                      padding: const EdgeInsets.only(left: 6, bottom: 2.1),
+                      child: Text
+                        (
+                        _data.watchingEpisode!,
+                        style:
+                        const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
+                    ),
+                    IconButton
+                      (
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.zero,
+                      iconSize: 16,
+                      onPressed: ()
+                      {
+                        print('go to info page');
+                        print(_data.id);
+                      },
+                      icon: Icon(CupertinoIcons.info), color: Colors.white,)
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+  }
 }

@@ -18,23 +18,24 @@ class CupertinoMain extends StatelessWidget{
   ];
 
   @override
-  Widget build(BuildContext context) {
-
+  Widget build(BuildContext context)
+  {
     // 페이지 전환을 위한 MyBottomNavgationBarController 인스턴스화 (의존성 주입)
     // Get.put : 수명이 페이지와 같음
     Get.put(MainBottomNavgationBarController());
 
-    return Scaffold(
-      backgroundColor: context.theme.colorScheme.background,
+    return
+    Scaffold
+    (
+      //backgroundColor: context.theme.colorScheme.background,
+      backgroundColor: Colors.transparent,
       // 빈 AppBar 따로 정의
       //appBar: EmptyAppBar(),
       // MyBottomNavgationBarController의 변수가 변하면 화면(페이지) 변경
-      body: Obx(() => SafeArea(
-          child:
-          // static 변수를 이용해 컨트롤러 접근
-          tabPages[MainBottomNavgationBarController.to.selectedIndex.value])),
-      // 2번에서 만든 BottomNavgationBar 컴포넌트
       bottomNavigationBar: MainBottomNavgationBar(),
+      body:
+      //Container(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, color: Colors.black,),
+      Obx(() => tabPages[MainBottomNavgationBarController.to.selectedIndex.value]),
     );
   }
 }
@@ -66,6 +67,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
       child: Obx(() =>
         BottomNavigationBar
         (
+          iconSize: 50,
         // 현재 인덱스를 selectedIndex에 저장
         currentIndex: controller.selectedIndex.value,
         // 요소(item)을 탭 할 시 실행)
@@ -82,31 +84,31 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
         // Bar에 보여질 요소. icon과 label로 구성.
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem
-            (
+          (
             // 선택된 탭은 채워진 아이콘, 나머지는 line 아이콘
               icon: controller.selectedIndex.value == 0
-                  ? Image.asset('assets/images/main/home_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/main/home_off.png', height: 50, width: 50,),
-              label: StringTable().Table![100001]),
+                  ? Image.asset('assets/images/main/home_on.png')
+                  : Image.asset('assets/images/main/home_off.png'),
+              label: StringTable().Table![100001], backgroundColor: Colors.transparent),
               BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 1
-                  ? Image.asset('assets/images/main/pick_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/main/pick_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/pick_on.png')
+                  : Image.asset('assets/images/main/pick_off.png'),
                   label: StringTable().Table![100002]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 2
-                  ? Image.asset('assets/images/main/open_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/main/open_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/open_on.png')
+                  : Image.asset('assets/images/main/open_off.png'),
               label: StringTable().Table![100003]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 3
-                  ? Image.asset('assets/images/main/reword_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/main/reword_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/reword_on.png')
+                  : Image.asset('assets/images/main/reword_off.png'),
               label: StringTable().Table![100004]),
           BottomNavigationBarItem(
               icon: controller.selectedIndex.value == 4
-                  ? Image.asset('assets/images/main/my_on.png', height: 50, width: 50,)
-                  : Image.asset('assets/images/main/my_off.png', height: 50, width: 50,),
+                  ? Image.asset('assets/images/main/my_on.png')
+                  : Image.asset('assets/images/main/my_off.png'),
               label: StringTable().Table![100005]),
         ],
       )),

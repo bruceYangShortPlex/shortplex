@@ -181,7 +181,7 @@ class LoginMananger
       return;
     }
 
-    var manager = Get.find<HttpProtocolManager>();
+    var manager = HttpProtocolManager.to;
     var oauthLogin = OAuthLogin
     (
       email: userData.email,

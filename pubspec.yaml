@@ -78,6 +78,7 @@ flutter:
   # assets:
   assets:
     - assets/images/main/
+    - assets/images/home/
     - assets/images/Public/
     - assets/images/Shop/
     - assets/images/User/

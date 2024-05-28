@@ -270,3 +270,10 @@ Future<int> _getDirectorySize(Directory dir) async
 // });
 // },
 // )
+
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await StringTable().InitTable();
+//   runApp( FeaturedPage());
+// }

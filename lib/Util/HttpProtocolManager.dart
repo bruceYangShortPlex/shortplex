@@ -31,8 +31,10 @@ import '../table/UserData.dart';
 //   }
 // }
 
-class HttpProtocolManager
+class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin
 {
+  static HttpProtocolManager get to => Get.find();
+
   static String ApiKey = 'cbj1PqcA1NKlJEzQa0BGKwJulkfBqQcb';
 
   getData() async
@@ -100,6 +102,9 @@ class HttpProtocolManager
   {
     var uri = 'https://quadra-server.web.app/api/v1/account/user';
     var userData = Get.find<UserData>();
+    if (userData.isLogin == false)
+      return '';
+
     var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${userData.id}','Content-Type':'application/json'};
     try
     {

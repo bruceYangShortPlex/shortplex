@@ -4,13 +4,6 @@ import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:get/get.dart';
 import '../table/StringTable.dart';
 
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await StringTable().InitTable();
-//   runApp( FeaturedPage());
-// }
-
 class FeaturedPage extends StatefulWidget
 {
   const FeaturedPage({super.key});
@@ -137,7 +130,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                     (
                       onTap: ()
                       {
-                        Get.to(()=>ContentInfoPage());
+                        Get.to(()=>ContentInfoPage(), arguments: dataList[currentIndex]);
                       },
                       child:
                       Row
@@ -238,5 +231,6 @@ class FeaturedData
   String iconPath = '';
   String title = '';
   String content = '';
+  int id = 0;
 }
 

@@ -38,7 +38,7 @@ class _FadeTestState extends State<FadeTest> with SingleTickerProviderStateMixin
 
   @override
   void dispose() {
-    //_controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 

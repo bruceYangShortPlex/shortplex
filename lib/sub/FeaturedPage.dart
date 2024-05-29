@@ -1,5 +1,7 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/Util/ShortsPlayer.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:get/get.dart';
 import '../table/StringTable.dart';
@@ -19,8 +21,6 @@ class _FeaturedPageState extends State<FeaturedPage>
   List<FeaturedData> dataList = <FeaturedData>[];
   var currentIndex = 0;
 
-  late PageController _pageController;
-
   @override
   void initState()
   {
@@ -28,12 +28,12 @@ class _FeaturedPageState extends State<FeaturedPage>
     // pageList.add(VideoPage(url: "https://cdn.gro.care/ec12312256ad_1683524903074.mp4",));
     // pageList.add(VideoPage(url: "https://cdn.gro.care/4dc9fddff1c8_1683731818849.mp4",));
     // pageList.add(VideoPage(url: "https://cdn.gro.care/045e95f617aa_1683612715343.mp4",));
-    // pageList.add(VideoPage(url: "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",));
-    // pageList.add(VideoPage(url: "https://videos.pexels.com/video-files/6060027/6060027-uhd_2160_3840_25fps.mp4",));
-    // pageList.add(VideoPage(url: "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",));
-    pageList.add(_testWidget('1'));
-    pageList.add(_testWidget('2'));
-    pageList.add(_testWidget('3'));
+    // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",));
+    // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/6060027/6060027-uhd_2160_3840_25fps.mp4",));
+    // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",));
+     pageList.add(_testWidget('1'));
+     pageList.add(_testWidget('2'));
+     pageList.add(_testWidget('3'));
 
     var data1 = FeaturedData();
     data1.title = '황후마마가 돌아왔다.1';
@@ -54,13 +54,15 @@ class _FeaturedPageState extends State<FeaturedPage>
     //   "https://videos.pexels.com/video-files/6060027/6060027-uhd_2160_3840_25fps.mp4",
     //   "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4"
     // ];
+  }
 
-    _pageController = PageController(initialPage: 0, viewportFraction: 1)
-      ..addListener(() {
-        setState(() {
-          currentIndex = _pageController.page!.round();
-        });
-      });
+  @override
+  void dispose()
+  {
+    pageList.clear();
+    urlList.clear();
+    dataList.clear();
+    super.dispose();
   }
 
   Widget _testWidget(String _title)
@@ -101,20 +103,26 @@ class _FeaturedPageState extends State<FeaturedPage>
             child:
             Stack
             (
+              alignment: Alignment.center,
               children:
               [
-                PageView.builder
+                CarouselSlider
                 (
-                  //physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: pageList.length,
-                  controller: _pageController,
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (context, index)
-                  {
-                    return pageList[index];
-                    //ShortsPlayer(shortsUrl: urlList[index]);
-                    //VideoPage(url: urlList[index]);
-                  },
+                  options: CarouselOptions
+                  (
+                    onPageChanged: (index, reason)
+                    {
+                      setState(() {
+                        currentIndex = index;
+                      });
+                    },
+                    aspectRatio: 9 / 16,
+                    viewportFraction: 1,
+                    //enlargeCenterPage: true,
+                    scrollDirection: Axis.vertical,
+                    //autoPlay: true,
+                  ),
+                  items: pageList,
                 ),
                 Align
                 (
@@ -124,13 +132,13 @@ class _FeaturedPageState extends State<FeaturedPage>
                   (
                     width: MediaQuery.of(context).size.width,
                     height: 125,
-                    color: Colors.blue,
+                    color: Colors.transparent,
                     child:
                     GestureDetector
                     (
                       onTap: ()
                       {
-                        Get.to(()=>ContentInfoPage(), arguments: dataList[currentIndex]);
+                        Get.to(()=> ContentInfoPage(), arguments: dataList[currentIndex]);
                       },
                       child:
                       Row

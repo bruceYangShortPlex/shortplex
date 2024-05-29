@@ -6,14 +6,15 @@ import 'package:shortplex/sub/FeaturedPage.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 import 'HomePage.dart';
+import 'ReleasedContentsPage.dart';
 
 class CupertinoMain extends StatelessWidget{
   // 탭별 화면
   static List<Widget> tabPages = <Widget>[
     HomePage(), // 외부 클래스로 정의
     FeaturedPage(),
-    HomePage(),
-    HomePage(),
+    ReleasedContentsPage(),
+    Container(),
     UserInfoPage(),
   ];
 

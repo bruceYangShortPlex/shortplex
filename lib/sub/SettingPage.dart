@@ -26,8 +26,6 @@ class SettingPage extends StatefulWidget
 
   @override
   State<SettingPage> createState() => _SettingPageState();
-
-
 }
 
 class _SettingPageState extends State<SettingPage>

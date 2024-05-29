@@ -1,8 +1,10 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/SearchPage.dart';
 
 class HomePage extends StatefulWidget
 {
@@ -13,7 +15,7 @@ class HomePage extends StatefulWidget
 }
 
 class _HomePageState extends State<HomePage> {
-  late PageController _pageController;
+
   List<Widget> pageList = <Widget>[];
   List<String> homePageViewTitle = <String>[];
   var homeContentsDataList = <contentData>[];
@@ -27,18 +29,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     print('init');
 
-    _pageController = PageController
-    (
-        initialPage: 4,
-        viewportFraction: 0.7
-    )
-      ..addListener(() {
-        setState(() {
-          pageIndex = _pageController.page!.round();
-        });
-      });
-
-    pageIndex = _pageController.initialPage;
+    pageIndex = 0;
 
     for(int i = 0; i < 10; ++i)
     {
@@ -87,6 +78,16 @@ class _HomePageState extends State<HomePage> {
   // }
 
   @override
+  void dispose()
+  {
+    pageList.clear();
+    homePageViewTitle.clear();
+    homeContentsDataList.clear();
+    rankContentsDataList.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context)
   {
     return
@@ -123,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                       (
                         onPressed: ()
                         {
-                          print('go to Search Page');
+                          Get.to(() => SearchPage());
                         },
                         icon: Icon(CupertinoIcons.search), iconSize: 30,color: Colors.white),
                     )
@@ -200,58 +201,27 @@ class _HomePageState extends State<HomePage> {
       height: 410,
       //color: Colors.green,
       child:
-      Stack
+      CarouselSlider
       (
-        children:
-        [
-          PageView.builder
-          (
-            //physics: AlwaysScrollableScrollPhysics(),
-            itemCount: pageList.length,
-            controller: _pageController,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index)
+        options:
+        CarouselOptions
+        (
+          enlargeFactor: 0.2,
+          enlargeCenterPage: true,
+          viewportFraction: 0.7,
+          height: 410,
+          autoPlay: true,
+          //aspectRatio: 1.0,
+          initialPage: 0,
+          onPageChanged: (index, reason)
+          {
+            setState(()
             {
-              double startScale = 0.9;
-              double  endScale = 0.9;
-
-              if (index == pageIndex)
-              {
-                 endScale = 1;
-                 if (tweenInitBlock == true)
-                 {
-                   startScale = 1;
-                   tweenInitBlock = false;
-                 }
-              }
-
-              return
-              TweenAnimationBuilder<double>
-              (
-                tween: Tween<double>(begin: startScale, end: endScale),
-                duration: Duration(milliseconds: 150),
-                builder: (BuildContext context, double size, Widget? child)
-                {
-                  return
-                  Transform.scale
-                  (
-                    scale: size,
-                    child:
-                    Card
-                    (
-                      child:
-                      Center
-                      (
-                        child:
-                        pageList[index],
-                      ),
-                    ),
-                  );
-                }
-              );
-            },
-          ),
-        ]
+              pageIndex = index;
+            });
+          },
+        ),
+        items: pageList,
       ),
     );
   }
@@ -398,7 +368,7 @@ class _HomePageState extends State<HomePage> {
                         children:
                         [
                           SvgPicture.asset
-                            (
+                          (
                             'assets/images/home/home_frame_bg.svg',
                             width: 180,
                             height: 160,

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
@@ -25,12 +26,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 {
   bool check = false;
 
-  List<bool> _selections = List.generate(3, (_) => false);
+  var _selections = List.generate(3, (_) => false);
   var episodeGroupList = <String>[];
-  List<bool> episodeGroupSelections = <bool>[];
+  var episodeGroupSelections = <bool>[];
   late Map<int, List<EpisodeContentData>> mapEpisodeContentsData = {};
-  List<EpisodeContentData> episodeContentsList = <EpisodeContentData>[];
-  List<EpisodeCommentData> episodeCommentList = <EpisodeCommentData>[];
+  var episodeContentsList = <EpisodeContentData>[];
+  var episodeCommentList = <EpisodeCommentData>[];
+  var _scrollController = ScrollController();
 
   @override
   void initState()
@@ -64,30 +66,95 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     mapEpisodeContentsData[0] = episodeContentsList;
     episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
 
-    for(int i = 0; i < 20; ++i)
-      {
-        var commentData = EpisodeCommentData
-        (
-          name: '황후마마가 돌아왔다.',
-          commant: '이건 재미있다. 무조건 된다고 생각한다.',
-          date: '24.09.06',
-          episodeNumber: '11',
-          iconUrl: '',
-          ID: i,
-          isLikeCheck: i % 2 == 0,
-          likeCount: '12',
-          replyCount: '3',
-          isOwner: i == 0,
-          isBest: true,
-        );
-        episodeCommentList.add(commentData);
+    for(int i = 0; i < 10; ++i)
+    {
+      var commentData = EpisodeCommentData
+      (
+        name: '황후마마가 돌아왔다.',
+        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        date: '24.09.06',
+        episodeNumber: '11',
+        iconUrl: '',
+        ID: i,
+        isLikeCheck: i % 2 == 0,
+        likeCount: '12',
+        replyCount: '3',
+        isOwner: i == 0,
+        isBest: true,
+      );
+      episodeCommentList.add(commentData);
+    }
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _onEndOfPage();
       }
+    });
 
     setState(()
     {
       _selections[0] = true;
       episodeGroupSelections[0] = true;
     });
+  }
+
+  @override
+  void dispose()
+  {
+    _scrollController.dispose();
+    _selections.clear();
+    episodeGroupList.clear();
+    episodeGroupSelections.clear();
+    mapEpisodeContentsData.clear();
+    episodeContentsList.clear();
+    episodeCommentList.clear();
+    super.dispose();
+  }
+
+  void _onEndOfPage() async
+  {
+    if (!_selections[1])
+      return;
+
+    try
+    {
+      //여기서 리스트 요청하고 만들고 해야한다.
+      // Replace with your method to fetch data from the server.
+      final newItems = await Future.delayed(Duration(seconds: 1),
+          ()
+          {
+            for(int i = 0; i < 10; ++i)
+            {
+              var commentData = EpisodeCommentData
+              (
+                name: '황후마마가 돌아왔다.',
+                commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                date: '24.09.06',
+                episodeNumber: '11',
+                iconUrl: '',
+                ID: i,
+                isLikeCheck: i % 2 == 0,
+                likeCount: '12',
+                replyCount: '3',
+                isOwner: i == 0,
+                isBest: true,
+              );
+              episodeCommentList.add(commentData);
+
+            }
+            setState(()
+            {
+
+            });
+
+          }
+      );
+    }
+    catch (e)
+    {
+      print(e);
+    }
   }
 
   @override
@@ -132,6 +199,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         child:
         SingleChildScrollView
         (
+          controller: _scrollController,
           child:
           Container
           (
@@ -629,6 +697,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   (
     visible: _selections[1],
     child:
+      // Container
+      // (
+      //   width: 390,
+      //   height: 270.w,
+      //   color: Colors.grey,
+      // ),
+
     Column
     (
       children:

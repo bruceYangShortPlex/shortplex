@@ -61,6 +61,13 @@ class _CommantPageState extends State<CommantPage>
   }
 
   @override
+  void dispose()
+  {
+    replyList.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context)
   {
     return mainWidget(context);

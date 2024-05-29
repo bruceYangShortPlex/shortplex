@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/table/UserData.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       GetMaterialApp
       (
           debugShowCheckedModeBanner: false,
-          theme: ThemeData.dark(useMaterial3: true),
+          theme: ThemeData.dark(useMaterial3: true,),
           // ThemeData
           //   (
           //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.black12, background: Colors.black,),

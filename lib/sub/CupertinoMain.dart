@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/FeaturedPage.dart';
+import 'package:shortplex/sub/RewardPage.dart';
 import 'package:shortplex/sub/UserInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 import 'HomePage.dart';
@@ -14,7 +15,7 @@ class CupertinoMain extends StatelessWidget{
     HomePage(), // 외부 클래스로 정의
     FeaturedPage(),
     ReleasedContentsPage(),
-    Container(),
+    RewardPage(),
     UserInfoPage(),
   ];
 

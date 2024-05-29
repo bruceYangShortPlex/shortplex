@@ -17,6 +17,7 @@ class CommantPage extends StatefulWidget
 class _CommantPageState extends State<CommantPage>
 {
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
+  var scrollController = ScrollController();
 
   var commentData = EpisodeCommentData
   (
@@ -40,7 +41,7 @@ class _CommantPageState extends State<CommantPage>
     commentData = Get.arguments;
     print('data 1 : ${commentData}');
 
-    for(int i = 0; i < 20; ++i)
+    for(int i = 0; i < 10; ++i)
     {
       var commentData = EpisodeCommentData
       (
@@ -58,13 +59,63 @@ class _CommantPageState extends State<CommantPage>
       );
       replyList.add(commentData);
     }
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        onEndOfPage();
+      }
+    });
   }
 
   @override
   void dispose()
   {
+    scrollController.dispose();
     replyList.clear();
     super.dispose();
+  }
+
+  void onEndOfPage() async
+  {
+    try
+    {
+      //여기서 리스트 요청하고 만들고 해야한다.
+      // Replace with your method to fetch data from the server.
+      final newItems = await Future.delayed(Duration(seconds: 1),
+              ()
+          {
+            for(int i = 0; i < 10; ++i)
+            {
+              var commentData = EpisodeCommentData
+              (
+                name: '황후마마가 돌아왔다.',
+                commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                date: '24.09.06',
+                episodeNumber: '11',
+                iconUrl: '',
+                ID: i,
+                isLikeCheck: i % 2 == 0,
+                likeCount: i.toString(),
+                replyCount: '3',
+                isOwner: i == 0,
+                isBest: true,
+              );
+              replyList.add(commentData);
+            }
+
+            setState(()
+            {
+
+            });
+
+          }
+      );
+    }
+    catch (e)
+    {
+      print(e);
+    }
   }
 
   @override
@@ -81,15 +132,15 @@ SafeArea
   (
     home:
     CupertinoPageScaffold
-      (
+    (
       backgroundColor: Colors.black,
       navigationBar:
       CupertinoNavigationBar
-        (
+      (
         backgroundColor: Colors.transparent,
         leading:
         Row
-          (
+        (
           mainAxisAlignment: MainAxisAlignment.start,
           children:
           [
@@ -111,7 +162,7 @@ SafeArea
               ),
             ),
             Container
-              (
+            (
               width: MediaQuery.of(context).size.width * 0.3,
               height: 50,
               //color: Colors.green,
@@ -134,10 +185,11 @@ SafeArea
       (
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Colors.blue,
+        //color: Colors.blue,
         child:
         SingleChildScrollView
         (
+          controller: scrollController,
           child:
           Padding
           (

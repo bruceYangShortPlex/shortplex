@@ -32,7 +32,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   late Map<int, List<EpisodeContentData>> mapEpisodeContentsData = {};
   var episodeContentsList = <EpisodeContentData>[];
   var episodeCommentList = <EpisodeCommentData>[];
-  var _scrollController = ScrollController();
+  var scrollController = ScrollController();
 
   @override
   void initState()
@@ -85,10 +85,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       episodeCommentList.add(commentData);
     }
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        _onEndOfPage();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        onEndOfPage();
       }
     });
 
@@ -102,7 +102,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   @override
   void dispose()
   {
-    _scrollController.dispose();
+    scrollController.dispose();
     _selections.clear();
     episodeGroupList.clear();
     episodeGroupSelections.clear();
@@ -112,7 +112,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     super.dispose();
   }
 
-  void _onEndOfPage() async
+  void onEndOfPage() async
   {
     if (!_selections[1])
       return;
@@ -199,7 +199,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         child:
         SingleChildScrollView
         (
-          controller: _scrollController,
+          controller: scrollController,
           child:
           Container
           (

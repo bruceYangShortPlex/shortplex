@@ -1,17 +1,17 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
 import '../table/StringTable.dart';
 
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await StringTable().InitTable();
-//   runApp(ReleasedContentsPage());
-// }
+void main() async
+{
+  WidgetsFlutterBinding.ensureInitialized();
+  await StringTable().InitTable();
+  runApp(ReleasedContentsPage());
+}
 
 class ReleasedContentsPage extends StatefulWidget {
   const ReleasedContentsPage({super.key});
@@ -142,6 +142,25 @@ Widget mainWidget(BuildContext context)=>
       ),
     );
 
+
+  Widget tweenAnimation(bool _play, Widget _widget)
+  {
+    return
+    TweenAnimationBuilder
+    (
+      duration: Duration(milliseconds: 200),
+      tween: _play ? Tween<Offset>(begin: Offset(0, 0), end: Offset(-5, -5)) : Tween<Offset>(begin: Offset(-5, -5), end: Offset(0, 0)),
+      builder: (context, offset, child)
+      {
+        return Transform.translate
+        (
+            offset: offset,
+            child: _widget,
+        );
+      }
+    );
+  }
+
   Widget contentSelctItem(int _index)
   {
     var month = '7월'; //20003
@@ -154,7 +173,6 @@ Widget mainWidget(BuildContext context)=>
       [
         Row
         (
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children:
           [
@@ -173,6 +191,7 @@ Widget mainWidget(BuildContext context)=>
             ),
           ],
         ),
+        SizedBox(height: 5,),
         GestureDetector
         (
           onTap: ()
@@ -184,27 +203,44 @@ Widget mainWidget(BuildContext context)=>
             });
           },
           child:
-          Container
+          Stack
           (
-            width: 73.50,
-            height: 112,
-            decoration: ShapeDecoration(
-              color: Color(0xFFC4C4C4),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                    width: 1.50,
-                    color: selectedIndex == _index
-                        ? Color(0xFF00FFBF)
-                        : Colors.grey),
-                borderRadius: BorderRadius.circular(7),
+            children:
+            [
+              SvgPicture.asset
+              (
+                'assets/images/home/home_frame_bg.svg',
+                width: 73.50,
+                height: 112,
+                fit: BoxFit.fill,
               ),
-            ),
-            child: Text('afdafs'),
+              tweenAnimation
+              (
+                selectedIndex == _index,
+                Container
+                  (
+                  width: 73.50,
+                  height: 112,
+                  decoration: ShapeDecoration(
+                    color: Color(0xFFC4C4C4),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                          width: 1.50,
+                          color: selectedIndex == _index
+                              ? Color(0xFF00FFBF)
+                              : Colors.transparent),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                  ),
+                  //child: Text('afdafs'),
+                ),
+              ),
+            ],
           ),
-        ),
+          ),
+        SizedBox(height: 10,),
       ],
     );
-
   }
 
   Widget contentSelector()
@@ -213,7 +249,7 @@ Widget mainWidget(BuildContext context)=>
     Container
     (
       height: double.infinity,
-      width: 86,
+      width: 95,
       color: Colors.blue,
       child:
       ListView
@@ -221,9 +257,9 @@ Widget mainWidget(BuildContext context)=>
         scrollDirection: Axis.vertical,
         children:
         [
-          SizedBox(height: 130,),
+          SizedBox(height: 50,),
           for(var item in contentList)
-            contentSelctItem(item),
+            contentSelctItem(item)
         ],
       ),
     );
@@ -440,7 +476,7 @@ Widget mainWidget(BuildContext context)=>
                               padding: const EdgeInsets.only(top: 18),
                               child: Text
                               (
-                                StringTable().Table![200002]!,
+                                StringTable().Table![100024]!,
                                 style:
                                 TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
                               ),
@@ -454,56 +490,6 @@ Widget mainWidget(BuildContext context)=>
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class MyCarousel extends StatefulWidget {
-  @override
-  _MyCarouselState createState() => _MyCarouselState();
-}
-
-class _MyCarouselState extends State<MyCarousel> {
-  List<Color> colors = List.generate(10, (index) => Colors.grey);
-
-  @override
-  Widget build(BuildContext context)
-  {
-    return
-    MaterialApp
-    (
-      home:
-      CarouselSlider.builder
-      (
-        itemCount: 10,
-        itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex)
-        {
-          return
-          GestureDetector
-          (
-            onTap: () {
-              setState(() {
-                colors[itemIndex] = Colors.blue;  // 원하는 색상으로 변경
-              });
-            },
-            child: Container(
-              color: colors[itemIndex],
-              width: MediaQuery.of(context).size.width,
-              child: Text('Item $itemIndex'),
-            ),
-          );
-        },
-        options: CarouselOptions(
-          height: 400,
-          enlargeCenterPage: true,
-          autoPlay: true,
-          aspectRatio: 2.0,
-          autoPlayCurve: Curves.fastOutSlowIn,
-          enableInfiniteScroll: true,
-          autoPlayAnimationDuration: Duration(milliseconds: 800),
-          viewportFraction: 0.8,
         ),
       ),
     );

@@ -32,14 +32,9 @@ class MyApp extends StatelessWidget {
       child:
       GetMaterialApp
       (
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData.dark(useMaterial3: true,),
-          // ThemeData
-          //   (
-          //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.black12, background: Colors.black,),
-          //   useMaterial3: true,
-          //   ),
-      home: LogoPage(),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(useMaterial3: true,),
+        home: LogoPage(),
     ), designSize: Size(390, 844));
   }
 }

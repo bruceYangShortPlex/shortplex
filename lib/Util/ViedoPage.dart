@@ -52,8 +52,7 @@ class _VideoPageState extends State<VideoPage>
   {
     _videoPlayerController1 =
         VideoPlayerController.networkUrl(Uri.parse(widget.url));
-    //_videoPlayerController2 =
-        VideoPlayerController.networkUrl(Uri.parse(widget.url));
+    //_videoPlayerController2 = VideoPlayerController.networkUrl(Uri.parse(widget.url));
     await Future.wait([
       _videoPlayerController1.initialize(),
       //_videoPlayerController2.initialize()

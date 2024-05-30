@@ -32,13 +32,15 @@ class _LogoPageState extends State<LogoPage> {
   }
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     //Future.delayed(Duration(seconds: 1)).then((value) => completer.complete());
   }
 
   @override
-  void didChangeDependencies() async {
+  void didChangeDependencies() async
+  {
     super.didChangeDependencies();
 
     await waitUntilCondition();

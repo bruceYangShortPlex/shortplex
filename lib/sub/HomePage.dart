@@ -6,6 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/SearchPage.dart';
 
+import 'ContentPlayer.dart';
+
 class HomePage extends StatefulWidget
 {
   const HomePage({super.key});
@@ -195,33 +197,37 @@ class _HomePageState extends State<HomePage> {
   Widget homPageView()
   {
     return
-    Container
+    Padding
     (
-      width: 390,
-      height: 410,
-      //color: Colors.green,
-      child:
-      CarouselSlider
+      padding: const EdgeInsets.only(top: 10),
+      child: Container
       (
-        options:
-        CarouselOptions
+        width: 390,
+        height: 410,
+        //color: Colors.green,
+        child:
+        CarouselSlider
         (
-          enlargeFactor: 0.2,
-          enlargeCenterPage: true,
-          viewportFraction: 0.7,
-          height: 410,
-          autoPlay: true,
-          //aspectRatio: 1.0,
-          initialPage: 0,
-          onPageChanged: (index, reason)
-          {
-            setState(()
+          options:
+          CarouselOptions
+          (
+            enlargeFactor: 0.2,
+            enlargeCenterPage: true,
+            viewportFraction: 0.7,
+            height: 410,
+            autoPlay: true,
+            //aspectRatio: 1.0,
+            initialPage: 0,
+            onPageChanged: (index, reason)
             {
-              pageIndex = index;
-            });
-          },
+              setState(()
+              {
+                pageIndex = index;
+              });
+            },
+          ),
+          items: pageList,
         ),
-        items: pageList,
       ),
     );
   }
@@ -367,11 +373,15 @@ class _HomePageState extends State<HomePage> {
                       (
                         children:
                         [
-                          SvgPicture.asset
+                          Padding
                           (
-                            'assets/images/home/home_frame_bg.svg',
-                            width: 180,
-                            height: 160,
+                            padding: const EdgeInsets.only(left: 75),
+                            child: SvgPicture.asset
+                            (
+                              'assets/images/home/home_frame_bg.svg',
+                              width: 180,
+                              height: 160,
+                            ),
                           ),
                           SvgPicture.asset
                             (
@@ -432,6 +442,7 @@ class _HomePageState extends State<HomePage> {
               {
                 print(_data.id);
                 print('go to content player');
+                Get.to(() => ContentPlayer());
               }
               else
               {

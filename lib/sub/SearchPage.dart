@@ -56,7 +56,7 @@ class _SearchPageState extends State<SearchPage>
 
 Widget mainWidget(BuildContext context)=>
     SafeArea
-      (
+    (
       child:
       CupertinoApp
         (
@@ -261,29 +261,32 @@ Widget mainWidget(BuildContext context)=>
   Widget GridViw()
   {
     return
-    Container
+    Expanded
     (
-      width: 330,
-      height: MediaQuery.of(context).size.height - 160,
-      child:
-      PagedGridView<int, Widget>
+      child: Container
       (
-        pagingController: _pagingController,
-        gridDelegate:
-        SliverGridDelegateWithFixedCrossAxisCount
+        width: 330,
+        height: MediaQuery.of(context).size.height - 160,
+        child:
+        PagedGridView<int, Widget>
         (
-          mainAxisSpacing: 15,
-          crossAxisSpacing: 15,
-          childAspectRatio: 105 / 160,
-          crossAxisCount: 3,
-        ),
-        builderDelegate:
-        PagedChildBuilderDelegate<Widget>
-        (
-          itemBuilder: (context, item, index) =>
-          GridTile
+          pagingController: _pagingController,
+          gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount
           (
-            child: item,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            childAspectRatio: 105 / 160,
+            crossAxisCount: 3,
+          ),
+          builderDelegate:
+          PagedChildBuilderDelegate<Widget>
+          (
+            itemBuilder: (context, item, index) =>
+            GridTile
+            (
+              child: item,
+            ),
           ),
         ),
       ),

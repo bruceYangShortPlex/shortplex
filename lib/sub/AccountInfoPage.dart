@@ -69,10 +69,12 @@ class _AccountInfoPageState extends State<AccountInfoPage>
                   //color: Colors.green,
                   alignment: Alignment.center,
                   child:
-                  Text(StringTable().Table![400040]!,
+                  Text
+                  (
+                    StringTable().Table![400040]!,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
-
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
                 ),
                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
               ],

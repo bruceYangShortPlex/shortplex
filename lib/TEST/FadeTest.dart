@@ -49,83 +49,80 @@ class _FadeTestState extends State<FadeTest> with SingleTickerProviderStateMixin
   }
 
   Widget mainWidget(BuildContext context)=>
-      SafeArea
-        (
+  SafeArea
+  (
+    child:
+    CupertinoApp
+    (
+      home:
+      CupertinoPageScaffold
+      (
+        backgroundColor: Colors.black,
         child:
-        CupertinoApp
-          (
-          home:
-          CupertinoPageScaffold
+        Stack
+        (
+          children:
+          [
+            Container
             (
-            backgroundColor: Colors.black,
-            child:
-            Stack
-            (
-              children:
-              [
-                Container
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Colors.blueGrey,
+              child:
+              GestureDetector
+              (
+                onTap: ()
+                {
+                  if (_controller.status == AnimationStatus.completed)
+                  {
+                    _controller.reverse();
+                    setState(() {
+                      _visible = false;
+                    });
+                  }
+                  else
+                  {
+                    _controller.forward();
+                    setState(() {
+                      _visible = true;
+                    });
+                  }
+                },
+                child:
+                FadeTransition
                 (
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  color: Colors.blueGrey,
+                  opacity: _controller,
                   child:
-                    GestureDetector
+                  Container
+                  (
+                    color: Colors.blue,
+                    child:
+                    Column
                     (
-                      onTap: ()
-                      {
-                        if (_controller.status == AnimationStatus.completed)
-                        {
-                          _controller.reverse();
-                          setState(() {
-                            _visible = false;
-                          });
-                        }
-                        else
-                        {
-                          _controller.forward();
-                          setState(() {
-                            _visible = true;
-                          });
-                        }
-
-
-                      },
-                      child:
-
-                      FadeTransition
-                      (
-                        opacity: _controller,
-                        child:
-                        Container
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:
+                      [
+                        IgnorePointer
                         (
-                          color: Colors.blue,
+                          ignoring: _visible == false,
                           child:
-                          Column
+                          IconButton
                           (
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children:
-                            [
-                              IgnorePointer
-                              (
-                                ignoring: _visible == false,
-                                child:
-                                IconButton
-                                (
-                                  onPressed: () =>
-                                  {
-                                    print('click')
-                                  },
-                                  icon: Icon(Icons.add, size: 100,)),
-                              ),
-                            ],
-                          ),
+                            onPressed: () =>
+                            {
+                              print('click')
+                            },
+                            icon: Icon(Icons.add, size: 100,)),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-              ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }

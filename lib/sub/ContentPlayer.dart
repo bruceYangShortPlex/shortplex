@@ -2,19 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/routes/default_transitions.dart';
-import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:video_player/video_player.dart';
 
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
-
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  await StringTable().InitTable();
-  runApp(ContentPlayer());
-}
 
 class ContentPlayer extends StatefulWidget {
   @override
@@ -65,11 +56,17 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
       });
     });
 
-    setState(() {
-      _visible = false;
-    });
+    // setState(() {
+    //   _visible = true;
+    // });
 
     usedPopcorn = 3;
+
+    Future.delayed(Duration(milliseconds: 500)).then((_)
+    {
+      if (usedPopcorn != 0)
+        usedPopcornAnnounce();
+    });
   }
 
   SnackbarController usedPopcornAnnounce()
@@ -94,11 +91,10 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
   }
 
   @override
-  void didChangeDependencies()
+  void didChangeDependencies() async
   {
     super.didChangeDependencies();
-    if (usedPopcorn != 0)
-      usedPopcornAnnounce();
+
   }
 
   Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon)
@@ -118,7 +114,6 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
           onTap: ()
           {
             print('tap');
-            usedPopcornAnnounce();
           },
           child: Opacity
           (
@@ -144,7 +139,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                 children:
                 [
                   Padding
-                    (
+                  (
                     padding: const EdgeInsets.only(bottom: 14),
                     child: Icon(_buttonIcon, size: 22, color:Colors.white),
                   ),
@@ -202,19 +197,12 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                     color: Colors.white,
                     onPressed: ()
                     {
+                      //print(Get.isPopGestureEnable);
                       Get.back();
                     },
                   ),
-                  // IconButton
-                  // (
-                  //   onPressed: ()
-                  //   {
-                  //     Get.back();
-                  //   },
-                  //   icon: Icon(CupertinoIcons.back), color: Colors.white, iconSize: 33,
-
                   IconButton
-                    (
+                  (
                     onPressed: ()
                     {
                       //Get.off();
@@ -318,14 +306,9 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
   @override
   Widget build(BuildContext context)
   {
-    return //mainWidget(context);
-    // MaterialApp
-    // (
-    //   debugShowCheckedModeBanner: false,
-      //title: 'Video Demo',
-    //  home:
-      SafeArea
-      (
+    return
+    SafeArea
+    (
       child:
       CupertinoApp
       (

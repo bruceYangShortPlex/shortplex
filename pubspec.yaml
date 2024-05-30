@@ -41,8 +41,7 @@ dependencies:
   firebase_messaging: ^14.9.1
   firebase_auth: ^4.19.4
   firebase_analytics: ^10.10.4
-  chewie: ^1.8.1
-  video_player:
+  video_player: ^2.8.6
   kakao_flutter_sdk: ^1.9.2
   google_sign_in: ^6.2.1
   flutter_screenutil:

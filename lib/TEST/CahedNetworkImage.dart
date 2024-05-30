@@ -197,7 +197,7 @@ Future<int> _getDirectorySize(Directory dir) async
 //           backgroundColor: Colors.black,
 //           navigationBar:
 //           CupertinoNavigationBar
-//             (
+//           (
 //             backgroundColor: Colors.transparent,
 //             leading:
 //             Row

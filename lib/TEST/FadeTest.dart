@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
 import '../Util/ShortplexTools.dart';
-import '../Util/ViedoPage.dart';
 import '../table/StringTable.dart';
 
 void main()

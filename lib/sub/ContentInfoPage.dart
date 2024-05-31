@@ -7,12 +7,18 @@ import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/sub/CommentPage.dart';
 import '../table/StringTable.dart';
 
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await StringTable().InitTable();
-//   runApp(ContentInfoPage());
-// }
+void main() async
+{
+  WidgetsFlutterBinding.ensureInitialized();
+  await StringTable().InitTable();
+  runApp(ContentInfoPage());
+}
+
+enum CommentSortType
+{
+  LIKE,   //좋아요순.
+  LATEST, //최신순.
+}
 
 class ContentInfoPage extends StatefulWidget
 {
@@ -33,6 +39,8 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   var episodeContentsList = <EpisodeContentData>[];
   var episodeCommentList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
+  var totalCommentCount = 0;
+  CommentSortType commentSortType = CommentSortType.LATEST;
 
   @override
   void initState()
@@ -697,17 +705,96 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   (
     visible: _selections[1],
     child:
-      // Container
-      // (
-      //   width: 390,
-      //   height: 270.w,
-      //   color: Colors.grey,
-      // ),
-
     Column
     (
       children:
       [
+        SizedBox
+        (
+          width: 390,
+          child:
+          Row
+          (
+            children:
+            [
+              Expanded
+              (
+                child:
+                Container
+                (
+                  padding: EdgeInsets.only(left: 30, bottom: 1),
+                  child: Text
+                  (
+                    '${StringTable().Table![100026]!} (${totalCommentCount})',
+                    style:
+                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
+                ),
+              ),
+              GestureDetector
+              (
+                onTap: () {
+                  setState(() {
+                    commentSortType = CommentSortType.LIKE;
+                  });
+                },
+                child: Container
+                (
+                  width: 73,
+                  height: 26,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LIKE ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.only(bottom: 1),
+                  child:
+                  Text
+                  (
+                    StringTable().Table![100035]!,
+                    style:
+                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10,),
+              GestureDetector
+              (
+                onTap: () {
+                  setState(() {
+                    commentSortType = CommentSortType.LATEST;
+                  });
+                },
+                child: Container
+                (
+                  width: 73,
+                  height: 26,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LATEST ? Color(0xFF00FFBF) : Color(0xFF878787)),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.only(bottom: 1),
+                  child:
+                  Text
+                  (
+                    StringTable().Table![100036]!,
+                    style:
+                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10,),
+            ],
+          ),
+        ),
+        SizedBox(height: 10,),
         for(int i = 0; i < episodeCommentList.length; ++i)
           CommentWidget
           (

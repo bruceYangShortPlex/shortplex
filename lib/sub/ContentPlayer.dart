@@ -37,8 +37,6 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
   @override
   void initState()
   {
-    super.initState();
-
     videoController = VideoPlayerController.networkUrl(
         Uri.parse("https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4"))
       ..initialize().then((_) {
@@ -125,6 +123,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
       );
       replyList.add(commentData);
     }
+    super.initState();
   }
 
   @override
@@ -189,6 +188,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                   {
                     controlUIVisible = false;
                     isShowReply = false;
+                    tweenTime = 300;
                     bottomOffset = 0;
                   });
                 }
@@ -465,28 +465,71 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
             ),
           )
           :
-          Center
+          Stack
           (
-            child:
-            //controlUI(context),
-            CircularProgressIndicator()
-          ),
+            children:
+            [
+              Align
+              (
+                alignment: Alignment.topCenter,
+                child:
+                Container
+                (
+                  height: 50,
+                  child:
+                  Row
+                  (
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children:
+                    [
+                      CupertinoNavigationBarBackButton
+                      (
+                        color: Colors.white,
+                        onPressed: ()
+                        {
+                          Get.back();
+                        },
+                      ),
+                      IconButton
+                      (
+                        onPressed: ()
+                        {
+                          //Get.off();
+                          print('다음회차 보기 누름');
+                        },
+                        icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Center
+              (
+                child:
+                //controlUI(context),
+                CircularProgressIndicator()
+              ),
+            ],
+          )
         )
       )
     );
   }
 
   double bottomOffset = -840.h;
+  int tweenTime = 0;
   Widget commentCanvas()
   {
     return
     TweenAnimationBuilder<double>
     (
       tween: Tween<double>(begin: 0, end: bottomOffset),
-      duration: const Duration(milliseconds: 300),
+      duration: Duration(milliseconds: tweenTime),
       builder: (BuildContext context, double offset, Widget? child)
       {
-        return Positioned(
+        return
+        Positioned
+        (
           bottom: offset,
           left: 0,
           right: 0,

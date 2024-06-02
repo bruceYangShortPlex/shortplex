@@ -24,7 +24,7 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage>
 {
   var contentUrl = '';
   var contentList = <int>[];
-  int selectedIndex = 1;
+  int selectedIndex = 0;
 
   @override
   void initState()
@@ -142,13 +142,13 @@ Widget mainWidget(BuildContext context)=>
       ),
     );
 
-
+  int tweenTime = 0;
   Widget tweenAnimation(bool _play, Widget _widget)
   {
     return
     TweenAnimationBuilder
     (
-      duration: Duration(milliseconds: 200),
+      duration: Duration(milliseconds: tweenTime),
       tween: _play ? Tween<Offset>(begin: Offset(0, 0), end: Offset(-5, -5)) : Tween<Offset>(begin: Offset(-5, -5), end: Offset(0, 0)),
       builder: (context, offset, child)
       {
@@ -196,6 +196,7 @@ Widget mainWidget(BuildContext context)=>
         (
           onTap: ()
           {
+            tweenTime = 300;
             setState(()
             {
               selectedIndex = _index;

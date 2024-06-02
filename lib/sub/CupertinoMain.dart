@@ -9,6 +9,46 @@ import 'package:shortplex/table/StringTable.dart';
 import 'HomePage.dart';
 import 'ReleasedContentsPage.dart';
 
+// class CupertinoMain extends StatefulWidget {
+//   const CupertinoMain({super.key});
+//
+//   @override
+//   State<CupertinoMain> createState() => _CupertinoMainState();
+// }
+//
+// class _CupertinoMainState extends State<CupertinoMain>
+// {
+//   static List<Widget> tabPages = <Widget>[
+//     HomePage(), // 외부 클래스로 정의
+//     FeaturedPage(),
+//     ReleasedContentsPage(),
+//     RewardPage(),
+//     UserInfoPage(),
+//   ];
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     // 페이지 전환을 위한 MyBottomNavgationBarController 인스턴스화 (의존성 주입)
+//     // Get.put : 수명이 페이지와 같음
+//     Get.put(MainBottomNavgationBarController());
+//
+//     return
+//       Scaffold
+//         (
+//         //backgroundColor: context.theme.colorScheme.background,
+//         backgroundColor: Colors.transparent,
+//         // 빈 AppBar 따로 정의
+//         //appBar: EmptyAppBar(),
+//         // MyBottomNavgationBarController의 변수가 변하면 화면(페이지) 변경
+//         bottomNavigationBar: MainBottomNavgationBar(),
+//         body:
+//         //Container(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, color: Colors.black,),
+//         Obx(() => tabPages[MainBottomNavgationBarController.to.selectedIndex.value]),
+//       );
+//   }
+// }
+
+
 class CupertinoMain extends StatelessWidget{
   // 탭별 화면
   static List<Widget> tabPages = <Widget>[

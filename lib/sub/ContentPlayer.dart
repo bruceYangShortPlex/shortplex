@@ -8,6 +8,7 @@ import 'package:video_player/video_player.dart';
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
+import 'ReplyPage.dart';
 
 enum ContentPlayButtonType
 {
@@ -90,7 +91,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
     for(int i = 0; i < 11; ++i)
     {
       var commentData = EpisodeCommentData
-        (
+      (
         name: '황후마마가 돌아왔다.',
         commant: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
@@ -104,6 +105,25 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
         isBest: true,
       );
       episodeCommentList.add(commentData);
+    }
+
+    for(int i = 0; i < 10; ++i)
+    {
+      var commentData = EpisodeCommentData
+      (
+        name: '황후마마가 돌아왔다.',
+        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        date: '24.09.06',
+        episodeNumber: '11',
+        iconUrl: '',
+        ID: i,
+        isLikeCheck: i % 2 == 0,
+        likeCount: '12',
+        replyCount: '3',
+        isOwner: i == 0,
+        isBest: true,
+      );
+      replyList.add(commentData);
     }
   }
 
@@ -165,8 +185,10 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               case ContentPlayButtonType.COMMENT:
                 {
                   tweenController.reverse();
-                  setState(() {
+                  setState(()
+                  {
                     controlUIVisible = false;
+                    isShowReply = false;
                     bottomOffset = 0;
                   });
                 }
@@ -386,6 +408,14 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
             onTap:
             ()
             {
+              if (bottomOffset == 0) {
+                bottomOffset = -840.h;
+                setState(() {
+
+                });
+                return;
+              }
+
               if (tweenController.status == AnimationStatus.completed)
               {
                 tweenController.reverse();
@@ -506,7 +536,8 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                     height: 550.h,
                     color: Colors.black,
                     child:
-                    contentComment(),
+                    isShowReply == false ?
+                    contentComment() : commentReply(),
                   ),
                 ),
               ],
@@ -661,7 +692,12 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                         },
                             (id)
                         {
+                          commentData = episodeCommentList[i];
                           //TODO : 답글 보기 처리.
+                          isShowReply = true;
+                          setState(() {
+
+                          });
                           //Get.to(() => ReplyPage(), arguments: episodeCommentList[i]);
                         },
                             (id)
@@ -680,14 +716,46 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
 
   //TODO : Reply
   bool isShowReply = false;
+  List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
+  EpisodeCommentData? commentData;
 
-  Widget showReply()
+  Widget commentReply()
   {
     return
     Container
     (
       height: 550.h,
-      color: Colors.green,
+      //color: Colors.green,
+      child:
+      Column
+      (
+        mainAxisAlignment: MainAxisAlignment.start,
+        children:
+        [
+          Container
+          (
+            height: 50,
+            alignment: Alignment.centerLeft,
+            child:
+            CupertinoNavigationBarBackButton
+            (
+              color: Colors.white,
+              onPressed: ()
+              {
+                isShowReply = false;
+                setState(() {
+
+                });
+              },
+            ),
+          ),
+          Expanded
+          (
+            child:
+            ReplyPopup(scrollController, commentData!, replyList, 20),
+          )
+        ],
+      ),
     );
   }
 
@@ -699,25 +767,32 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
       // Replace with your method to fetch data from the server.
         await Future.delayed(Duration(seconds: 1),
         ()
-          {
+        {
             print('update !');
-            for(int i = 0; i < 10; ++i)
+            if (isShowReply)
             {
-              var commentData = EpisodeCommentData
-              (
-                name: '황후마마가 돌아왔다.',
-                commant: '이건 재미있다. 무조건 된다고 생각한다.',
-                date: '24.09.06',
-                episodeNumber: '11',
-                iconUrl: '',
-                ID: i,
-                isLikeCheck: i % 2 == 0,
-                likeCount: '12',
-                replyCount: '3',
-                isOwner: i == 0,
-                isBest: true,
-              );
-              episodeCommentList.add(commentData);
+
+            }
+            else
+            {
+              for(int i = 0; i < 10; ++i)
+              {
+                var commentData = EpisodeCommentData
+                  (
+                  name: '황후마마가 돌아왔다.',
+                  commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                  date: '24.09.06',
+                  episodeNumber: '11',
+                  iconUrl: '',
+                  ID: i,
+                  isLikeCheck: i % 2 == 0,
+                  likeCount: '12',
+                  replyCount: '3',
+                  isOwner: i == 0,
+                  isBest: true,
+                );
+                episodeCommentList.add(commentData);
+              }
             }
 
             print('episodeCommentList.length : ${episodeCommentList.length}');

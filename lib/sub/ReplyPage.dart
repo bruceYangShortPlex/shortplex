@@ -193,12 +193,13 @@ SafeArea
 }
 
 Widget ReplyPopup(ScrollController _scrollController,
-    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList) {
+    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList, [double _padding = 60])
+{
 
   return SingleChildScrollView(
     controller: _scrollController,
     child: Padding(
-      padding: const EdgeInsets.only(top: 60),
+      padding: EdgeInsets.only(top: _padding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

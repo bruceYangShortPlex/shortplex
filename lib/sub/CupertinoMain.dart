@@ -67,8 +67,8 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
       height: 80,
       color: Colors.black,
       child: Obx(() =>
-        BottomNavigationBar
-        (
+      BottomNavigationBar
+      (
           iconSize: 50,
         // 현재 인덱스를 selectedIndex에 저장
         currentIndex: controller.selectedIndex.value,
@@ -76,7 +76,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
         onTap: controller.changeIndex,
         // 선택에 따라 icon·label 색상 변경
         selectedItemColor: Color(0xFF00FFBF), //context.theme.colorScheme.onBackground,
-        unselectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey,
         // 선택에 따라 label text style 변경
         unselectedLabelStyle: TextStyle(fontSize: 12),// fontFamily: 'NotoSans', fontWeight: FontWeight.w100, color: Colors.white),
         selectedLabelStyle: TextStyle(fontSize: 12),//fontFamily: 'NotoSans', fontWeight: FontWeight.w100, color: Colors.green),
@@ -85,32 +85,64 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
         backgroundColor: Colors.transparent,
         // Bar에 보여질 요소. icon과 label로 구성.
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem
-          (
-            // 선택된 탭은 채워진 아이콘, 나머지는 line 아이콘
-              icon: controller.selectedIndex.value == 0
-                  ? Image.asset('assets/images/main/home_on.png')
-                  : Image.asset('assets/images/main/home_off.png'),
-              label: StringTable().Table![100001], backgroundColor: Colors.transparent),
+            BottomNavigationBarItem
+            (
+                icon:
+                ImageIcon
+                (
+                  AssetImage('assets/images/main/home_off.png'),
+                  size: 30.0,
+                ),
+                    //   icon: controller.selectedIndex.value == 0
+              //       ? Image.asset('assets/images/main/home_on.png')
+              //       : Image.asset('assets/images/main/home_off.png'),
+                 label: StringTable().Table![100001]
+            ),
               BottomNavigationBarItem(
-              icon: controller.selectedIndex.value == 1
-                  ? Image.asset('assets/images/main/pick_on.png')
-                  : Image.asset('assets/images/main/pick_off.png'),
+              icon:
+              ImageIcon
+              (
+                AssetImage('assets/images/main/pick_off.png'),
+                size: 30.0,
+              ),
+              // controller.selectedIndex.value == 1
+              //     ? Image.asset('assets/images/main/pick_on.png')
+              //     : Image.asset('assets/images/main/pick_off.png'),
                   label: StringTable().Table![100002]),
-          BottomNavigationBarItem(
-              icon: controller.selectedIndex.value == 2
-                  ? Image.asset('assets/images/main/open_on.png')
-                  : Image.asset('assets/images/main/open_off.png'),
+          BottomNavigationBarItem
+            (
+              icon:
+              ImageIcon
+              (
+                AssetImage('assets/images/main/open_off.png'),
+                size: 30.0,
+              ),
+              // controller.selectedIndex.value == 2
+              //     ? Image.asset('assets/images/main/open_on.png')
+              //     : Image.asset('assets/images/main/open_off.png'),
               label: StringTable().Table![100003]),
           BottomNavigationBarItem(
-              icon: controller.selectedIndex.value == 3
-                  ? Image.asset('assets/images/main/reword_on.png')
-                  : Image.asset('assets/images/main/reword_off.png'),
+              icon:
+              ImageIcon
+              (
+                AssetImage('assets/images/main/reword_off.png'),
+                size: 30.0,
+              ),
+              // controller.selectedIndex.value == 3
+              //     ? Image.asset('assets/images/main/reword_on.png')
+              //     : Image.asset('assets/images/main/reword_off.png'),
               label: StringTable().Table![100004]),
-          BottomNavigationBarItem(
-              icon: controller.selectedIndex.value == 4
-                  ? Image.asset('assets/images/main/my_on.png')
-                  : Image.asset('assets/images/main/my_off.png'),
+          BottomNavigationBarItem
+            (
+              icon:
+              ImageIcon
+                (
+                AssetImage('assets/images/main/my_off.png'),
+                size: 30.0,
+              ),
+              // controller.selectedIndex.value == 4
+              //     ? Image.asset('assets/images/main/my_on.png')
+              //     : Image.asset('assets/images/main/my_off.png'),
               label: StringTable().Table![100005]),
         ],
       )),

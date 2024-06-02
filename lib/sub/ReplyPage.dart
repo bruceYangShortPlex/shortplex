@@ -1,20 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
 
-class CommantPage extends StatefulWidget
+class ReplyPage extends StatefulWidget
 {
-  const CommantPage({super.key});
+  const ReplyPage({super.key});
 
   @override
-  State<CommantPage> createState() => _CommantPageState();
+  State<ReplyPage> createState() => _ReplyPageState();
 }
 
-class _CommantPageState extends State<CommantPage>
+class _ReplyPageState extends State<ReplyPage>
 {
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
@@ -180,96 +179,74 @@ SafeArea
         ),
       ),
       child:
-
       Container
       (
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         //color: Colors.blue,
         child:
-        SingleChildScrollView
-        (
-          controller: scrollController,
-          child:
-          Padding
-          (
-            padding: const EdgeInsets.only(top: 60),
-            child:
-            Column
-            (
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:
-              [
-                Padding
-                (
-                  padding: const EdgeInsets.only(left: 30),
-                  child:
-                  Container
-                  (
-                    child:
-                    CommentWidget
-                    (
-                      commentData.ID,
-                      commentData.iconUrl!,
-                      commentData.episodeNumber!,
-                      commentData.name!,
-                      commentData.date!,
-                      commentData.isLikeCheck!,
-                      commentData.commant!,
-                      commentData.likeCount!,
-                      commentData.replyCount!,
-                      commentData.isOwner!,
-                      commentData.isBest!,
-                          (p0) {
-
-                      },
-                          (p0) {
-
-                      },
-                          (p0) {
-
-                      },
-                    ),
-                  ),
-                ),
-                for(int i = 0; i < replyList.length; ++i)
-                Padding
-                (
-                  padding: const EdgeInsets.only(left: 80),
-                  child: Container
-                  (
-                    child:
-                    CommentWidget
-                    (
-                      replyList[i].ID,
-                      replyList[i].iconUrl!,
-                      replyList[i].episodeNumber!,
-                      replyList[i].name!,
-                      replyList[i].date!,
-                      replyList[i].isLikeCheck!,
-                      replyList[i].commant!,
-                      replyList[i].likeCount!,
-                      replyList[i].replyCount!,
-                      replyList[i].isOwner!,
-                      replyList[i].isBest!,
-                          (p0) {
-
-                      },
-                          (p0) {
-
-                      },
-                          (p0) {
-
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        ReplyPopup(scrollController, commentData, replyList),
+      ),
       ),
     ),
-  ),
-);
+  );
+}
+
+Widget ReplyPopup(ScrollController _scrollController,
+    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList) {
+
+  return SingleChildScrollView(
+    controller: _scrollController,
+    child: Padding(
+      padding: const EdgeInsets.only(top: 60),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 30),
+            child: Container(
+              child: CommentWidget(
+                _commentData.ID,
+                _commentData.iconUrl!,
+                _commentData.episodeNumber!,
+                _commentData.name!,
+                _commentData.date!,
+                _commentData.isLikeCheck!,
+                _commentData.commant!,
+                _commentData.likeCount!,
+                _commentData.replyCount!,
+                _commentData.isOwner!,
+                _commentData.isBest!,
+                (p0) {},
+                (p0) {},
+                (p0) {},
+              ),
+            ),
+          ),
+          for (int i = 0; i < _replyList.length; ++i)
+            Padding(
+              padding: const EdgeInsets.only(left: 80),
+              child: Container(
+                child: CommentWidget(
+                  _replyList[i].ID,
+                  _replyList[i].iconUrl!,
+                  _replyList[i].episodeNumber!,
+                  _replyList[i].name!,
+                  _replyList[i].date!,
+                  _replyList[i].isLikeCheck!,
+                  _replyList[i].commant!,
+                  _replyList[i].likeCount!,
+                  _replyList[i].replyCount!,
+                  _replyList[i].isOwner!,
+                  _replyList[i].isBest!,
+                  (p0) {},
+                  (p0) {},
+                  (p0) {},
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
 }

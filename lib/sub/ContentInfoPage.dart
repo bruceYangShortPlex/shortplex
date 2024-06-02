@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
-import 'package:shortplex/sub/CommentPage.dart';
+import 'package:shortplex/sub/ReplyPage.dart';
 import '../table/StringTable.dart';
 
 void main() async
@@ -32,11 +32,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 {
   bool check = false;
 
-  var _selections = List.generate(3, (_) => false);
+  var selections = List.generate(3, (_) => false);
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
   late Map<int, List<EpisodeContentData>> mapEpisodeContentsData = {};
   var episodeContentsList = <EpisodeContentData>[];
+
+  //comment 관련
   var episodeCommentList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
   var totalCommentCount = 0;
@@ -102,7 +104,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
     setState(()
     {
-      _selections[0] = true;
+      selections[0] = true;
       episodeGroupSelections[0] = true;
     });
   }
@@ -111,7 +113,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   void dispose()
   {
     scrollController.dispose();
-    _selections.clear();
+    selections.clear();
     episodeGroupList.clear();
     episodeGroupSelections.clear();
     mapEpisodeContentsData.clear();
@@ -122,7 +124,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   void onEndOfPage() async
   {
-    if (!_selections[1])
+    if (!selections[1])
       return;
 
     try
@@ -421,14 +423,14 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   ),
                 ),
               ],
-              isSelected: _selections,
+              isSelected: selections,
               onPressed: (int index)
               {
                 setState(()
                 {
-                  for(int i = 0 ; i < _selections.length ; ++i)
+                  for(int i = 0 ; i < selections.length ; ++i)
                   {
-                    _selections[i] = i == index;
+                    selections[i] = i == index;
                   }
                 });
               },
@@ -454,7 +456,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           child:
           Visibility
           (
-            visible: _selections[0],
+            visible: selections[0],
             child: Divider(height: 10, color: Color(0xFF00FFBF), thickness: 2,)
           ),
         ),
@@ -469,7 +471,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             child:
             Visibility
               (
-                visible: _selections[1],
+                visible: selections[1],
                 child: Divider(height: 10, color: Color(0xFF00FFBF), thickness: 2,)
             ),
         ),
@@ -484,7 +486,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           child:
           Visibility
           (
-              visible: _selections[2],
+              visible: selections[2],
               child: Divider(height: 10, color: Color(0xFF00FFBF), thickness: 2,)
           ),
         ),
@@ -495,7 +497,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   Widget episodeInfo() =>
   Visibility
   (
-    visible: _selections[0],
+    visible: selections[0],
     child:
     Container
     (
@@ -703,7 +705,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   Widget contentCommant() =>
   Visibility
   (
-    visible: _selections[1],
+    visible: selections[1],
     child:
     Column
     (
@@ -733,8 +735,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               ),
               GestureDetector
               (
-                onTap: () {
-                  setState(() {
+                onTap: ()
+                {
+                  setState(()
+                  {
                     commentSortType = CommentSortType.LIKE;
                   });
                 },
@@ -763,8 +767,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               const SizedBox(width: 10,),
               GestureDetector
               (
-                onTap: () {
-                  setState(() {
+                onTap: ()
+                {
+                  setState(()
+                  {
                     commentSortType = CommentSortType.LATEST;
                   });
                 },
@@ -817,7 +823,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (id)
             {
               //TODO : 댓글의 답글 열기 버튼 처리
-              Get.to(() => CommantPage(), arguments: episodeCommentList[i]);
+              Get.to(() => ReplyPage(), arguments: episodeCommentList[i]);
             },
                 (id)
             {
@@ -834,7 +840,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     return
     Visibility
     (
-      visible: _selections[2],
+      visible: selections[2],
       child:
       SizedBox
       (

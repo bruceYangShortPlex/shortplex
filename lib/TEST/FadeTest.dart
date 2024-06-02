@@ -1,10 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:shortplex/Util/ShortsPlayer.dart';
-import '../Util/ShortplexTools.dart';
-import '../table/StringTable.dart';
 
 void main()
 {

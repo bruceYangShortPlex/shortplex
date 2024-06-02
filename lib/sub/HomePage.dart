@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/SearchPage.dart';
@@ -142,7 +143,7 @@ class _HomePageState extends State<HomePage> {
           child:
           Padding
           (
-            padding: const EdgeInsets.only(top: 60),
+            padding: EdgeInsets.only(top: 80),
             child: Center
             (
               child:
@@ -171,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Padding
                       (
-                        padding: const EdgeInsets.only(bottom: 8.0),
+                        padding: EdgeInsets.only(bottom: 8.0),
                         child:
                         Text
                         (

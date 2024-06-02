@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -398,6 +399,28 @@ Widget CommentWidget
         ),
         SizedBox(height: 20,),
       ],
+    ),
+  );
+}
+
+void activeBottomSheet(Widget _widget)
+{
+  Get.bottomSheet
+  (
+    // shape: const RoundedRectangleBorder(
+    //   borderRadius: BorderRadius.only(
+    //     topRight: Radius.circular(20),
+    //     topLeft: Radius.circular(20),
+    //   ),
+    // ),
+    // clipBehavior: Clip.hardEdge,
+    backgroundColor: Colors.black,
+    SizedBox
+    (
+      width: 390.w,
+      height: 750.h,
+      child:
+      _widget
     ),
   );
 }

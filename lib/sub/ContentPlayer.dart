@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,15 @@ import 'package:video_player/video_player.dart';
 
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
+import 'ContentInfoPage.dart';
+
+enum ContentPlayButtonType
+{
+  COMMENT,
+  CHECK,
+  SHARE,
+  CONTENT_INFO,
+}
 
 class ContentPlayer extends StatefulWidget {
   @override
@@ -14,25 +24,25 @@ class ContentPlayer extends StatefulWidget {
 
 class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProviderStateMixin
 {
-  late VideoPlayerController controller;
+  late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
   double currentTime = 0.0;
   int commentCount = 0;
   int usedPopcorn = 0;
 
   late AnimationController tweenController;
-  bool _visible = false;
+  bool controlUIVisible = false;
 
   @override
   void initState()
   {
     super.initState();
 
-    controller = VideoPlayerController.networkUrl(
+    videoController = VideoPlayerController.networkUrl(
         Uri.parse("https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4"))
       ..initialize().then((_) {
         setState(() {
-          controller.play();
+          videoController.play();
         });
       });
 
@@ -42,9 +52,9 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
     );
 
     // Add a listener to update the current time variable
-    controller.addListener(()
+    videoController.addListener(()
     {
-      if (controller.value.position >= controller.value.duration)
+      if (videoController.value.position >= videoController.value.duration)
       {
         // 동영상 재생이 끝났을 때 실행할 로직
         print("동영상 재생이 끝났습니다.");
@@ -52,7 +62,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
 
       setState(()
       {
-        currentTime = controller.value.position.inSeconds.toDouble();
+        currentTime = videoController.value.position.inSeconds.toDouble();
       });
     });
 
@@ -67,6 +77,43 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
       if (usedPopcorn != 0)
         usedPopcornAnnounce();
     });
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent)
+      {
+        print('call end page');
+        onEndOfPage();
+      }
+    });
+
+    for(int i = 0; i < 11; ++i)
+    {
+      var commentData = EpisodeCommentData
+        (
+        name: '황후마마가 돌아왔다.',
+        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        date: '24.09.06',
+        episodeNumber: '11',
+        iconUrl: '',
+        ID: i,
+        isLikeCheck: i % 2 == 0,
+        likeCount: '12',
+        replyCount: '3',
+        isOwner: i == 0,
+        isBest: true,
+      );
+      episodeCommentList.add(commentData);
+    }
+  }
+
+  @override
+  void dispose()
+  {
+    videoController.dispose();
+    tweenController.dispose();
+    scrollController.dispose();
+    super.dispose();
   }
 
   SnackbarController usedPopcornAnnounce()
@@ -97,7 +144,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
 
   }
 
-  Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon)
+  Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon, ContentPlayButtonType _type)
   {
     return
     Container
@@ -113,6 +160,21 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
         (
           onTap: ()
           {
+            switch(_type)
+            {
+              case ContentPlayButtonType.COMMENT:
+                {
+                  tweenController.reverse();
+                  setState(() {
+                    controlUIVisible = false;
+                    bottomOffset = 0;
+                  });
+                }
+                break;
+              default:
+                print('to do type $_type');
+                break;
+            }
             print('tap');
           },
           child: Opacity
@@ -224,15 +286,15 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               (
                 onTap: ()
                 {
-                  if (controller.value.isPlaying)
-                    controller.pause();
+                  if (videoController.value.isPlaying)
+                    videoController.pause();
                   else
-                    controller.play();
+                    videoController.play();
                 },
                 child: Container
                 (
                   alignment: Alignment.center,
-                  padding: controller.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5),
+                  padding: videoController.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5),
                   width: 75,
                   height: 75,
                   decoration: ShapeDecoration(
@@ -248,17 +310,17 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                   child:
                   Icon
                   (
-                    controller.value.isPlaying ? CupertinoIcons.pause_solid :
+                    videoController.value.isPlaying ? CupertinoIcons.pause_solid :
                     CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                   ),
                 ),
               ),
             ),
           ),
-          contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble),
-          contentUIButtons(StringTable().Table![100023]!, CupertinoIcons.heart),
-          contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share),
-          contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info),
+          contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
+          contentUIButtons(StringTable().Table![100023]!, CupertinoIcons.heart, ContentPlayButtonType.CHECK),
+          contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
+          contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
           Container
           (
             color: Colors.black.withOpacity(0.9),
@@ -271,13 +333,13 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               (
                 value: currentTime,
                 min: 0.0,
-                max: controller.value.duration.inSeconds.toDouble(),
+                max: videoController.value.duration.inSeconds.toDouble(),
                 onChanged: (value)
                 {
                   setState(()
                   {
                     currentTime = value;
-                    controller.seekTo(Duration(seconds: value.toInt()));
+                    videoController.seekTo(Duration(seconds: value.toInt()));
                   });
                 },
               ),
@@ -293,7 +355,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
             child:
             Text
             (
-              '${formatDuration(controller.value.position)} / ${formatDuration(controller.value.duration)}',
+              '${formatDuration(videoController.value.position)} / ${formatDuration(videoController.value.duration)}',
               style:
               TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
             ),
@@ -315,9 +377,9 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
         home:
         CupertinoPageScaffold
         (
-        backgroundColor: Colors.black,
-        child:
-          controller.value.isInitialized
+          backgroundColor: Colors.black,
+          child:
+          videoController.value.isInitialized
               ?
           GestureDetector
           (
@@ -328,17 +390,17 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               {
                 tweenController.reverse();
                 setState(() {
-                  _visible = false;
+                  controlUIVisible = false;
                 });
               }
               else
               {
                 tweenController.forward();
                 setState(() {
-                  _visible = true;
+                  controlUIVisible = true;
                 });
               }
-              print('on tap screen');
+              print('on tap screen 1');
             },
             child:
             Stack
@@ -351,9 +413,9 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                   child:
                   AspectRatio
                   (
-                    aspectRatio: controller.value.aspectRatio,
+                    aspectRatio: videoController.value.aspectRatio,
                     child:
-                    VideoPlayer(controller),
+                    VideoPlayer(videoController),
                   ),
                 ),
                 FadeTransition
@@ -362,11 +424,13 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                   child:
                   IgnorePointer
                   (
-                    ignoring: _visible == false,
+                    ignoring: controlUIVisible == false,
                     child:
                     controlUI(context),
                   ),
                 ),
+                commentCanvas(),
+                //contentComment(),
               ],
             ),
           )
@@ -377,17 +441,296 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
             //controlUI(context),
             CircularProgressIndicator()
           ),
-            )
+        )
       )
-        );
-    //);
+    );
   }
 
-  @override
-  void dispose()
+  double bottomOffset = -840.h;
+  Widget commentCanvas()
   {
-    controller.dispose();
-    tweenController.dispose();
-    super.dispose();
+    return
+    TweenAnimationBuilder<double>
+    (
+      tween: Tween<double>(begin: 0, end: bottomOffset),
+      duration: const Duration(milliseconds: 300),
+      builder: (BuildContext context, double offset, Widget? child)
+      {
+        return Positioned(
+          bottom: offset,
+          left: 0,
+          right: 0,
+          child:
+          GestureDetector
+          (
+            onTap: ()
+            {
+              if (bottomOffset == 0)
+              {
+                setState(() {
+                  bottomOffset = -840.h;
+                });
+              }
+            },
+            child:
+            Stack
+            (
+              children:
+              [
+                Padding
+                (
+                  padding: const EdgeInsets.only(top: 250),
+                  child: Container
+                  (
+                    width: 390.w,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(0.00, -1.00),
+                        end: Alignment(0, 1),
+                        colors: [Colors.black.withOpacity(0), Colors.black],
+                      ),
+                    ),
+                  ),
+                ),
+                Container
+                (
+                  width: MediaQuery.of(context).size.width,
+                  height: 840.h,
+                  //color: Colors.transparent,
+                  alignment: Alignment.bottomCenter,
+                  child:
+                  Container
+                  (
+                    width: 390.w,
+                    height: 550.h,
+                    color: Colors.black,
+                    child:
+                    contentComment(),
+                  ),
+                ),
+              ],
+            ),
+
+          ),
+        );
+      },
+    );
+  }
+
+  //comment 관련
+  var episodeCommentList = <EpisodeCommentData>[];
+  var scrollController = ScrollController();
+  var totalCommentCount = 0;
+  CommentSortType commentSortType = CommentSortType.LATEST;
+
+  Widget contentComment()
+  {
+    return
+    Padding
+    (
+      padding: const EdgeInsets.only(top: 10),
+      child:
+        Column
+        (
+          children:
+          [
+            SizedBox
+            (
+              width: 390,
+              child:
+              Row
+              (
+                children:
+                [
+                  Expanded
+                  (
+                    child:
+                    Container
+                    (
+                      padding: EdgeInsets.only(left: 30, bottom: 1),
+                      child:
+                      Text
+                      (
+                        '${StringTable().Table![100026]!} (${totalCommentCount})',
+                        style:
+                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
+                    ),
+                  ),
+                  GestureDetector
+                  (
+                    onTap: ()
+                    {
+                      setState(()
+                      {
+                        commentSortType = CommentSortType.LIKE;
+                      });
+                    },
+                    child: Container
+                    (
+                      width: 73,
+                      height: 26,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LIKE ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.only(bottom: 1),
+                      child:
+                      Text
+                      (
+                        StringTable().Table![100035]!,
+                        style:
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  GestureDetector
+                  (
+                    onTap: ()
+                    {
+                      setState(()
+                      {
+                        commentSortType = CommentSortType.LATEST;
+                      });
+                    },
+                    child:
+                    Container
+                    (
+                      width: 73,
+                      height: 26,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LATEST ? Color(0xFF00FFBF) : Color(0xFF878787)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.only(bottom: 1),
+                      child:
+                      Text
+                        (
+                        StringTable().Table![100036]!,
+                        style:
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container
+            (
+              height: 505.h,
+              //color: Colors.green,
+              child:
+              SingleChildScrollView
+              (
+                controller: scrollController,
+                child:
+                Column
+                (
+                  children:
+                  [
+                    for(int i = 0; i < episodeCommentList.length; ++i)
+                      CommentWidget
+                      (
+                        episodeCommentList[i].ID,
+                        episodeCommentList[i].iconUrl!,
+                        episodeCommentList[i].episodeNumber!,
+                        episodeCommentList[i].date!,
+                        episodeCommentList[i].name!,
+                        episodeCommentList[i].isLikeCheck!,
+                        episodeCommentList[i].commant!,
+                        episodeCommentList[i].likeCount!,
+                        episodeCommentList[i].replyCount!,
+                        episodeCommentList[i].isOwner!,
+                        episodeCommentList[i].isBest!,
+                            (id)
+                        {
+                          //TODO : 좋아요 버튼 처리
+                          print(id);
+                        },
+                            (id)
+                        {
+                          //TODO : 답글 보기 처리.
+                          //Get.to(() => ReplyPage(), arguments: episodeCommentList[i]);
+                        },
+                            (id)
+                        {
+                          //TODO : 삭제 버튼 처리
+                        },
+                      ),
+                  ]
+                )
+              ),
+            )
+          ],
+        ),
+    );
+  }
+
+  //TODO : Reply
+  bool isShowReply = false;
+
+  Widget showReply()
+  {
+    return
+    Container
+    (
+      height: 550.h,
+      color: Colors.green,
+    );
+  }
+
+  void onEndOfPage() async
+  {
+    try
+    {
+      //여기서 리스트 요청하고 만들고 해야한다.
+      // Replace with your method to fetch data from the server.
+        await Future.delayed(Duration(seconds: 1),
+        ()
+          {
+            print('update !');
+            for(int i = 0; i < 10; ++i)
+            {
+              var commentData = EpisodeCommentData
+              (
+                name: '황후마마가 돌아왔다.',
+                commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                date: '24.09.06',
+                episodeNumber: '11',
+                iconUrl: '',
+                ID: i,
+                isLikeCheck: i % 2 == 0,
+                likeCount: '12',
+                replyCount: '3',
+                isOwner: i == 0,
+                isBest: true,
+              );
+              episodeCommentList.add(commentData);
+            }
+
+            print('episodeCommentList.length : ${episodeCommentList.length}');
+
+            setState(()
+            {
+            });
+          }
+      );
+    }
+    catch (e)
+    {
+      print(e);
+    }
   }
 }

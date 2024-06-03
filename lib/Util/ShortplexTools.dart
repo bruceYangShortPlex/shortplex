@@ -7,25 +7,24 @@ import 'package:flutter/material.dart';
 import '../table/StringTable.dart';
 import 'ExpandableText.dart';
 
-void showDialogTwoButton(int _titieID, int _contentID, VoidCallback _callback)
+void showDialogTwoButton(String _titie, String _content, VoidCallback _callback, [VoidCallback? _noCallBack = null])
 {
   Get.defaultDialog
   (
     backgroundColor: Color(0x1E1E1E).withOpacity(1),
-    title: StringTable().Table![_titieID]!,
+    title: _titie,
     titleStyle:
     TextStyle
     (
       fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
     titlePadding: EdgeInsets.only(top: 30),
-    contentPadding: _contentID == 0 ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 30),
-    content : _contentID != 0 ?
+    contentPadding: _content == '' ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 30),
+    content :
     Text
     (
-      StringTable().Table![_contentID]!,
+      _content,
       style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
-    )
-    : Text(''),
+    ),
     actions:
     [
       CupertinoButton
@@ -41,6 +40,9 @@ void showDialogTwoButton(int _titieID, int _contentID, VoidCallback _callback)
         onPressed: ()
         {
           Get.back();
+          if (_noCallBack != null) {
+            _noCallBack();
+          }
         },
         child:
         Text
@@ -216,7 +218,7 @@ Widget CommentWidget
                                 child:
                                 Text
                                 (
-                                  'BEST',
+                                  StringTable().Table![100037]!,
                                   style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
                                 ),
                                 fit: BoxFit.contain,

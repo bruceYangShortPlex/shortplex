@@ -1,5 +1,4 @@
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,8 +43,6 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
     if (contentData!.isLock)
     {
-      print('check cost');
-
       var userData = Get.find<UserData>();
       //구독중이면 그냥 다음진행.
       if (userData.isSubscription == false)
@@ -57,7 +54,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
           isShowContent = false;
           isShowShop =  true;
           bottomOffset = 0;
-          setState(() {
+          tweenTime = 300;
+          setState(()
+          {
 
           });
         }
@@ -76,31 +75,35 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
       isShowContent = true;
     }
 
-    var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
+    print('check cost isShowContent : $isShowContent');
 
-    videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
-      ..initialize().then((_) {
+    void VideoControllerInit() {
+      var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
+      videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
+        ..initialize().then((_) {
+          setState(() {
+            if (isShowContent) {
+              videoController.play();
+            }
+          });
+        });
+
+      videoController.addListener(() {
+        if (videoController.value.position >= videoController.value.duration) {
+          // 동영상 재생이 끝났을 때 실행할 로직
+          print("동영상 재생이 끝났습니다.");
+        }
+
         setState(() {
-          if (isShowContent) {
-            videoController.play();
-          }
+          currentTime = videoController.value.position.inSeconds.toDouble();
         });
       });
+    }
 
-    videoController.addListener(()
+    if (isShowContent == true)
     {
-      if (videoController.value.position >= videoController.value.duration)
-      {
-        // 동영상 재생이 끝났을 때 실행할 로직
-        print("동영상 재생이 끝났습니다.");
-      }
-
-      setState(()
-      {
-        currentTime = videoController.value.position.inSeconds.toDouble();
-      });
-    });
-
+      VideoControllerInit();
+    }
 
     tweenController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -187,7 +190,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   {
     ticker.dispose();
     replyScrollController.dispose();
-    videoController.dispose();
+    if (isShowContent) {
+      videoController.dispose();
+    }
     tweenController.dispose();
     scrollController.dispose();
     super.dispose();
@@ -224,6 +229,11 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
             (
             onTap: ()
             {
+              if (showCheck() == false)
+              {
+                return;
+              }
+
               switch(_type)
               {
                 case ContentPlayButtonType.COMMENT:
@@ -293,6 +303,19 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
       );
   }
 
+  bool showCheck()
+  {
+    if (isShowContent == false)
+    {
+      bottomOffset = 0;
+      setState(() {
+
+      });
+    }
+
+    return isShowContent;
+  }
+
   Widget controlUI(BuildContext context)
   {
     return
@@ -336,20 +359,12 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       (
                       onPressed: ()
                       {
-                        if (isShowContent == true)
+                        if (showCheck() == false)
                         {
-                          print('다음 회차 시부레');
-                          Get.off(ContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
                           return;
                         }
-                        else {
-                          isShowShop = true;
-                        }
 
-                        bottomOffset = 0;
-                        setState(() {
-
-                        });
+                        Get.off(NextContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
                         print('다음회차 보기 누름');
                       },
                       icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
@@ -368,18 +383,29 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                   (
                   onTap: ()
                   {
+                    if (showCheck() == false)
+                    {
+                      return;
+                    }
+
                     ticker.stop();
                     ticker.start();
 
-                    if (videoController.value.isPlaying)
-                      videoController.pause();
-                    else
-                      videoController.play();
+                    if (videoController.value.isInitialized)
+                    {
+                      if (videoController.value.isPlaying) {
+                        videoController.pause();
+                      }
+                      else {
+                        videoController.play();
+                      }
+                    }
                   },
-                  child: Container
+                  child:
+                  Container
                     (
                     alignment: Alignment.center,
-                    padding: videoController.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5),
+                    padding: isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
                     width: 75,
                     height: 75,
                     decoration: ShapeDecoration(
@@ -395,7 +421,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     child:
                     Icon
                       (
-                      videoController.value.isPlaying ? CupertinoIcons.pause_solid :
+                      isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? CupertinoIcons.pause_solid :
                       CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                     ),
                   ),
@@ -414,6 +440,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                 (
                 width: MediaQuery.of(context).size.width,
                 child:
+                isShowContent && videoController.value.isInitialized ?
                 CupertinoSlider
                   (
                   value: currentTime,
@@ -429,7 +456,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       videoController.seekTo(Duration(seconds: value.toInt()));
                     });
                   },
-                ),
+                ) : Container(),
               ),
             ),
             Container
@@ -442,7 +469,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               child:
               Text
                 (
-                '${formatDuration(videoController.value.position)} / ${formatDuration(videoController.value.duration)}',
+                isShowContent && videoController.value.isInitialized ?
+                '${formatDuration(videoController.value.position)} / ${formatDuration(videoController.value.duration)}' : '00:00 / 00:00',
                 style:
                 TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
               ),
@@ -455,139 +483,109 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   @override
   Widget build(BuildContext context)
   {
-    return
-      SafeArea
-        (
-          child:
-          CupertinoApp
-            (
-              home:
-              CupertinoPageScaffold
-                (
-                  backgroundColor: Colors.black,
-                  child:
-                  videoController.value.isInitialized
-                    ?
-                  GestureDetector
+    try {
+      return
+        SafeArea
+          (
+            child:
+            CupertinoApp
+              (
+                home:
+                CupertinoPageScaffold
                   (
-                    onTap:
-                        ()
-                    {
-                      if (bottomOffset == 0) {
-                        bottomOffset = -840.h;
-                        setState(() {
-
-                        });
-                        return;
-                      }
-
-                      if (tweenController.status == AnimationStatus.completed)
-                      {
-                        tweenController.reverse();
-                        ticker.stop();
-                        setState(()
-                        {
-                          controlUIVisible = false;
-                        });
-                      }
-                      else
-                      {
-                        tweenController.forward();
-                        ticker.start();
-                        setState(()
-                        {
-                          controlUIVisible = true;
-                        });
-                      }
-                      print('on tap screen 1');
-                    },
+                    backgroundColor: Colors.black,
                     child:
-                    Stack
+                    GestureDetector
                       (
-                      //mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>
-                      [
-                        Center
-                          (
-                          child:
-                          AspectRatio
-                            (
-                            aspectRatio: videoController.value.aspectRatio,
-                            child:
-                            VideoPlayer(videoController),
-                          ),
-                        ),
-                        FadeTransition
+                      onTap:
+                          ()
+                      {
+                        if (isShowContent == false || bottomOffset == 0) {
+                          return;
+                        }
+
+                        if (tweenController.status == AnimationStatus.completed) {
+                          tweenController.reverse();
+                          ticker.stop();
+                          setState(() {
+                            controlUIVisible = false;
+                          });
+                        }
+                        else
+                        {
+                          tweenController.forward();
+                          ticker.stop();
+                          ticker.start();
+                          setState(()
+                          {
+                            controlUIVisible = true;
+                          });
+                        }
+                      },
+                      child:
+                      Stack
                         (
-                          opacity: tweenController,
-                          child:
-                          IgnorePointer
-                          (
-                            ignoring: controlUIVisible == false,
-                            child:
-                            controlUI(context),
-                          ),
-                        ),
-                        commentCanvas(),
-                        //contentComment(),
-                      ],
-                    ),
-                  )
-                      :
-                  Stack
-                    (
-                    children:
-                    [
-                      Align
-                        (
-                        alignment: Alignment.topCenter,
-                        child:
-                        Container
-                          (
-                          height: 50,
-                          child:
-                          Row
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>
+                        [
+                          Center
                             (
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children:
-                            [
-                              CupertinoNavigationBarBackButton
+                            child:
+                            AspectRatio
+                              (
+                              aspectRatio: 9/16,
+                              child:
+                              isShowContent == true && videoController.value.isInitialized == true ?
+                              VideoPlayer(videoController) :
+                              Center
                                 (
-                                color: Colors.white,
-                                onPressed: ()
-                                {
-                                  Get.back();
-                                },
+                                  child:
+                                  CircularProgressIndicator()
                               ),
-                              IconButton
-                                (
-                                onPressed: ()
-                                {
-                                  //Get.off();
-                                  print('다음회차 보기 누름');
-                                },
-                                icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
-                              )
-                            ],
+                            ),
                           ),
-                        ),
+                          FadeTransition
+                            (
+                            opacity: tweenController,
+                            child:
+                            IgnorePointer
+                              (
+                              ignoring: controlUIVisible == false,
+                              child:
+                              controlUI(context),
+                            ),
+                          ),
+                          bottomCanvas(),
+                          //contentComment(),
+                        ],
                       ),
-                      Center
-                        (
-                          child:
-                          //controlUI(context),
-                          CircularProgressIndicator()
-                      ),
-                    ],
-                  )
-              )
-          )
-      );
+                    )
+                )
+            )
+        );
+    }
+    catch(e)
+    {
+      print(e);
+      return
+        Container
+          (
+          child:
+          CupertinoNavigationBarBackButton
+            (
+            color: Colors.white,
+            onPressed: ()
+            {
+              Get.back();
+            },
+          ),
+        );
+    }
   }
 
   double bottomOffset = -840.h;
   int tweenTime = 0;
-  Widget commentCanvas()
+  Widget bottomCanvas()
   {
     return
       TweenAnimationBuilder<double>
@@ -603,61 +601,74 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               left: 0,
               right: 0,
               child:
-              GestureDetector
+              Stack
                 (
-                onTap: ()
-                {
-                  if (bottomOffset == 0)
-                  {
-                    setState(() {
-                      bottomOffset = -840.h;
-                    });
-                  }
-                },
-                child:
-                Stack
-                  (
-                  children:
-                  [
-                    Padding
-                      (
-                      padding: EdgeInsets.only(top: 275.h),
-                      child:
-                      Container
-                        (
-                        height: 70,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment(0, -1),
-                            end: Alignment(0, 1),
-                            colors: [Colors.transparent, Colors.black],
-                          ),
-                          //border: Border.all(width: 1),
-                        ),
-                      ),
-                    ),
+                children:
+                [
+                  Padding
+                    (
+                    padding: EdgeInsets.only(top: 275.h),
+                    child:
                     Container
                       (
-                      width: MediaQuery.of(context).size.width,
-                      height: 840.h,
-                      //color: Colors.transparent,
-                      alignment: Alignment.bottomCenter,
-                      child:
-                      Container
-                        (
-                        width: 390.w,
-                        height: 500.h,
-                        color: Colors.black,
-                        child:
-                        isShowShop ?
-                        showShop() :
-                        isShowReply == false ?
-                        contentComment() : commentReply(),
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment(0, -1),
+                          end: Alignment(0, 1),
+                          colors: [Colors.transparent, Colors.black],
+                        ),
+                        //border: Border.all(width: 1),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Container
+                    (
+                    width: MediaQuery.of(context).size.width,
+                    height: 840.h,
+                    //color: Colors.transparent,
+                    alignment: Alignment.bottomCenter,
+                    child:
+                    Container
+                      (
+                      width: 390.w,
+                      height: 500.h,
+                      color: Colors.black,
+                      child:
+                      isShowShop ?
+                      showShop() :
+                      isShowReply == false ?
+                      contentComment() : commentReply(),
+                    ),
+                  ),
+                  GestureDetector
+                    (
+                    onTap: ()
+                    {
+                      if (bottomOffset == 0)
+                      {
+                        if (isShowContent == false) {
+                          tweenController.forward();
+                          ticker.stop();
+                          controlUIVisible = true;
+                        }
 
+                        bottomOffset = -840.h;
+                        setState(()
+                        {
+
+                        });
+                      }
+                    },
+                    child:
+                    Container
+                      (
+                      height: 320.h,
+                      color: Colors.transparent,
+                      //color: Colors.blue,
+                    ),
+                  ),
+                ],
               ),
             );
         },
@@ -1050,24 +1061,27 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                 ),
               ),
               ShopGoods(false),
-              Row
-                (
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                [
-                  toggleButton(),
-                  Padding
-                    (
-                    padding: EdgeInsets.only(bottom: 2),
-                    child:
-                    Text
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Row
+                  (
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                  [
+                    toggleButton(),
+                    Padding
                       (
-                      StringTable().Table![400027]!,
-                      style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      padding: EdgeInsets.only(bottom: 2),
+                      child:
+                      Text
+                        (
+                        StringTable().Table![400027]!,
+                        style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
                     ),
-                  ),
 
-                ],
+                  ],
+                ),
               )
             ],
           ),

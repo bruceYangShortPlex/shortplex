@@ -110,6 +110,7 @@ class ContentData
   int? cost;
   String? contentUrl;
   bool isLock = true;
+  bool isCheck = false;
 
   ContentData
   (

@@ -1,7 +1,5 @@
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +29,7 @@ class ContentPlayer extends StatefulWidget
 
 class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateMixin
 {
-  VideoPlayerController? videoController;
+  late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
   double currentTime = 0.0;
   int commentCount = 0;
@@ -44,6 +42,29 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   ContentData? contentData;
   bool isShowContent = false;
 
+  void VideoControllerInit() {
+    var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
+    videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
+      ..initialize().then((_) {
+        setState(() {
+          if (isShowContent) {
+            videoController.play();
+          }
+        });
+      });
+
+    videoController.addListener(() {
+      if (videoController.value.position >= videoController.value.duration) {
+        // 동영상 재생이 끝났을 때 실행할 로직
+        print("동영상 재생이 끝났습니다.");
+      }
+
+      setState(() {
+        currentTime = videoController.value.position.inSeconds.toDouble();
+      });
+    });
+  }
+
   @override
   void initState()
   {
@@ -51,28 +72,52 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     print('play content ${contentData!.id} / cost ${contentData!.cost}');
 
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
-    if (contentData!.isLock)
+    //이번회차의 가격을 알아온다.
+    var cost = UserData.to.GetContentCost(contentData!.id!);
+    if (cost != 0 && contentData!.isLock)
     {
-      print('check cost');
-
-      var userData = Get.find<UserData>();
       //구독중이면 그냥 다음진행.
-      if (userData.isSubscription == false)
+      if (UserData.to.isSubscription == false)
       {
-        //다음회차의 가격을 알아온다.
-        var cost = userData.GetContentCost(contentData!.id!);
-        if (userData.popcornCount + userData.bonusCornCount < cost)
+        if (UserData.to.popcornCount + UserData.to.bonusCornCount < cost)
         {
           isShowContent = false;
           isShowShop =  true;
           bottomOffset = 0;
-          setState(() {
+          tweenTime = 300;
+          setState(()
+          {
 
           });
         }
         else
         {
-          isShowContent = true;
+          //팝콘은 충분한데 자동결제가 아닌사람.
+          if (UserData.to.autoPlay == false)
+          {
+            WidgetsBinding.instance.addPostFrameCallback((_)
+            {
+              // 이곳에 빌드 후에 실행할 코드를 작성하세요.
+              showDialogTwoButton(StringTable().Table![100038]!, StringTable().Table![100039]!, ()
+              {
+                //서버에 통신하고 처리되면 거시기한다.
+                isShowContent = true;
+                VideoControllerInit();
+                setState(() {
+
+                });
+              },
+              () {
+                Get.back();
+              },);
+            });
+
+            isShowContent = false;
+          }
+          else
+          {
+            isShowContent = true;
+          }
         }
       }
       else
@@ -85,29 +130,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       isShowContent = true;
     }
 
+    print('check cost isShowContent : $isShowContent');
 
-    void VideoControllerInit() {
-      var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
-      videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
-        ..initialize().then((_) {
-          setState(() {
-            if (isShowContent) {
-              videoController!.play();
-            }
-          });
-        });
-
-      videoController!.addListener(() {
-        if (videoController!.value.position >= videoController!.value.duration) {
-          // 동영상 재생이 끝났을 때 실행할 로직
-          print("동영상 재생이 끝났습니다.");
-        }
-
-        setState(() {
-          currentTime = videoController!.value.position.inSeconds.toDouble();
-        });
-      });
-    }
 
     if (isShowContent == true)
     {
@@ -178,7 +202,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     ticker = createTicker((elapsed)
     {
       if (elapsed.inSeconds > 3)
-        {
+      {
           ticker.stop();
           if(controlUIVisible = true)
           {
@@ -199,7 +223,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     ticker.dispose();
     replyScrollController.dispose();
-    videoController!.dispose();
+    if (isShowContent) {
+      videoController.dispose();
+    }
     tweenController.dispose();
     scrollController.dispose();
     super.dispose();
@@ -209,7 +235,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   void didChangeDependencies() async
   {
     super.didChangeDependencies();
-
   }
 
   void setScrollPosition(double _offset) {
@@ -236,6 +261,11 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         (
           onTap: ()
           {
+            if (showCheck() == false)
+            {
+              return;
+            }
+
             switch(_type)
             {
               case ContentPlayButtonType.COMMENT:
@@ -252,11 +282,24 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   });
                 }
                 break;
+              case ContentPlayButtonType.CONTENT_INFO:
+                {
+                  Get.to(() => ContentInfoPage());
+                }
+                break;
+              case ContentPlayButtonType.CHECK:
+                {
+                  contentData!.isCheck = !contentData!.isCheck;
+                  setState(() {
+
+                  });
+                }
+                break;
               default:
                 print('to do type $_type');
                 break;
             }
-            print('tap');
+            print('contentUIButtons tap');
           },
           child: Opacity
           (
@@ -305,6 +348,19 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     );
   }
 
+  bool showCheck()
+  {
+    if (isShowContent == false)
+    {
+      bottomOffset = 0;
+      setState(() {
+
+      });
+    }
+
+    return isShowContent;
+  }
+
   Widget controlUI(BuildContext context)
   {
     return
@@ -348,20 +404,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   (
                     onPressed: ()
                     {
-                      if (isShowContent == true)
+                      if (showCheck() == false)
                       {
-                        print('다음 회차 시부레');
-                        Get.off(NextContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
                         return;
                       }
-                      else {
-                        isShowShop = true;
-                      }
 
-                      bottomOffset = 0;
-                      setState(() {
-
-                      });
+                      Get.off(NextContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
                       print('다음회차 보기 누름');
                     },
                     icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
@@ -380,18 +428,29 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               (
                 onTap: ()
                 {
+                  if (showCheck() == false)
+                  {
+                    return;
+                  }
+
                   ticker.stop();
                   ticker.start();
 
-                  if (videoController!.value.isPlaying)
-                    videoController!.pause();
-                  else
-                    videoController!.play();
+                  if (videoController.value.isInitialized)
+                  {
+                    if (videoController.value.isPlaying) {
+                      videoController.pause();
+                    }
+                    else {
+                      videoController.play();
+                    }
+                  }
                 },
-                child: Container
+                child:
+                Container
                 (
                   alignment: Alignment.center,
-                  padding: videoController!.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5),
+                  padding: isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
                   width: 75,
                   height: 75,
                   decoration: ShapeDecoration(
@@ -407,7 +466,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   child:
                   Icon
                   (
-                    videoController!.value.isPlaying ? CupertinoIcons.pause_solid :
+                    isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? CupertinoIcons.pause_solid :
                     CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                   ),
                 ),
@@ -415,7 +474,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             ),
           ),
           contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
-          contentUIButtons(StringTable().Table![100023]!, CupertinoIcons.heart, ContentPlayButtonType.CHECK),
+          contentUIButtons(StringTable().Table![100023]!, contentData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
           contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
           contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
           Container
@@ -426,11 +485,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             (
               width: MediaQuery.of(context).size.width,
               child:
+              isShowContent && videoController.value.isInitialized ?
               CupertinoSlider
               (
                 value: currentTime,
                 min: 0.0,
-                max: videoController!.value.duration.inSeconds.toDouble(),
+                max: videoController.value.duration.inSeconds.toDouble(),
                 onChanged: (value)
                 {
                   ticker.stop();
@@ -438,10 +498,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   setState(()
                   {
                     currentTime = value;
-                    videoController!.seekTo(Duration(seconds: value.toInt()));
+                    videoController.seekTo(Duration(seconds: value.toInt()));
                   });
                 },
-              ),
+              ) : Container(),
             ),
           ),
           Container
@@ -454,7 +514,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             child:
             Text
             (
-              '${formatDuration(videoController!.value.position)} / ${formatDuration(videoController!.value.duration)}',
+              isShowContent && videoController.value.isInitialized ?
+              '${formatDuration(videoController.value.position)} / ${formatDuration(videoController.value.duration)}' : '00:00 / 00:00',
               style:
               TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
             ),
@@ -470,27 +531,21 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   try {
     return
       SafeArea
-        (
+      (
           child:
           CupertinoApp
-            (
+          (
               home:
               CupertinoPageScaffold
-                (
+              (
                   backgroundColor: Colors.black,
                   child:
-                  videoController != null &&
-                  videoController!.value.isInitialized
-                      ?
                   GestureDetector
-                    (
+                  (
                     onTap:
-                        () {
-                      if (bottomOffset == 0) {
-                        bottomOffset = -840.h;
-                        setState(() {
-
-                        });
+                    ()
+                    {
+                      if (isShowContent == false || bottomOffset == 0) {
                         return;
                       }
 
@@ -501,91 +556,54 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                           controlUIVisible = false;
                         });
                       }
-                      else {
+                      else
+                      {
                         tweenController.forward();
+                        ticker.stop();
                         ticker.start();
-                        setState(() {
+                        setState(()
+                        {
                           controlUIVisible = true;
                         });
                       }
-                      print('on tap screen 1');
                     },
                     child:
                     Stack
-                      (
+                    (
                       //mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>
                       [
                         Center
-                          (
+                        (
                           child:
                           AspectRatio
-                            (
-                            aspectRatio: videoController!.value.aspectRatio,
+                          (
+                            aspectRatio: 9/16,
                             child:
-                            VideoPlayer(videoController!),
+                            isShowContent == true && videoController.value.isInitialized == true ?
+                            VideoPlayer(videoController) :
+                            Center
+                            (
+                              child:
+                              CircularProgressIndicator()
+                            ),
                           ),
                         ),
                         FadeTransition
-                          (
+                        (
                           opacity: tweenController,
                           child:
                           IgnorePointer
-                            (
+                          (
                             ignoring: controlUIVisible == false,
                             child:
                             controlUI(context),
                           ),
                         ),
-                        commentCanvas(),
+                        bottomCanvas(),
                         //contentComment(),
                       ],
                     ),
-                  )
-                      :
-                  Stack
-                    (
-                    children:
-                    [
-                      Align
-                        (
-                        alignment: Alignment.topCenter,
-                        child:
-                        Container
-                          (
-                          height: 50,
-                          child:
-                          Row
-                            (
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children:
-                            [
-                              CupertinoNavigationBarBackButton
-                                (
-                                color: Colors.white,
-                                onPressed: () {
-                                  Get.back();
-                                },
-                              ),
-                              IconButton
-                                (
-                                onPressed: () {
-                                  //Get.off();
-                                  print('다음회차 보기 누름');
-                                },
-                                icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Center
-                        (
-                          child:
-                          //controlUI(context),
-                          CircularProgressIndicator()
-                      ),
-                    ],
                   )
               )
           )
@@ -612,7 +630,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   double bottomOffset = -840.h;
   int tweenTime = 0;
-  Widget commentCanvas()
+  Widget bottomCanvas()
   {
     return
     TweenAnimationBuilder<double>
@@ -628,18 +646,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
           left: 0,
           right: 0,
           child:
-          GestureDetector
-          (
-            onTap: ()
-            {
-              if (bottomOffset == 0)
-              {
-                setState(() {
-                  bottomOffset = -840.h;
-                });
-              }
-            },
-            child:
             Stack
             (
               children:
@@ -680,10 +686,35 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     contentComment() : commentReply(),
                   ),
                 ),
+                GestureDetector
+                (
+                    onTap: ()
+                    {
+                      if (bottomOffset == 0)
+                      {
+                        if (isShowContent == false) {
+                          tweenController.forward();
+                          ticker.stop();
+                          controlUIVisible = true;
+                        }
+
+                        bottomOffset = -840.h;
+                        setState(()
+                        {
+
+                        });
+                      }
+                    },
+                  child:
+                  Container
+                  (
+                    height: 320.h,
+                    color: Colors.transparent,
+                    //color: Colors.blue,
+                  ),
+                ),
               ],
             ),
-
-          ),
         );
       },
     );
@@ -1075,24 +1106,27 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 ),
               ),
               ShopGoods(false),
-              Row
-              (
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                [
-                  toggleButton(),
-                  Padding
-                  (
-                    padding: EdgeInsets.only(bottom: 2),
-                    child:
-                    Text
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Row
+                (
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                  [
+                    toggleButton(),
+                    Padding
                     (
-                      StringTable().Table![400027]!,
-                      style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      padding: EdgeInsets.only(bottom: 2),
+                      child:
+                      Text
+                      (
+                        StringTable().Table![400027]!,
+                        style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
                     ),
-                  ),
 
-                ],
+                  ],
+                ),
               )
             ],
           ),
@@ -1100,7 +1134,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     );
   }
 
-  bool isChecked = true;
   Widget toggleButton() =>
       Transform.scale
         (
@@ -1108,14 +1141,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         child:
         CupertinoSwitch
           (
-          value: isChecked,
+          value: UserData.to.autoPlay,
           activeColor: Color(0xFF00FFBF),
           onChanged: (bool? value)
           {
             //TODO : 서버에 알리기
             setState(()
             {
-              isChecked = value ?? false;
+              UserData.to.autoPlay = value ?? false;
             });
           },
         ),

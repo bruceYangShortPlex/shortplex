@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
+import 'package:shortplex/sub/ContentPlayer.dart';
 import 'package:shortplex/sub/ReplyPage.dart';
+import 'package:shortplex/table/UserData.dart';
 import '../table/StringTable.dart';
 
 void main() async
@@ -35,8 +37,8 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   var selections = List.generate(3, (_) => false);
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
-  late Map<int, List<EpisodeContentData>> mapEpisodeContentsData = {};
-  var episodeContentsList = <EpisodeContentData>[];
+  late Map<int, List<ContentData>> mapEpisodeContentsData = {};
+  var episodeContentsList = <ContentData>[];
 
   //comment 관련
   var episodeCommentList = <EpisodeCommentData>[];
@@ -59,19 +61,15 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     episodeGroupList.add('41~60화');
     episodeGroupList.add('41~60화');
 
-    var data1 = EpisodeContentData();
-    data1.path = '';
-    data1.open = true;
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
-    episodeContentsList.add(data1);
+    for(int i = 0; i < 20; ++i)
+    {
+      var contentsData = ContentData(id: i, imagePath: '', title: '배포할 내용', cost: i);
+      contentsData.isNew = false;
+      contentsData.isWatching = true;
+      contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);
+      contentsData.rank = i;
+      episodeContentsList.add(contentsData);
+    }
 
     mapEpisodeContentsData[0] = episodeContentsList;
     episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
@@ -246,7 +244,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       (
         width: 390,
         height: 260,
-        color: Colors.white,
+        color: Colors.grey,
       ),
       SizedBox(height: 20,),
       Container
@@ -645,6 +643,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               (
                 onTap: ()
                 {
+                  Get.to(() => ContentPlayer(), arguments: list[i]);
                   print('click');
                 },
                 child:
@@ -656,11 +655,11 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     (
                       width: 77,
                       height: 107,
-                      color: Colors.yellow,
+                      color: Colors.grey,
                     ),
                     Visibility
                     (
-                      visible: list[i].open == false,
+                      visible: list[i].isLock == false,
                       child:
                       Container
                       (
@@ -920,12 +919,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       ),
     );
   }
-}
-
-class EpisodeContentData
-{
-  String? path;
-  bool? open;
 }
 
 class EpisodeCommentData

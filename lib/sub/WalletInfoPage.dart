@@ -378,7 +378,6 @@ class _WalletInfoPageState extends State<WalletInfoPage>
         ],
       );
 
-  bool _isChecked = true;
   Widget _toggleButton() =>
       Transform.scale
         (
@@ -386,14 +385,14 @@ class _WalletInfoPageState extends State<WalletInfoPage>
         child:
         CupertinoSwitch
           (
-          value: _isChecked,
+          value: UserData.to.autoPlay,
           activeColor: Color(0xFF00FFBF),
           onChanged: (bool? value)
           {
             //TODO : 서버에 알리기
             setState(()
             {
-              _isChecked = value ?? false;
+              UserData.to.autoPlay = value ?? false;
             });
           },
         ),

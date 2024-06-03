@@ -185,7 +185,7 @@ class _SettingPageState extends State<SettingPage>
         break;
       case SettingSubPageType.ACCOUNT_DELETE:
         {
-          showDialogTwoButton(600014, 600015,
+          showDialogTwoButton(StringTable().Table![600014]!,StringTable().Table![600015]!,
           () =>
           {
             print('Account Delete ok Clikc'),
@@ -194,7 +194,7 @@ class _SettingPageState extends State<SettingPage>
         break;
       case SettingSubPageType.LOG_OUT:
         {
-          showDialogTwoButton(600011,0,
+          showDialogTwoButton(StringTable().Table![600011]!,'',
           ()=>
           {
             print('Logout ok Clikc'),

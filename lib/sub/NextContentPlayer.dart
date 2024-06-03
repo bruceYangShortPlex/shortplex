@@ -469,7 +469,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                   videoController.value.isInitialized
                     ?
                   GestureDetector
-                    (
+                  (
                     onTap:
                         ()
                     {
@@ -518,11 +518,11 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                           ),
                         ),
                         FadeTransition
-                          (
+                        (
                           opacity: tweenController,
                           child:
                           IgnorePointer
-                            (
+                          (
                             ignoring: controlUIVisible == false,
                             child:
                             controlUI(context),

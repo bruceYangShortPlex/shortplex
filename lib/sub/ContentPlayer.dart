@@ -31,7 +31,7 @@ class ContentPlayer extends StatefulWidget
 
 class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateMixin
 {
-  late VideoPlayerController videoController;
+  VideoPlayerController? videoController;
   // Add a variable to handle the time of video playback
   double currentTime = 0.0;
   int commentCount = 0;
@@ -85,31 +85,34 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       isShowContent = true;
     }
 
-    var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
 
-    videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
-      ..initialize().then((_) {
+    void VideoControllerInit() {
+      var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
+      videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
+        ..initialize().then((_) {
+          setState(() {
+            if (isShowContent) {
+              videoController!.play();
+            }
+          });
+        });
+
+      videoController!.addListener(() {
+        if (videoController!.value.position >= videoController!.value.duration) {
+          // 동영상 재생이 끝났을 때 실행할 로직
+          print("동영상 재생이 끝났습니다.");
+        }
+
         setState(() {
-          if (isShowContent) {
-            videoController.play();
-          }
+          currentTime = videoController!.value.position.inSeconds.toDouble();
         });
       });
+    }
 
-    videoController.addListener(()
+    if (isShowContent == true)
     {
-      if (videoController.value.position >= videoController.value.duration)
-      {
-        // 동영상 재생이 끝났을 때 실행할 로직
-        print("동영상 재생이 끝났습니다.");
-      }
-
-      setState(()
-      {
-        currentTime = videoController.value.position.inSeconds.toDouble();
-      });
-    });
-
+      VideoControllerInit();
+    }
 
     tweenController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -196,7 +199,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     ticker.dispose();
     replyScrollController.dispose();
-    videoController.dispose();
+    videoController!.dispose();
     tweenController.dispose();
     scrollController.dispose();
     super.dispose();
@@ -380,15 +383,15 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   ticker.stop();
                   ticker.start();
 
-                  if (videoController.value.isPlaying)
-                    videoController.pause();
+                  if (videoController!.value.isPlaying)
+                    videoController!.pause();
                   else
-                    videoController.play();
+                    videoController!.play();
                 },
                 child: Container
                 (
                   alignment: Alignment.center,
-                  padding: videoController.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5),
+                  padding: videoController!.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5),
                   width: 75,
                   height: 75,
                   decoration: ShapeDecoration(
@@ -404,7 +407,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   child:
                   Icon
                   (
-                    videoController.value.isPlaying ? CupertinoIcons.pause_solid :
+                    videoController!.value.isPlaying ? CupertinoIcons.pause_solid :
                     CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                   ),
                 ),
@@ -427,7 +430,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               (
                 value: currentTime,
                 min: 0.0,
-                max: videoController.value.duration.inSeconds.toDouble(),
+                max: videoController!.value.duration.inSeconds.toDouble(),
                 onChanged: (value)
                 {
                   ticker.stop();
@@ -435,7 +438,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   setState(()
                   {
                     currentTime = value;
-                    videoController.seekTo(Duration(seconds: value.toInt()));
+                    videoController!.seekTo(Duration(seconds: value.toInt()));
                   });
                 },
               ),
@@ -451,7 +454,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             child:
             Text
             (
-              '${formatDuration(videoController.value.position)} / ${formatDuration(videoController.value.duration)}',
+              '${formatDuration(videoController!.value.position)} / ${formatDuration(videoController!.value.duration)}',
               style:
               TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
             ),
@@ -464,134 +467,147 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   @override
   Widget build(BuildContext context)
   {
+  try {
     return
-    SafeArea
-    (
-      child:
-      CupertinoApp
-      (
-        home:
-        CupertinoPageScaffold
+      SafeArea
         (
-          backgroundColor: Colors.black,
           child:
-          videoController.value.isInitialized
-          ?
-          GestureDetector
-          (
-            onTap:
-            ()
-            {
-              if (bottomOffset == 0) {
-                bottomOffset = -840.h;
-                setState(() {
-
-                });
-                return;
-              }
-
-              if (tweenController.status == AnimationStatus.completed)
-              {
-                tweenController.reverse();
-                ticker.stop();
-                setState(()
-                {
-                  controlUIVisible = false;
-                });
-              }
-              else
-              {
-                tweenController.forward();
-                ticker.start();
-                setState(()
-                {
-                  controlUIVisible = true;
-                });
-              }
-              print('on tap screen 1');
-            },
-            child:
-            Stack
+          CupertinoApp
             (
-              //mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>
-              [
-                Center
+              home:
+              CupertinoPageScaffold
                 (
+                  backgroundColor: Colors.black,
                   child:
-                  AspectRatio
-                  (
-                    aspectRatio: videoController.value.aspectRatio,
+                  videoController != null &&
+                  videoController!.value.isInitialized
+                      ?
+                  GestureDetector
+                    (
+                    onTap:
+                        () {
+                      if (bottomOffset == 0) {
+                        bottomOffset = -840.h;
+                        setState(() {
+
+                        });
+                        return;
+                      }
+
+                      if (tweenController.status == AnimationStatus.completed) {
+                        tweenController.reverse();
+                        ticker.stop();
+                        setState(() {
+                          controlUIVisible = false;
+                        });
+                      }
+                      else {
+                        tweenController.forward();
+                        ticker.start();
+                        setState(() {
+                          controlUIVisible = true;
+                        });
+                      }
+                      print('on tap screen 1');
+                    },
                     child:
-                    VideoPlayer(videoController),
-                  ),
-                ),
-                FadeTransition
-                (
-                  opacity: tweenController,
-                  child:
-                  IgnorePointer
-                  (
-                    ignoring: controlUIVisible == false,
-                    child:
-                    controlUI(context),
-                  ),
-                ),
-                commentCanvas(),
-                //contentComment(),
-              ],
-            ),
-          )
-          :
-          Stack
-          (
-            children:
-            [
-              Align
-              (
-                alignment: Alignment.topCenter,
-                child:
-                Container
-                (
-                  height: 50,
-                  child:
-                  Row
-                  (
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Stack
+                      (
+                      //mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>
+                      [
+                        Center
+                          (
+                          child:
+                          AspectRatio
+                            (
+                            aspectRatio: videoController!.value.aspectRatio,
+                            child:
+                            VideoPlayer(videoController!),
+                          ),
+                        ),
+                        FadeTransition
+                          (
+                          opacity: tweenController,
+                          child:
+                          IgnorePointer
+                            (
+                            ignoring: controlUIVisible == false,
+                            child:
+                            controlUI(context),
+                          ),
+                        ),
+                        commentCanvas(),
+                        //contentComment(),
+                      ],
+                    ),
+                  )
+                      :
+                  Stack
+                    (
                     children:
                     [
-                      CupertinoNavigationBarBackButton
-                      (
-                        color: Colors.white,
-                        onPressed: ()
-                        {
-                          Get.back();
-                        },
+                      Align
+                        (
+                        alignment: Alignment.topCenter,
+                        child:
+                        Container
+                          (
+                          height: 50,
+                          child:
+                          Row
+                            (
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:
+                            [
+                              CupertinoNavigationBarBackButton
+                                (
+                                color: Colors.white,
+                                onPressed: () {
+                                  Get.back();
+                                },
+                              ),
+                              IconButton
+                                (
+                                onPressed: () {
+                                  //Get.off();
+                                  print('다음회차 보기 누름');
+                                },
+                                icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
+                              )
+                            ],
+                          ),
+                        ),
                       ),
-                      IconButton
-                      (
-                        onPressed: ()
-                        {
-                          //Get.off();
-                          print('다음회차 보기 누름');
-                        },
-                        icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
-                      )
+                      Center
+                        (
+                          child:
+                          //controlUI(context),
+                          CircularProgressIndicator()
+                      ),
                     ],
-                  ),
-                ),
-              ),
-              Center
-              (
-                child:
-                //controlUI(context),
-                CircularProgressIndicator()
-              ),
-            ],
+                  )
+              )
           )
-        )
-      )
-    );
+      );
+    }
+    catch(e)
+    {
+      print(e);
+      return
+      Container
+      (
+        child:
+        CupertinoNavigationBarBackButton
+        (
+          color: Colors.white,
+          onPressed: ()
+          {
+            Get.back();
+          },
+        ),
+      );
+    }
   }
 
   double bottomOffset = -840.h;

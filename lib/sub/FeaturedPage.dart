@@ -5,6 +5,7 @@ import 'package:shortplex/Util/ShortsPlayer.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:get/get.dart';
 import '../table/StringTable.dart';
+import '../table/UserData.dart';
 
 class FeaturedPage extends StatefulWidget
 {
@@ -54,6 +55,16 @@ class _FeaturedPageState extends State<FeaturedPage>
     //   "https://videos.pexels.com/video-files/6060027/6060027-uhd_2160_3840_25fps.mp4",
     //   "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4"
     // ];
+
+    for(int i = 0; i < 10; ++i)
+    {
+      var contentsData = ContentData(id: i, imagePath: '', title: '배포할 내용', cost: i);
+      contentsData.isNew = false;
+      contentsData.isWatching = true;
+      contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);
+      contentsData.rank = i;
+      UserData.to.ContentDatas.add(contentsData);
+    }
   }
 
   @override

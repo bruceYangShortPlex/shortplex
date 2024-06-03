@@ -592,7 +592,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                           //   });
                           // }
 
-                          Get.to(() => ShopPage());
+                          Get.to(() => Shoppage());
                         },
                       ),
                     ),
@@ -816,7 +816,7 @@ class UserInfoMainListView extends GetxController
     ),
   );
 
-  Widget contentsView(List<contentData> _list, [bool _buttonVisible = false])
+  Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
   {
     if (_list.length == 0)
       return SizedBox();
@@ -887,7 +887,7 @@ class UserInfoMainListView extends GetxController
       );
   }
 
-  Widget contentItem(contentData _data)
+  Widget contentItem(ContentData _data)
   {
     return
       Padding
@@ -971,7 +971,7 @@ class UserInfoMainListView extends GetxController
                       ),
                       child:
                       Text
-                        (
+                      (
                         'NEW',
                         style:
                         const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),

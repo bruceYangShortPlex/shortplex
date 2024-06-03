@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/ChargeHistoryPage.dart';
 import 'package:shortplex/sub/ShopPage.dart';
@@ -144,35 +145,44 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                   [
                                     Row
                                     (
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children:
                                       [
-                                        _moneyInfo('assets/images/main/shortplex.png', Get.find<UserData>().GetPopupcornCount().$1),
-
-                                        Padding
+                                        Expanded
                                         (
-                                          padding: const EdgeInsets.only(top: 20),
+                                          flex: 3,
+                                            child:
+                                            _moneyInfo('assets/images/User/my_popcon.png', Get.find<UserData>().GetPopupcornCount().$1)
+                                        ),
+                                        Expanded
+                                        (
+                                          flex: 1,
                                           child:
-                                          Opacity
+                                          Padding
                                           (
-                                            opacity: 0.80,
-                                            child: Transform
-                                              (
-                                              alignment: Alignment.center,
-                                              transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(1.57),
-                                              child:
-                                              Container
-                                              (
-                                                //color: Colors.white,
-                                                height: 0.5,
-                                                width: 56,
-                                                decoration: ShapeDecoration(
-                                                  shape: RoundedRectangleBorder(
-                                                    side: BorderSide
-                                                    (
-                                                      width: 1.50,
-                                                      strokeAlign: BorderSide.strokeAlignCenter,
-                                                      color: Colors.white.withOpacity(0.4),
+                                            padding: const EdgeInsets.only(top: 20),
+                                            child:
+                                            Opacity
+                                            (
+                                              opacity: 0.80,
+                                              child: Transform
+                                                (
+                                                alignment: Alignment.center,
+                                                transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(1.57),
+                                                child:
+                                                Container
+                                                (
+                                                  //color: Colors.white,
+                                                  height: 0.5,
+                                                  width: 56,
+                                                  decoration: ShapeDecoration(
+                                                    shape: RoundedRectangleBorder(
+                                                      side: BorderSide
+                                                      (
+                                                        width: 1.50,
+                                                        strokeAlign: BorderSide.strokeAlignCenter,
+                                                        color: Colors.white.withOpacity(0.4),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -180,7 +190,11 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                             ),
                                           ),
                                         ),
-                                        _moneyInfo('assets/images/main/shortplex.png', Get.find<UserData>().GetPopupcornCount().$2),
+                                        Expanded
+                                        (
+                                          flex: 3,
+                                            child: _moneyInfo('assets/images/User/my_bonus.png', Get.find<UserData>().GetPopupcornCount().$2)
+                                        ),
                                       ],
                                     ),
                                     Padding
@@ -212,7 +226,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                           ),
                                           onTap: ()
                                           {
-                                            Get.to(() => ShopPage());
+                                            Get.to(() => Shoppage());
                                           },
                                         ),
                                       ),
@@ -299,7 +313,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
   Widget _moneyInfo(String _imagePath, String _text) =>
   Padding
   (
-    padding: const EdgeInsets.only(left: 20, top: 20),
+    padding: const EdgeInsets.only(top: 20),
     child:
     Container
     (
@@ -355,7 +369,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                 ),
               ),
               Padding
-                (
+              (
                 padding:EdgeInsets.only(right: 20),
                 child: _isToggle ? _toggleButton() : _moveButton(_moveSubpageType),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:shortplex/Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 
 // void main() async
@@ -310,27 +311,6 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
         ),
       );
 
-  SnackbarController showSnackbar()
-  {
-    return
-    Get.snackbar
-    (
-      '',
-      '',
-      padding: EdgeInsets.only(bottom: 30),
-      messageText:
-      Center(
-        child: Text(StringTable().Table![400085]!,
-          style:
-          TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
-      ),
-      //colorText: Colors.blue,
-      backgroundColor: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: Duration(seconds: 2),
-    );
-  }
-
   Widget checkNumber()=>
   Container
   (
@@ -356,7 +336,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
         TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
       onTap: ()
       {
-        showSnackbar();
+        ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.BOTTOM);
       },
     ),
   );

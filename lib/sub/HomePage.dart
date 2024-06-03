@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/SearchPage.dart';
 
+import '../table/UserData.dart';
 import 'ContentPlayer.dart';
 
 class HomePage extends StatefulWidget
@@ -17,12 +18,12 @@ class HomePage extends StatefulWidget
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-
+class _HomePageState extends State<HomePage>
+{
   List<Widget> pageList = <Widget>[];
   List<String> homePageViewTitle = <String>[];
-  var homeContentsDataList = <contentData>[];
-  var rankContentsDataList = <contentData>[];
+  var homeContentsDataList = <ContentData>[];
+  var rankContentsDataList = <ContentData>[];
   var pageIndex = 0;
   var tweenInitBlock = true;
 
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       pageList.add(topPageItem());
       homePageViewTitle.add(i.toString());
 
-      var contentsData = contentData(id: i, imagePath: '', title: '배포할 내용');
+      var contentsData = ContentData(id: i, imagePath: '', title: '배포할 내용', cost: i);
       contentsData.isNew = false;
       contentsData.isWatching = true;
       contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);
@@ -256,7 +257,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget contentsView(List<contentData> _list, [bool _buttonVisible = false])
+  Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
   {
     if (_list.length == 0)
       return SizedBox();
@@ -327,7 +328,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget rankContentView(List<contentData> _list)
+  Widget rankContentView(List<ContentData> _list)
   {
     if (_list.length == 0)
       return SizedBox();
@@ -424,7 +425,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget contentItem(contentData _data)
+  Widget contentItem(ContentData _data)
   {
     return
     Padding
@@ -443,7 +444,7 @@ class _HomePageState extends State<HomePage> {
               {
                 print(_data.id);
                 print('go to content player');
-                Get.to(() => ContentPlayer());
+                Get.to(() => ContentPlayer(), arguments: _data);
               }
               else
               {
@@ -551,7 +552,8 @@ class _HomePageState extends State<HomePage> {
                   Padding
                   (
                     padding: const EdgeInsets.only(left: 6, bottom: 2.1),
-                    child: Text
+                    child:
+                    Text
                     (
                       _data.watchingEpisode!,
                       style:
@@ -577,24 +579,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
-
-class contentData
-{
-  int? id;
-  String? title;
-  String? imagePath;
-  bool? isNew;
-  bool? isWatching;
-  String? watchingEpisode;
-  int? rank;
-
-  contentData
-  (
-    {
-      required this.id,
-      required this.title,
-      required this.imagePath,
-    }
-  );
 }

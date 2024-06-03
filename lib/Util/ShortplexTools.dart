@@ -20,7 +20,12 @@ void showDialogTwoButton(int _titieID, int _contentID, VoidCallback _callback)
     titlePadding: EdgeInsets.only(top: 30),
     contentPadding: _contentID == 0 ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 30),
     content : _contentID != 0 ?
-    Text(StringTable().Table![_contentID]!, style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),) : Text(''),
+    Text
+    (
+      StringTable().Table![_contentID]!,
+      style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+    )
+    : Text(''),
     actions:
     [
       CupertinoButton
@@ -111,6 +116,7 @@ Widget CommentWidget
         String _likeCount,
         bool _isOwner,
         bool _isBest,
+        bool _isReply,
         Function(int) _callClickLike, Function(int) _callOpenCommant,Function(int) _callDelete)
 {
   var index = _index;
@@ -306,64 +312,81 @@ Widget CommentWidget
             mainAxisAlignment: MainAxisAlignment.start,
             children:
             [
-              Padding
+              Expanded
               (
-                padding: const EdgeInsets.only(left: 32),
                 child:
-                Container
+                Padding
                 (
-                  //color: Colors.blue,
-                  child: IconButton
+                  padding: const EdgeInsets.only(left: 32),
+                  child:
+                  Container
                   (
-                    padding: EdgeInsets.zero,
-                    onPressed: ()
-                    {
-                      _callClickLike(index);
-                    },
-                    icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
-                                color: Colors.white,size: 15,),
+                    //color: Colors.blue,
+                    child:
+                    Row
+                    (
+                      children:
+                      [
+                        IconButton
+                        (
+                          padding: EdgeInsets.zero,
+                          onPressed: ()
+                          {
+                            _callClickLike(index);
+                          },
+                          icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
+                            color: Colors.white,size: 15,),
+                        ),
+                        Text
+                        (
+                          textAlign: TextAlign.start,
+                          _likeCount,
+                          style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        ),
+                      ],
+                    )
                   ),
                 ),
               ),
-              Container
+
+              Expanded
               (
-                width: 40,
-                child:
-                Text
+                child: Padding
                 (
-                  textAlign: TextAlign.start,
-                  _likeCount,
-                  style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
-                ),
-              ),
-              Padding
-              (
-                padding: const EdgeInsets.only(left: 0),
-                child:
-                Container
-                (
-                  //color: Colors.blue,
-                  child: IconButton
+                  padding: const EdgeInsets.only(left: 0),
+                  child:
+                  Container
                   (
-                    padding: EdgeInsets.zero,
-                    onPressed: ()
-                    {
-                      _callOpenCommant(index);
-                    },
-                    icon: Icon( CupertinoIcons.ellipses_bubble, color: Colors.white,size: 15,),
-                  ),
-                ),
-              ),
-              Container
-              (
-                //color: Colors.blue,
-                width: 40,
-                child:
-                Text
-                (
-                  textAlign: TextAlign.start,
-                  _replyCount,
-                  style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    //color: Colors.blue,
+                    child:
+                    Visibility
+                    (
+                      visible: !_isReply,
+                      child: Row
+                      (
+                        children:
+                        [
+                          IconButton
+                            (
+                            padding: EdgeInsets.zero,
+                            onPressed: ()
+                            {
+                              _callOpenCommant(index);
+                            },
+                            icon: Icon( CupertinoIcons.ellipses_bubble, color: Colors.white,size: 15,),
+
+                          ),
+                          Text
+                            (
+                            textAlign: TextAlign.start,
+                            _replyCount,
+                            style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    ),
                 ),
               ),
               Visibility
@@ -425,3 +448,26 @@ void activeBottomSheet(Widget _widget)
   );
 }
 
+SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position)
+{
+  return
+  Get.snackbar
+  (
+    '',
+    '',
+    padding: EdgeInsets.only(bottom: 30),
+    messageText:
+    Center(
+      child:
+      Text
+        (
+        _content,
+        style:
+        TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+    ),
+    //colorText: Colors.blue,
+    backgroundColor: Colors.white,
+    snackPosition: _position,
+    duration: Duration(seconds: 3),
+  );
+}

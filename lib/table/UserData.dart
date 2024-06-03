@@ -14,10 +14,15 @@ class UserData extends GetxController
   String providerUid = '';
   RxBool isSubscription = false.obs;
   RxInt popcornCount = 10000.obs;
-  int cornCount = 0;
+  int bonusCornCount = 0;
+  bool autoPlay = true;
+  int usedPopcorn = 0;
+  int usedBonusCorn = 0;
 
   String id = '';//barer token.
   String userId = ''; //server id
+
+  List<ContentData> ContentDatas = <ContentData>[];
 
   InitValue()
   {
@@ -30,15 +35,39 @@ class UserData extends GetxController
     privacypolicies = 'true';
     isSubscription.value = false;
     popcornCount.value = 0;
-    cornCount = 0;
+    bonusCornCount = 0;
+    ContentDatas.clear();
   }
 
   (String, String) GetPopupcornCount()
   {
     var formatter = NumberFormat('#,###');
     var popcornCount = formatter.format(this.popcornCount.value);
-    var cornCount = formatter.format(this.cornCount);
+    var cornCount = formatter.format(this.bonusCornCount);
     return (popcornCount, cornCount);
+  }
+
+  int GetContentCost(int _episode)
+  {
+    if (_episode >= ContentDatas.length)
+    {
+      return -1;
+    }
+
+    if (isSubscription.value == true)
+    {
+      return 0;
+    }
+
+    for(var item in ContentDatas)
+    {
+      if (item.id == _episode)
+        {
+          return item.cost!;
+        }
+    }
+
+    return -1;
   }
 
   String GetProviderIcon()
@@ -67,4 +96,28 @@ class UserData extends GetxController
 
     return IconPath;
   }
+}
+
+class ContentData
+{
+  int? id;
+  String? title;
+  String? imagePath;
+  bool? isNew;
+  bool? isWatching;
+  String? watchingEpisode;
+  int? rank;
+  int? cost;
+  String? contentUrl;
+  bool isLock = true;
+
+  ContentData
+  (
+    {
+      required this.id,
+      required this.title,
+      required this.imagePath,
+      required this.cost,
+    }
+  );
 }

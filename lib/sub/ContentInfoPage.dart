@@ -815,6 +815,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             episodeCommentList[i].replyCount!,
             episodeCommentList[i].isOwner!,
             episodeCommentList[i].isBest!,
+            false,
             (id)
             {
               //TODO : 좋아요 버튼 처리

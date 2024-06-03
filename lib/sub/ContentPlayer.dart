@@ -1,8 +1,12 @@
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/sub/ShopPage.dart';
+import 'package:shortplex/table/UserData.dart';
 import 'package:video_player/video_player.dart';
 
 import '../Util/ShortplexTools.dart';
@@ -18,25 +22,32 @@ enum ContentPlayButtonType
   CONTENT_INFO,
 }
 
-class ContentPlayer extends StatefulWidget {
+class ContentPlayer extends StatefulWidget
+{
   @override
   _ContentPlayerState createState() => _ContentPlayerState();
 }
 
-class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProviderStateMixin
+class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateMixin
 {
   late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
   double currentTime = 0.0;
   int commentCount = 0;
   int usedPopcorn = 0;
+  double tweenDelay = 3;
+  double commentScrollOffset = 0;
+  late Ticker ticker;
 
   late AnimationController tweenController;
   bool controlUIVisible = false;
+  ContentData? contentData;
 
   @override
   void initState()
   {
+    contentData = Get.arguments as ContentData;
+
     videoController = VideoPlayerController.networkUrl(
         Uri.parse("https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4"))
       ..initialize().then((_) {
@@ -69,12 +80,26 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
     //   _visible = true;
     // });
 
+    //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
+    // if (contentData!.isLock)
+    // {
+    //   var userData = Get.find<UserData>();
+    //   //구독중이면 그냥 다음진행.
+    //   if (userData.isSubscription == false) {
+    //     //다음회차의 가격을 알아온다.
+    //     var cost = userData.GetContentCost(contentData!.id!);
+    //     if (userData.popcornCount + userData.bonusCornCount < cost) {
+    //
+    //     }
+    //   }
+    // }
+
     usedPopcorn = 3;
 
     Future.delayed(Duration(milliseconds: 500)).then((_)
     {
       if (usedPopcorn != 0)
-        usedPopcornAnnounce();
+        ShowCustomSnackbar(StringTable().Table![100047]!, SnackPosition.BOTTOM);
     });
 
     scrollController.addListener(() {
@@ -123,37 +148,35 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
       );
       replyList.add(commentData);
     }
+
+    ticker = createTicker((elapsed)
+    {
+      if (elapsed.inSeconds > 3)
+        {
+          ticker.stop();
+          if(controlUIVisible = true)
+          {
+            controlUIVisible = false;
+            tweenController.reverse();
+            setState(() {
+
+            });
+          }
+        }
+    });
+
     super.initState();
   }
 
   @override
   void dispose()
   {
+    ticker.dispose();
+    replyScrollController.dispose();
     videoController.dispose();
     tweenController.dispose();
     scrollController.dispose();
     super.dispose();
-  }
-
-  SnackbarController usedPopcornAnnounce()
-  {
-    return
-    Get.snackbar
-    (
-      '',
-      '',
-      padding: EdgeInsets.only(bottom: 30),
-      messageText:
-      Center(
-        child: Text(StringTable().Table![100047]!,
-          style:
-          TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
-      ),
-      //colorText: Colors.blue,
-      backgroundColor: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: Duration(seconds: 3),
-    );
   }
 
   @override
@@ -161,6 +184,14 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
   {
     super.didChangeDependencies();
 
+  }
+
+  void setScrollPosition(double _offset) {
+    scrollController.animateTo(
+      _offset,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 
   Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon, ContentPlayButtonType _type)
@@ -182,14 +213,16 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
             switch(_type)
             {
               case ContentPlayButtonType.COMMENT:
-                {
+              {
+                  isShowShop = false;
+                  ticker.stop();
+                  controlUIVisible = false;
+                  isShowReply = false;
+                  tweenTime = 300;
+                  bottomOffset = 0;
                   tweenController.reverse();
                   setState(()
                   {
-                    controlUIVisible = false;
-                    isShowReply = false;
-                    tweenTime = 300;
-                    bottomOffset = 0;
                   });
                 }
                 break;
@@ -289,7 +322,12 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                   (
                     onPressed: ()
                     {
-                      //Get.off();
+                      //Get.off(() => ContentPlayer(), arguments: contentData);
+                      isShowShop = true;
+                      bottomOffset = 0;
+                      setState(() {
+
+                      });
                       print('다음회차 보기 누름');
                     },
                     icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
@@ -308,6 +346,9 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               (
                 onTap: ()
                 {
+                  ticker.stop();
+                  ticker.start();
+
                   if (videoController.value.isPlaying)
                     videoController.pause();
                   else
@@ -358,6 +399,8 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                 max: videoController.value.duration.inSeconds.toDouble(),
                 onChanged: (value)
                 {
+                  ticker.stop();
+                  ticker.start();
                   setState(()
                   {
                     currentTime = value;
@@ -402,7 +445,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
           backgroundColor: Colors.black,
           child:
           videoController.value.isInitialized
-              ?
+          ?
           GestureDetector
           (
             onTap:
@@ -419,14 +462,18 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               if (tweenController.status == AnimationStatus.completed)
               {
                 tweenController.reverse();
-                setState(() {
+                ticker.stop();
+                setState(()
+                {
                   controlUIVisible = false;
                 });
               }
               else
               {
                 tweenController.forward();
-                setState(() {
+                ticker.start();
+                setState(()
+                {
                   controlUIVisible = true;
                 });
               }
@@ -552,17 +599,18 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               [
                 Padding
                 (
-                  padding: const EdgeInsets.only(top: 250),
-                  child: Container
+                  padding: EdgeInsets.only(top: 275.h),
+                  child:
+                  Container
                   (
-                    width: 390.w,
-                    height: 50,
+                    height: 70,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        begin: Alignment(0.00, -1.00),
+                        begin: Alignment(0, -1),
                         end: Alignment(0, 1),
-                        colors: [Colors.black.withOpacity(0), Colors.black],
+                        colors: [Colors.transparent, Colors.black],
                       ),
+                      //border: Border.all(width: 1),
                     ),
                   ),
                 ),
@@ -576,9 +624,11 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                   Container
                   (
                     width: 390.w,
-                    height: 550.h,
+                    height: 500.h,
                     color: Colors.black,
                     child:
+                    isShowShop ?
+                    showShop() :
                     isShowReply == false ?
                     contentComment() : commentReply(),
                   ),
@@ -595,6 +645,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
   //comment 관련
   var episodeCommentList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
+  var replyScrollController = ScrollController();
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.LATEST;
 
@@ -703,7 +754,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
             SizedBox(height: 10,),
             Container
             (
-              height: 505.h,
+              height: 455.h,
               //color: Colors.green,
               child:
               SingleChildScrollView
@@ -728,6 +779,7 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                         episodeCommentList[i].replyCount!,
                         episodeCommentList[i].isOwner!,
                         episodeCommentList[i].isBest!,
+                            false,
                             (id)
                         {
                           //TODO : 좋아요 버튼 처리
@@ -736,8 +788,8 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                             (id)
                         {
                           commentData = episodeCommentList[i];
-                          //TODO : 답글 보기 처리.
                           isShowReply = true;
+                          commentScrollOffset = scrollController.offset;
                           setState(() {
 
                           });
@@ -757,7 +809,6 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
     );
   }
 
-  //TODO : Reply
   bool isShowReply = false;
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   EpisodeCommentData? commentData;
@@ -786,8 +837,10 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
               onPressed: ()
               {
                 isShowReply = false;
-                setState(() {
-
+                print('on tap reply off');
+                setState(()
+                {
+                   setScrollPosition(commentScrollOffset);
                 });
               },
             ),
@@ -814,7 +867,25 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
             print('update !');
             if (isShowReply)
             {
-
+              for(int i = 0; i < 10; ++i)
+              {
+                var commentData = EpisodeCommentData
+                  (
+                  name: '황후마마가 돌아왔다.',
+                  commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                  date: '24.09.06',
+                  episodeNumber: '11',
+                  iconUrl: '',
+                  ID: i,
+                  isLikeCheck: i % 2 == 0,
+                  likeCount: '12',
+                  replyCount: '3',
+                  isOwner: i == 0,
+                  isBest: true,
+                );
+                replyList.add(commentData);
+              }
+              print('replyList.length : ${replyList.length}');
             }
             else
             {
@@ -836,9 +907,8 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
                 );
                 episodeCommentList.add(commentData);
               }
+              print('episodeCommentList.length : ${episodeCommentList.length}');
             }
-
-            print('episodeCommentList.length : ${episodeCommentList.length}');
 
             setState(()
             {
@@ -851,4 +921,156 @@ class _ContentPlayerState extends State<ContentPlayer> with SingleTickerProvider
       print(e);
     }
   }
+
+  bool isShowShop = false;
+  Widget showShop()
+  {
+    return
+    Padding
+    (
+      padding: EdgeInsets.only(top: 30),
+      child:
+      SingleChildScrollView
+      (
+          child:
+          Column
+          (
+            children:
+            [
+              Padding
+              (
+                padding: EdgeInsets.only(top: 20),
+                child:
+                Container
+                (
+                  height: 85,
+                  //color: Colors.white,
+                  child:
+                  Row
+                  (
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children:
+                    [
+                      Expanded
+                      (
+                        flex: 3,
+                        child:
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30),
+                          child: Container
+                          (
+                            alignment: Alignment.centerLeft,
+                            //color: Colors.blue,
+                            child:
+                            Column
+                            (
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children:
+                              [
+                                Text
+                                (
+                                  StringTable().Table![400024]!,
+                                  style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                ),
+                                SizedBox(height: 8,),
+                                Text
+                                (
+                                  SetTableStringArgument(400025, ['${contentData!.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
+                                  ,
+                                  style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                ),
+                              ],
+                            )
+                          ),
+                        ),
+                      ),
+                      Expanded
+                      (
+                        child:
+                        Padding
+                        (
+                          padding: const EdgeInsets.only(right: 30),
+                          child: Container
+                          (
+                            alignment: Alignment.topLeft,
+                            //color: Colors.green,
+                            child:
+                            Stack
+                            ( alignment: Alignment.center,
+                              children:
+                              [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: Container
+                                  (
+                                    width: 32,
+                                    height: 32,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Padding
+                                (
+                                  padding: const EdgeInsets.only(top: 50),
+                                  child:
+                                  Text
+                                  (
+                                    StringTable().Table![400026]!,
+                                    style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              ShopGoods(false),
+              Row
+              (
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                [
+                  toggleButton(),
+                  Padding
+                  (
+                    padding: EdgeInsets.only(bottom: 2),
+                    child:
+                    Text
+                    (
+                      StringTable().Table![400027]!,
+                      style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    ),
+                  ),
+
+                ],
+              )
+            ],
+          ),
+      ),
+    );
+  }
+
+  bool isChecked = true;
+  Widget toggleButton() =>
+      Transform.scale
+        (
+        scale: 0.7,
+        child:
+        CupertinoSwitch
+          (
+          value: isChecked,
+          activeColor: Color(0xFF00FFBF),
+          onChanged: (bool? value)
+          {
+            //TODO : 서버에 알리기
+            setState(()
+            {
+              isChecked = value ?? false;
+            });
+          },
+        ),
+      );
 }

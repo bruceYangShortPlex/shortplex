@@ -121,8 +121,8 @@ class BuySubscriptionPage extends StatelessWidget
                       children:
                       [
                         SvgPicture.asset
-                          (
-                          'assets/images/shop/my_shop_freepass_1.svg',
+                        (
+                          'assets/images/Shop/my_shop_freepass_1.svg',
                         ),
                         Container
                           (
@@ -161,7 +161,7 @@ class BuySubscriptionPage extends StatelessWidget
                     ) :
                     SvgPicture.asset
                     (
-                      'assets/images/shop/my_shop_freepass.svg',
+                      'assets/images/Shop/my_shop_freepass.svg',
                     )
                   ),
                   SizedBox(height: 50,),

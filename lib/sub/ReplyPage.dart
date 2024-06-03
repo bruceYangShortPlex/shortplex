@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
@@ -185,7 +186,12 @@ SafeArea
         height: MediaQuery.of(context).size.height,
         //color: Colors.blue,
         child:
-        ReplyPopup(scrollController, commentData, replyList),
+        Padding
+        (
+          padding: EdgeInsets.only(top: 10),
+          child:
+          ReplyPopup(scrollController, commentData, replyList)
+        ),
       ),
       ),
     ),
@@ -196,58 +202,82 @@ Widget ReplyPopup(ScrollController _scrollController,
     EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList, [double _padding = 60])
 {
 
-  return SingleChildScrollView(
-    controller: _scrollController,
-    child: Padding(
-      padding: EdgeInsets.only(top: _padding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 30),
-            child: Container(
-              child: CommentWidget(
-                _commentData.ID,
-                _commentData.iconUrl!,
-                _commentData.episodeNumber!,
-                _commentData.name!,
-                _commentData.date!,
-                _commentData.isLikeCheck!,
-                _commentData.commant!,
-                _commentData.likeCount!,
-                _commentData.replyCount!,
-                _commentData.isOwner!,
-                _commentData.isBest!,
-                (p0) {},
-                (p0) {},
-                (p0) {},
-              ),
+  return
+
+  Padding
+  (
+    padding: EdgeInsets.only(top: _padding),
+    child: Column
+    (
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:
+      [
+        Padding
+        (
+          padding: const EdgeInsets.only(left: 30),
+          child:
+          Container
+          (
+            padding: EdgeInsets.only(top: 5),
+            child:
+            CommentWidget
+            (
+              _commentData.ID,
+              _commentData.iconUrl!,
+              _commentData.episodeNumber!,
+              _commentData.name!,
+              _commentData.date!,
+              _commentData.isLikeCheck!,
+              _commentData.commant!,
+              _commentData.likeCount!,
+              _commentData.replyCount!,
+              _commentData.isOwner!,
+              _commentData.isBest!,
+              false,
+              (p0) {},
+              (p0) {},
+              (p0) {},
             ),
           ),
-          for (int i = 0; i < _replyList.length; ++i)
-            Padding(
-              padding: const EdgeInsets.only(left: 80),
-              child: Container(
-                child: CommentWidget(
-                  _replyList[i].ID,
-                  _replyList[i].iconUrl!,
-                  _replyList[i].episodeNumber!,
-                  _replyList[i].name!,
-                  _replyList[i].date!,
-                  _replyList[i].isLikeCheck!,
-                  _replyList[i].commant!,
-                  _replyList[i].likeCount!,
-                  _replyList[i].replyCount!,
-                  _replyList[i].isOwner!,
-                  _replyList[i].isBest!,
-                  (p0) {},
-                  (p0) {},
-                  (p0) {},
-                ),
-              ),
+        ),
+        Expanded
+        (
+          child: SingleChildScrollView
+          (
+            controller: _scrollController,
+            child: Column
+            (
+              children:
+              [
+                SizedBox(height:  10,),
+                for (int i = 0; i < _replyList.length; ++i)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 80),
+                    child: Container(
+                      child: CommentWidget(
+                        _replyList[i].ID,
+                        _replyList[i].iconUrl!,
+                        _replyList[i].episodeNumber!,
+                        _replyList[i].name!,
+                        _replyList[i].date!,
+                        _replyList[i].isLikeCheck!,
+                        _replyList[i].commant!,
+                        _replyList[i].likeCount!,
+                        _replyList[i].replyCount!,
+                        _replyList[i].isOwner!,
+                        _replyList[i].isBest!,
+                            true,
+                            (p0) {},
+                            (p0) {},
+                            (p0) {},
+                      ),
+                    ),
+                  ),
+              ],
             ),
-        ],
-      ),
+          ),
+        ),
+      ],
     ),
   );
 }

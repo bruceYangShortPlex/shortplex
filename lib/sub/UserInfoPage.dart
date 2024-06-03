@@ -592,7 +592,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                           //   });
                           // }
 
-                          Get.to(() => Shoppage());
+                          Get.to(() => ShopPage());
                         },
                       ),
                     ),

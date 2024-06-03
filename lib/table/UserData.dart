@@ -13,7 +13,7 @@ class UserData extends GetxController
   String privacypolicies = 'true';
   String providerUid = '';
   RxBool isSubscription = false.obs;
-  RxInt popcornCount = 10000.obs;
+  RxInt popcornCount = 0.obs;
   int bonusCornCount = 0;
   bool autoPlay = true;
   int usedPopcorn = 0;

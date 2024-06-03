@@ -226,7 +226,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                           ),
                                           onTap: ()
                                           {
-                                            Get.to(() => Shoppage());
+                                            Get.to(() => ShopPage());
                                           },
                                         ),
                                       ),

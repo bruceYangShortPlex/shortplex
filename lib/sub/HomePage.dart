@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/sub/SearchPage.dart';
 
 import '../table/UserData.dart';
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage>
 
     for(int i = 0; i < 10; ++i)
     {
-      pageList.add(topPageItem());
+      pageList.add(topPageItem(i));
       homePageViewTitle.add(i.toString());
 
       var contentsData = ContentData(id: i, imagePath: '', title: '배포할 내용', cost: i);
@@ -234,13 +235,14 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget topPageItem()
+  Widget topPageItem(int _id)
   {
     return
     GestureDetector
     (
       onTap: ()
       {
+        Get.to(()=> ContentInfoPage(), arguments: _id);
         print(pageIndex);
       },
       child: Container
@@ -364,40 +366,41 @@ class _HomePageState extends State<HomePage>
                   (
                     padding: EdgeInsets.only(right: 5),
                     child:
-                    Container
+                    GestureDetector
                     (
-                      width: 180,
-                      height: 160,
-                      //color: Colors.grey,
-                      alignment: Alignment.centerRight,
-                      child:
-                      Stack
+                      onTap: ()
+                      {
+                        Get.to(()=> ContentInfoPage(), arguments: _list[i].id);
+                        print(_list[i].id);
+                      },
+                      child: Container
                       (
-                        children:
-                        [
-                          Padding
-                          (
-                            padding: const EdgeInsets.only(left: 75),
-                            child: SvgPicture.asset
+                        width: 180,
+                        height: 160,
+                        //color: Colors.grey,
+                        alignment: Alignment.centerRight,
+                        child:
+                        Stack
+                        (
+                          children:
+                          [
+                            Padding
                             (
-                              'assets/images/home/home_frame_bg.svg',
+                              padding: const EdgeInsets.only(left: 75),
+                              child: SvgPicture.asset
+                              (
+                                'assets/images/home/home_frame_bg.svg',
+                                width: 180,
+                                height: 160,
+                              ),
+                            ),
+                            SvgPicture.asset
+                              (
+                              'assets/images/home/home_text ${i + 1}.svg',
                               width: 180,
                               height: 160,
                             ),
-                          ),
-                          SvgPicture.asset
-                            (
-                            'assets/images/home/home_text ${i + 1}.svg',
-                            width: 180,
-                            height: 160,
-                          ),
-                          GestureDetector
-                          (
-                            onTap: ()
-                            {
-                              print(_list[i].id);
-                            },
-                            child: Padding
+                            Padding
                             (
                               padding: const EdgeInsets.only(left: 65),
                               child: Container
@@ -411,8 +414,8 @@ class _HomePageState extends State<HomePage>
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

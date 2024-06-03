@@ -8,14 +8,14 @@ import '../table/StringTable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 
-class Shoppage extends StatefulWidget {
-  const Shoppage({super.key});
+class ShopPage extends StatefulWidget {
+  const ShopPage({super.key});
 
   @override
-  State<Shoppage> createState() => _ShoppageState();
+  State<ShopPage> createState() => _ShopPageState();
 }
 
-class _ShoppageState extends State<Shoppage> {
+class _ShopPageState extends State<ShopPage> {
   @override
 
   @override

@@ -12,6 +12,7 @@ import 'package:video_player/video_player.dart';
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
+import 'NextContentPlayer.dart';
 import 'ReplyPage.dart';
 
 enum ContentPlayButtonType
@@ -34,7 +35,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   // Add a variable to handle the time of video playback
   double currentTime = 0.0;
   int commentCount = 0;
-  int usedPopcorn = 0;
   double tweenDelay = 3;
   double commentScrollOffset = 0;
   late Ticker ticker;
@@ -42,26 +42,60 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   late AnimationController tweenController;
   bool controlUIVisible = false;
   ContentData? contentData;
+  bool isShowContent = false;
 
   @override
   void initState()
   {
     contentData = Get.arguments as ContentData;
+    print('play content ${contentData!.id} / cost ${contentData!.cost}');
 
-    videoController = VideoPlayerController.networkUrl(
-        Uri.parse("https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4"))
+    //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
+    if (contentData!.isLock)
+    {
+      print('check cost');
+
+      var userData = Get.find<UserData>();
+      //구독중이면 그냥 다음진행.
+      if (userData.isSubscription == false)
+      {
+        //다음회차의 가격을 알아온다.
+        var cost = userData.GetContentCost(contentData!.id!);
+        if (userData.popcornCount + userData.bonusCornCount < cost)
+        {
+          isShowContent = false;
+          isShowShop =  true;
+          bottomOffset = 0;
+          setState(() {
+
+          });
+        }
+        else
+        {
+          isShowContent = true;
+        }
+      }
+      else
+      {
+        isShowContent = true;
+      }
+    }
+    else
+    {
+      isShowContent = true;
+    }
+
+    var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
+
+    videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
       ..initialize().then((_) {
         setState(() {
-          videoController.play();
+          if (isShowContent) {
+            videoController.play();
+          }
         });
       });
 
-    tweenController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    // Add a listener to update the current time variable
     videoController.addListener(()
     {
       if (videoController.value.position >= videoController.value.duration)
@@ -76,30 +110,19 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       });
     });
 
-    // setState(() {
-    //   _visible = true;
-    // });
 
-    //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
-    // if (contentData!.isLock)
-    // {
-    //   var userData = Get.find<UserData>();
-    //   //구독중이면 그냥 다음진행.
-    //   if (userData.isSubscription == false) {
-    //     //다음회차의 가격을 알아온다.
-    //     var cost = userData.GetContentCost(contentData!.id!);
-    //     if (userData.popcornCount + userData.bonusCornCount < cost) {
-    //
-    //     }
-    //   }
-    // }
+    tweenController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
 
-    usedPopcorn = 3;
-
+    // Add a listener to update the current time variable
     Future.delayed(Duration(milliseconds: 500)).then((_)
     {
-      if (usedPopcorn != 0)
+      if (UserData.to.usedPopcorn != 0) {
         ShowCustomSnackbar(StringTable().Table![100047]!, SnackPosition.BOTTOM);
+        UserData.to.usedPopcorn = 0;
+      }
     });
 
     scrollController.addListener(() {
@@ -322,8 +345,16 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   (
                     onPressed: ()
                     {
-                      //Get.off(() => ContentPlayer(), arguments: contentData);
-                      isShowShop = true;
+                      if (isShowContent == true)
+                      {
+                        print('다음 회차 시부레');
+                        Get.off(NextContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
+                        return;
+                      }
+                      else {
+                        isShowShop = true;
+                      }
+
                       bottomOffset = 0;
                       setState(() {
 

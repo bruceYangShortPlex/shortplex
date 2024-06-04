@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
-import '../table/StringTable.dart';
+import '../../table/StringTable.dart';
 
 // void main() async
 // {

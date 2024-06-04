@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:get/get.dart';
-import '../table/StringTable.dart';
-import '../table/UserData.dart';
+import '../../table/StringTable.dart';
+import '../../table/UserData.dart';
 
 class FeaturedPage extends StatefulWidget
 {

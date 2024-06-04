@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/table/StringTable.dart';
 
-import '../table/UserData.dart';
+import '../../table/UserData.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

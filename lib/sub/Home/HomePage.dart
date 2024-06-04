@@ -6,10 +6,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
-import 'package:shortplex/sub/SearchPage.dart';
+import 'package:shortplex/sub/Home/SearchPage.dart';
 
-import '../table/UserData.dart';
-import 'ContentPlayer.dart';
+import '../../table/UserData.dart';
+import '../ContentPlayer.dart';
 
 class HomePage extends StatefulWidget
 {

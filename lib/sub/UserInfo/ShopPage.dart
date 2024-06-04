@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
-import 'package:shortplex/sub/BuySubscriptionPage.dart';
-import '../table/StringTable.dart';
+import '../../table/StringTable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'BuySubscriptionPage.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key});

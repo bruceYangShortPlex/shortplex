@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:shortplex/sub/PhoneConfirmPage.dart';
-import '../table/StringTable.dart';
+import 'package:shortplex/sub/UserInfo/PhoneConfirmPage.dart';
+import '../../table/StringTable.dart';
 
 enum AccountInfoSubPageType
 {

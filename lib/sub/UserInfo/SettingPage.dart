@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../Util/ShortplexTools.dart';
-import '../table/StringTable.dart';
+import '../../Util/ShortplexTools.dart';
+import '../../table/StringTable.dart';
 import 'AccountInfoPage.dart';
 
 enum SettingSubPageType

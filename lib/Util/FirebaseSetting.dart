@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
-import 'package:shortplex/sub/FeaturedPage.dart';
+import 'package:shortplex/sub/Featured/FeaturedPage.dart';
 import '../firebase_options.dart';
 
 class FirebaseSetting {

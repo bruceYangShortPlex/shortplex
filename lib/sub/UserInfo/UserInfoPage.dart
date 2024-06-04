@@ -1,25 +1,17 @@
 import 'dart:convert';
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/state_manager.dart';
-import 'package:shortplex/sub/BuySubscriptionPage.dart';
-import 'package:shortplex/sub/SettingPage.dart';
-import 'package:shortplex/sub/ShopPage.dart';
-import 'package:shortplex/sub/WalletInfoPage.dart';
-import '../Util/HttpProtocolManager.dart';
-import '../Util/ShortplexTools.dart';
-import '../table/StringTable.dart';
-import '../table/UserData.dart';
-import 'HomePage.dart';
+import 'package:shortplex/sub/UserInfo/SettingPage.dart';
+import 'package:shortplex/sub/UserInfo/ShopPage.dart';
+import '../../Util/HttpProtocolManager.dart';
+import '../../table/StringTable.dart';
+import '../../table/UserData.dart';
+import 'BuySubscriptionPage.dart';
 import 'LoginPage.dart';
+import 'WalletInfoPage.dart';
 
 enum UserInfoSubPageType
 {
@@ -504,8 +496,9 @@ class _UserInfoPageState extends State<UserInfoPage>
                               Padding
                                 (
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Image.asset
-                                  (
+                                child:
+                                Image.asset
+                                (
                                   alignment: Alignment.center,
                                   width: 32,
                                   height: 32,

@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
-import '../table/StringTable.dart';
+import '../../table/StringTable.dart';
 
 void main() async
 {

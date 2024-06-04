@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import '../Util/ShortplexTools.dart';
-import '../table/StringTable.dart';
+import '../../Util/ShortplexTools.dart';
+import '../../table/StringTable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../table/UserData.dart';
+import '../../table/UserData.dart';
 
-//import '../table/UserData.dart';
-
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-//   Get.lazyPut(()=>UserData());
-//   await StringTable().InitTable();
-//   runApp(BuySubscriptionPage());
-// }
 
 class BuySubscriptionPage extends StatelessWidget
 {
@@ -230,7 +218,7 @@ class BuySubscriptionPage extends StatelessWidget
                     padding: EdgeInsets.only(bottom: 3, left: 30, right: 10),
                     child:
                     Text
-                      (
+                    (
                       textAlign: TextAlign.center,
                       StringTable().Table![400037]!,
                       style:

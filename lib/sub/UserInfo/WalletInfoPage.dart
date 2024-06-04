@@ -1,22 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:shortplex/sub/ChargeHistoryPage.dart';
-import 'package:shortplex/sub/ShopPage.dart';
-import 'package:shortplex/sub/UsedHistoryPage.dart';
+import 'package:shortplex/sub/UserInfo/ShopPage.dart';
+import 'package:shortplex/sub/UserInfo/UsedHistoryPage.dart';
 
-import '../table/StringTable.dart';
-import '../table/UserData.dart';
+import '../../table/StringTable.dart';
+import '../../table/UserData.dart';
 import 'BonusHistoryPage.dart';
-
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  Get.lazyPut(()=>UserData());
-  await StringTable().InitTable();
-  runApp(WalletInfoPage());
-}
+import 'ChargeHistoryPage.dart';
 
 enum WalletSubPageType
 {

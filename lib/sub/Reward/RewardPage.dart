@@ -94,9 +94,9 @@ class _RewardPageState extends State<RewardPage> {
     for (int i = 0 ; i < 6 ; ++i)
     {
       var missionTestData = DailyMissionData();
-      missionTestData.missionType = i as DailyMissionType;
-      missionTestData.isReceive = i == 0;
-
+      missionTestData.missionType = DailyMissionType.values[i];
+      missionTestData.missionCompleteCount = i;
+      missionTestData.isReceive = i == 2;
       dailyMissionList.add(missionTestData);
     }
 
@@ -135,7 +135,7 @@ Widget mainWidget(BuildContext context)=>
           Container
           (
             height: 50,
-            color: Colors.green,
+            //color: Colors.green,
             alignment: Alignment.center,
             child:
             Row
@@ -188,6 +188,7 @@ Widget mainWidget(BuildContext context)=>
                 SizedBox(height: 40,),
                 shareFriend(),
                 dailyMission(),
+                SizedBox(height: 40,),
               ],
             ),
           ),
@@ -446,7 +447,7 @@ Widget mainWidget(BuildContext context)=>
                    mainAxisAlignment: MainAxisAlignment.center,
                   children:
                   [
-                    Icon(CupertinoIcons.bubble_left_fill),
+                    Icon(CupertinoIcons.bubble_left_fill, color: Colors.white,),
                     SizedBox(width: 10,),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 2),
@@ -896,23 +897,71 @@ Widget mainWidget(BuildContext context)=>
           Align
           (
             alignment: Alignment.centerLeft,
-            child: Text
+            child:
+            Text
             (
               StringTable().Table![300015]!,
               style:
-              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              const TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
             ),
           ),
-
+          SizedBox(height: 10,),
+          for(var item in dailyMissionList)
+            Padding
+            (
+              padding: const EdgeInsets.only(bottom: 20),
+              child:
+              dailyMissionItem(item),
+            ),
+          SizedBox(height: 15),
+          Center
+          (
+            child: Container
+            (
+              padding: EdgeInsets.zero,
+              width: 165,
+              height: 40,
+              child:
+              CupertinoButton
+              (
+                pressedOpacity: 0.5,
+                padding: EdgeInsets.only(bottom: 2),
+                color: Color(0xFF00FFBF),
+                onPressed: ()
+                {
+                  //TODO : 전체수령
+                },
+                child:
+                Text
+                (
+                  StringTable().Table![300046]!,
+                  style:
+                  const TextStyle(fontSize: 16, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget dailyMissionItem()
+  Widget dailyMissionItem(DailyMissionData _data)
   {
+    var textColor = Colors.white;
+    if (_data.isReceive) {
+      textColor = Colors.grey;
+    }
+    else if (_data.missionCompleteCount == _data.totalMissionCount)
+    {
+      textColor = const Color(0xFF00FFBF);
+    }
+
+    var missionCount = _data.totalMissionCount - _data.missionCompleteCount;
+
     return
-    Container(
+    Container
+    (
       width: 360,
       height: 62,
       decoration: ShapeDecoration(
@@ -925,6 +974,124 @@ Widget mainWidget(BuildContext context)=>
           ),
           borderRadius: BorderRadius.circular(5),
         ),
+      ),
+      child:
+      Row
+      (
+        children:
+        [
+          Expanded
+          (
+            flex: 2,
+            child:
+            Container
+            (
+              //color: Colors.blue,
+              child:
+              Column
+              (
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                [
+                  Padding
+                  (
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Row
+                    (
+                      children:
+                      [
+                        Image.asset
+                        (
+                          alignment: Alignment.center,
+                          width: 20,
+                          height: 20,
+                          'assets/images/User/my_bonus.png',
+                          fit: BoxFit.scaleDown,
+                        ),
+                        SizedBox(width: 5,),
+                        Text
+                        (
+                          SetTableStringArgument(400061, ['${_data.bounusCount}']),
+                          style:
+                          TextStyle(fontSize: 14, color: textColor, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        ),
+                        SizedBox(width: 5,),
+                        for(int i = 0; i < _data.missionCompleteCount; ++i)
+                          Padding
+                          (
+                            padding: EdgeInsets.only(left: 2),
+                            child:
+                            Icon(CupertinoIcons.circle_fill, size: 10, color: textColor,)
+                          ),
+
+                        for(int i = 0; i < missionCount; ++i)
+                          Padding
+                          (
+                            padding: EdgeInsets.only(left: 2),
+                            child:
+                            Icon
+                            (
+                              CupertinoIcons.circle,
+                              size: 10,
+                              color: textColor,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 5,),
+                  Align
+                  (
+                    alignment: Alignment.centerLeft,
+                    child:
+                    Padding
+                    (
+                      padding: EdgeInsets.only(left: 20,),
+                      child:
+                      Text
+                      (
+                        _data.title,
+                        style:
+                        TextStyle(fontSize: 14, color: textColor, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded
+          (
+            child:
+            Container
+            (
+              //color: Colors.red,
+              child:
+              Container
+              (
+                padding: EdgeInsets.only(left: 10, right: 10),
+                height: 27,
+                child:
+                CupertinoButton
+                (
+                  pressedOpacity: 0.5,
+                  padding: EdgeInsets.only(bottom: 2),
+                  color: Color(0xFF00FFBF),
+                  onPressed: () {
+
+                  },
+                  child:
+                  Text
+                  (
+                    StringTable().Table![300026]!,
+                    style:
+                    const TextStyle(fontSize: 12, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -957,9 +1124,9 @@ enum DailyMissionType
 
 class DailyMissionData
 {
-  int bounusCount = 0;
+  int bounusCount = 1;
   DailyMissionType missionType = DailyMissionType.SHARE_CONTENT;
-  int totalMissionCount = 0;
+  int totalMissionCount = 5;
   int missionCompleteCount = 0;
   String title = '타이틀';
   bool isReceive = false;

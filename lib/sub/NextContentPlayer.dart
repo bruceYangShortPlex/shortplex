@@ -468,9 +468,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               color: Colors.black.withOpacity(0.9),
               child:
               Text
-                (
+              (
                 isShowContent && videoController.value.isInitialized ?
-                '${formatDuration(videoController.value.position)} / ${formatDuration(videoController.value.duration)}' : '00:00 / 00:00',
+                '${formatDuration(videoController.value.position).$2}:${formatDuration(videoController.value.position).$3} / ${formatDuration(videoController.value.duration).$2}:${formatDuration(videoController.value.duration).$3}' : '00:00 / 00:00',
                 style:
                 TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
               ),

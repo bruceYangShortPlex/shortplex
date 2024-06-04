@@ -95,15 +95,16 @@ String SetStringArgument(String _source, List<String> list)
   return dest;
 }
 
-String formatDuration(Duration duration) {
+(String, String, String) formatDuration(Duration duration)
+{
   int hours = duration.inHours;
   int minutes = duration.inMinutes.remainder(60);
   int seconds = duration.inSeconds.remainder(60);
   String formattedHours = hours.toString().padLeft(2, '0');
   String formattedMinutes = minutes.toString().padLeft(2, '0');
   String formattedSeconds = seconds.toString().padLeft(2, '0');
-  return  hours != 0 ? "$formattedHours:$formattedMinutes:$formattedSeconds" :
-          "$formattedMinutes:$formattedSeconds";
+
+  return (formattedHours, formattedMinutes, formattedSeconds);
 }
 Widget CommentWidget
       (
@@ -350,7 +351,6 @@ Widget CommentWidget
                   ),
                 ),
               ),
-
               Expanded
               (
                 child: Padding

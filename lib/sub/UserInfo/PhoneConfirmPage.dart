@@ -84,7 +84,6 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             ),
           ),
           child:
-
           Container
           (
             alignment: Alignment.topCenter,
@@ -154,7 +153,8 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     child:
     Padding
     (
-      padding: EdgeInsets.only(top: 10, right: 20),
+      padding:
+      EdgeInsets.only(top: 10, right: 20),
       child:
       Container
       (

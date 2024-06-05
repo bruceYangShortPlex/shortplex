@@ -84,7 +84,7 @@ class _SettingPageState extends State<SettingPage>
                   child:
                   Text(StringTable().Table![400013]!,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
 
                 ),
                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -139,7 +139,7 @@ class _SettingPageState extends State<SettingPage>
     [
       Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
       Row
-        (
+      (
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children:
         [
@@ -156,7 +156,7 @@ class _SettingPageState extends State<SettingPage>
               child:
               Text(StringTable().Table![_titleID]!,
                 style:
-                TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
             ),
           ),
           Padding

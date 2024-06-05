@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:shortplex/sub/Reward/RewardHistoryPage.dart';
+import 'package:shortplex/sub/Reward/TitleSchoolPage.dart';
 
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
@@ -75,7 +79,10 @@ class _RewardPageState extends State<RewardPage> {
   void initState()
   {
     super.initState();
-    textEditingController = TextEditingController(text: StringTable().Table![300013]!,);
+
+    var defaultText = UserData.to.recommendedName.isEmpty ? StringTable().Table![300013]! : UserData.to.recommendedName;
+
+    textEditingController = TextEditingController(text: defaultText,);
     textFieldFocusNode = FocusNode();
     textFieldFocusNode.addListener(onFocusChange);
 
@@ -102,7 +109,6 @@ class _RewardPageState extends State<RewardPage> {
 
     startTimer();
   }
-
 
   @override
   void dispose() {
@@ -243,7 +249,8 @@ Widget mainWidget(BuildContext context)=>
           Visibility
           (
             visible: _data.EndTime != null,
-            child: Align
+            child:
+            Align
             (
               alignment: Alignment.centerRight,
               child:
@@ -273,7 +280,7 @@ Widget mainWidget(BuildContext context)=>
                   child:
                   Padding
                   (
-                    padding: EdgeInsets.only(top: 2, left: 8, right: 8),
+                    padding: EdgeInsets.only(top: 4, left: 8, right: 8),
                     child:
                     FittedBox
                     (
@@ -283,7 +290,7 @@ Widget mainWidget(BuildContext context)=>
                       (
                         _data.EndTime != null ? SetTableStringArgument(800007, [formatDuration(_data.difference!).$1,formatDuration(_data.difference!).$2]) : '',
                         style:
-                        TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
                       ),
                     ),
                   ),
@@ -423,8 +430,9 @@ Widget mainWidget(BuildContext context)=>
             child:
             GestureDetector
             (
-              onTap: () {
-                print('go titleSchool');
+              onTap: ()
+              {
+                Get.to(() => const TitleSchoolPage());
               },
               child: Container
               (
@@ -486,11 +494,16 @@ Widget mainWidget(BuildContext context)=>
             [
               Expanded
               (
-                child: Text
+                child:
+                Padding
                 (
-                  StringTable().Table![300006]!,
-                  style:
-                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Text
+                  (
+                    StringTable().Table![300006]!,
+                    style:
+                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  ),
                 ),
               ),
               Expanded
@@ -498,6 +511,7 @@ Widget mainWidget(BuildContext context)=>
                 child:
                 Container
                 (
+                  padding: EdgeInsets.only(bottom: 2),
                   alignment: Alignment.centerRight,
                   child:
                   Text
@@ -520,7 +534,7 @@ Widget mainWidget(BuildContext context)=>
                     icon: const Icon(Icons.arrow_forward_ios),
                     onPressed: ()
                     {
-
+                      Get.to(() => RewardHistory(PageTitle: StringTable().Table![300007]!));
                     }
                 ),
               )
@@ -531,6 +545,73 @@ Widget mainWidget(BuildContext context)=>
             width: 390,
             height: 160,
             color: Colors.grey,
+            child:
+            Stack
+            (
+              alignment: Alignment.center,
+              children:
+              [
+                Align
+                (
+                  alignment: Alignment.bottomRight,
+                  child:
+                  Padding
+                  (
+                    padding: const EdgeInsets.only(bottom: 10, right: 20),
+                    child:
+                    GestureDetector
+                    (
+                      onTap: () {
+                        print('share button on');
+                      },
+                      child:
+                      Opacity
+                      (
+                        opacity: 0.70,
+                        child: Container(
+                          width: 56,
+                          height: 45,
+                          decoration: ShapeDecoration(
+                            color: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 1.50,
+                                strokeAlign: BorderSide.strokeAlignOutside,
+                                color: Color(0xFF3B3B3B),
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child:
+                          Stack
+                          (
+                            alignment: Alignment.center,
+                            children:
+                            [
+                              Padding
+                              (
+                                padding: const EdgeInsets.only(bottom: 14),
+                                child: Icon(CupertinoIcons.share, size: 22, color:Colors.white),
+                              ),
+                              Padding
+                              (
+                                padding: const EdgeInsets.only(top: 18),
+                                child: Text
+                                  (
+                                  StringTable().Table![100024]!,
+                                  style:
+                                  TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ),
           SizedBox(height: 30,),
           Container
@@ -747,7 +828,9 @@ Widget mainWidget(BuildContext context)=>
                       child:
                       CupertinoTextField
                       (
-                        padding: const EdgeInsets.only(top: 2, left: 20),
+                        //enabled: false,
+                        readOnly: UserData.to.recommendedName.isEmpty == false,
+                        padding: const EdgeInsets.only(top: 3, left: 20),
                         controller: textEditingController,
                         cursorColor: Colors.white,
                         keyboardType: TextInputType.text,
@@ -778,6 +861,12 @@ Widget mainWidget(BuildContext context)=>
                         onEditingComplete: ()
                         {
                           print('입력 스트링 ${textEditingController.text}');
+                          //TODO:추천인 서버랑 통신해서 보너스 받거나 에러코드 보여주기
+                          ShowCustomSnackbar(SetTableStringArgument(300040, ['10']),SnackPosition.BOTTOM);
+                          UserData.to.recommendedName = textEditingController.text;
+                          setState(() {
+
+                          });
                         },
                       ),
                     ),
@@ -786,7 +875,24 @@ Widget mainWidget(BuildContext context)=>
               ),
             ),
           ),
-          SizedBox(height: 25,),
+          SizedBox(height: 5,),
+          Align
+          (
+            alignment: Alignment.centerLeft,
+            child:
+            Padding
+            (
+              padding: const EdgeInsets.only(left: 40),
+              child:
+              Text
+              (
+                UserData.to.recommendedName.isEmpty ? StringTable().Table![300012]! : '',
+                style:
+                TextStyle(fontSize: 10, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              ),
+            ),
+          ),
+          SizedBox(height: 10,),
           Opacity
             (
             opacity: 0.70,

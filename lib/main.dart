@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/table/UserData.dart';
-import 'Util/theme.dart';
 import 'table/StringTable.dart';
 
 void main() async

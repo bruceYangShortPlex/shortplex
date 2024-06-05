@@ -113,7 +113,7 @@ class BuySubscriptionPage extends StatelessWidget
                           'assets/images/Shop/my_shop_freepass_1.svg',
                         ),
                         Container
-                          (
+                        (
                           alignment: Alignment.centerLeft,
                           width: 290,
                           height: 78,
@@ -190,7 +190,7 @@ class BuySubscriptionPage extends StatelessWidget
 
                   SizedBox(height: 50,),
                   Stack
-                    (
+                  (
                     alignment: Alignment.center,
                     children:
                     [

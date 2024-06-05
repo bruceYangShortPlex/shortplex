@@ -5,7 +5,7 @@ import 'package:shortplex/sub/UserInfo/HistoryPage.dart';
 
 class BonusHistoryPage extends HistoryPage
 {
-  const BonusHistoryPage({super.key, required super.PageTitle});
+  BonusHistoryPage({super.key, required super.PageTitle});
 
   @override
   State<BonusHistoryPage> createState() => _BonusHistoryPageState();
@@ -17,7 +17,6 @@ class _BonusHistoryPageState extends State<BonusHistoryPage>
   void didChangeDependencies()
   {
     super.didChangeDependencies();
-    Get.put(HistoryListController());
   }
 
   @override

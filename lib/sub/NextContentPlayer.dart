@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/sub/CupertinoMain.dart';
+import 'package:shortplex/sub/Reward/RewardPage.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/table/UserData.dart';
 import 'package:video_player/video_player.dart';
@@ -1018,40 +1020,71 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                         ),
                       ),
                       Expanded
-                        (
+                      (
                         child:
                         Padding
-                          (
+                        (
                           padding: const EdgeInsets.only(right: 30),
                           child: Container
-                            (
+                          (
                             alignment: Alignment.topLeft,
                             //color: Colors.green,
                             child:
-                            Stack
-                              ( alignment: Alignment.center,
-                              children:
-                              [
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: Container
+                            GestureDetector
+                            (
+                              onTap: ()
+                              {
+                                MainBottomNavgationBarController.to.selectedIndex.value = 3;
+                                Get.back();
+                              },
+                              child:
+                              Stack
+                              (
+                                alignment: Alignment.center,
+                                children:
+                                [
+                                  Padding
                                     (
-                                    width: 32,
-                                    height: 32,
-                                    color: Colors.grey,
+                                    padding: EdgeInsets.only(bottom: 20),
+                                    child:
+
+                                    Container
+                                      (
+                                      width: 40,
+                                      height: 21,
+                                      decoration: ShapeDecoration(
+                                        color: Color(0xFF1E1E1E),
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(width: 1, color: Color(0xFF00FFBF)),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                      ),
+                                      child:
+                                      FittedBox
+                                        (
+                                        alignment: Alignment.center,
+                                        child:
+                                        Text
+                                          (
+                                          'FREE',
+                                          style: TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                        ),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                Padding
-                                  (
-                                  padding: const EdgeInsets.only(top: 50),
-                                  child:
-                                  Text
+                                  Padding
                                     (
-                                    StringTable().Table![400026]!,
-                                    style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    padding: const EdgeInsets.only(top: 50),
+                                    child:
+                                    Text
+                                      (
+                                      StringTable().Table![400026]!,
+                                      style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),

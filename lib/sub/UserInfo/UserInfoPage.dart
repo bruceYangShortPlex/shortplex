@@ -401,7 +401,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                   Padding
                   (
                     padding: EdgeInsets.only(left: 20, top: 5),
-                    child:  Text(StringTable().Table![400005]!, style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 18),),
+                    child:  Text(StringTable().Table![400005]!, style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),),
                   ),
                   widget._moveButton(UserInfoSubPageType.WALLET_INFO),
                 ],
@@ -677,7 +677,7 @@ class UserInfoMainListView extends GetxController
                 child:
                 Text(StringTable().Table![_titleID]!,
                   style:
-                  TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
               ),
             ),
             Padding

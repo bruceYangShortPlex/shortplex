@@ -3,15 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:shortplex/Util/ShortsPlayer.dart';
 import '../../table/StringTable.dart';
-
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  await StringTable().InitTable();
-  runApp(ReleasedContentsPage());
-}
 
 class ReleasedContentsPage extends StatefulWidget {
   const ReleasedContentsPage({super.key});

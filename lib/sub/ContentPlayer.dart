@@ -10,8 +10,10 @@ import 'package:video_player/video_player.dart';
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
+import 'CupertinoMain.dart';
 import 'NextContentPlayer.dart';
 import 'ReplyPage.dart';
+import 'Reward/RewardPage.dart';
 
 enum ContentPlayButtonType
 {
@@ -301,7 +303,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             }
             print('contentUIButtons tap');
           },
-          child: Opacity
+          child:
+          Opacity
           (
             opacity: 0.70,
             child: Container(
@@ -330,7 +333,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     child: Icon(_buttonIcon, size: 22, color:Colors.white),
                   ),
                   Padding
-                    (
+                  (
                     padding: const EdgeInsets.only(top: 18),
                     child: Text
                     (
@@ -1068,35 +1071,66 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         Padding
                         (
                           padding: const EdgeInsets.only(right: 30),
-                          child: Container
+                          child:
+                          Container
                           (
                             alignment: Alignment.topLeft,
                             //color: Colors.green,
                             child:
-                            Stack
-                            ( alignment: Alignment.center,
-                              children:
-                              [
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: Container
+                            GestureDetector
+                            (
+                             onTap: ()
+                             {
+                               MainBottomNavgationBarController.to.selectedIndex.value = 3;
+                               Get.back();
+                             },
+                              child: Stack
+                              (
+                                alignment: Alignment.center,
+                                children:
+                                [
+                                  Padding
                                   (
-                                    width: 32,
-                                    height: 32,
-                                    color: Colors.grey,
+                                    padding: EdgeInsets.only(bottom: 20),
+                                    child:
+
+                                      Container
+                                      (
+                                        width: 40,
+                                        height: 21,
+                                        decoration: ShapeDecoration(
+                                          color: Color(0xFF1E1E1E),
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(width: 1, color: Color(0xFF00FFBF)),
+                                            borderRadius: BorderRadius.circular(5),
+                                          ),
+                                        ),
+                                        child:
+                                        FittedBox
+                                          (
+                                          alignment: Alignment.center,
+                                          child:
+                                          Text
+                                            (
+                                            'FREE',
+                                            style: TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                          ),
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
                                   ),
-                                ),
-                                Padding
-                                (
-                                  padding: const EdgeInsets.only(top: 50),
-                                  child:
-                                  Text
+                                  Padding
                                   (
-                                    StringTable().Table![400026]!,
-                                    style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    padding: const EdgeInsets.only(top: 50),
+                                    child:
+                                    Text
+                                    (
+                                      StringTable().Table![400026]!,
+                                      style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -50,7 +50,7 @@ class _ExpandableTextState extends State<ExpandableText>
                     (
                       widget.text,
                       style:
-                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ) :
                 Padding
@@ -61,7 +61,7 @@ class _ExpandableTextState extends State<ExpandableText>
                   (
                       widget.text, maxLines: 4, overflow: TextOverflow.ellipsis,
                     style:
-                    TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
                 Align
@@ -79,7 +79,7 @@ class _ExpandableTextState extends State<ExpandableText>
                       (
                         _isExpanded ? '간략히' : StringTable().Table![100007]!,
                         style:
-                        TextStyle(fontSize: 11, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 11, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ) ,
                       onPressed: () => setState(() => _isExpanded = !_isExpanded),
                     ),
@@ -99,7 +99,7 @@ class _ExpandableTextState extends State<ExpandableText>
                 (
                   widget.text,
                   style:
-                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               );
             }

@@ -344,7 +344,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     (
                       _buttonLabel,
                       style:
-                      TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                 ],
@@ -525,7 +525,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               isShowContent && videoController.value.isInitialized ?
               '${formatDuration(videoController.value.position).$2}:${formatDuration(videoController.value.position).$3} / ${formatDuration(videoController.value.duration).$2}:${formatDuration(videoController.value.duration).$3}' : '00:00 / 00:00',
               style:
-              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
         ],
@@ -777,7 +777,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       (
                         '${StringTable().Table![100026]!} (${totalCommentCount})',
                         style:
-                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -808,7 +808,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       (
                         StringTable().Table![100035]!,
                         style:
-                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -841,7 +841,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         (
                         StringTable().Table![100036]!,
                         style:
-                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -1068,14 +1068,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                 Text
                                 (
                                   StringTable().Table![400024]!,
-                                  style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                                 SizedBox(height: 8,),
                                 Text
                                 (
                                   SetTableStringArgument(400025, ['${contentData!.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
                                   ,
-                                  style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                               ],
                             )
@@ -1130,7 +1130,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                           Text
                                             (
                                             'FREE',
-                                            style: TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                            style: TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                           ),
                                           fit: BoxFit.contain,
                                         ),
@@ -1143,7 +1143,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                     Text
                                     (
                                       StringTable().Table![400026]!,
-                                      style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                      style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                     ),
                                   ),
                                 ],
@@ -1172,7 +1172,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       Text
                       (
                         StringTable().Table![400027]!,
-                        style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
 

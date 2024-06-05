@@ -172,7 +172,7 @@ SafeArea
               (
                 StringTable().Table![100046]!,
                 style:
-                TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
             Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)

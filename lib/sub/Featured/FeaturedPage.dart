@@ -186,13 +186,13 @@ class _FeaturedPageState extends State<FeaturedPage>
                                   (
                                     dataList[currentIndex].title,
                                     style:
-                                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                   Text
                                   (
                                     dataList[currentIndex].content,
                                     style:
-                                    TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.7), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.7), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                   Align
                                   (
@@ -223,7 +223,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                                         (
                                           StringTable().Table![100006]!,
                                           style:
-                                          TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                          TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                         ),
                                       ),
                                     )

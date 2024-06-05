@@ -255,7 +255,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         (
           '황후마마가 돌아왔다.',
           style:
-          TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+          TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
       SizedBox(height: 10,),
@@ -268,7 +268,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         (
           SetStringArgument('{0}          {1}          {2}          {3}', ['24.09','총99화','시대물','TOP10']),
           style:
-          TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+          TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
       SizedBox(height: 10,),
@@ -281,7 +281,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         (
           'Content 내용이 들어갈 자리 \nContent 내용이 들어갈 자리\nContent 내용이 들어갈 자리 ',
           style:
-          TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+          TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
       SizedBox(height: 10,),
@@ -317,7 +317,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (
                   StringTable().Table![100023]!,
                   style:
-                  TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ],
             ),
@@ -341,7 +341,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (
                   StringTable().Table![100024]!,
                   style:
-                  TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ],
             ),
@@ -392,7 +392,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   (
                     StringTable().Table![100025]!,
                     style:
-                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
                 Container
@@ -404,7 +404,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   (
                     StringTable().Table![100026]!,
                     style:
-                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
                 Container
@@ -416,7 +416,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   (
                     StringTable().Table![100027]!,
                     style:
-                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ],
@@ -578,7 +578,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       (
         _title,
         style:
-        TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+        TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
       ),
     ) 
         :
@@ -601,7 +601,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       (
         _title,
         style:
-        TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+        TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
       ),
     ),
   );
@@ -688,7 +688,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (
                   SetTableStringArgument(100033, ['${i + 1}']),
                   style:
-                  TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ),
             ],
@@ -727,7 +727,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   (
                     '${StringTable().Table![100026]!} (${totalCommentCount})',
                     style:
-                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),
@@ -758,7 +758,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   (
                     StringTable().Table![100035]!,
                     style:
-                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),
@@ -790,7 +790,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   (
                     StringTable().Table![100036]!,
                     style:
-                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),
@@ -864,7 +864,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   (
                     title,
                     style:
-                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ],
@@ -874,7 +874,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               textAlign: TextAlign.center,
               SetTableStringArgument(800002, ['24.05.04', '24.06.03', '<황후마마가 돌아왔다>']),
               style:
-              TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
             SizedBox(height: 30,),
             Stack
@@ -893,7 +893,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     textAlign: TextAlign.center,
                     StringTable().Table![800003]!,
                     style:
-                    TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ],
@@ -910,7 +910,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 textAlign: TextAlign.start,
                 StringTable().Table![800004]!,
                 style:
-                TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
           ],

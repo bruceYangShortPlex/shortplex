@@ -80,7 +80,7 @@ class CacheManagerPage extends StatefulWidget {
   //                 child:
   //                 Text(StringTable().Table![400052]!,
   //                   style:
-  //                   TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+  //                   TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
   //
   //               ),
   //               Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -233,7 +233,7 @@ Future<int> _getDirectorySize(Directory dir) async
 //                     (
 //                     StringTable().Table![400021]!,
 //                     style:
-//                     TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+//                     TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
 //                   ),
 //                 ),
 //                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)

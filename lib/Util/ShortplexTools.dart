@@ -16,14 +16,14 @@ void showDialogTwoButton(String _titie, String _content, VoidCallback _callback,
     titleStyle:
     TextStyle
     (
-      fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+      fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
     titlePadding: EdgeInsets.only(top: 30),
     contentPadding: _content == '' ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 30),
     content :
     Text
     (
       _content,
-      style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+      style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
     ),
     actions:
     [
@@ -48,7 +48,7 @@ void showDialogTwoButton(String _titie, String _content, VoidCallback _callback,
         Text
         (
           StringTable().Table![600008]!,
-          style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+          style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
       SizedBox(width: 30,),
@@ -71,7 +71,7 @@ void showDialogTwoButton(String _titie, String _content, VoidCallback _callback,
         Text
         (
           StringTable().Table![600007]!,
-          style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+          style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
     ],
@@ -333,7 +333,7 @@ Widget CommentWidget
                                 Text
                                 (
                                   StringTable().Table![100037]!,
-                                  style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                                 fit: BoxFit.contain,
                               ),
@@ -354,7 +354,7 @@ Widget CommentWidget
                             Text
                             (
                               SetTableStringArgument(100034, [_episodeNumber]),
-                              style: TextStyle(fontSize: 12, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                              style: TextStyle(fontSize: 12, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),
                         ),
@@ -373,7 +373,7 @@ Widget CommentWidget
                             Text
                             (
                               _name == '' ? '...' : _name = _name.length > 10 ? _name.substring(0, 10) : _name,
-                              style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                              style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),
                         ),
@@ -394,7 +394,7 @@ Widget CommentWidget
                               Text
                               (
                                 _date,
-                                style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                               ),
                           ),
                           ),
@@ -457,7 +457,7 @@ Widget CommentWidget
                         (
                           textAlign: TextAlign.start,
                           _likeCount,
-                          style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ],
                     )
@@ -495,7 +495,7 @@ Widget CommentWidget
                             (
                             textAlign: TextAlign.start,
                             _replyCount,
-                            style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                            style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                         ],
                       ),
@@ -578,7 +578,7 @@ SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position)
         (
         _content,
         style:
-        TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+        TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
     ),
     //colorText: Colors.blue,
     backgroundColor: Colors.white,

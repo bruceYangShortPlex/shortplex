@@ -102,7 +102,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                       (
                       StringTable().Table![300002]!,
                       style:
-                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                   Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -138,7 +138,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                   (
                                   StringTable().Table![300004]!,
                                   style:
-                                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                               ),
                             ),
@@ -193,7 +193,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                               (
                                               endTime != null ? SetTableStringArgument(800007, [formatDuration(endTimeDifference!).$1,formatDuration(endTimeDifference!).$2]) : '',
                                               style:
-                                              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                             ),
                                           ),
                                         ),
@@ -293,7 +293,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                 (
                                 StringTable().Table![300030]!,
                                 style:
-                                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                               ),
                             ),
                             SizedBox(height: 30,),
@@ -318,21 +318,21 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     (
                                     StringTable().Table![300031]!,
                                     style:
-                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                   SizedBox(height: 15,),
                                   Text
                                     (
                                     StringTable().Table![300032]!,
                                     style:
-                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                   SizedBox(height: 15,),
                                   Text
                                     (
                                     StringTable().Table![300033]!,
                                     style:
-                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                 ],
                               ),
@@ -351,14 +351,14 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     (
                                     StringTable().Table![300028]!,
                                     style:
-                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                   SizedBox(height: 15,),
                                   Text
                                     (
                                     SetTableStringArgument(300029, ['$bonusCount']),
                                     style:
-                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                 ],
                               ),
@@ -380,7 +380,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                       (
                                       StringTable().Table![300034]!,
                                       style:
-                                      TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                      TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                     ),
                                     IconButton
                                       (
@@ -414,7 +414,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     textAlign: TextAlign.center,
                                     StringTable().Table![300035]!,
                                     style:
-                                    TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                    TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
                                 ),
                               ],
@@ -428,7 +428,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                 //textAlign: TextAlign.left,
                                 StringTable().Table![300036]!,
                                 style:
-                                TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                               ),
                             ),
                             SizedBox(height: 90,),
@@ -490,7 +490,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                         Text
                                         (
                                           StringTable().Table![100041]!,
-                                          style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                          style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                         ),
                                       ),
                                     ),

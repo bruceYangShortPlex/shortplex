@@ -66,7 +66,7 @@ class BuySubscriptionPage extends StatelessWidget
                     (
                       StringTable().Table![400031]!,
                       style:
-                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                   Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -97,7 +97,7 @@ class BuySubscriptionPage extends StatelessWidget
                       textAlign: TextAlign.center,
                       StringTable().Table![400034]!,
                       style:
-                      TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                   SizedBox(height: 20,),
@@ -132,14 +132,14 @@ class BuySubscriptionPage extends StatelessWidget
                                   textAlign: TextAlign.center,
                                   StringTable().Table![400014]!,
                                   style:
-                                  TextStyle(fontSize: 16, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  TextStyle(fontSize: 16, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                                 Text
                                   (
                                   textAlign: TextAlign.center,
                                   SetTableStringArgument(400015, ['99.12.31']),
                                   style:
-                                  TextStyle(fontSize: 14, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  TextStyle(fontSize: 14, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                               ],
                             ),
@@ -182,7 +182,7 @@ class BuySubscriptionPage extends StatelessWidget
                           textAlign: TextAlign.center,
                           SetTableStringArgument(400035, ['39,900']),
                           style:
-                          TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ),
@@ -205,7 +205,7 @@ class BuySubscriptionPage extends StatelessWidget
                           textAlign: TextAlign.center,
                           StringTable().Table![400036]!,
                           style:
-                          TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ],
@@ -222,7 +222,7 @@ class BuySubscriptionPage extends StatelessWidget
                       textAlign: TextAlign.center,
                       StringTable().Table![400037]!,
                       style:
-                      TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                 ],

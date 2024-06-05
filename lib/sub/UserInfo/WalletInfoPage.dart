@@ -76,7 +76,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                   child:
                   Text(StringTable().Table![400005]!,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                 ),
                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
               ],
@@ -213,7 +213,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                             padding: const EdgeInsets.only(bottom: 3),
                                             child: Text(StringTable().Table![400009]!,
                                               style:
-                                              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                                              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                                           ),
                                           onTap: ()
                                           {
@@ -257,7 +257,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                 child:
                                 Text(StringTable().Table![400006]!,
                                   style:
-                                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                             ),
                             Container
                             (
@@ -277,7 +277,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                               (
                                 StringTable().Table![400007]!,
                                 style:
-                                const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                               ),
                             ),
                           ],
@@ -356,7 +356,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                   child:
                   Text(StringTable().Table![_titleID]!,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                 ),
               ),
               Padding

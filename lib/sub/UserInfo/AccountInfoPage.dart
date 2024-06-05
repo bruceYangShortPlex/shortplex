@@ -73,7 +73,7 @@ class _AccountInfoPageState extends State<AccountInfoPage>
                   (
                     StringTable().Table![400040]!,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -108,7 +108,7 @@ class _AccountInfoPageState extends State<AccountInfoPage>
                     child:
                     Text(StringTable().Table![400055]!,
                       style:
-                      TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                      TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                   ),
                   Padding
                   (
@@ -137,11 +137,11 @@ class _AccountInfoPageState extends State<AccountInfoPage>
                         [
                           Text(StringTable().Table![400056]!,
                           style:
-                          TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                          TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                           SizedBox(height: 10,),
                           Text('${_infoCount} / 4',
                             style:
-                            TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                            TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                         ],
                       ),
                     )
@@ -182,7 +182,7 @@ class _AccountInfoPageState extends State<AccountInfoPage>
                   (
                     StringTable().Table![_titleID]!,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),

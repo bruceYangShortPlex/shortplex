@@ -84,7 +84,7 @@ class _SettingPageState extends State<SettingPage>
                   child:
                   Text(StringTable().Table![400013]!,
                     style:
-                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
 
                 ),
                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -120,7 +120,7 @@ class _SettingPageState extends State<SettingPage>
                   (
                     'Ver 1.00' ,
                     style:
-                    TextStyle(fontSize: 15, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 15, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ],
               ),
@@ -156,7 +156,7 @@ class _SettingPageState extends State<SettingPage>
               child:
               Text(StringTable().Table![_titleID]!,
                 style:
-                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
             ),
           ),
           Padding

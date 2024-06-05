@@ -118,8 +118,8 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
         selectedItemColor: Color(0xFF00FFBF), //context.theme.colorScheme.onBackground,
         unselectedItemColor: Colors.grey,
         // 선택에 따라 label text style 변경
-        unselectedLabelStyle: TextStyle(fontSize: 12),// fontFamily: 'NotoSans', fontWeight: FontWeight.w100, color: Colors.white),
-        selectedLabelStyle: TextStyle(fontSize: 12),//fontFamily: 'NotoSans', fontWeight: FontWeight.w100, color: Colors.green),
+        //unselectedLabelStyle: TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+        selectedLabelStyle: TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         // 탭 애니메이션 변경 (fixed: 없음)
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
@@ -136,7 +136,7 @@ class MainBottomNavgationBar extends GetView<MainBottomNavgationBarController> {
                     //   icon: controller.selectedIndex.value == 0
               //       ? Image.asset('assets/images/main/home_on.png')
               //       : Image.asset('assets/images/main/home_off.png'),
-                 label: StringTable().Table![100001]
+                 label: StringTable().Table![100001],
             ),
               BottomNavigationBarItem(
               icon:

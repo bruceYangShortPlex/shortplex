@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage>
                         (
                           homePageViewTitle[pageIndex],
                           style:
-                          const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ],
@@ -283,7 +283,7 @@ class _HomePageState extends State<HomePage>
               (
                 _list[0].title!,
                 style:
-                const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: 10,),
               SizedBox
@@ -349,7 +349,7 @@ class _HomePageState extends State<HomePage>
           (
             _list[0].title!,
             style:
-            const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+            const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
           SizedBox(height: 10,),
           SingleChildScrollView
@@ -516,7 +516,7 @@ class _HomePageState extends State<HomePage>
                     (
                       'NEW',
                       style:
-                      const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                 ),
@@ -560,7 +560,7 @@ class _HomePageState extends State<HomePage>
                     (
                       _data.watchingEpisode!,
                       style:
-                      const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                   IconButton

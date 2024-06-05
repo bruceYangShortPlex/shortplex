@@ -67,7 +67,7 @@ class HistoryPage extends StatefulWidget
                     (
                       PageTitle,
                       style:
-                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                   Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -127,7 +127,7 @@ class HistoryPage extends StatefulWidget
                 TextStyle(fontSize: 12,
                   color: Colors.white.withOpacity(0.6),
                   fontFamily: 'NotoSans',
-                  fontWeight: FontWeight.w100,),
+                  fontWeight: FontWeight.bold,),
               ),
             ),
           ),
@@ -212,7 +212,7 @@ class HistoryPage extends StatefulWidget
                                   TextStyle(fontSize: 15,
                                     color: Colors.white,
                                     fontFamily: 'NotoSans',
-                                    fontWeight: FontWeight.w100,),
+                                    fontWeight: FontWeight.bold,),
                                 ),
                                 Visibility
                                   (
@@ -224,7 +224,7 @@ class HistoryPage extends StatefulWidget
                                     TextStyle(fontSize: 10,
                                       color: Colors.white.withOpacity(0.6),
                                       fontFamily: 'NotoSans',
-                                      fontWeight: FontWeight.w100,),
+                                      fontWeight: FontWeight.bold,),
                                   ),
                                 ),
                                 Text
@@ -234,7 +234,7 @@ class HistoryPage extends StatefulWidget
                                   TextStyle(fontSize: 10,
                                     color: Colors.white.withOpacity(0.6),
                                     fontFamily: 'NotoSans',
-                                    fontWeight: FontWeight.w100,),
+                                    fontWeight: FontWeight.bold,),
                                 ),
                               ],
                             ),
@@ -269,7 +269,7 @@ class HistoryPage extends StatefulWidget
                             _data.content1,
                             style:
                             TextStyle(
-                              fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                              fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                         ),
                         Visibility
@@ -289,7 +289,7 @@ class HistoryPage extends StatefulWidget
                               _data.content2,
                               style:
                               TextStyle(
-                                fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),
                         ),
@@ -369,7 +369,7 @@ class HistoryPage extends StatefulWidget
                                   fontSize: 15,
                                   color: Colors.white,
                                   fontFamily: 'NotoSans',
-                                  fontWeight: FontWeight.w100,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text
@@ -379,7 +379,7 @@ class HistoryPage extends StatefulWidget
                                   fontSize: 10,
                                   color: Colors.white.withOpacity(0.6),
                                   fontFamily: 'NotoSans',
-                                  fontWeight: FontWeight.w100,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text
@@ -389,7 +389,7 @@ class HistoryPage extends StatefulWidget
                                   fontSize: 10,
                                   color: Colors.white.withOpacity(0.6),
                                   fontFamily: 'NotoSans',
-                                  fontWeight: FontWeight.w100,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               )
                             ],
@@ -424,7 +424,7 @@ class HistoryPage extends StatefulWidget
                         fontSize: 15,
                         color: _textColor,
                         fontFamily: 'NotoSans',
-                        fontWeight: FontWeight.w100,
+                        fontWeight: FontWeight.bold,
                       ),
                     ) :
                     Column
@@ -439,7 +439,7 @@ class HistoryPage extends StatefulWidget
                             fontSize: 15,
                             color: _textColor,
                             fontFamily: 'NotoSans',
-                            fontWeight: FontWeight.w100,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text
@@ -449,7 +449,7 @@ class HistoryPage extends StatefulWidget
                             fontSize: 15,
                             color: _textColor,
                             fontFamily: 'NotoSans',
-                            fontWeight: FontWeight.w100,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],

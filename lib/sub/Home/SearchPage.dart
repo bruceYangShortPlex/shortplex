@@ -102,7 +102,7 @@ Widget mainWidget(BuildContext context)=>
                   // (
                   //   StringTable().Table![400021]!,
                   //   style:
-                  //   TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  //   TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   // ),
                 ),
                 Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
@@ -193,7 +193,7 @@ Widget mainWidget(BuildContext context)=>
           (
             fontSize: 11,
             color: selectedType == _type ? Colors.white : Colors.white.withOpacity(0.6),
-            fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+            fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
     );

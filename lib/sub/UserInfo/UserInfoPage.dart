@@ -163,7 +163,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                     (
                       StringTable().Table![400003]!,
                       style:
-                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                     onTap: ()
                     {
@@ -229,8 +229,8 @@ class _UserInfoPageState extends State<UserInfoPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children:
           [
-            Text('${Get.find<UserData>().name.value}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 20,),),
-            Text('UID : ${Get.find<UserData>().providerUid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,fontSize: 12,),),
+            Text('${Get.find<UserData>().name.value}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,fontSize: 20,),),
+            Text('UID : ${Get.find<UserData>().providerUid}',style: TextStyle(color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,fontSize: 12,),),
           ],
         ),
       ),
@@ -331,7 +331,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                             child:
                             Text(StringTable().Table![400016]!,
                               style:
-                              TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                              TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                           ),
                           onTap: ()
                           {
@@ -677,7 +677,7 @@ class UserInfoMainListView extends GetxController
                 child:
                 Text(StringTable().Table![_titleID]!,
                   style:
-                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
               ),
             ),
             Padding
@@ -737,7 +737,7 @@ class UserInfoMainListView extends GetxController
                 //color: Colors.red,
                 child: Text(StringTable().Table![_titleID]!,
                   style:
-                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
               ),
             ),
           ],
@@ -753,7 +753,7 @@ class UserInfoMainListView extends GetxController
             width: 200.w,
             child: Text(StringTable().Table![_contents1id]!,
               style:
-              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
           ),
         ),
         Padding
@@ -767,7 +767,7 @@ class UserInfoMainListView extends GetxController
             width: 200.w,
             child: Text(StringTable().Table![_contents2id]!,
               style:
-              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
           ),
         ),
         Padding
@@ -792,7 +792,7 @@ class UserInfoMainListView extends GetxController
                 child:
                 Text(StringTable().Table![400010]!,
                   style:
-                  TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),),
+                  TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                 onTap: ()
                 {
                   print('todo~ work');
@@ -833,7 +833,7 @@ class UserInfoMainListView extends GetxController
                   (
                   _list[0].title!,
                   style:
-                  const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
                 SizedBox(height: 10,),
                 SizedBox
@@ -967,7 +967,7 @@ class UserInfoMainListView extends GetxController
                       (
                         'NEW',
                         style:
-                        const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -1010,7 +1010,7 @@ class UserInfoMainListView extends GetxController
                         (
                         _data.watchingEpisode!,
                         style:
-                        const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                     IconButton

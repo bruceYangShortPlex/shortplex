@@ -82,7 +82,7 @@ class _ShopPageState extends State<ShopPage> {
                         StringTable().Table![400021]!,
                         style:
                         TextStyle(
-                          fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                     Container(width: MediaQuery
@@ -157,7 +157,7 @@ Widget ShopGoods([bool _visibleTap = true])
               style:
               TextStyle
               (
-                fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
         ),
@@ -247,7 +247,7 @@ Widget ShopGoods([bool _visibleTap = true])
                   TextStyle(fontSize: 16,
                     color: Colors.white.withOpacity(0.6),
                     fontFamily: 'NotoSans',
-                    fontWeight: FontWeight.w100,),
+                    fontWeight: FontWeight.bold,),
                 ),
               ),
             ],
@@ -272,7 +272,7 @@ Widget ShopGoods([bool _visibleTap = true])
               TextStyle(fontSize: 13,
                 color: Colors.white.withOpacity(0.6),
                 fontFamily: 'NotoSans',
-                fontWeight: FontWeight.w100,),
+                fontWeight: FontWeight.bold,),
             ),
           ),
         )
@@ -316,7 +316,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
                     (
                     _title,
                     style:
-                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
                 Padding
@@ -327,7 +327,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
                     (
                     _bonus,
                     style:
-                    TextStyle(fontSize: 9, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 9, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
                 Padding
@@ -364,7 +364,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
               (
                 _price,
                 style:
-                TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
           ),
@@ -389,7 +389,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
               (
               _sale,
               style:
-              TextStyle(fontSize: 10, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              TextStyle(fontSize: 10, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
         ],
@@ -418,7 +418,7 @@ Widget goods_subscriptionTitle() =>
               (
               StringTable().Table![400031]!,
               style:
-              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
 
           ),

@@ -153,7 +153,7 @@ Widget mainWidget(BuildContext context)=>
                 (
                   StringTable().Table![300001]!,
                   style:
-                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
                 Image.asset
                 (
@@ -167,7 +167,7 @@ Widget mainWidget(BuildContext context)=>
                 (
                   '${UserData.to.GetPopupcornCount().$2}',
                   style:
-                  TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ],
             ),
@@ -224,7 +224,7 @@ Widget mainWidget(BuildContext context)=>
             (
               StringTable().Table![400022]!,
               style:
-              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
           for(var item in eventList)
@@ -290,7 +290,7 @@ Widget mainWidget(BuildContext context)=>
                       (
                         _data.EndTime != null ? SetTableStringArgument(800007, [formatDuration(_data.difference!).$1,formatDuration(_data.difference!).$2]) : '',
                         style:
-                        TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -353,7 +353,7 @@ Widget mainWidget(BuildContext context)=>
                         (
                           _data.Title,
                           style:
-                          TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ),
@@ -385,7 +385,7 @@ Widget mainWidget(BuildContext context)=>
             (
               StringTable().Table![300002]!,
               style:
-              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
           SizedBox(height: 10,),
@@ -404,7 +404,7 @@ Widget mainWidget(BuildContext context)=>
               (
               StringTable().Table![300004]!,
               style:
-              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
           SizedBox(height: 10,),
@@ -464,7 +464,7 @@ Widget mainWidget(BuildContext context)=>
                       (
                         StringTable().Table![300005]!,
                         style:
-                        TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ],
@@ -502,7 +502,7 @@ Widget mainWidget(BuildContext context)=>
                   (
                     StringTable().Table![300006]!,
                     style:
-                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),
@@ -518,7 +518,7 @@ Widget mainWidget(BuildContext context)=>
                   (
                     StringTable().Table![300007]!,
                     style:
-                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),
@@ -568,7 +568,8 @@ Widget mainWidget(BuildContext context)=>
                       Opacity
                       (
                         opacity: 0.70,
-                        child: Container(
+                        child:
+                        Container(
                           width: 56,
                           height: 45,
                           decoration: ShapeDecoration(
@@ -600,7 +601,7 @@ Widget mainWidget(BuildContext context)=>
                                   (
                                   StringTable().Table![100024]!,
                                   style:
-                                  TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                                  TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                               ),
                             ],
@@ -635,10 +636,6 @@ Widget mainWidget(BuildContext context)=>
                     (
                       children:
                       [
-                        Opacity
-                        (
-                          opacity: 0.70,
-                          child:
                           Container
                           (
                             width: 145,
@@ -665,9 +662,8 @@ Widget mainWidget(BuildContext context)=>
                             (
                               StringTable().Table![300009]!,
                               style:
-                              TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                              TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
-                          ),
                         ),
                         Container
                         (
@@ -691,7 +687,7 @@ Widget mainWidget(BuildContext context)=>
                           (
                             StringTable().Table![300009]!,
                             style:
-                            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                         )
                       ],
@@ -710,38 +706,33 @@ Widget mainWidget(BuildContext context)=>
                     (
                       children:
                       [
-                        Opacity
-                          (
-                          opacity: 0.70,
+                        Container
+                        (
+                          width: 145,
+                          height: 66,
+                          decoration: ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(1.00, 0.00),
+                              end: Alignment(-1, 0),
+                              colors: [Color(0xFF023D30), Color(0xFF0A273E)],
+                            ),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                width: 1,
+                                strokeAlign: BorderSide.strokeAlignOutside,
+                                color: Color(0xFF0A2022),
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                          ),
+                          alignment: Alignment.bottomCenter,
+                          padding: EdgeInsets.only(bottom: 10),
                           child:
-                          Container
-                            (
-                            width: 145,
-                            height: 66,
-                            decoration: ShapeDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment(1.00, 0.00),
-                                end: Alignment(-1, 0),
-                                colors: [Color(0xFF023D30), Color(0xFF0A273E)],
-                              ),
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 1,
-                                  strokeAlign: BorderSide.strokeAlignOutside,
-                                  color: Color(0xFF0A2022),
-                                ),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                            ),
-                            alignment: Alignment.bottomCenter,
-                            padding: EdgeInsets.only(bottom: 10),
-                            child:
-                            Text
-                            (
-                              StringTable().Table![300010]!,
-                              style:
-                              TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
-                            ),
+                          Text
+                          (
+                            StringTable().Table![300010]!,
+                            style:
+                            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                         ),
                         Container
@@ -766,7 +757,7 @@ Widget mainWidget(BuildContext context)=>
                           (
                             StringTable().Table![300010]!,
                             style:
-                            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                         )
                       ],
@@ -777,11 +768,9 @@ Widget mainWidget(BuildContext context)=>
             ),
           ),
           SizedBox(height: 25,),
-          Opacity
-          (
-            opacity: 0.70,
-            child: Container(
-              width: 322.76,
+            Container
+            (
+              width: 323,
               height: 27,
               decoration: ShapeDecoration(
                 gradient: LinearGradient(
@@ -815,7 +804,7 @@ Widget mainWidget(BuildContext context)=>
                       (
                         StringTable().Table![300012]!,
                         style:
-                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -834,7 +823,7 @@ Widget mainWidget(BuildContext context)=>
                         controller: textEditingController,
                         cursorColor: Colors.white,
                         keyboardType: TextInputType.text,
-                        style: TextStyle(fontFamily: 'NotoSans', fontSize: 13, color: Colors.white),
+                        style: TextStyle(fontFamily: 'NotoSans', fontSize: 13, color: Colors.grey, fontWeight: FontWeight.normal),
                         decoration:
                         BoxDecoration
                         (
@@ -874,7 +863,7 @@ Widget mainWidget(BuildContext context)=>
                 ],
               ),
             ),
-          ),
+
           SizedBox(height: 5,),
           Align
           (
@@ -888,16 +877,14 @@ Widget mainWidget(BuildContext context)=>
               (
                 UserData.to.recommendedName.isEmpty ? StringTable().Table![300012]! : '',
                 style:
-                TextStyle(fontSize: 10, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                TextStyle(fontSize: 10, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
           ),
           SizedBox(height: 10,),
-          Opacity
+            Container
             (
-            opacity: 0.70,
-            child: Container(
-              width: 322.76,
+              width: 323,
               height: 27,
               decoration: ShapeDecoration(
                 gradient: LinearGradient(
@@ -931,7 +918,7 @@ Widget mainWidget(BuildContext context)=>
                       (
                         StringTable().Table![300011]!,
                         style:
-                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -963,7 +950,7 @@ Widget mainWidget(BuildContext context)=>
                           (
                             featureCode,
                             style:
-                            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                            TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                           IconButton
                           (
@@ -982,7 +969,6 @@ Widget mainWidget(BuildContext context)=>
                 ],
               ),
             ),
-          ),
           SizedBox(height: 35,),
         ],
       ),
@@ -1008,7 +994,7 @@ Widget mainWidget(BuildContext context)=>
             (
               StringTable().Table![300015]!,
               style:
-              const TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+              const TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
           SizedBox(height: 10,),
@@ -1042,7 +1028,7 @@ Widget mainWidget(BuildContext context)=>
                 (
                   StringTable().Table![300046]!,
                   style:
-                  const TextStyle(fontSize: 16, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                  const TextStyle(fontSize: 16, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ),
             ),
@@ -1119,7 +1105,7 @@ Widget mainWidget(BuildContext context)=>
                         (
                           SetTableStringArgument(400061, ['${_data.bounusCount}']),
                           style:
-                          TextStyle(fontSize: 14, color: textColor, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                          TextStyle(fontSize: 14, color: textColor, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                         SizedBox(width: 5,),
                         for(int i = 0; i < _data.missionCompleteCount; ++i)
@@ -1158,7 +1144,7 @@ Widget mainWidget(BuildContext context)=>
                       (
                         _data.title,
                         style:
-                        TextStyle(fontSize: 14, color: textColor, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                        TextStyle(fontSize: 14, color: textColor, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -1191,7 +1177,7 @@ Widget mainWidget(BuildContext context)=>
                   (
                     StringTable().Table![300026]!,
                     style:
-                    const TextStyle(fontSize: 12, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.w100,),
+                    const TextStyle(fontSize: 12, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),

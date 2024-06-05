@@ -205,7 +205,7 @@ class BuySubscriptionPage extends StatelessWidget
                           textAlign: TextAlign.center,
                           StringTable().Table![400036]!,
                           style:
-                          TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          TextStyle(fontSize: 16, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ],
@@ -222,7 +222,7 @@ class BuySubscriptionPage extends StatelessWidget
                       textAlign: TextAlign.center,
                       StringTable().Table![400037]!,
                       style:
-                      TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      TextStyle(fontSize: 13, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                     ),
                   ),
                 ],

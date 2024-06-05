@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:get/get.dart';
@@ -188,11 +189,17 @@ class _FeaturedPageState extends State<FeaturedPage>
                                     style:
                                     TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
-                                  Text
+                                  Container
                                   (
-                                    dataList[currentIndex].content,
-                                    style:
-                                    TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.7), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                    //color: Colors.grey,
+                                    width: 245.w,
+                                    child:
+                                    Text
+                                    (
+                                      dataList[currentIndex].content,
+                                      style:
+                                      TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),
+                                    ),
                                   ),
                                   Align
                                   (

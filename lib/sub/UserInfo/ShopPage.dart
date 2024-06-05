@@ -245,7 +245,7 @@ Widget ShopGoods([bool _visibleTap = true])
                   StringTable().Table![400032]!,
                   style:
                   TextStyle(fontSize: 16,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.grey,
                     fontFamily: 'NotoSans',
                     fontWeight: FontWeight.bold,),
                 ),
@@ -270,9 +270,9 @@ Widget ShopGoods([bool _visibleTap = true])
               StringTable().Table![400033]!,
               style:
               TextStyle(fontSize: 13,
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.grey,
                 fontFamily: 'NotoSans',
-                fontWeight: FontWeight.bold,),
+                fontWeight: FontWeight.w500,),
             ),
           ),
         )

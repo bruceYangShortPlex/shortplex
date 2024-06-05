@@ -4,9 +4,10 @@ import 'package:shortplex/table/StringTable.dart';
 
 class ExpandableText extends StatefulWidget
 {
-  ExpandableText({required this.text});
+  ExpandableText({required this.text, required this.limitLine});
 
   final String text;
+  final int limitLine;
 
 
   @override
@@ -31,7 +32,7 @@ class _ExpandableTextState extends State<ExpandableText>
           builder: (BuildContext context, BoxConstraints constraints)
           {
             final span = TextSpan(text: widget.text);
-            final tp = TextPainter(text: span, maxLines: 4, textDirection: TextDirection.ltr);
+            final tp = TextPainter(text: span, maxLines: widget.limitLine, textDirection: TextDirection.ltr);
             tp.layout(maxWidth: constraints.maxWidth);
 
             if (tp.didExceedMaxLines)
@@ -50,7 +51,7 @@ class _ExpandableTextState extends State<ExpandableText>
                     (
                       widget.text,
                       style:
-                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.normal,),
                     ),
                   ) :
                 Padding
@@ -61,7 +62,7 @@ class _ExpandableTextState extends State<ExpandableText>
                   (
                       widget.text, maxLines: 4, overflow: TextOverflow.ellipsis,
                     style:
-                    TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.normal,),
                   ),
                 ),
                 Align
@@ -99,7 +100,7 @@ class _ExpandableTextState extends State<ExpandableText>
                 (
                   widget.text,
                   style:
-                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.normal,),
                 ),
               );
             }

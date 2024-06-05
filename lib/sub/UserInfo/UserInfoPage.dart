@@ -637,8 +637,8 @@ class UserInfoMainListView extends GetxController
   {
     super.onInit();
     Get.put(UserInfoPage());
-    list.add(defaultInfo(400010, 400010, 400010,CupertinoIcons.bell));
-    list.add(defaultInfo(400011,400011,400011, CupertinoIcons.heart));
+    list.add(defaultInfo(400010, 400097, 400098,CupertinoIcons.bell));
+    list.add(defaultInfo(400011,400099,400100, CupertinoIcons.heart));
     list.add(_option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO));
     list.add(_option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING));
   }
@@ -713,8 +713,9 @@ class UserInfoMainListView extends GetxController
             Padding
             (
               padding: const EdgeInsets.only(left: 15, top: 10),
-              child: Container
-                (
+              child:
+              Container
+              (
                 width: 20,
                 height: 20,
                 //color: Colors.red,
@@ -735,7 +736,10 @@ class UserInfoMainListView extends GetxController
                 width: 300,
                 height: 22,
                 //color: Colors.red,
-                child: Text(StringTable().Table![_titleID]!,
+                child:
+                Text
+                (
+                  StringTable().Table![_titleID]!,
                   style:
                   TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
               ),
@@ -753,7 +757,7 @@ class UserInfoMainListView extends GetxController
             width: 200.w,
             child: Text(StringTable().Table![_contents1id]!,
               style:
-              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),),
           ),
         ),
         Padding
@@ -767,7 +771,7 @@ class UserInfoMainListView extends GetxController
             width: 200.w,
             child: Text(StringTable().Table![_contents2id]!,
               style:
-              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),),
           ),
         ),
         Padding
@@ -790,7 +794,7 @@ class UserInfoMainListView extends GetxController
               GestureDetector
               (
                 child:
-                Text(StringTable().Table![400010]!,
+                Text(StringTable().Table![400101]!,
                   style:
                   TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                 onTap: ()

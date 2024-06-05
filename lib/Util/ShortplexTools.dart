@@ -408,7 +408,7 @@ Widget CommentWidget
                     width: 310 - 36,
                     //color: Colors.red,
                     child:
-                    ExpandableText(text: _commant),
+                    ExpandableText(text: _commant, limitLine: 4,),
                   ),
                 ],
               ),

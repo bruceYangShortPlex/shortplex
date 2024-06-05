@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
+import '../../Util/ExpandableText.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 
@@ -31,6 +33,10 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   DateTime? endTime;
   Duration? endTimeDifference;
   int bonusCount = 10;
+
+  String titleCommenter = '홍길동';
+  String titleComment = '아버지를 아버지라 부르지 못하고 형을 형이라 부르지 못하는김에 좀 털자';
+  int titleCommentReplyCount = 2000;
 
   void startTimer()
   {
@@ -235,7 +241,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     child:
                                     Container
                                     (
-                                      color: Colors.grey,
+                                      //color: Colors.grey,
                                       child: 
                                       Column
                                       (
@@ -248,8 +254,59 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children:
                                             [
-                                              Container( width: 50, height: 15, color: Colors.yellow,),
-                                              Expanded(child: Container(height: 15, color: Colors.blue,))
+                                              Container
+                                              (
+                                                width: 40,
+                                                height: 15,
+                                                //color: Colors.yellow,
+                                                //padding: EdgeInsets.zero,
+                                                alignment: Alignment.center,
+                                                child:
+                                                Container
+                                                (
+                                                  width: 30,
+                                                  height: 13,
+                                                  decoration: ShapeDecoration(
+                                                    color: Colors.black,
+                                                    shape: RoundedRectangleBorder(
+                                                      side: BorderSide(width: 0.80, color: Color(0xFF00FFBF)),
+                                                      borderRadius: BorderRadius.circular(3),
+                                                    ),
+
+                                                  ),
+                                                  padding: EdgeInsets.all(1),
+                                                  child:
+                                                  FittedBox
+                                                  (
+                                                    alignment: Alignment.topCenter,
+                                                    child:
+                                                    Text
+                                                    (
+                                                      StringTable().Table![300037]!,
+                                                      style:
+                                                      TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              ),
+                                              Expanded
+                                              (
+                                                child:
+                                                Container
+                                                (
+                                                  height: 15,
+                                                  padding: EdgeInsets.only(bottom: 2),
+                                                  //color: Colors.blue,
+                                                  child:
+                                                  Text
+                                                  (
+                                                    titleCommenter,
+                                                    style:
+                                                    TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                                  ),
+                                                )
+                                              )
                                             ],
                                           ),
                                           SizedBox(height: 5,),
@@ -258,8 +315,18 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                             child:
                                             Container
                                             (
+                                              padding: EdgeInsets.only(left: 5),
+                                              alignment: Alignment.centerLeft,
                                               height: 15,
-                                              color: Colors.red,
+                                              //color: Colors.red,
+                                              child:
+                                              Text
+                                              (
+                                                overflow: TextOverflow.ellipsis,
+                                                titleComment,
+                                                style:
+                                                TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.normal,),
+                                              ),
                                             )
                                           ),
                                           SizedBox(height: 10,),
@@ -270,7 +337,16 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                   Container
                                   (
                                     width: 105,
-                                    color: Colors.white,
+                                    //color: Colors.green,
+                                    alignment: Alignment.topLeft,
+                                    padding: EdgeInsets.all(8),
+                                    child:
+                                    Text
+                                    (
+                                      SetStringArgument( '${StringTable().Table![100026]!} ({0})', ['${NumberFormat('#,###').format(titleCommentReplyCount)}']),
+                                      style:
+                                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                    ),
                                   )
                                 ],
                               ),
@@ -351,14 +427,14 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     (
                                     StringTable().Table![300028]!,
                                     style:
-                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                    TextStyle(fontSize: 13, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                                   ),
                                   SizedBox(height: 15,),
                                   Text
                                     (
                                     SetTableStringArgument(300029, ['$bonusCount']),
                                     style:
-                                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                    TextStyle(fontSize: 13, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                                   ),
                                 ],
                               ),
@@ -428,7 +504,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                 //textAlign: TextAlign.left,
                                 StringTable().Table![300036]!,
                                 style:
-                                TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                TextStyle(fontSize: 13, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                               ),
                             ),
                             SizedBox(height: 90,),
@@ -495,7 +571,10 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                       ),
                                     ),
                                   ),
-                                  Icon(Icons.send, color: Colors.grey,),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Icon(Icons.send, color: Colors.grey,),
+                                  ),
                                 ],
                               ),
                             ),

@@ -106,6 +106,119 @@ String SetStringArgument(String _source, List<String> list)
 
   return (formattedHours, formattedMinutes, formattedSeconds);
 }
+
+Widget profileRect(double _size, String _imageUrl)
+{
+  return
+    Padding
+    (
+    padding: const EdgeInsets.all(8.0),
+    child:
+    Container
+    (
+      width: _size,
+      height: _size,
+      // decoration: const BoxDecoration
+      // (
+      //   border: Border
+      //     (
+      //     left: BorderSide(color: Color(0xFF00FFBF), width: 1),
+      //     right:BorderSide(color: Color(0xFF00FFBF), width: 1),
+      //     top :BorderSide(color: Color(0xFF00FFBF), width: 1),
+      //     bottom:BorderSide(color: Color(0xFF00FFBF), width: 1),
+      //   ),
+      //   //borderRadius: BorderRadius.circular(15),
+      //   shape: BoxShape.circle,
+      //   color: Color(0xFF00FFBF),
+      // ),
+      child:
+      ClipRRect
+      (
+        borderRadius: BorderRadius.circular(100),
+        child:
+        Container
+        (
+          color: Colors.black,
+          child: _imageUrl.isEmpty ? Image.asset('assets/images/User/my_picture.png', fit: BoxFit.cover,) :
+          Image.network(_imageUrl, fit: BoxFit.cover),
+        ),
+      ),
+    )
+  );
+}
+
+Widget VirtualKeybord(String _defaultString, TextEditingController _controller, FocusNode _focusNode,  double _bottomHeight, VoidCallback _callback)
+{
+  print(_bottomHeight);
+  return
+    Align(
+      alignment: Alignment.bottomCenter,
+      child:
+      Container
+      (
+        child:
+        Column
+        (
+          mainAxisAlignment: MainAxisAlignment.end,
+          children:
+          [
+            Container
+            (
+              color: Colors.black,
+              child:
+              Row
+              (
+                children: <Widget>
+                [
+                  profileRect(26, ''),
+                  Expanded
+                  (
+                    child:
+                    SizedBox
+                    (
+                      height: 32,
+                      child: CupertinoTextField
+                      (
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        placeholder: _defaultString,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF1E1E1E), // 배경색을 회색으로 설정
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        placeholderStyle:
+                        TextStyle
+                        (
+                          fontSize: 12,
+                          fontFamily: 'NotoSans',
+                          color: Colors.grey, //placeholder 글자색을 빨간색으로 설정
+                        ),
+                        padding:
+                        EdgeInsets.only(left: 20),
+                        //decoration: ,
+                      ),
+                    ),
+                  ),
+                  CupertinoButton
+                  (
+                    child: Icon(Icons.send, color: Colors.grey,),
+                    onPressed: ()
+                    {
+                      _focusNode.unfocus();
+                      _callback();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: _bottomHeight,)
+          ],
+        ),
+
+      ),
+    );
+}
+
 Widget CommentWidget
       (
         int _index,

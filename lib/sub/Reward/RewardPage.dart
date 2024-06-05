@@ -315,7 +315,7 @@ Widget mainWidget(BuildContext context)=>
                     side: BorderSide(
                       width: 2,
                       strokeAlign: BorderSide.strokeAlignOutside,
-                      color: Color(0xFF5670CE),
+                      color: Color(0xFF00FFBF),
                     ),
                     borderRadius: BorderRadius.circular(7),
                   ),

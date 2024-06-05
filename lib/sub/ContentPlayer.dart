@@ -43,8 +43,11 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   bool controlUIVisible = false;
   ContentData? contentData;
   bool isShowContent = false;
+  TextEditingController textEditingController = TextEditingController();
+  FocusNode textFocusNode = FocusNode();
 
-  void VideoControllerInit() {
+  void VideoControllerInit()
+  {
     var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
     videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
       ..initialize().then((_) {
@@ -223,6 +226,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   @override
   void dispose()
   {
+    textFocusNode.dispose();
+    textEditingController.dispose();
     ticker.dispose();
     replyScrollController.dispose();
     if (isShowContent) {
@@ -541,6 +546,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               home:
               CupertinoPageScaffold
               (
+                resizeToAvoidBottomInset: false,
                   backgroundColor: Colors.black,
                   child:
                   GestureDetector
@@ -685,8 +691,17 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     child:
                     isShowShop ?
                     showShop() :
-                    isShowReply == false ?
-                    contentComment() : commentReply(),
+                    Stack
+                    (
+                      children:
+                      [
+                        isShowReply == false ?
+                        contentComment() : commentReply(),
+                        VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, () {
+                        //TODO: 댓글 입력.
+                        },)
+                      ],
+                    )
                   ),
                 ),
                 GestureDetector
@@ -695,12 +710,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     {
                       if (bottomOffset == 0)
                       {
-                        if (isShowContent == false) {
+                        if (isShowContent == false)
+                        {
                           tweenController.forward();
                           ticker.stop();
                           controlUIVisible = true;
                         }
 
+                        textFocusNode.unfocus();
                         bottomOffset = -840.h;
                         setState(()
                         {

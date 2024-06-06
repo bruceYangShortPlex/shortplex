@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/sub/ContentInfoPage.dart';
 
 import '../table/StringTable.dart';
 import 'ExpandableText.dart';
@@ -149,74 +150,78 @@ Widget profileRect(double _size, String _imageUrl)
 
 Widget VirtualKeybord(String _defaultString, TextEditingController _controller, FocusNode _focusNode,  double _bottomHeight, VoidCallback _callback)
 {
-  print(_bottomHeight);
+  //print(_bottomHeight);
   return
-    Align(
-      alignment: Alignment.bottomCenter,
+  Align
+  (
+    alignment: Alignment.bottomCenter,
+    child:
+    Container
+    (
       child:
-      Container
+      Column
       (
-        child:
-        Column
-        (
-          mainAxisAlignment: MainAxisAlignment.end,
-          children:
-          [
-            Container
+        mainAxisAlignment: MainAxisAlignment.end,
+        children:
+        [
+          Container
+          (
+            color: Colors.black,
+            child:
+            Row
             (
-              color: Colors.black,
-              child:
-              Row
-              (
-                children: <Widget>
-                [
-                  profileRect(26, ''),
-                  Expanded
+              children: <Widget>
+              [
+                profileRect(26, ''),
+                Expanded
+                (
+                  child:
+                  SizedBox
                   (
+                    height: 32,
                     child:
-                    SizedBox
+                    CupertinoTextField
                     (
-                      height: 32,
-                      child: CupertinoTextField
-                      (
-                        controller: _controller,
-                        focusNode: _focusNode,
-                        placeholder: _defaultString,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF1E1E1E), // 배경색을 회색으로 설정
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        placeholderStyle:
-                        TextStyle
-                        (
-                          fontSize: 12,
-                          fontFamily: 'NotoSans',
-                          color: Colors.grey, //placeholder 글자색을 빨간색으로 설정
-                        ),
-                        padding:
-                        EdgeInsets.only(left: 20),
-                        //decoration: ,
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      placeholder: _defaultString,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF1E1E1E), // 배경색을 회색으로 설정
+                        borderRadius: BorderRadius.circular(20),
                       ),
+                      placeholderStyle:
+                      TextStyle
+                      (
+                        fontSize: 12,
+                        fontFamily: 'NotoSans',
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400//placeholder 글자색을 빨간색으로 설정
+                      ),
+                      padding:
+                      EdgeInsets.only(left: 20, bottom: 2),
+                      //decoration: ,
                     ),
                   ),
-                  CupertinoButton
-                  (
-                    child: Icon(Icons.send, color: Colors.grey,),
-                    onPressed: ()
-                    {
-                      _focusNode.unfocus();
-                      _callback();
-                    },
-                  ),
-                ],
-              ),
+                ),
+                CupertinoButton
+                (
+                  padding: EdgeInsets.only(right: 20, left: 10),
+                  child:
+                  Icon(Icons.send, color: Colors.grey,),
+                  onPressed: ()
+                  {
+                    _focusNode.unfocus();
+                    _callback();
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: _bottomHeight,)
-          ],
-        ),
-
+          ),
+          SizedBox(height: _bottomHeight,)
+        ],
       ),
-    );
+    ),
+  );
 }
 
 Widget CommentWidget
@@ -231,11 +236,14 @@ Widget CommentWidget
         String _replyCount,
         String _likeCount,
         bool _isOwner,
-        bool _isBest,
+        CommentType _commentType,
         bool _isReply,
         Function(int) _callClickLike, Function(int) _callOpenCommant,Function(int) _callDelete)
 {
   var index = _index;
+  var bannerStringID = _commentType == CommentType.TOP10 ? 500015 : 100037;
+  var likeCount = _commentType == CommentType.TOP10 ? '???' :_likeCount;
+
   return
   Container
   (
@@ -308,7 +316,7 @@ Widget CommentWidget
                       [
                         Visibility
                         (
-                          visible: _isBest,
+                          visible: _commentType != CommentType.NORMAL,
                           child:
                           Padding
                           (
@@ -332,7 +340,7 @@ Widget CommentWidget
                                 child:
                                 Text
                                 (
-                                  StringTable().Table![100037]!,
+                                  StringTable().Table![bannerStringID]!,
                                   style: TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                                 fit: BoxFit.contain,
@@ -353,7 +361,7 @@ Widget CommentWidget
                             child:
                             Text
                             (
-                              SetTableStringArgument(100034, [_episodeNumber]),
+                              _episodeNumber.isEmpty ? '' : SetTableStringArgument(100034, [_episodeNumber]),
                               style: TextStyle(fontSize: 12, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),
@@ -456,7 +464,7 @@ Widget CommentWidget
                         Text
                         (
                           textAlign: TextAlign.start,
-                          _likeCount,
+                          likeCount,
                           style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ],

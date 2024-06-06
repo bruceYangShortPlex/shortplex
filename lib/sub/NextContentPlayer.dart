@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shortplex/sub/CupertinoMain.dart';
-import 'package:shortplex/sub/Reward/RewardPage.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/table/UserData.dart';
 import 'package:video_player/video_player.dart';
@@ -13,15 +11,16 @@ import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
 import 'ContentPlayer.dart';
+import 'CupertinoMain.dart';
 import 'ReplyPage.dart';
 
 class NextContentPlayer extends StatefulWidget
 {
   @override
-  _NextContentPlayerState createState() => _NextContentPlayerState();
+  _NextContentPlayer createState() => _NextContentPlayer();
 }
 
-class _NextContentPlayerState extends State<NextContentPlayer> with TickerProviderStateMixin
+class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderStateMixin
 {
   late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
@@ -35,6 +34,32 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   bool controlUIVisible = false;
   ContentData? contentData;
   bool isShowContent = false;
+  TextEditingController textEditingController = TextEditingController();
+  FocusNode textFocusNode = FocusNode();
+
+  void VideoControllerInit()
+  {
+    var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
+    videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
+      ..initialize().then((_) {
+        setState(() {
+          if (isShowContent) {
+            videoController.play();
+          }
+        });
+      });
+
+    videoController.addListener(() {
+      if (videoController.value.position >= videoController.value.duration) {
+        // 동영상 재생이 끝났을 때 실행할 로직
+        print("동영상 재생이 끝났습니다.");
+      }
+
+      setState(() {
+        currentTime = videoController.value.position.inSeconds.toDouble();
+      });
+    });
+  }
 
   @override
   void initState()
@@ -43,15 +68,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
     print('play content ${contentData!.id} / cost ${contentData!.cost}');
 
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
-    if (contentData!.isLock)
+    //이번회차의 가격을 알아온다.
+    var cost = UserData.to.GetContentCost(contentData!.id!);
+    if (cost != 0 && contentData!.isLock)
     {
-      var userData = Get.find<UserData>();
       //구독중이면 그냥 다음진행.
-      if (userData.isSubscription == false)
+      if (UserData.to.isSubscription == false)
       {
-        //다음회차의 가격을 알아온다.
-        var cost = userData.GetContentCost(contentData!.id!);
-        if (userData.popcornCount + userData.bonusCornCount < cost)
+        if (UserData.to.popcornCount + UserData.to.bonusCornCount < cost)
         {
           isShowContent = false;
           isShowShop =  true;
@@ -64,7 +88,32 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
         }
         else
         {
-          isShowContent = true;
+          //팝콘은 충분한데 자동결제가 아닌사람.
+          if (UserData.to.autoPlay == false)
+          {
+            WidgetsBinding.instance.addPostFrameCallback((_)
+            {
+              // 이곳에 빌드 후에 실행할 코드를 작성하세요.
+              showDialogTwoButton(StringTable().Table![100038]!, StringTable().Table![100039]!, ()
+              {
+                //서버에 통신하고 처리되면 거시기한다.
+                isShowContent = true;
+                VideoControllerInit();
+                setState(() {
+
+                });
+              },
+                    () {
+                  Get.back();
+                },);
+            });
+
+            isShowContent = false;
+          }
+          else
+          {
+            isShowContent = true;
+          }
         }
       }
       else
@@ -79,28 +128,6 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
 
     print('check cost isShowContent : $isShowContent');
 
-    void VideoControllerInit() {
-      var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
-      videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
-        ..initialize().then((_) {
-          setState(() {
-            if (isShowContent) {
-              videoController.play();
-            }
-          });
-        });
-
-      videoController.addListener(() {
-        if (videoController.value.position >= videoController.value.duration) {
-          // 동영상 재생이 끝났을 때 실행할 로직
-          print("동영상 재생이 끝났습니다.");
-        }
-
-        setState(() {
-          currentTime = videoController.value.position.inSeconds.toDouble();
-        });
-      });
-    }
 
     if (isShowContent == true)
     {
@@ -130,12 +157,12 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
       }
     });
 
-    for(int i = 0; i < 11; ++i)
+    for(int i = 0; i < 10; ++i)
     {
       var commentData = EpisodeCommentData
         (
         name: '황후마마가 돌아왔다.',
-        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
         episodeNumber: '11',
         iconUrl: '',
@@ -144,7 +171,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
         likeCount: '12',
         replyCount: '3',
         isOwner: i == 0,
-        isBest: true,
+        commentType: CommentType.BEST,
       );
       episodeCommentList.add(commentData);
     }
@@ -154,7 +181,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
       var commentData = EpisodeCommentData
         (
         name: '황후마마가 돌아왔다.',
-        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
         episodeNumber: '11',
         iconUrl: '',
@@ -163,7 +190,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
         likeCount: '12',
         replyCount: '3',
         isOwner: i == 0,
-        isBest: true,
+        commentType: CommentType.NORMAL,
       );
       replyList.add(commentData);
     }
@@ -190,6 +217,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   @override
   void dispose()
   {
+    textFocusNode.dispose();
+    textEditingController.dispose();
     ticker.dispose();
     replyScrollController.dispose();
     if (isShowContent) {
@@ -204,7 +233,6 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   void didChangeDependencies() async
   {
     super.didChangeDependencies();
-
   }
 
   void setScrollPosition(double _offset) {
@@ -252,13 +280,27 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     });
                   }
                   break;
+                case ContentPlayButtonType.CONTENT_INFO:
+                  {
+                    Get.to(() => ContentInfoPage());
+                  }
+                  break;
+                case ContentPlayButtonType.CHECK:
+                  {
+                    contentData!.isCheck = !contentData!.isCheck;
+                    setState(() {
+
+                    });
+                  }
+                  break;
                 default:
                   print('to do type $_type');
                   break;
               }
-              print('tap');
+              print('contentUIButtons tap');
             },
-            child: Opacity
+            child:
+            Opacity
               (
               opacity: 0.70,
               child: Container(
@@ -431,7 +473,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               ),
             ),
             contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
-            contentUIButtons(StringTable().Table![100023]!, CupertinoIcons.heart, ContentPlayButtonType.CHECK),
+            contentUIButtons(StringTable().Table![100023]!, contentData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
             contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
             contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
             Container
@@ -470,7 +512,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               color: Colors.black.withOpacity(0.9),
               child:
               Text
-              (
+                (
                 isShowContent && videoController.value.isInitialized ?
                 '${formatDuration(videoController.value.position).$2}:${formatDuration(videoController.value.position).$3} / ${formatDuration(videoController.value.duration).$2}:${formatDuration(videoController.value.duration).$3}' : '00:00 / 00:00',
                 style:
@@ -495,6 +537,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                 home:
                 CupertinoPageScaffold
                   (
+                    resizeToAvoidBottomInset: false,
                     backgroundColor: Colors.black,
                     child:
                     GestureDetector
@@ -633,14 +676,24 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     child:
                     Container
                       (
-                      width: 390.w,
-                      height: 500.h,
-                      color: Colors.black,
-                      child:
-                      isShowShop ?
-                      showShop() :
-                      isShowReply == false ?
-                      contentComment() : commentReply(),
+                        width: 390.w,
+                        height: 500.h,
+                        color: Colors.black,
+                        child:
+                        isShowShop ?
+                        showShop() :
+                        Stack
+                          (
+                          children:
+                          [
+                            isShowReply == false ?
+                            contentComment() : commentReply(),
+                            VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, ()
+                            {
+                              //TODO: 댓글 입력.
+                            },)
+                          ],
+                        )
                     ),
                   ),
                   GestureDetector
@@ -649,12 +702,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     {
                       if (bottomOffset == 0)
                       {
-                        if (isShowContent == false) {
+                        if (isShowContent == false)
+                        {
                           tweenController.forward();
                           ticker.stop();
                           controlUIVisible = true;
                         }
 
+                        textFocusNode.unfocus();
                         bottomOffset = -840.h;
                         setState(()
                         {
@@ -806,14 +861,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                             episodeCommentList[i].ID,
                             episodeCommentList[i].iconUrl!,
                             episodeCommentList[i].episodeNumber!,
-                            episodeCommentList[i].date!,
                             episodeCommentList[i].name!,
+                            episodeCommentList[i].date!,
                             episodeCommentList[i].isLikeCheck!,
-                            episodeCommentList[i].commant!,
+                            episodeCommentList[i].comment!,
                             episodeCommentList[i].likeCount!,
                             episodeCommentList[i].replyCount!,
                             episodeCommentList[i].isOwner!,
-                            episodeCommentList[i].isBest!,
+                            episodeCommentList[i].commentType!,
                             false,
                                 (id)
                             {
@@ -907,7 +962,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                 var commentData = EpisodeCommentData
                   (
                   name: '황후마마가 돌아왔다.',
-                  commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                  comment: '이건 재미있다. 무조건 된다고 생각한다.',
                   date: '24.09.06',
                   episodeNumber: '11',
                   iconUrl: '',
@@ -916,7 +971,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                   likeCount: '12',
                   replyCount: '3',
                   isOwner: i == 0,
-                  isBest: true,
+                  commentType: CommentType.NORMAL,
                 );
                 replyList.add(commentData);
               }
@@ -929,7 +984,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                 var commentData = EpisodeCommentData
                   (
                   name: '황후마마가 돌아왔다.',
-                  commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                  comment: '이건 재미있다. 무조건 된다고 생각한다.',
                   date: '24.09.06',
                   episodeNumber: '11',
                   iconUrl: '',
@@ -938,7 +993,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                   likeCount: '12',
                   replyCount: '3',
                   isOwner: i == 0,
-                  isBest: true,
+                  commentType: CommentType.NORMAL,
                 );
                 episodeCommentList.add(commentData);
               }
@@ -1020,26 +1075,26 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                         ),
                       ),
                       Expanded
-                      (
+                        (
                         child:
                         Padding
-                        (
-                          padding: const EdgeInsets.only(right: 30),
-                          child: Container
                           (
+                          padding: const EdgeInsets.only(right: 30),
+                          child:
+                          Container
+                            (
                             alignment: Alignment.topLeft,
                             //color: Colors.green,
                             child:
                             GestureDetector
-                            (
+                              (
                               onTap: ()
                               {
                                 MainBottomNavgationBarController.to.selectedIndex.value = 3;
                                 Get.back();
                               },
-                              child:
-                              Stack
-                              (
+                              child: Stack
+                                (
                                 alignment: Alignment.center,
                                 children:
                                 [
@@ -1122,7 +1177,6 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
       );
   }
 
-  bool isChecked = true;
   Widget toggleButton() =>
       Transform.scale
         (
@@ -1130,14 +1184,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
         child:
         CupertinoSwitch
           (
-          value: isChecked,
+          value: UserData.to.autoPlay,
           activeColor: Color(0xFF00FFBF),
           onChanged: (bool? value)
           {
             //TODO : 서버에 알리기
             setState(()
             {
-              isChecked = value ?? false;
+              UserData.to.autoPlay = value ?? false;
             });
           },
         ),

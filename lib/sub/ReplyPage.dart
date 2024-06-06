@@ -22,7 +22,7 @@ class _ReplyPageState extends State<ReplyPage>
   var commentData = EpisodeCommentData
   (
     name: '',
-    commant: '',
+    comment: '',
     date: '',
     episodeNumber: '',
     iconUrl: '',
@@ -31,7 +31,7 @@ class _ReplyPageState extends State<ReplyPage>
     likeCount: '',
     replyCount: '',
     isOwner: false,
-    isBest: false,
+    commentType: CommentType.NORMAL,
   );
 
   @override
@@ -46,7 +46,7 @@ class _ReplyPageState extends State<ReplyPage>
       var commentData = EpisodeCommentData
       (
         name: '황후마마가 돌아왔다.',
-        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
         episodeNumber: '11',
         iconUrl: '',
@@ -55,7 +55,7 @@ class _ReplyPageState extends State<ReplyPage>
         likeCount: '12',
         replyCount: '3',
         isOwner: i == 0,
-        isBest: true,
+        commentType: CommentType.NORMAL,
       );
       replyList.add(commentData);
     }
@@ -90,7 +90,7 @@ class _ReplyPageState extends State<ReplyPage>
               var commentData = EpisodeCommentData
               (
                 name: '황후마마가 돌아왔다.',
-                commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                comment: '이건 재미있다. 무조건 된다고 생각한다.',
                 date: '24.09.06',
                 episodeNumber: '11',
                 iconUrl: '',
@@ -99,7 +99,7 @@ class _ReplyPageState extends State<ReplyPage>
                 likeCount: i.toString(),
                 replyCount: '3',
                 isOwner: i == 0,
-                isBest: true,
+                commentType: CommentType.NORMAL,
               );
               replyList.add(commentData);
             }
@@ -228,11 +228,11 @@ Widget ReplyPopup(ScrollController _scrollController,
               _commentData.name!,
               _commentData.date!,
               _commentData.isLikeCheck!,
-              _commentData.commant!,
+              _commentData.comment!,
               _commentData.likeCount!,
               _commentData.replyCount!,
               _commentData.isOwner!,
-              _commentData.isBest!,
+              _commentData.commentType!,
               false,
               (p0) {},
               (p0) {},
@@ -261,11 +261,11 @@ Widget ReplyPopup(ScrollController _scrollController,
                         _replyList[i].name!,
                         _replyList[i].date!,
                         _replyList[i].isLikeCheck!,
-                        _replyList[i].commant!,
+                        _replyList[i].comment!,
                         _replyList[i].likeCount!,
                         _replyList[i].replyCount!,
                         _replyList[i].isOwner!,
-                        _replyList[i].isBest!,
+                        _replyList[i].commentType!,
                             true,
                             (p0) {},
                             (p0) {},

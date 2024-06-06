@@ -13,7 +13,6 @@ import 'ContentInfoPage.dart';
 import 'CupertinoMain.dart';
 import 'NextContentPlayer.dart';
 import 'ReplyPage.dart';
-import 'Reward/RewardPage.dart';
 
 enum ContentPlayButtonType
 {
@@ -166,12 +165,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       }
     });
 
-    for(int i = 0; i < 11; ++i)
+    for(int i = 0; i < 10; ++i)
     {
       var commentData = EpisodeCommentData
       (
         name: '황후마마가 돌아왔다.',
-        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
         episodeNumber: '11',
         iconUrl: '',
@@ -180,7 +179,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         likeCount: '12',
         replyCount: '3',
         isOwner: i == 0,
-        isBest: true,
+        commentType: CommentType.BEST,
       );
       episodeCommentList.add(commentData);
     }
@@ -190,7 +189,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       var commentData = EpisodeCommentData
       (
         name: '황후마마가 돌아왔다.',
-        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
         episodeNumber: '11',
         iconUrl: '',
@@ -199,7 +198,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         likeCount: '12',
         replyCount: '3',
         isOwner: i == 0,
-        isBest: true,
+        commentType: CommentType.NORMAL,
       );
       replyList.add(commentData);
     }
@@ -697,8 +696,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       [
                         isShowReply == false ?
                         contentComment() : commentReply(),
-                        VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, () {
-                        //TODO: 댓글 입력.
+                        VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, ()
+                        {
+                          //TODO: 댓글 입력.
                         },)
                       ],
                     )
@@ -869,14 +869,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         episodeCommentList[i].ID,
                         episodeCommentList[i].iconUrl!,
                         episodeCommentList[i].episodeNumber!,
-                        episodeCommentList[i].date!,
                         episodeCommentList[i].name!,
+                        episodeCommentList[i].date!,
                         episodeCommentList[i].isLikeCheck!,
-                        episodeCommentList[i].commant!,
+                        episodeCommentList[i].comment!,
                         episodeCommentList[i].likeCount!,
                         episodeCommentList[i].replyCount!,
                         episodeCommentList[i].isOwner!,
-                        episodeCommentList[i].isBest!,
+                        episodeCommentList[i].commentType!,
                             false,
                             (id)
                         {
@@ -970,7 +970,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 var commentData = EpisodeCommentData
                   (
                   name: '황후마마가 돌아왔다.',
-                  commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                  comment: '이건 재미있다. 무조건 된다고 생각한다.',
                   date: '24.09.06',
                   episodeNumber: '11',
                   iconUrl: '',
@@ -979,7 +979,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   likeCount: '12',
                   replyCount: '3',
                   isOwner: i == 0,
-                  isBest: true,
+                  commentType: CommentType.NORMAL,
                 );
                 replyList.add(commentData);
               }
@@ -992,7 +992,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 var commentData = EpisodeCommentData
                   (
                   name: '황후마마가 돌아왔다.',
-                  commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                  comment: '이건 재미있다. 무조건 된다고 생각한다.',
                   date: '24.09.06',
                   episodeNumber: '11',
                   iconUrl: '',
@@ -1001,7 +1001,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   likeCount: '12',
                   replyCount: '3',
                   isOwner: i == 0,
-                  isBest: true,
+                  commentType: CommentType.NORMAL,
                 );
                 episodeCommentList.add(commentData);
               }

@@ -78,7 +78,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       var commentData = EpisodeCommentData
       (
         name: '황후마마가 돌아왔다.',
-        commant: '이건 재미있다. 무조건 된다고 생각한다.',
+        comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
         episodeNumber: '11',
         iconUrl: '',
@@ -87,7 +87,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         likeCount: '12',
         replyCount: '3',
         isOwner: i == 0,
-        isBest: true,
+        commentType: CommentType.BEST,
       );
       episodeCommentList.add(commentData);
     }
@@ -136,7 +136,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               var commentData = EpisodeCommentData
               (
                 name: '황후마마가 돌아왔다.',
-                commant: '이건 재미있다. 무조건 된다고 생각한다.',
+                comment: '이건 재미있다. 무조건 된다고 생각한다.',
                 date: '24.09.06',
                 episodeNumber: '11',
                 iconUrl: '',
@@ -145,7 +145,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 likeCount: '12',
                 replyCount: '3',
                 isOwner: i == 0,
-                isBest: true,
+                commentType: CommentType.BEST,
               );
               episodeCommentList.add(commentData);
 
@@ -222,7 +222,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 SizedBox(height: 20,),
                 tabButtons(),
                 episodeInfo(),
-                contentCommant(),
+                contentComment(),
                 SizedBox(height: 20,),
                 contentEventAnnounce(),
               ],
@@ -700,7 +700,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     );
   }
 
-  Widget contentCommant() =>
+  Widget contentComment() =>
   Visibility
   (
     visible: selections[1],
@@ -805,14 +805,14 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             episodeCommentList[i].ID,
             episodeCommentList[i].iconUrl!,
             episodeCommentList[i].episodeNumber!,
-            episodeCommentList[i].date!,
             episodeCommentList[i].name!,
+            episodeCommentList[i].date!,
             episodeCommentList[i].isLikeCheck!,
-            episodeCommentList[i].commant!,
+            episodeCommentList[i].comment!,
             episodeCommentList[i].likeCount!,
             episodeCommentList[i].replyCount!,
             episodeCommentList[i].isOwner!,
-            episodeCommentList[i].isBest!,
+            episodeCommentList[i].commentType!,
             false,
             (id)
             {
@@ -920,6 +920,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   }
 }
 
+enum CommentType
+{
+  NORMAL,
+  BEST,
+  TOP10,
+}
+
 class EpisodeCommentData
 {
   int ID = 0;
@@ -928,11 +935,11 @@ class EpisodeCommentData
   String? name;
   String? date;
   bool? isLikeCheck;
-  String? commant;
+  String? comment;
   String? replyCount;
   String? likeCount;
   bool? isOwner;
-  bool? isBest;
+  CommentType? commentType;
 
   EpisodeCommentData
   (
@@ -943,11 +950,11 @@ class EpisodeCommentData
       required this.name,
       required this.date,
       required this.isLikeCheck,
-      required this.commant,
+      required this.comment,
       required this.replyCount,
       required this.likeCount,
       required this.isOwner,
-      required this.isBest,
+      required this.commentType,
     }
   );
 }

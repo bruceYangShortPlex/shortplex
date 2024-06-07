@@ -4,11 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_widget_cache.dart';
 import 'package:intl/intl.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolHistoryPage.dart';
 
-import '../../Util/ExpandableText.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../ContentInfoPage.dart';
@@ -96,7 +94,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                 name: '황후마마가 돌아왔다.',
                 comment: '이건 재미있다. 무조건 된다고 생각한다.',
                 date: '24.09.06',
-                episodeNumber: '11',
+                episodeNumber: '',
                 iconUrl: '',
                 ID: i,
                 isLikeCheck: i % 2 == 0,
@@ -141,7 +139,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         name: '황후마마가 돌아왔다.',
         comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
-        episodeNumber: '11',
+        episodeNumber: '',
         iconUrl: '',
         ID: i,
         isLikeCheck: i % 2 == 0,
@@ -153,14 +151,14 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
       rankedCommentList.add(commentData);
     }
 
-    for(int i = 0; i < 10; ++i)
+    for(int i = 0; i < 6; ++i)
     {
       var commentData = EpisodeCommentData
         (
         name: '황후마마가 돌아왔다.',
         comment: '이건 재미있다. 무조건 된다고 생각한다.',
         date: '24.09.06',
-        episodeNumber: '11',
+        episodeNumber: '',
         iconUrl: '',
         ID: i,
         isLikeCheck: i % 2 == 0,
@@ -408,7 +406,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
               setState(() {
 
               });
-              print('open change');
             },
             child: Container
               (
@@ -726,7 +723,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
           setState(() {
 
           });
-          print('open');
         },
         child:
         Container
@@ -814,7 +810,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                   });
                 },
                 child: Container
-                  (
+                (
                   width: 73,
                   height: 26,
                   decoration: ShapeDecoration(
@@ -860,7 +856,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                   padding: const EdgeInsets.only(bottom: 1),
                   child:
                   Text
-                    (
+                  (
                     StringTable().Table![100036]!,
                     style:
                     TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
@@ -872,36 +868,86 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
           ),
         ),
         const SizedBox(height: 10,),
-        for(var data in rankedCommentList)
-          CommentWidget
-          (
-            data.ID,
-            data.iconUrl!,
-            data.episodeNumber!,
-            data.date!,
-            data.name!,
-            data.isLikeCheck!,
-            data.comment!,
-            data.likeCount!,
-            data.replyCount!,
-            data.isOwner!,
-            data.commentType!,
-            false,
-                (id)
-            {
-              //TODO : 좋아요 버튼 처리
-              print(id);
-            },
-                (id)
-            {
-              //TODO : 댓글의 답글 열기 버튼 처리
+        Stack
+        (
+          alignment: Alignment.topCenter,
+          children:
+          [
+            Container
+            (
+              alignment: Alignment.center,
+                padding: EdgeInsets.only(top: 20),
+                child:
+                Image.asset('assets/images/Reward/reward_Top10_BG.png',width: 390, height: 1024,)
+            ),
+            Container
+            (
+              height: 300,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.black, Colors.transparent],
+                ),
+              ),
+            ),
+            Padding
+            (
+              padding: EdgeInsets.only(top: 744),
+              child:
+              Container
+              (
+                height: 300,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Colors.black, Colors.transparent],
+                  ),
+                ),
+              ),
+            ),
+            Column
+            (
+              children:
+              [
+                Image.asset('assets/images/Reward/reward_Top10_text.png'),
+                const SizedBox(height: 20,),
+                for(var data in rankedCommentList)
+                  CommentWidget
+                    (
+                    data.ID,
+                    data.iconUrl!,
+                    data.episodeNumber!,
+                    data.name!,
+                    data.date!,
+                    data.isLikeCheck!,
+                    data.comment!,
+                    data.likeCount!,
+                    data.replyCount!,
+                    data.isOwner!,
+                    data.commentType!,
+                    false,
+                        (id)
+                    {
+                      //TODO : 좋아요 버튼 처리
+                      print(id);
+                    },
+                        (id)
+                    {
+                      //TODO : 댓글의 답글 열기 버튼 처리
 
-            },
-                (id)
-            {
-              //TODO : 삭제 버튼 처리
-            },
-          ),
+                    },
+                        (id)
+                    {
+                      //TODO : 삭제 버튼 처리
+                    },
+                  ),
+              ],
+            )
+
+          ],
+        ),
         const SizedBox(height: 40,),
         Stack
         (
@@ -931,8 +977,8 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
             commentList[i].ID,
             commentList[i].iconUrl!,
             commentList[i].episodeNumber!,
-            commentList[i].date!,
             commentList[i].name!,
+            commentList[i].date!,
             commentList[i].isLikeCheck!,
             commentList[i].comment!,
             commentList[i].likeCount!,

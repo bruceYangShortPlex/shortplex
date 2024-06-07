@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:shortplex/sub/Home/SearchPage.dart';
 import 'package:shortplex/sub/Reward/RewardHistoryPage.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolPage.dart';
 
@@ -98,6 +99,7 @@ class _RewardPageState extends State<RewardPage> {
       var testData = ShortPlexEventData();
       if (i % 2 == 0)
       {
+        testData.eventPage = EventPageType.SEARCH;
         testData.SetTestTime();
       }
       testData.Title = '왭하드 테이블에서 받든지 서버에서 받든지';
@@ -249,7 +251,10 @@ Widget mainWidget(BuildContext context)=>
     (
       onTap: ()
       {
-        print('Event Click');
+        if (_data.eventPage == EventPageType.SEARCH)
+          {
+            Get.to(() => SearchPage(), arguments: SearchType.EVENT);
+          }
       },
       child:
       Container
@@ -340,7 +345,7 @@ Widget mainWidget(BuildContext context)=>
                   (
                     children:
                     [
-                      //Image.network(_data.BG_Url, width: 356, height: 64,fit: BoxFit.fill, ),
+                      Image.network(_data.BG_Url, width: 356, height: 64,fit: BoxFit.fill, ),
                       Align
                       (
                         alignment: Alignment.centerLeft,
@@ -1207,6 +1212,12 @@ Widget mainWidget(BuildContext context)=>
   }
 }
 
+enum EventPageType
+{
+  NONE,
+  SEARCH,
+}
+
 class ShortPlexEventData
 {
   String IconUrl = 'https://picsum.photos/250?image=9';
@@ -1214,6 +1225,7 @@ class ShortPlexEventData
   String BG_Url = 'https://picsum.photos/250?image=9';
   DateTime? EndTime;
   Duration? difference;
+  EventPageType eventPage = EventPageType.NONE;
 
   void SetTestTime()
   {

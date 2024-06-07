@@ -45,7 +45,7 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
         isLikeCheck: i % 2 == 0,
         likeCount: '12',
         replyCount: '3',
-        isOwner: i == 0,
+        isOwner: false,
         commentType: CommentType.NORMAL,
       );
       recordCommentList.add(commentData);
@@ -124,7 +124,7 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
                   height: 260,
                   color: Colors.grey,
                 ),
-                SizedBox(height: 30,),
+                SizedBox(height: 20,),
                 titleSchoolRecord(),
               ],
             ),
@@ -211,25 +211,70 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
   Widget titleSchoolRecord()
   {
     return
-      Container
+      Expanded
+      (
+        child: Container
         (
-          width: 390,
-          //color: Colors.blue,
-          child:
-          Column
+            width: 390,
+            //color: Colors.blue,
+            //alignment: Alignment.topCenter,
+            child:
+            Stack
             (
-            children:
-            [
-              for(int i = 0; i < recordCommentList.length; ++i)
-                RecordItem(i, recordCommentList[i]),
-            ],
-          )
+              alignment: Alignment.topCenter,
+              children:
+              [
+                Image.asset('assets/images/Reward/reward_Top10_BG.png',width: 390, fit: BoxFit.fill,),
+                Container
+                (
+                  width: 390,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black, Colors.transparent],
+                    ),
+                  ),
+                ),
+                Container
+                (
+                  width: 390,
+                  alignment: Alignment.bottomCenter,
+                  child: Container
+                    (
+                    width: 390,
+                    height: 300,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black, Colors.transparent],
+                      ),
+                    ),
+                  ),
+                ),
+                Column
+                (
+                  children:
+                  [
+                    Image.asset('assets/images/Reward/reward_Top3_text.png'),
+                    SizedBox(height: 20,),
+                    for(int i = 0; i < recordCommentList.length; ++i)
+                      RecordItem(i, recordCommentList[i]),
+                  ],
+                ),
+              ],
+            ),
+        ),
       );
   }
 
   Widget RecordItem(int _rank, EpisodeCommentData _data)
   {
     var borderColor = _rank == 0 ? const Color(0xFFFFB700) : _rank == 1 ? const Color(0xFFAAAAAA) : const Color(0xFFA44E00);
+    var randIcon = _rank == 0 ? 'assets/images/Reward/reward_Top3_icon_1.png' : _rank == 1 ? 'assets/images/Reward/reward_Top3_icon_2.png'
+        : 'assets/images/Reward/reward_Top3_icon_3.png';
     return
       Column
         (
@@ -259,7 +304,7 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
                     alignment: Alignment.topCenter,
                     padding: EdgeInsets.only(left: 10,),
                     child:
-                    Image.asset('assets/images/main/shortplex.png', width: 30, height: 55,)
+                    Image.asset(randIcon, width: 30, height: 55,)
                 ),
                 SizedBox(width: 10,),
                 Padding
@@ -267,7 +312,7 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
                   padding: const EdgeInsets.only(top: 20),
                   child:
                   CommentWidget
-                    (
+                  (
                     _data.ID,
                     _data.iconUrl!,
                     _data.episodeNumber!,

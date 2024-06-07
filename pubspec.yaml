@@ -84,6 +84,8 @@ flutter:
     - assets/images/Shop/
     - assets/images/User/
     - assets/images/pick/
+    - assets/images/Reward/
+    - assets/images/Reward/event_popcorn/
     - assets/json/
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -480,7 +480,7 @@ Widget CommentWidget
                   child:
                   Container
                   (
-                    //color: Colors.blue,
+                    //color: Colors.red,
                     child:
                     Visibility
                     (
@@ -512,31 +512,24 @@ Widget CommentWidget
                     ),
                 ),
               ),
-              Visibility
+              Container
               (
-                visible: _isOwner,
+                //color: Colors.blue,
+                width: 50,
+                alignment: Alignment.centerRight,
                 child:
-                Align
+                Visibility
                 (
-                  alignment: Alignment.centerRight,
+                  visible: _isOwner,
                   child:
-                  Padding
+                  IconButton
                   (
-                    padding: const EdgeInsets.only(right: 0),
-                    child:
-                    Container
-                    (
-                      //color: Colors.blue,
-                      child: IconButton
-                      (
-                        padding: EdgeInsets.zero,
-                        onPressed: ()
-                        {
-                          _callOpenCommant(index);
-                        },
-                        icon: Icon( CupertinoIcons.delete, color: Colors.white,size: 15,),
-                      ),
-                    ),
+                    padding: EdgeInsets.zero,
+                    onPressed: ()
+                    {
+                      _callOpenCommant(index);
+                    },
+                    icon: Icon( CupertinoIcons.delete, color: Colors.white,size: 15,),
                   ),
                 ),
               ),

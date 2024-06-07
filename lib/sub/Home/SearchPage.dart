@@ -17,6 +17,7 @@ enum SearchType
   ACTION,
   HISTORICAL,
   JAEBEOL,
+  EVENT,
 }
 
 class SearchPage extends StatefulWidget
@@ -39,6 +40,10 @@ class _SearchPageState extends State<SearchPage>
     {
       _fetchPage(pageKey);
     });
+
+    if (Get.arguments != null) {
+      selectedType = Get.arguments as SearchType;
+    }
 
     super.initState();
   }
@@ -142,7 +147,8 @@ Widget mainWidget(BuildContext context)=>
                     searchTypeSelectButton(SearchType.ACTION, StringTable().Table![500004]!),
                     searchTypeSelectButton(SearchType.HISTORICAL, StringTable().Table![500005]!),
                     searchTypeSelectButton(SearchType.JAEBEOL, StringTable().Table![500006]!),
-                    SizedBox(width: 73,)
+                    searchTypeSelectButton(SearchType.EVENT, StringTable().Table![500006]!),
+                    //SizedBox(width: 73,)
                   ],
                 ),
                 SizedBox(height: 30,),
@@ -185,6 +191,7 @@ Widget mainWidget(BuildContext context)=>
           ),
         ),
         alignment: Alignment.center,
+        padding: EdgeInsets.only(bottom: 1),
         child:
         Text
         (

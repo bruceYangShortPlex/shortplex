@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
@@ -9,6 +10,10 @@ import 'table/StringTable.dart';
 void main() async
 {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   StringTable().InitTable();
   Get.lazyPut(() => LoginMananger());
   Get.lazyPut(()=> UserData());

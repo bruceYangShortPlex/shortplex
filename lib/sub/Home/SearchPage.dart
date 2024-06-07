@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 
 const int _pageSize = 30;
@@ -244,7 +245,8 @@ Widget mainWidget(BuildContext context)=>
     (
       onTap: ()
       {
-        print('grid item on tap');
+        //print('grid item on tap');
+        Get.to(() => ContentInfoPage());
       },
       child: Container
       (
@@ -265,7 +267,7 @@ Widget mainWidget(BuildContext context)=>
     (
       child: Container
       (
-        width: 330,
+        width: 390,
         height: MediaQuery.of(context).size.height - 160,
         child:
         PagedGridView<int, Widget>

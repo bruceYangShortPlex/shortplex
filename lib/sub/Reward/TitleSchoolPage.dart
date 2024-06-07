@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_widget_cache.dart';
 import 'package:intl/intl.dart';
+import 'package:shortplex/sub/Reward/TitleSchoolHistoryPage.dart';
 
 import '../../Util/ExpandableText.dart';
 import '../../Util/ShortplexTools.dart';
@@ -24,7 +25,6 @@ enum TitleSchoolPageType
 {
   INFO,
   COMMENT,
-  RECORD,
 }
 
 class TitleSchoolPage extends StatefulWidget {
@@ -52,19 +52,27 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   var scrollController = ScrollController();
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.LATEST;
-  var recordCommentList = <EpisodeCommentData>[];
+
 
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
 
-  void startTimer() {
-    schoolTimer = Timer.periodic(
-      const Duration(minutes: 1), (Timer timer) =>
-        setState(
-              () {
+  void startTimer()
+  {
+    schoolTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer)
+    {
+        if (mounted)
+        {
+          setState(()
+          {
             endTimeDifference = endTimeDifference! - const Duration(minutes: 1);
-          },
-        ),
+          });
+        }
+        else
+        {
+          timer.cancel();
+        }
+      },
     );
   }
 
@@ -126,25 +134,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
       }
     });
 
-    for(int i = 0; i < 3; ++i)
-    {
-      var commentData = EpisodeCommentData
-      (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '',
-        iconUrl: '',
-        ID: i,
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isOwner: i == 0,
-        commentType: CommentType.NORMAL,
-      );
-      recordCommentList.add(commentData);
-    }
-
     for(int i = 0; i < 10; ++i)
     {
       var commentData = EpisodeCommentData
@@ -188,6 +177,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
 
   @override
   void dispose() {
+    schoolTimer.cancel();
     textFocusNode.dispose();
     textEditingController.dispose();
     scrollController.dispose();
@@ -391,10 +381,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                           ),
                           const SizedBox(height: 30,),
                           pageType == TitleSchoolPageType.INFO ?
-                          info() :
-                          pageType == TitleSchoolPageType.COMMENT ?
-                          titleSchoolCommnet() :
-                          titleSchoolRecord(),
+                          info() : titleSchoolCommnet(),
                         ],
                       )
                   ),
@@ -665,18 +652,15 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                     TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                   IconButton
-                    (
+                  (
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(bottom: 1),
                     color: Colors.white,
                     iconSize: 20,
                     icon: const Icon(Icons.arrow_forward_ios), onPressed: ()
-                  {
-                    pageType = TitleSchoolPageType.RECORD;
-                    setState(() {
-
-                    });
-                  },
+                    {
+                      Get.to(() => TitleSchoolHistoryPage());
+                    },
                   ),
                 ],
               )
@@ -706,7 +690,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
           ),
           SizedBox(height: 20,),
           Container
-            (
+          (
             width: 306,
             child: Text
               (
@@ -725,7 +709,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   {
     return
     pageType == TitleSchoolPageType.COMMENT ?
-    VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, ()
+    VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, 0, ()
     {
 
     },)
@@ -775,7 +759,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                   Text
                   (
                     StringTable().Table![100041]!,
-                    style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),
+                    style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                   ),
                 ),
               ),
@@ -972,102 +956,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
             },
           ),
         const SizedBox(height: 40,),
-      ],
-    );
-  }
-
-  Widget titleSchoolRecord()
-  {
-    return
-    Container
-    (
-      width: 390,
-      //color: Colors.blue,
-      child:
-      Column
-      (
-        children:
-        [
-          for(int i = 0; i < recordCommentList.length; ++i)
-            RecordItem(i, recordCommentList[i]),
-        ],
-      )
-    );
-  }
-
-  Widget RecordItem(int _rank, EpisodeCommentData _data)
-  {
-    var borderColor = _rank == 0 ? const Color(0xFFFFB700) : _rank == 1 ? const Color(0xFFAAAAAA) : const Color(0xFFA44E00);
-    return
-    Column
-    (
-      children:
-      [
-        Container
-        (
-          //width: 332,
-          //height: 69,
-          decoration: ShapeDecoration(
-            color: Color(0xCC242424),
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 2, color: borderColor),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-          alignment: Alignment.center,
-          child:
-          Row
-          (
-            children:
-            [
-              SizedBox(width: 10,),
-              Container
-              (
-                //color: Colors.red,
-                alignment: Alignment.topCenter,
-                padding: EdgeInsets.only(left: 10,),
-                child:
-                Image.asset('assets/images/main/shortplex.png', width: 30, height: 55,)
-              ),
-              SizedBox(width: 10,),
-              Padding
-              (
-                padding: const EdgeInsets.only(top: 20),
-                child:
-                CommentWidget
-                (
-                  _data.ID,
-                  _data.iconUrl!,
-                  _data.episodeNumber!,
-                  _data.name!,
-                  _data.date!,
-                  _data.isLikeCheck!,
-                  _data.comment!,
-                  _data.likeCount!,
-                  _data.replyCount!,
-                  _data.isOwner!,
-                  _data.commentType!,
-                  false,
-                      (id)
-                  {
-                    //TODO : 좋아요 버튼 처리
-                    print(id);
-                  },
-                      (id)
-                  {
-                    //TODO : 댓글의 답글 열기 버튼 처리
-
-                  },
-                      (id)
-                  {
-                    //TODO : 삭제 버튼 처리
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 20,),
       ],
     );
   }

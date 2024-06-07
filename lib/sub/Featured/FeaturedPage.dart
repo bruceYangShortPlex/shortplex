@@ -198,7 +198,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                                     (
                                       dataList[currentIndex].content,
                                       style:
-                                      TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),
+                                      TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                                     ),
                                   ),
                                   Align

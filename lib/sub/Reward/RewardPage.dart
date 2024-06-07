@@ -43,27 +43,34 @@ class _RewardPageState extends State<RewardPage> {
 
   void startTimer()
   {
-    eventTimer = Timer.periodic(
-    const Duration(minutes: 1),(Timer timer) =>
-    setState(()
+    eventTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer)
     {
-      for(var item in eventTimerList)
-      {
-        if (item.EndTime == null)
+        if (mounted)
         {
-          continue;
-        }
+          setState(()
+          {
+            for(var item in eventTimerList)
+            {
+              if (item.EndTime == null)
+              {
+                continue;
+              }
 
-        item.difference = item.difference! - const Duration(minutes: 1);
-        if (item.difference! <= Duration.zero)
-        {
-          item.difference = Duration.zero;
-          eventTimerList.remove(item);
+              item.difference = item.difference! - const Duration(minutes: 1);
+              if (item.difference! <= Duration.zero)
+              {
+                item.difference = Duration.zero;
+                eventTimerList.remove(item);
+              }
+              //print('Time left: ${formatDuration(item.difference!).$1}:${formatDuration(item.difference!).$2}');
+            }
+          });
         }
-        print('Time left: ${formatDuration(item.difference!).$1}:${formatDuration(item.difference!).$2}');
-      }
-    },
-    ),
+        else
+        {
+          timer.cancel();
+        }
+      },
     );
   }
 
@@ -112,6 +119,7 @@ class _RewardPageState extends State<RewardPage> {
 
   @override
   void dispose() {
+    eventTimer.cancel();
     textFieldFocusNode.removeListener(onFocusChange);
     textFieldFocusNode.dispose();
     textEditingController.dispose();
@@ -237,132 +245,140 @@ Widget mainWidget(BuildContext context)=>
   Widget eventItem(ShortPlexEventData _data)
   {
     return
-    Container
+    GestureDetector
     (
-      height: 100,
-      width: 390,
+      onTap: ()
+      {
+        print('Event Click');
+      },
       child:
-      Stack
+      Container
       (
-        children:
-        [
-          Visibility
-          (
-            visible: _data.EndTime != null,
-            child:
-            Align
+        height: 100,
+        width: 390,
+        child:
+        Stack
+        (
+          children:
+          [
+            Visibility
             (
-              alignment: Alignment.centerRight,
+              visible: _data.EndTime != null,
               child:
-              Padding
+              Align
               (
-                padding: const EdgeInsets.only(right: 30),
+                alignment: Alignment.centerRight,
                 child:
-                Container
+                Padding
                 (
-                  width: 130,
-                  height: 55,
-                  decoration: ShapeDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment(0.98, -0.18),
-                      end: Alignment(-0.98, 0.18),
-                      colors: [Color(0xFF033C32), Color(0xFF0A293E)],
-                    ),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 1,
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                        color: Color(0xFF0A2022),
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
+                  padding: const EdgeInsets.only(right: 30),
                   child:
-                  Padding
+                  Container
                   (
-                    padding: EdgeInsets.only(top: 4, left: 8, right: 8),
+                    width: 130,
+                    height: 55,
+                    decoration: ShapeDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(0.98, -0.18),
+                        end: Alignment(-0.98, 0.18),
+                        colors: [Color(0xFF033C32), Color(0xFF0A293E)],
+                      ),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          width: 1,
+                          strokeAlign: BorderSide.strokeAlignOutside,
+                          color: Color(0xFF0A2022),
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
                     child:
-                    FittedBox
+                    Padding
                     (
-                      alignment: Alignment.topCenter,
+                      padding: EdgeInsets.only(top: 4, left: 8, right: 8),
                       child:
-                      Text
+                      FittedBox
                       (
-                        _data.EndTime != null ? SetTableStringArgument(800007, [formatDuration(_data.difference!).$1,formatDuration(_data.difference!).$2]) : '',
-                        style:
-                        TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding
-          (
-            padding: const EdgeInsets.only(top: 50),
-            child:
-            Center
-            (
-              child:
-              Container
-              (
-                width: 356,
-                height: 64,
-                decoration: ShapeDecoration(
-                  color: Color(0xFF1E1E1E),
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      width: 2,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                      color: Color(0xFF00FFBF),
-                    ),
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                ),
-                child:
-                Stack
-                (
-                  children:
-                  [
-                    //Image.network(_data.BG_Url, width: 356, height: 64,fit: BoxFit.fill, ),
-                    Align
-                    (
-                      alignment: Alignment.centerLeft,
-                      child:
-                      Padding
-                      (
-                        padding: const EdgeInsets.only(left: 20),
-                        child: 
-                        Image.network(_data.IconUrl, height: 32, width: 32,),
-                        // Container
-                        // (
-                        //   width: 32,
-                        //   height: 32,
-                        //   color: Colors.grey,
-                        // ),
-                      ),
-                    ),
-                    Center
-                    (
-                      child:
-                      Padding
-                      (
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text
+                        alignment: Alignment.topCenter,
+                        child:
+                        Text
                         (
-                          _data.Title,
+                          _data.EndTime != null ? SetTableStringArgument(800007, [formatDuration(_data.difference!).$1,formatDuration(_data.difference!).$2]) : '',
                           style:
                           TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            Padding
+            (
+              padding: const EdgeInsets.only(top: 50),
+              child:
+              Center
+              (
+                child:
+                Container
+                (
+                  width: 356,
+                  height: 64,
+                  decoration: ShapeDecoration(
+                    color: Color(0xFF1E1E1E),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        width: 2,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        color: Color(0xFF00FFBF),
+                      ),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                  ),
+                  child:
+                  Stack
+                  (
+                    children:
+                    [
+                      //Image.network(_data.BG_Url, width: 356, height: 64,fit: BoxFit.fill, ),
+                      Align
+                      (
+                        alignment: Alignment.centerLeft,
+                        child:
+                        Padding
+                        (
+                          padding: const EdgeInsets.only(left: 20),
+                          child:
+                          Image.network(_data.IconUrl, height: 32, width: 32,),
+                          // Container
+                          // (
+                          //   width: 32,
+                          //   height: 32,
+                          //   color: Colors.grey,
+                          // ),
+                        ),
+                      ),
+                      Center
+                      (
+                        child:
+                        Padding
+                        (
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text
+                          (
+                            _data.Title,
+                            style:
+                            TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -494,6 +510,7 @@ Widget mainWidget(BuildContext context)=>
             [
               Expanded
               (
+                flex: 3,
                 child:
                 Padding
                 (
@@ -513,6 +530,7 @@ Widget mainWidget(BuildContext context)=>
                 (
                   padding: EdgeInsets.only(bottom: 2),
                   alignment: Alignment.centerRight,
+                  //color: Colors.red,
                   child:
                   Text
                   (

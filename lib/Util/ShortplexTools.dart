@@ -195,7 +195,7 @@ Widget VirtualKeybord(String _defaultString, TextEditingController _controller, 
                         fontSize: 12,
                         fontFamily: 'NotoSans',
                         color: Colors.grey,
-                        fontWeight: FontWeight.w400//placeholder 글자색을 빨간색으로 설정
+                        fontWeight: FontWeight.w500//placeholder 글자색을 빨간색으로 설정
                       ),
                       padding:
                       EdgeInsets.only(left: 20, bottom: 2),

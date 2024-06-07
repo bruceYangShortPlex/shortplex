@@ -757,7 +757,7 @@ class UserInfoMainListView extends GetxController
             width: 200.w,
             child: Text(StringTable().Table![_contents1id]!,
               style:
-              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),),
+              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
           ),
         ),
         Padding
@@ -771,7 +771,7 @@ class UserInfoMainListView extends GetxController
             width: 200.w,
             child: Text(StringTable().Table![_contents2id]!,
               style:
-              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),),
+              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
           ),
         ),
         Padding

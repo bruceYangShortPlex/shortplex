@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/table/UserData.dart';
+import 'Util/AdsManager.dart';
 import 'table/StringTable.dart';
 
 void main() async
@@ -14,6 +15,7 @@ void main() async
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  AdManager.initGoogleMobileAds();
   StringTable().InitTable();
   Get.lazyPut(() => LoginMananger());
   Get.lazyPut(()=> UserData());

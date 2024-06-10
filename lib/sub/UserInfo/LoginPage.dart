@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _buttonEnabled = true;
+  bool buttonEnabled = true;
 
   var loginManager = Get.find<LoginMananger>();
 
@@ -132,15 +132,15 @@ class _LoginPageState extends State<LoginPage> {
                   )
                 ],
               ),
-              onPressed: _buttonEnabled
+              onPressed: buttonEnabled
                   ? () async {
-                      _buttonEnabled = false;
+                      buttonEnabled = false;
                       var result = await loginManager.LogIn(_type);
                       if (result) {
                         //var token = Get.find<Kakao_Login>().token;
                         //서버에 주고 로그인.
                       }
-                      _buttonEnabled = true;
+                      buttonEnabled = true;
                     }
                   : null),
         ),
@@ -149,10 +149,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget _LoginButtons() =>
       Obx(() => UserData.to.isLogin.value == true
           ? IconButton(
-              onPressed: _buttonEnabled
+              onPressed: buttonEnabled
                   ? () async {
                       await loginManager.LogOut();
-                      _buttonEnabled = true;
+                      buttonEnabled = true;
                       print('Logout');
                     }
                   : null,

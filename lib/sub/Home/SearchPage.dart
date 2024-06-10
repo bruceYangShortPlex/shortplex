@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:shortplex/Network/Search_Res.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 
-const int _pageSize = 30;
+const int _pageSize = 15;
 enum SearchType
 {
   ALL,
@@ -32,6 +34,7 @@ class _SearchPageState extends State<SearchPage>
 {
   final PagingController<int, Widget> _pagingController =
   PagingController(firstPageKey: 0);
+  SearchRes? searchData;
 
   @override
   void initState()
@@ -212,21 +215,23 @@ Widget mainWidget(BuildContext context)=>
     print('_fetch page  selectedSearchIndex : ${selectedType}');
     try
     {
-      // Replace with your method to fetch data from the server.
-      final newItems = await Future<List<Widget>>.delayed(Duration(seconds: 1),
-            ()
-            {
-              var list = <Widget>[];
+      var newItems = <Widget>[];
+      Get.lazyPut(() => HttpProtocolManager());
+      await HttpProtocolManager.to.send_Search(0, _pageSize).then((value)
+      {
+        searchData = value;
+        if(searchData == null)
+          return;
 
-              for(int i = 0 ; i < 30 ; ++i)
-                {
-                  list.add(gridItem());
-                }
+        print('searchData!.data.items.length : ${searchData!.data.items.length}');
 
-              //여기서 리스트 요청하고 만들고 해야한다.
-              return list;
-            }
-      );
+        for(int i = 0; i < searchData!.data.items.length; ++i)
+        {
+          DateTime date = DateTime.parse(searchData!.data.items[i].createdAt);
+          print('date Y : ${date.year} / M : ${date.month} / D : ${date.day} ');
+          newItems.add(gridItem(searchData!.data.items[i]));
+        }
+      });
 
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage)
@@ -245,15 +250,17 @@ Widget mainWidget(BuildContext context)=>
     }
   }
 
-  Widget gridItem()
+  Widget gridItem(Items _item)
   {
+    print('_item ${_item.thumbnailImgUrl}');
     return
     GestureDetector
     (
       onTap: ()
       {
-        //print('grid item on tap');
-        Get.to(() => ContentInfoPage());
+        print('grid item on tap ${_item.id}');
+
+        //Get.to(() => ContentInfoPage());
       },
       child: Container
       (
@@ -263,6 +270,7 @@ Widget mainWidget(BuildContext context)=>
           color: Color(0xFFC4C4C4),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
         ),
+        child: Image.network(_item.thumbnailImgUrl, fit: BoxFit.contain,),
       ),
     );
   }

@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
+import 'package:shortplex/Util/LoginMananger.dart';
+import 'package:shortplex/table/UserData.dart';
 
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
@@ -114,7 +117,10 @@ class _SettingPageState extends State<SettingPage>
                   _option(400044, SettingSubPageType.PRIVATE_POLICY),
                   _option(400045, SettingSubPageType.LEGAL_NOTICE),
                   _option(400046, SettingSubPageType.ACCOUNT_DELETE),
-                  _option(400047, SettingSubPageType.LOG_OUT),
+                  Obx(() {
+                    return
+                    Visibility(visible: UserData.to.isLogin.value, child:_option(400047, SettingSubPageType.LOG_OUT),);
+                  },),
                   Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
                   Text
                   (
@@ -144,7 +150,7 @@ class _SettingPageState extends State<SettingPage>
         children:
         [
           Padding
-            (
+          (
             padding:EdgeInsets.only(left: 30),
             child:
             Container
@@ -154,13 +160,15 @@ class _SettingPageState extends State<SettingPage>
               //color: Colors.yellow,
               alignment: Alignment.centerLeft,
               child:
-              Text(StringTable().Table![_titleID]!,
+              Text
+              (
+                StringTable().Table![_titleID]!,
                 style:
                 TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
             ),
           ),
           Padding
-            (
+          (
             padding:EdgeInsets.only(right: 20),
             child: _isToggle ? _toggleButton() : _moveButton(_moveSubpageType),
           ),
@@ -169,44 +177,54 @@ class _SettingPageState extends State<SettingPage>
     ],
   );
 
-  Widget _moveButton(SettingSubPageType _type) =>
-  IconButton
-  (
-    alignment: Alignment.center,
-    color: Colors.white,
-    iconSize: 20,
-    icon: const Icon(Icons.arrow_forward_ios),
-    onPressed: ()
-    {
-    switch(_type)
-    {
-      case SettingSubPageType.ACCOUNT_INFO:
-        Get.to(()=> AccountInfoPage());
-        break;
-      case SettingSubPageType.ACCOUNT_DELETE:
-        {
-          showDialogTwoButton(StringTable().Table![600014]!,StringTable().Table![600015]!,
-          () =>
-          {
-            print('Account Delete ok Clikc'),
-          });
+  bool buttonEnabled = true;
+  Widget _moveButton(SettingSubPageType _type)
+  {
+    return
+    IconButton
+    (
+      alignment: Alignment.center,
+      color: Colors.white,
+      iconSize: 20,
+      icon: const Icon(Icons.arrow_forward_ios),
+      onPressed: buttonEnabled ? ()
+      {
+        switch (_type) {
+          case SettingSubPageType.ACCOUNT_INFO:
+            Get.to(() => AccountInfoPage());
+            break;
+          case SettingSubPageType.ACCOUNT_DELETE:
+            {
+              showDialogTwoButton(StringTable().Table![600014]!, StringTable().Table![600015]!,
+                      () {
+                    print('Account Delete ok Clikc');
+                    buttonEnabled = true;
+                  });
+            }
+            break;
+          case SettingSubPageType.LOG_OUT:
+            {
+                showDialogTwoButton(StringTable().Table![600011]!, '',
+                ()
+                async
+                {
+                  buttonEnabled = false;
+                  var loginManager = Get.find<LoginMananger>();
+
+                  await loginManager.LogOut();
+
+                  buttonEnabled = true;
+                  print('Logout ok Click');
+                });
+            }
+            break;
+          default:
+            print('not found type ${_type}');
+            break;
         }
-        break;
-      case SettingSubPageType.LOG_OUT:
-        {
-          showDialogTwoButton(StringTable().Table![600011]!,'',
-          ()=>
-          {
-            print('Logout ok Clikc'),
-          });
-        }
-        break;
-      default:
-        print('not found type ${_type}');
-        break;
-      }
-    },
-  );
+      } : null
+    );
+  }
 
   Widget _toggleButton() =>
   Transform.scale

@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage>
   void initState()
   {
     super.initState();
-    print('init');
 
     pageIndex = 0;
 
@@ -52,25 +51,19 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    print('change');
-    // var seleect = Get.find<RootBottomNavgationBarController>().selectedIndex.value;
-    // print('select : ${seleect}' );
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  // }
 
   // @override
   // void didUpdateWidget(covariant HomePage oldWidget) {
-  //   // TODO: implement didUpdateWidget
   //   super.didUpdateWidget(oldWidget);
   //   print('update : oldWidget = ${oldWidget.reactive}, current : ${widget}');
   // }
 
   // @override
   // void deactivate() {
-  //   // TODO: implement deactivate
   //   super.deactivate();
   //   print('deactive');
   // }

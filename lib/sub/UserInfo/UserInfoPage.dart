@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,7 +66,7 @@ class _UserInfoPageState extends State<UserInfoPage>
         //유저정보 불러와서 비동기로 데이터 체우기.
         var jsonData = jsonDecode(value);
         var providerid = jsonData['providerid'];
-        print('providerid');
+        print('Get User Data providerid');
       }
     });
   }
@@ -139,39 +140,42 @@ class _UserInfoPageState extends State<UserInfoPage>
             (
               padding: const EdgeInsets.only(right: 22.0),
               child:
-              Visibility
-              (
-                visible: !Get.find<UserData>().isLogin.value,
-                child:
-                Container
-                (
-                  padding: EdgeInsets.only(bottom: 2),
-                  alignment: Alignment.center,
-                  width: 90,
-                  height: 26,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child:
-                  GestureDetector
-                  (
-                    child:
-                    Text
-                    (
-                      StringTable().Table![400003]!,
-                      style:
-                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                    ),
-                    onTap: ()
-                    {
-                      Get.to(() => LoginPage(),transition: Transition.noTransition);
-                    },
-                  ),
-                ),
-              ),
+                  Obx(() {
+                    return
+                      Visibility
+                        (
+                        visible: UserData.to.isLogin.value == false,
+                        child:
+                        Container
+                          (
+                          padding: EdgeInsets.only(bottom: 2),
+                          alignment: Alignment.center,
+                          width: 90,
+                          height: 26,
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          child:
+                          GestureDetector
+                            (
+                            child:
+                            Text
+                              (
+                              StringTable().Table![400003]!,
+                              style:
+                              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                            ),
+                            onTap: ()
+                            {
+                              Get.to(() => LoginPage(),transition: Transition.noTransition);
+                            },
+                          ),
+                        ),
+                      );
+                  },),
             ),
           ],
         ),

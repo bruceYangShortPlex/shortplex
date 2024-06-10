@@ -1,7 +1,7 @@
 class OAuthRes
 {
-  String? id;
-  String? userId;
+  String? id; //Bearer token
+  String? userId; //user server id
   bool? fresh;
   String? expiresAt;
 

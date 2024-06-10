@@ -27,7 +27,8 @@ class OAuthLogin
     photourl: json['photourl'],
   );
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson()
+  {
     final map = <String, dynamic>{};
     map['email'] = email;
     map['displayname'] = displayname;
@@ -35,6 +36,48 @@ class OAuthLogin
     map['provideruserid'] = provideruserid;
     map['privacypolicies'] = privacypolicies;
     map['photourl'] = photourl;
+    return map;
+  }
+}
+
+class Logout
+{
+  String _email = '';
+  String _password = '';
+  String _username = '';
+
+  Logout({required String email,required String password,required String username,})
+  {
+    _email = email;
+    _password = password;
+    _username = username;
+  }
+
+  Logout.fromJson(dynamic json)
+  {
+    _email = json['email'];
+    _password = json['password'];
+    _username = json['username'];
+  }
+
+  Logout copyWith({  required String email,
+    required String password,
+    required String username,
+  }) => Logout(  email: email ?? _email,
+    password: password ?? _password,
+    username: username ?? _username,
+  );
+
+  String get email => _email;
+  String get password => _password;
+  String get username => _username;
+
+  Map<String, dynamic> toJson()
+  {
+    final map = <String, dynamic>{};
+    map['email'] = _email;
+    map['password'] = _password;
+    map['username'] = _username;
     return map;
   }
 }

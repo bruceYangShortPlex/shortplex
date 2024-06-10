@@ -80,13 +80,14 @@ class LoginMananger
 
   Future<bool> LogOut() async
   {
-    if (!isLogin)
+    if (!UserData.to.isLogin.value)
     {
       print('already logout return');
       return true;
     }
 
-    try {
+    try
+    {
       var userData = Get.find<UserData>();
 
       if (userData.providerid == 'kakao')
@@ -109,7 +110,14 @@ class LoginMananger
     print('Logout result : ${isLogin}');
 
     if (!isLogin)
-      Get.find<UserData>().InitValue();
+    {
+      Get.lazyPut(()=>HttpProtocolManager());
+      var logout = await HttpProtocolManager.to.send_Logout();
+      if (logout)
+      {
+        UserData.to.InitValue();
+      }
+    }
 
     return isLogin;
   }

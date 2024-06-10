@@ -22,6 +22,7 @@ class UserData extends GetxController
   String id = '';//barer token.
   String userId = ''; //server id
 
+
   List<ContentData> ContentDatas = <ContentData>[];
 
   InitValue()

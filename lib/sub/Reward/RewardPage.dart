@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:shortplex/Util/AdsManager.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 import 'package:shortplex/sub/Reward/RewardHistoryPage.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolPage.dart';
@@ -1192,8 +1193,14 @@ Widget mainWidget(BuildContext context)=>
                   pressedOpacity: 0.5,
                   padding: EdgeInsets.only(bottom: 2),
                   color: Color(0xFF00FFBF),
-                  onPressed: () {
+                  onPressed: () async
+                  {
+                    AdManager.loadRewardedAd(() =>
+                    {
+                      print('print reward'),
+                    });
 
+                    print('print ads');
                   },
                   child:
                   Text

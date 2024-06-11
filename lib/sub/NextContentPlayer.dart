@@ -408,7 +408,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                           return;
                         }
 
-                        Get.off(NextContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
+                        //Get.off(NextContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
                         print('다음회차 보기 누름');
                       },
                       icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,

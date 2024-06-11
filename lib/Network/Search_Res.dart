@@ -138,23 +138,24 @@ Data copyWith({  required int count,
 
 class Items
 {
-  String _seq = '';
-  String _id = '';
-  String _title = '';
-  String _subtitle = '';
-  String _slug = '';
-  String _description = '';
-  String _teaser = '';
-  bool _previewYn = false;
-  String _previewStartAt = '';
-  String _genre = '';
-  String _tag = '';
-  String _coverImgUrl = '';
-  String _thumbnailImgUrl = '';
-  String _posterPortraitImgUrl = '';
   int _weight = 0;
   bool _featured = false;
-  String _createdAt = '';
+  bool _previewYn = false;
+
+  String? _seq;
+  String? _id = '';
+  String? _title = '';
+  String? _subtitle = '';
+  String? _slug = '';
+  String? _description = '';
+  String? _teaser = '';
+  String? _previewStartAt = '';
+  String? _genre = '';
+  String? _tag = '';
+  String? _coverImgUrl = '';
+  String? _thumbnailImgUrl = '';
+  String? _posterPortraitImgUrl = '';
+  String? _createdAt = '';
   String? _releaseAt;
   String? _restrainAt;
   String? _shareLink;
@@ -167,85 +168,23 @@ class Items
   String? _deletedBy;
   String? _remark;
 
-//   Items({
-//       required String seq,
-//       required String id,
-//       String title,
-//       String subtitle,
-//       String slug,
-//       String description,
-//       String teaser,
-//       dynamic releaseAt,
-//       dynamic restrainAt,
-//       bool previewYn,
-//       String previewStartAt,
-//       String genre,
-//       String tag,
-//       dynamic shareLink,
-//       String coverImgUrl,
-//       String thumbnailImgUrl,
-//       dynamic posterLandscapeImgUrl,
-//       String posterPortraitImgUrl,
-//       dynamic stringKey,
-//       num weight,
-//       bool featured,
-//       String createdAt,
-//       dynamic createdBy,
-//       dynamic updatedAt,
-//       dynamic updatedBy,
-//       dynamic deletedAt,
-//       dynamic deletedBy,
-//       dynamic remark,}){
-//     _seq = seq;
-//     _id = id;
-//     _title = title;
-//     _subtitle = subtitle;
-//     _slug = slug;
-//     _description = description;
-//     _teaser = teaser;
-//     _releaseAt = releaseAt;
-//     _restrainAt = restrainAt;
-//     _previewYn = previewYn;
-//     _previewStartAt = previewStartAt;
-//     _genre = genre;
-//     _tag = tag;
-//     _shareLink = shareLink;
-//     _coverImgUrl = coverImgUrl;
-//     _thumbnailImgUrl = thumbnailImgUrl;
-//     _posterLandscapeImgUrl = posterLandscapeImgUrl;
-//     _posterPortraitImgUrl = posterPortraitImgUrl;
-//     _stringKey = stringKey;
-//     _weight = weight;
-//     _featured = featured;
-//     _createdAt = createdAt;
-//     _createdBy = createdBy;
-//     _updatedAt = updatedAt;
-//     _updatedBy = updatedBy;
-//     _deletedAt = deletedAt;
-//     _deletedBy = deletedBy;
-//     _remark = remark;
-// }
-  String get seq => _seq;
-  String get id => _id;
-  String get title => _title;
-  String get subtitle => _subtitle;
-  String get slug => _slug;
-  String get description => _description;
-  String get teaser => _teaser;
-
-  bool get previewYn => _previewYn;
-  String get previewStartAt => _previewStartAt;
-  String get genre => _genre;
-  String get tag => _tag;
-
-  String get coverImgUrl => _coverImgUrl;
-  String get thumbnailImgUrl => _thumbnailImgUrl;
-
-  String get posterPortraitImgUrl => _posterPortraitImgUrl;
-
   int get weight => _weight;
+  bool get previewYn => _previewYn;
   bool get featured => _featured;
-  String get createdAt => _createdAt;
+  String? get seq => _seq;
+  String? get id => _id;
+  String? get title => _title;
+  String? get subtitle => _subtitle;
+  String? get slug => _slug;
+  String? get description => _description;
+  String? get teaser => _teaser;
+  String? get previewStartAt => _previewStartAt;
+  String? get genre => _genre;
+  String? get tag => _tag;
+  String? get coverImgUrl => _coverImgUrl;
+  String? get thumbnailImgUrl => _thumbnailImgUrl;
+  String? get posterPortraitImgUrl => _posterPortraitImgUrl;
+  String? get createdAt => _createdAt;
   String? get releaseAt => _releaseAt;
   String? get restrainAt => _restrainAt;
   String? get shareLink => _shareLink;
@@ -274,11 +213,9 @@ class Items
     _coverImgUrl = json['cover_img_url'];
     _thumbnailImgUrl = json['thumbnail_img_url'];
     _posterPortraitImgUrl = json['poster_portrait_img_url'];
-
     _weight = json['weight'];
     _featured = json['featured'];
     _createdAt = json['created_at'];
-
     _releaseAt = json['release_at'];
     _restrainAt = json['restrain_at'];
     _shareLink = json['share_link'];

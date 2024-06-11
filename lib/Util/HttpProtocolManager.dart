@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shortplex/Network/HomeData_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Search_Res.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
@@ -157,22 +158,19 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return false;
   }
 
-  Future<SearchRes?> send_Search(int _page, int _perPage) async
+  Future<SearchRes?> get_SearchData(String _url) async
   {
     try
     {
-      //'Authorization': 'Bearer ${UserData.to.id}',
-      var heads = {'apikey':ApiKey, 'Content-Type':'application/json'};
-      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/all?page=$_page&itemsPerPage=$_perPage');
-      var res = await http.get(url, headers: heads);
+      //print('get_SearchData url :  $_url');
 
-      // print('url = $url');
-      // print('heads = $heads');
-      // print('res.body = ${res.body}');
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var url = Uri.parse(_url);
+      var res = await http.get(url, headers: heads);
 
       if (res.statusCode == 200)
       {
-        var data =  SearchRes.fromJson(jsonDecode(res.body));
+        var data =  SearchRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
         return data;
       }
       else
@@ -183,6 +181,36 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('send Search error : ${e}');
+    }
+
+    return null;
+  }
+
+  Future<HomeDataRes?> get_HomeData() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/home');
+      var res = await http.get(url, headers: heads);
+
+      // print('url = $url');
+      // print('heads = $heads');
+      // print('res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  HomeDataRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('home FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send home error : ${e}');
     }
 
     return null;

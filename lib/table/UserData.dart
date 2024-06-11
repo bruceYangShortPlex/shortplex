@@ -48,12 +48,12 @@ class UserData extends GetxController
     return (popcornCount, cornCount);
   }
 
-  int GetContentCost(int _episode)
+  int GetContentCost(String _episode)
   {
-    if (_episode >= ContentDatas.length)
-    {
-      return -1;
-    }
+    // if (_episode >= ContentDatas.length)
+    // {
+    //   return -1;
+    // }
 
     if (isSubscription.value == true)
     {
@@ -101,17 +101,18 @@ class UserData extends GetxController
 
 class ContentData
 {
-  int? id;
+  String? id;
   String? title;
   String? imagePath;
-  bool? isNew;
-  bool? isWatching;
+  bool isNew = false;
+  bool isWatching = false;
   String? watchingEpisode;
-  int? rank;
-  int? cost;
+  int rank = 0;
+  int cost = 0;
   String? contentUrl;
-  bool isLock = true;
+  bool isLock = false;
   bool isCheck = false;
+  String? contentTitle;
 
   ContentData
   (

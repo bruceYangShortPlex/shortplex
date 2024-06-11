@@ -9,8 +9,10 @@ import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 
+import '../../Network/HomeData_Res.dart';
+
 const int _pageSize = 15;
-enum SearchType
+enum SearchGroupType
 {
   ALL,
   ROMANCE,
@@ -45,7 +47,7 @@ class _SearchPageState extends State<SearchPage>
     });
 
     if (Get.arguments != null) {
-      selectedType = Get.arguments as SearchType;
+      selectedType = Get.arguments as SearchGroupType;
     }
 
     super.initState();
@@ -135,10 +137,10 @@ Widget mainWidget(BuildContext context)=>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children:
                   [
-                    searchTypeSelectButton(SearchType.ALL, StringTable().Table![100021]!),
-                    searchTypeSelectButton(SearchType.ROMANCE, StringTable().Table![500001]!),
-                    searchTypeSelectButton(SearchType.FANTASY, StringTable().Table![500002]!),
-                    searchTypeSelectButton(SearchType.ROFAN, StringTable().Table![500003]!),
+                    searchTypeSelectButton(SearchGroupType.ALL, StringTable().Table![100021]!),
+                    searchTypeSelectButton(SearchGroupType.ROMANCE, StringTable().Table![500001]!),
+                    searchTypeSelectButton(SearchGroupType.FANTASY, StringTable().Table![500002]!),
+                    searchTypeSelectButton(SearchGroupType.ROFAN, StringTable().Table![500003]!),
                   ],
                 ),
                 SizedBox(height: 10,),
@@ -147,10 +149,10 @@ Widget mainWidget(BuildContext context)=>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children:
                   [
-                    searchTypeSelectButton(SearchType.ACTION, StringTable().Table![500004]!),
-                    searchTypeSelectButton(SearchType.HISTORICAL, StringTable().Table![500005]!),
-                    searchTypeSelectButton(SearchType.JAEBEOL, StringTable().Table![500006]!),
-                    searchTypeSelectButton(SearchType.EVENT, StringTable().Table![500006]!),
+                    searchTypeSelectButton(SearchGroupType.ACTION, StringTable().Table![500004]!),
+                    searchTypeSelectButton(SearchGroupType.HISTORICAL, StringTable().Table![500005]!),
+                    searchTypeSelectButton(SearchGroupType.JAEBEOL, StringTable().Table![500006]!),
+                    searchTypeSelectButton(SearchGroupType.EVENT, StringTable().Table![500006]!),
                     //SizedBox(width: 73,)
                   ],
                 ),
@@ -163,9 +165,9 @@ Widget mainWidget(BuildContext context)=>
       ),
     );
 
-  SearchType selectedType = SearchType.ALL;
+  SearchGroupType selectedType = SearchGroupType.ALL;
 
-  Widget searchTypeSelectButton(SearchType _type, String _title, )
+  Widget searchTypeSelectButton(SearchGroupType _type, String _title, )
   {
     //var index = _index;
     return
@@ -212,23 +214,24 @@ Widget mainWidget(BuildContext context)=>
 
   Future<void> _fetchPage(int pageKey) async
   {
-    print('_fetch page  selectedSearchIndex : ${selectedType}');
+    //print('_fetch page  selectedSearchIndex : ${selectedType}');
     try
     {
       var newItems = <Widget>[];
       Get.lazyPut(() => HttpProtocolManager());
-      await HttpProtocolManager.to.send_Search(0, _pageSize).then((value)
+      var type = HomeDataType.all.toString().replaceAll('HomeDataType.', '');
+      var url = 'https://www.quadra-system.com/api/v1/vod/$type?page=$pageKey&itemPerPage=$_pageSize';
+      await HttpProtocolManager.to.get_SearchData(url).then((value)
       {
         searchData = value;
-        if(searchData == null)
+        if(searchData == null) {
           return;
-
-        print('searchData!.data.items.length : ${searchData!.data.items.length}');
+        }
 
         for(int i = 0; i < searchData!.data.items.length; ++i)
         {
-          DateTime date = DateTime.parse(searchData!.data.items[i].createdAt);
-          print('date Y : ${date.year} / M : ${date.month} / D : ${date.day} ');
+          // DateTime date = DateTime.parse(searchData!.data.items[i].createdAt);
+          // print('date Y : ${date.year} / M : ${date.month} / D : ${date.day} ');
           newItems.add(gridItem(searchData!.data.items[i]));
         }
       });
@@ -252,7 +255,6 @@ Widget mainWidget(BuildContext context)=>
 
   Widget gridItem(Items _item)
   {
-    print('_item ${_item.thumbnailImgUrl}');
     return
     GestureDetector
     (
@@ -270,7 +272,7 @@ Widget mainWidget(BuildContext context)=>
           color: Color(0xFFC4C4C4),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
         ),
-        child: Image.network(_item.thumbnailImgUrl, fit: BoxFit.contain,),
+        child: Image.network(_item.thumbnailImgUrl!, fit: BoxFit.contain,),
       ),
     );
   }

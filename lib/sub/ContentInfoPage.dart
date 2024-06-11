@@ -62,7 +62,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
     for(int i = 0; i < 20; ++i)
     {
-      var contentsData = ContentData(id: i, imagePath: '', title: '배포할 내용', cost: i);
+      var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i);
       contentsData.isNew = false;
       contentsData.isWatching = true;
       contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);

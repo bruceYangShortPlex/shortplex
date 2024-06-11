@@ -254,7 +254,7 @@ Widget mainWidget(BuildContext context)=>
       {
         if (_data.eventPage == EventPageType.SEARCH)
           {
-            Get.to(() => SearchPage(), arguments: SearchType.EVENT);
+            Get.to(() => SearchPage(), arguments: SearchGroupType.EVENT);
           }
       },
       child:

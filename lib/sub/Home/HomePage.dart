@@ -1,13 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
+import 'package:shortplex/sub/Home/HomeData.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 
+import '../../Network/HomeData_Res.dart';
+import '../../Util/HttpProtocolManager.dart';
 import '../../table/UserData.dart';
 import '../ContentPlayer.dart';
 
@@ -21,12 +25,146 @@ class HomePage extends StatefulWidget
 
 class _HomePageState extends State<HomePage>
 {
-  List<Widget> pageList = <Widget>[];
-  List<String> homePageViewTitle = <String>[];
-  var homeContentsDataList = <ContentData>[];
+  var pageList = <ContentData>[];
+  var watchingContentsDataList = <ContentData>[];
   var rankContentsDataList = <ContentData>[];
+  var themesList = <List<ContentData>>[];
+
   var pageIndex = 0;
-  var tweenInitBlock = true;
+
+  Future GetHomeData() async
+  {
+    // pageList = HomeData.to.pageList;
+    // watchingContentsDataList = HomeData.to.watchingContentsDataList;
+    // rankContentsDataList = HomeData.to.rankContentsDataList;
+    // themesList = HomeData.to.themesList;
+
+    try
+    {
+      Get.lazyPut(() => HttpProtocolManager());
+      await HttpProtocolManager.to.get_HomeData().then((value)
+      {
+        var homeData = value;
+        if(homeData == null) {
+          return;
+        }
+
+        pageList.clear();
+        watchingContentsDataList.clear();
+        rankContentsDataList.clear();
+        themesList.clear();
+
+        for(var item in homeData.data!.content!)
+        {
+          //대문 page
+          if (HomeDataType.featured.toString().contains(item.code.toString()))
+          {
+            for (int i = 0 ; i < item.items!.length; ++i)
+            {
+              var listitem = item.items![i];
+              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.posterPortraitImgUrl, cost: 0);
+              data.contentTitle = listitem.title;
+              //print('data = ${data}');
+              pageList.add(data);
+            }
+
+            continue;
+          }
+
+          //시청중
+          if (HomeDataType.watch.toString().contains(item.code.toString()))
+          {
+            for (int i = 0 ; i < item.items!.length; ++i)
+            {
+              var listitem = item.items![i];
+              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0);
+              data.contentTitle = listitem.title;
+              data.isWatching = true;
+              data.watchingEpisode = '';
+              watchingContentsDataList.add(data);
+            }
+
+            continue;
+          }
+
+          //top10
+          if (HomeDataType.top.toString().contains(item.code.toString()))
+          {
+            //대문 리스트.
+            for (int i = 0 ; i < item.items!.length; ++i)
+            {
+              var listitem = item.items![i];
+              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0);
+              data.contentTitle = listitem.title;
+              data.rank = i;
+              rankContentsDataList.add(data);
+            }
+
+            continue;
+          }
+
+          var list = <ContentData>[];
+          for (int i = 0 ; i < item.items!.length; ++i)
+          {
+            var listitem = item.items![i];
+            var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0);
+            data.contentTitle = listitem.title;
+            data.isNew = HomeDataType.recent.toString().contains(item.code.toString());
+            list.add(data);
+          }
+
+          themesList.add(list);
+        }
+
+        setState(() {
+
+        });
+
+        // HomeData.to.SetPageList(pageList);
+        // HomeData.to.SetWatchList(watchingContentsDataList);
+        // HomeData.to.SetRankList(rankContentsDataList);
+        // HomeData.to.SetThemesList(themesList);
+      });
+    }
+    catch(e)
+    {
+      print('GetHomeData error : $e');
+    }
+  }
+
+  // Future GetContentList(HomeDataType _type) async
+  // {
+  //   try
+  //   {
+  //     Get.lazyPut(() => HttpProtocolManager());
+  //     var type = HomeDataType.top.toString().replaceAll('SearchType.', '');
+  //     var url = 'https://www.quadra-system.com/api/v1/home/$type?page=0&itemPerPage=20';
+  //     await HttpProtocolManager.to.get_SearchData(url).then((value)
+  //     {
+  //       var searchData = value;
+  //       if(searchData == null) {
+  //         return;
+  //       }
+  //
+  //       for(int i = 0; i < searchData.data.items.length; ++i)
+  //       {
+  //         var item = searchData.data.items[i];
+  //         var data = ContentData(id: item.id, title: item.title, imagePath: item.posterPortraitImgUrl, cost: 0);
+  //
+  //         data.rank = _type == HomeDataType.top ? i : 0;
+  //         data.isWatching = _type == HomeDataType.watch;
+  //         data.isLock = false;
+  //         data.isNew = _type == HomeDataType.recent;
+  //       }
+  //     });
+  //   }
+  //   catch (error)
+  //   {
+  //     if (kDebugMode) {
+  //       print(error);
+  //     }
+  //   }
+  // }
 
   @override
   void initState()
@@ -35,20 +173,9 @@ class _HomePageState extends State<HomePage>
 
     pageIndex = 0;
 
-    for(int i = 0; i < 10; ++i)
-    {
-      pageList.add(topPageItem(i));
-      homePageViewTitle.add(i.toString());
+    Get.lazyPut(()=> HomeData());
 
-      var contentsData = ContentData(id: i, imagePath: '', title: '배포할 내용', cost: i);
-      contentsData.isNew = false;
-      contentsData.isWatching = true;
-      contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);
-      contentsData.rank = 0;
-      homeContentsDataList.add(contentsData);
-      contentsData.rank = i + 1;
-      rankContentsDataList.add(contentsData);
-    }
+    GetHomeData();
   }
 
   // @override
@@ -78,10 +205,6 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose()
   {
-    pageList.clear();
-    homePageViewTitle.clear();
-    homeContentsDataList.clear();
-    rankContentsDataList.clear();
     super.dispose();
   }
 
@@ -171,7 +294,8 @@ class _HomePageState extends State<HomePage>
                         child:
                         Text
                         (
-                          homePageViewTitle[pageIndex],
+                          pageList.length != 0 && pageIndex < pageList.length ?
+                          pageList[pageIndex].contentTitle! : '',
                           style:
                           const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
@@ -179,8 +303,10 @@ class _HomePageState extends State<HomePage>
                     ],
                   ),
                   SizedBox(height: 30,),
-                  contentsView(homeContentsDataList),
+                  contentsView(watchingContentsDataList),
                   rankContentView(rankContentsDataList),
+                  for(var item in themesList)
+                    contentsView(item),
                 ],
               ),
             ),
@@ -202,8 +328,14 @@ class _HomePageState extends State<HomePage>
         height: 410,
         //color: Colors.green,
         child:
-        CarouselSlider
+        CarouselSlider.builder
         (
+          itemCount: pageList.length,
+          itemBuilder: (context, index, realIndex)
+          {
+            var widget = pageList.length != 0 && index < pageList.length ? topPageItem(pageList[index]) : Container();
+            return widget;
+          },
           options:
           CarouselOptions
           (
@@ -222,20 +354,20 @@ class _HomePageState extends State<HomePage>
               });
             },
           ),
-          items: pageList,
+          //items: pageList,
         ),
       ),
     );
   }
 
-  Widget topPageItem(int _id)
+  Widget topPageItem(ContentData _data)
   {
     return
     GestureDetector
     (
       onTap: ()
       {
-        Get.to(()=> ContentInfoPage(), arguments: _id);
+        Get.to(()=> ContentInfoPage(), arguments: _data.id);
         print(pageIndex);
       },
       child: Container
@@ -243,22 +375,24 @@ class _HomePageState extends State<HomePage>
         width: 260,
         height: 410,
         decoration: ShapeDecoration(
-        color: Color(0xFFC4C4C4),
+        color: Colors.black,
         shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
         ),
         ),
+        child: Image.network(_data.imagePath!, fit: BoxFit.fill,),
       ),
     );
   }
 
   Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
   {
-    if (_list.length == 0)
+    if (_list.isEmpty) {
       return SizedBox();
+    }
 
     return
-    Container
+    SizedBox
     (
       width: 390,
       child:
@@ -388,7 +522,7 @@ class _HomePageState extends State<HomePage>
                               ),
                             ),
                             SvgPicture.asset
-                              (
+                            (
                               'assets/images/home/home_text ${i + 1}.svg',
                               width: 180,
                               height: 160,
@@ -396,15 +530,17 @@ class _HomePageState extends State<HomePage>
                             Padding
                             (
                               padding: const EdgeInsets.only(left: 65),
-                              child: Container
+                              child:
+                              Container
                               (
                                 width: 105,
                                 height: 160,
                                 decoration: ShapeDecoration
-                                  (
-                                  color: Color(0xFFC4C4C4),
+                                (
+                                  color: Colors.black, // Color(0xFFC4C4C4),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
                                 ),
+                                child: Image.network(_list[i].imagePath!, fit: BoxFit.fill,),
                               ),
                             ),
                           ],
@@ -436,7 +572,7 @@ class _HomePageState extends State<HomePage>
           (
             onTap: ()
             {
-              if (_data.isWatching!)
+              if (_data.isWatching)
               {
                 print(_data.id);
                 print('go to content player');
@@ -451,7 +587,7 @@ class _HomePageState extends State<HomePage>
             child:
             Stack
             (
-              alignment: _data.isWatching! ? Alignment.center : Alignment.topRight,
+              alignment: _data.isWatching ? Alignment.center : Alignment.topRight,
               children:
               [
                 Container
@@ -460,13 +596,14 @@ class _HomePageState extends State<HomePage>
                   height: 160,
                   decoration: ShapeDecoration
                   (
-                    color: Color(0xFFC4C4C4),
+                    color: Colors.black, // Color(0xFFC4C4C4),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
                   ),
+                  child: Image.network(_data.imagePath!, fit: BoxFit.fill,),
                 ),
                 Visibility
                 (
-                  visible: _data.isWatching!,
+                  visible: _data.isWatching,
                   child:
                   Container
                   (
@@ -489,7 +626,7 @@ class _HomePageState extends State<HomePage>
                 ),
                 Visibility
                 (
-                  visible: _data.isNew!,
+                  visible: _data.isNew,
                   child:
                   Container
                   (
@@ -534,7 +671,7 @@ class _HomePageState extends State<HomePage>
           ),
           Visibility
           (
-            visible: _data.isWatching!,
+            visible: _data.isWatching,
             child:
             SizedBox
             (
@@ -551,7 +688,7 @@ class _HomePageState extends State<HomePage>
                     child:
                     Text
                     (
-                      _data.watchingEpisode!,
+                      _data.watchingEpisode ?? '',
                       style:
                       const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),

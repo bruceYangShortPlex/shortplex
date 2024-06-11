@@ -6,6 +6,7 @@ import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Search_Res.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 
+import '../Network/Content_Res.dart';
 import '../Network/OAuth_Res.dart';
 import '../table/UserData.dart';
 
@@ -205,12 +206,42 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       }
       else
       {
-        print('home FAILD : ${res.statusCode}');
+        print('get home data FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('send home error : ${e}');
+      print('get home data error : ${e}');
+    }
+
+    return null;
+  }
+
+  Future<ContentRes?> get_ContentData(String _contentID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID');
+      var res = await http.get(url, headers: heads);
+
+      // print('url = $url');
+      // print('heads = $heads');
+      // print('res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  ContentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('get content FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get content data error : ${e}');
     }
 
     return null;

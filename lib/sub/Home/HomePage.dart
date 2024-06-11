@@ -1,9 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
@@ -34,10 +31,10 @@ class _HomePageState extends State<HomePage>
 
   Future GetHomeData() async
   {
-    // pageList = HomeData.to.pageList;
-    // watchingContentsDataList = HomeData.to.watchingContentsDataList;
-    // rankContentsDataList = HomeData.to.rankContentsDataList;
-    // themesList = HomeData.to.themesList;
+    pageList = HomeData.to.pageList;
+    watchingContentsDataList = HomeData.to.watchingContentsDataList;
+    rankContentsDataList = HomeData.to.rankContentsDataList;
+    themesList = HomeData.to.themesList;
 
     try
     {
@@ -62,7 +59,7 @@ class _HomePageState extends State<HomePage>
             for (int i = 0 ; i < item.items!.length; ++i)
             {
               var listitem = item.items![i];
-              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.posterPortraitImgUrl, cost: 0);
+              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.posterPortraitImgUrl, cost: 0, releaseAt: listitem.releaseAt);
               data.contentTitle = listitem.title;
               //print('data = ${data}');
               pageList.add(data);
@@ -77,7 +74,7 @@ class _HomePageState extends State<HomePage>
             for (int i = 0 ; i < item.items!.length; ++i)
             {
               var listitem = item.items![i];
-              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0);
+              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0, releaseAt: listitem.releaseAt);
               data.contentTitle = listitem.title;
               data.isWatching = true;
               data.watchingEpisode = '';
@@ -94,7 +91,7 @@ class _HomePageState extends State<HomePage>
             for (int i = 0 ; i < item.items!.length; ++i)
             {
               var listitem = item.items![i];
-              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0);
+              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0, releaseAt: listitem.releaseAt);
               data.contentTitle = listitem.title;
               data.rank = i;
               rankContentsDataList.add(data);
@@ -107,7 +104,7 @@ class _HomePageState extends State<HomePage>
           for (int i = 0 ; i < item.items!.length; ++i)
           {
             var listitem = item.items![i];
-            var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0);
+            var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0, releaseAt: listitem.releaseAt);
             data.contentTitle = listitem.title;
             data.isNew = HomeDataType.recent.toString().contains(item.code.toString());
             list.add(data);
@@ -120,10 +117,10 @@ class _HomePageState extends State<HomePage>
 
         });
 
-        // HomeData.to.SetPageList(pageList);
-        // HomeData.to.SetWatchList(watchingContentsDataList);
-        // HomeData.to.SetRankList(rankContentsDataList);
-        // HomeData.to.SetThemesList(themesList);
+        HomeData.to.SetPageList(pageList);
+        HomeData.to.SetWatchList(watchingContentsDataList);
+        HomeData.to.SetRankList(rankContentsDataList);
+        HomeData.to.SetThemesList(themesList);
       });
     }
     catch(e)
@@ -367,7 +364,7 @@ class _HomePageState extends State<HomePage>
     (
       onTap: ()
       {
-        Get.to(()=> ContentInfoPage(), arguments: _data.id);
+        Get.to(()=> ContentInfoPage(), arguments: _data);
         print(pageIndex);
       },
       child: Container
@@ -497,7 +494,7 @@ class _HomePageState extends State<HomePage>
                     (
                       onTap: ()
                       {
-                        Get.to(()=> ContentInfoPage(), arguments: _list[i].id);
+                        Get.to(()=> ContentInfoPage(), arguments: _list[i]);
                         print(_list[i].id);
                       },
                       child: Container
@@ -576,12 +573,13 @@ class _HomePageState extends State<HomePage>
               {
                 print(_data.id);
                 print('go to content player');
-                Get.to(() => ContentPlayer(), arguments: _data);
+                Get.to(() => ContentPlayer(), arguments: _data.id);
               }
               else
               {
                 print('go to info page');
                 print(_data.id);
+                Get.to(() => const ContentInfoPage(), arguments: _data);
               }
             },
             child:

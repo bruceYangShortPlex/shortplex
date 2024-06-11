@@ -113,6 +113,7 @@ class ContentData
   bool isLock = false;
   bool isCheck = false;
   String? contentTitle;
+  String? releaseAt;
 
   ContentData
   (
@@ -121,6 +122,23 @@ class ContentData
       required this.title,
       required this.imagePath,
       required this.cost,
+      required this.releaseAt,
     }
   );
+
+  String GetReleaseDate()
+  {
+    if (releaseAt == null) {
+      return '';
+    }
+
+    if (releaseAt!.isEmpty) {
+      return '';
+    }
+
+    var date = DateTime.parse(releaseAt!);
+
+    var result = '${date.year}.${date.month}';
+    return result;
+  }
 }

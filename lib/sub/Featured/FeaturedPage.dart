@@ -30,10 +30,10 @@ class _FeaturedPageState extends State<FeaturedPage>
     // pageList.add(VideoPage(url: "https://cdn.gro.care/ec12312256ad_1683524903074.mp4",));
     // pageList.add(VideoPage(url: "https://cdn.gro.care/4dc9fddff1c8_1683731818849.mp4",));
     // pageList.add(VideoPage(url: "https://cdn.gro.care/045e95f617aa_1683612715343.mp4",));
-    // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",));
+     pageList.add(ShortsPlayer(shortsUrl: "https://www.quadra-system.com/api/v1/vod/stream/EP1-fhd-1717993295708.mp4",));
     // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/6060027/6060027-uhd_2160_3840_25fps.mp4",));
     // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",));
-     pageList.add(_testWidget('1'));
+     //pageList.add(_testWidget('1'));
      pageList.add(_testWidget('2'));
      pageList.add(_testWidget('3'));
 
@@ -59,7 +59,7 @@ class _FeaturedPageState extends State<FeaturedPage>
 
     for(int i = 0; i < 10; ++i)
     {
-      var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i);
+      var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i, releaseAt: '');
       contentsData.isNew = false;
       contentsData.isWatching = true;
       contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);

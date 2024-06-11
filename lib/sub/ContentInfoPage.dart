@@ -1,19 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/sub/ContentPlayer.dart';
 import 'package:shortplex/sub/ReplyPage.dart';
 import 'package:shortplex/table/UserData.dart';
+import '../Network/Content_Res.dart';
 import '../table/StringTable.dart';
-
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  await StringTable().InitTable();
-  runApp(ContentInfoPage());
-}
 
 enum CommentSortType
 {
@@ -34,8 +30,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   bool check = false;
 
   var selections = List.generate(3, (_) => false);
+
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
+
   late Map<int, List<ContentData>> mapEpisodeContentsData = {};
   var episodeContentsList = <ContentData>[];
 
@@ -45,33 +43,68 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.LATEST;
 
+  ContentRes? contentRes;
+  ContentData? contentData;
+
+  void GetContentData() async
+  {
+    try
+    {
+      contentData = Get.arguments as ContentData;
+      if (contentData == null)
+      {
+        return;
+      }
+
+      await HttpProtocolManager.to.get_ContentData(contentData!.id!).then((value)
+      {
+        contentRes = value;
+
+        int totalEpisodeCount = contentRes!.data!.episode!.length;
+        print('totalEpisodeCount = $totalEpisodeCount');
+        int dividingNumber = 20;
+        int groupCount = totalEpisodeCount ~/ dividingNumber;
+        print('groupCount = $groupCount');
+        for (int i = 0; i < groupCount; ++i)
+        {
+          var startString = i * dividingNumber + 1;
+          var endString = i * dividingNumber + dividingNumber;
+          episodeGroupList.add('${startString}~${SetTableStringArgument(100033, ['$endString'],)}');
+        }
+
+        var remain = totalEpisodeCount % 20;
+        if (remain != 0)
+        {
+          print('remain : $remain');
+
+          var startString = groupCount * dividingNumber + 1;
+          var endString = groupCount * dividingNumber + remain;
+          episodeGroupList.add('${startString}~${SetTableStringArgument(100033, ['$endString'],)}');
+        }
+
+        episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
+        episodeGroupSelections[0] = true;
+
+
+
+
+        setState(() {
+
+        });
+      });
+    }
+    catch(e)
+    {
+      print(e);
+    }
+  }
+
+
   @override
   void initState()
   {
     super.initState();
-
-    episodeGroupList.add('1~20화');
-    episodeGroupList.add('21~40화');
-    episodeGroupList.add('41~60화');
-    episodeGroupList.add('41~60화');
-    episodeGroupList.add('41~60화');
-    episodeGroupList.add('41~60화');
-    episodeGroupList.add('41~60화');
-    episodeGroupList.add('41~60화');
-    episodeGroupList.add('41~60화');
-
-    for(int i = 0; i < 20; ++i)
-    {
-      var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i);
-      contentsData.isNew = false;
-      contentsData.isWatching = true;
-      contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);
-      contentsData.rank = i;
-      episodeContentsList.add(contentsData);
-    }
-
-    mapEpisodeContentsData[0] = episodeContentsList;
-    episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
+    GetContentData();
 
     for(int i = 0; i < 10; ++i)
     {
@@ -102,7 +135,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     setState(()
     {
       selections[0] = true;
-      episodeGroupSelections[0] = true;
     });
   }
 
@@ -110,12 +142,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   void dispose()
   {
     scrollController.dispose();
-    selections.clear();
-    episodeGroupList.clear();
-    episodeGroupSelections.clear();
-    mapEpisodeContentsData.clear();
-    episodeContentsList.clear();
-    episodeCommentList.clear();
+
     super.dispose();
   }
 
@@ -253,7 +280,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         child:
         Text
         (
-          '황후마마가 돌아왔다.',
+          contentData!.contentTitle!,
           style:
           TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
@@ -264,12 +291,57 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         width: 390,
         //color: Colors.white,
         child:
-        Text
+        Row
         (
-          SetStringArgument('{0}          {1}          {2}          {3}', ['24.09','총99화','시대물','TOP10']),
-          style:
-          TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-        ),
+          children:
+          [
+            Visibility
+            (
+              visible: contentData?.GetReleaseDate() != '',
+              child: Expanded
+              (
+                child:
+                Text
+                (
+                  '${contentData?.GetReleaseDate()}',
+                  style:
+                  TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                ),
+              ),
+            ),
+
+            Expanded
+            (
+              child: Text
+              (
+                contentRes != null ?  SetTableStringArgument(100022, ['${contentRes?.data?.episode?.length}']) : '',
+                style:
+                TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              ),
+            ),
+
+            Expanded
+            (
+              child:
+              Text
+              (
+                contentRes != null ? contentRes!.data!.genre! : '',
+                style:
+                TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              ),
+            ),
+            Expanded
+            (
+              child: Text
+              (
+                contentData?.rank != 0 ? StringTable().Table![300037]! : '',
+                style:
+                TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              ),
+            ),
+          ],
+        )
+
       ),
       SizedBox(height: 10,),
       Container
@@ -374,9 +446,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             (
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               fillColor: Colors.transparent,
-              //focusColor: Colors.red,
-              //borderColor: Colors.red,
-              //disabledColor: Colors.red,
               borderColor: Colors.transparent,
               selectedBorderColor: Colors.transparent,
               color: Colors.white.withOpacity(0.6),
@@ -491,67 +560,64 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     ],
   );
 
-  Widget episodeInfo() =>
-  Visibility
-  (
-    visible: selections[0],
-    child:
-    Container
+  Widget episodeInfo()
+  {
+    return
+    Visibility
     (
-      width: 390,
+      visible: selections[0],
       child:
-      Column
+      Container
       (
-        mainAxisAlignment: MainAxisAlignment.center,
-        children:
-        [
-          Container
-          (
-            width: 390,
-            height: 26,
-            //color: Colors.green,
-            child:
-            SingleChildScrollView
+        width: 390,
+        child:
+        Column
+        (
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:
+          [
+            Container
             (
-              scrollDirection: Axis.horizontal,
+              width: 390,
+              height: 26,
+              //color: Colors.green,
               child:
-              ToggleButtons
+              SingleChildScrollView
               (
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                fillColor: Colors.transparent,
-                //focusColor: Colors.red,
-                //borderColor: Colors.red,
-                //disabledColor: Colors.red,
-                renderBorder: false,
-                selectedBorderColor: Colors.transparent,
-                color: Colors.white.withOpacity(0.6),
-                selectedColor: Colors.white,
-                children: <Widget>
-                [
-                  for(int i = 0 ; i < episodeGroupList.length; ++i)
-                    episodeGroup(episodeGroupList[i], episodeGroupSelections[i]),
+                scrollDirection: Axis.horizontal,
+                child:
+                ToggleButtons
+                (
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  fillColor: Colors.transparent,
+                  renderBorder: false,
+                  selectedBorderColor: Colors.transparent,
+                  color: Colors.white.withOpacity(0.6),
+                  selectedColor: Colors.white,
+                  children: <Widget>
+                  [
+                    for(int i = 0; i < episodeGroupList.length; ++i)
+                      episodeGroup(episodeGroupList[i], episodeGroupSelections[i]),
 
-                ],
-                isSelected: episodeGroupSelections,
-                onPressed: (int index)
-                {
-                  setState(()
-                  {
-                    for(int i = 0 ; i < episodeGroupSelections.length ; ++i)
-                    {
-                      episodeGroupSelections[i] = i == index;
-                    }
-                  });
-                },
+                  ],
+                  isSelected: episodeGroupSelections,
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int i = 0; i < episodeGroupSelections.length; ++i) {
+                        episodeGroupSelections[i] = i == index;
+                      }
+                    });
+                  },
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 20,),
-          episodeWrap(),
-        ],
+            SizedBox(height: 20,),
+            episodeWrap(),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 
 
   Widget episodeGroup(String _title, bool _select) =>
@@ -608,6 +674,11 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   Widget episodeWrap()
   {
+    if (mapEpisodeContentsData.length == 0)
+    {
+      return Container();
+    }
+
     //어떤회차 그룹을 선택했는지 인덱스를 찾아온다. 1~20화 를 눌렀다면 0번이 true이므로 0번을 찾는다.
     var data = episodeGroupSelections.asMap().entries.firstWhere((element) => element.value);
     print(data.key);

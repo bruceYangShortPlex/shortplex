@@ -34,8 +34,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
 
-  late Map<int, List<ContentData>> mapEpisodeContentsData = {};
-  var episodeContentsList = <ContentData>[];
+  late Map<int, List<Episode>> mapEpisodeData = {};
 
   //comment 관련
   var episodeCommentList = <EpisodeCommentData>[];
@@ -70,23 +69,49 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           var startString = i * dividingNumber + 1;
           var endString = i * dividingNumber + dividingNumber;
           episodeGroupList.add('${startString}~${SetTableStringArgument(100033, ['$endString'],)}');
+
+          var episodeList = <Episode>[];
+          for (int j = 0 ; j < dividingNumber; ++j)
+          {
+            var index = i * dividingNumber + j;
+            if (index >= contentRes!.data!.episode!.length)
+            {
+              print('episode data length overflow');
+              break;
+            }
+            var episodeData = contentRes!.data!.episode![index];
+            episodeList.add(episodeData);
+          }
+          
+          mapEpisodeData[i] = episodeList;
         }
 
         var remain = totalEpisodeCount % 20;
         if (remain != 0)
         {
-          print('remain : $remain');
+          //print('remain : $remain');
 
-          var startString = groupCount * dividingNumber + 1;
-          var endString = groupCount * dividingNumber + remain;
-          episodeGroupList.add('${startString}~${SetTableStringArgument(100033, ['$endString'],)}');
+          var startIndex = groupCount * dividingNumber + 1;
+          var endIndex = groupCount * dividingNumber + remain;
+          episodeGroupList.add('${startIndex}~${SetTableStringArgument(100033, ['$endIndex'],)}');
+
+          var episodeList = <Episode>[];
+          for(int i = startIndex; i <= endIndex; ++i)
+          {
+            if (i >= contentRes!.data!.episode!.length )
+            {
+              print('episode data length overflow');
+              break;
+            }
+
+            var episodeData = contentRes!.data!.episode![i];
+            episodeList.add(episodeData);
+          }
+          mapEpisodeData[groupCount] = episodeList;
         }
 
         episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
         episodeGroupSelections[0] = true;
-
-
-
 
         setState(() {
 
@@ -270,7 +295,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       (
         width: 390,
         height: 260,
-        color: Colors.grey,
+        color: Colors.blueGrey,
+        child: contentData!.landScapeImageUrl == null || contentData!.landScapeImageUrl!.isEmpty ?
+        SizedBox() : Image.network(contentData!.landScapeImageUrl!),
       ),
       SizedBox(height: 20,),
       Container
@@ -298,7 +325,8 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             Visibility
             (
               visible: contentData?.GetReleaseDate() != '',
-              child: Expanded
+              child:
+              Expanded
               (
                 child:
                 Text
@@ -309,7 +337,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 ),
               ),
             ),
-
             Expanded
             (
               child: Text
@@ -322,6 +349,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
             Expanded
             (
+              flex: 2,
               child:
               Text
               (
@@ -332,7 +360,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             ),
             Expanded
             (
-              child: Text
+              flex: 2,
+              child:
+              Text
               (
                 contentData?.rank != 0 ? StringTable().Table![300037]! : '',
                 style:
@@ -351,7 +381,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         child:
         Text
         (
-          'Content 내용이 들어갈 자리 \nContent 내용이 들어갈 자리\nContent 내용이 들어갈 자리 ',
+          contentRes != null ? contentRes!.data!.description! : '',
           style:
           TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
@@ -381,7 +411,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     setState(()
                     {
                       check = !check;
-                      //TODO Server work Like
                     });
                   },
                 ),
@@ -674,7 +703,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   Widget episodeWrap()
   {
-    if (mapEpisodeContentsData.length == 0)
+    if (mapEpisodeData.length == 0)
     {
       return Container();
     }
@@ -684,12 +713,12 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     print(data.key);
     var index = data.key;
 
-    if (!mapEpisodeContentsData.containsKey(data.key))
+    if (!mapEpisodeData.containsKey(data.key))
     {
       return Container();
     }
 
-    var list = mapEpisodeContentsData[index];
+    var list = mapEpisodeData[index];
     return
     Wrap
     (
@@ -713,7 +742,15 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               (
                 onTap: ()
                 {
-                  Get.to(() => ContentPlayer(), arguments: list[i]);
+                  if (list[i].isLock)
+                  {
+                    //TODO:구매안한 컨텐츠임둥.
+                    print('is lock');
+
+                    return;
+                  }
+
+                  Get.to(() => ContentPlayer(), arguments: [contentRes, i]);
                   print('click');
                 },
                 child:
@@ -725,11 +762,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     (
                       width: 77,
                       height: 107,
-                      color: Colors.grey,
+                      color: Colors.blueGrey,
+                      child: list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
+                          ? SizedBox() : Image.network(list[i].altImgUrl!),
                     ),
                     Visibility
                     (
-                      visible: list[i].isLock == false,
+                      visible: list[i].isLock,
                       child:
                       Container
                       (

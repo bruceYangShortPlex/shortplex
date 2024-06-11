@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shortplex/Network/Content_Res.dart';
 
 class UserData extends GetxController
 {
@@ -22,9 +23,6 @@ class UserData extends GetxController
   String id = '';//barer token.
   String userId = ''; //server id
 
-
-  List<ContentData> ContentDatas = <ContentData>[];
-
   InitValue()
   {
     name.value = 'Guest';
@@ -37,7 +35,6 @@ class UserData extends GetxController
     isSubscription.value = false;
     popcornCount.value = 0;
     bonusCornCount = 0;
-    ContentDatas.clear();
   }
 
   (String, String) GetPopupcornCount()
@@ -46,29 +43,6 @@ class UserData extends GetxController
     var popcornCount = formatter.format(this.popcornCount.value);
     var cornCount = formatter.format(this.bonusCornCount);
     return (popcornCount, cornCount);
-  }
-
-  int GetContentCost(String _episode)
-  {
-    // if (_episode >= ContentDatas.length)
-    // {
-    //   return -1;
-    // }
-
-    if (isSubscription.value == true)
-    {
-      return 0;
-    }
-
-    for(var item in ContentDatas)
-    {
-      if (item.id == _episode)
-        {
-          return item.cost!;
-        }
-    }
-
-    return -1;
   }
 
   String GetProviderIcon()
@@ -114,6 +88,8 @@ class ContentData
   bool isCheck = false;
   String? contentTitle;
   String? releaseAt;
+  String? landScapeImageUrl;
+  List<Episode>? episodeList;
 
   ContentData
   (
@@ -123,6 +99,7 @@ class ContentData
       required this.imagePath,
       required this.cost,
       required this.releaseAt,
+      required this.landScapeImageUrl,
     }
   );
 

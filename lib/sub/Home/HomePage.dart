@@ -59,9 +59,17 @@ class _HomePageState extends State<HomePage>
             for (int i = 0 ; i < item.items!.length; ++i)
             {
               var listitem = item.items![i];
-              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.posterPortraitImgUrl, cost: 0, releaseAt: listitem.releaseAt);
+              var data = ContentData
+              (
+                  id: listitem.id,
+                  title: item.title,
+                  imagePath: listitem.posterPortraitImgUrl,
+                  cost: 0,
+                  releaseAt: listitem.releaseAt,
+                  landScapeImageUrl: listitem.posterLandscapeImgUrl
+              );
+
               data.contentTitle = listitem.title;
-              //print('data = ${data}');
               pageList.add(data);
             }
 
@@ -74,7 +82,16 @@ class _HomePageState extends State<HomePage>
             for (int i = 0 ; i < item.items!.length; ++i)
             {
               var listitem = item.items![i];
-              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0, releaseAt: listitem.releaseAt);
+
+              var data = ContentData
+              (
+                  id: listitem.id,
+                  title: item.title,
+                  imagePath: listitem.thumbnailImgUrl,
+                  cost: 0,
+                  releaseAt: listitem.releaseAt,
+                  landScapeImageUrl: listitem.posterLandscapeImgUrl
+              );
               data.contentTitle = listitem.title;
               data.isWatching = true;
               data.watchingEpisode = '';
@@ -91,7 +108,15 @@ class _HomePageState extends State<HomePage>
             for (int i = 0 ; i < item.items!.length; ++i)
             {
               var listitem = item.items![i];
-              var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0, releaseAt: listitem.releaseAt);
+              var data = ContentData
+              (
+                  id: listitem.id,
+                  title: item.title,
+                  imagePath: listitem.thumbnailImgUrl,
+                  cost: 0,
+                  releaseAt: listitem.releaseAt,
+                  landScapeImageUrl: listitem.posterLandscapeImgUrl
+              );
               data.contentTitle = listitem.title;
               data.rank = i;
               rankContentsDataList.add(data);
@@ -104,12 +129,19 @@ class _HomePageState extends State<HomePage>
           for (int i = 0 ; i < item.items!.length; ++i)
           {
             var listitem = item.items![i];
-            var data = ContentData(id: listitem.id, title: item.title, imagePath: listitem.thumbnailImgUrl, cost: 0, releaseAt: listitem.releaseAt);
+            var data = ContentData
+            (
+                id: listitem.id,
+                title: item.title,
+                imagePath: listitem.thumbnailImgUrl,
+                cost: 0,
+                releaseAt: listitem.releaseAt,
+                landScapeImageUrl: listitem.posterLandscapeImgUrl
+            );
             data.contentTitle = listitem.title;
             data.isNew = HomeDataType.recent.toString().contains(item.code.toString());
             list.add(data);
           }
-
           themesList.add(list);
         }
 

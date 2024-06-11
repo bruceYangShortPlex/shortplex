@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/Network/Content_Res.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/table/UserData.dart';
 import 'package:video_player/video_player.dart';
@@ -40,14 +41,18 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   late AnimationController tweenController;
   bool controlUIVisible = false;
-  ContentData? contentData;
+  ContentRes? contentRes;
+  int selectedIndex = 0;
   bool isShowContent = false;
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
 
+  late String playUrl;
+  late Episode episodeData;
+
   void VideoControllerInit()
   {
-    var uri = "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
+    var uri = playUrl;//"https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
     videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
       ..initialize().then((_) {
         setState(() {
@@ -58,9 +63,15 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       });
 
     videoController.addListener(() {
-      if (videoController.value.position >= videoController.value.duration) {
+      if (videoController.value.position >= videoController.value.duration)
+      {
         // 동영상 재생이 끝났을 때 실행할 로직
         print("동영상 재생이 끝났습니다.");
+        if (selectedIndex < contentRes!.data!.episode!.length - 1)
+        {
+          Get.off(NextContentPlayer(), arguments: [contentRes, selectedIndex + 1]);
+          return;
+        }
       }
 
       setState(() {
@@ -72,18 +83,19 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   @override
   void initState()
   {
-    contentData = Get.arguments as ContentData;
-    print('play content ${contentData!.id} / cost ${contentData!.cost}');
-
+    contentRes = Get.arguments[0] as ContentRes;
+    selectedIndex = Get.arguments[1] as int;
+    episodeData = contentRes!.data!.episode![selectedIndex];
+    print('play content ${contentRes!.data!.id}');
+    playUrl = "https://www.quadra-system.com/api/v1/vod/stream/${episodeData.episodeFhd}";
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
     //이번회차의 가격을 알아온다.
-    var cost = UserData.to.GetContentCost(contentData!.id!);
-    if (cost != 0 && contentData!.isLock)
+    if (episodeData.cost != 0 && episodeData.isLock)
     {
       //구독중이면 그냥 다음진행.
       if (UserData.to.isSubscription == false)
       {
-        if (UserData.to.popcornCount + UserData.to.bonusCornCount < cost)
+        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData.cost)
         {
           isShowContent = false;
           isShowShop =  true;
@@ -295,7 +307,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 break;
               case ContentPlayButtonType.CHECK:
                 {
-                  contentData!.isCheck = !contentData!.isCheck;
+                  episodeData.isCheck = episodeData.isCheck;
                   setState(() {
 
                   });
@@ -407,19 +419,24 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       Get.back();
                     },
                   ),
-                  IconButton
+                  Visibility
                   (
-                    onPressed: ()
-                    {
-                      if (showCheck() == false)
+                    visible: selectedIndex < contentRes!.data!.episode!.length - 1,
+                    child:
+                    IconButton
+                    (
+                      onPressed: ()
                       {
-                        return;
-                      }
+                        if (showCheck() == false)
+                        {
+                          return;
+                        }
 
-                      //Get.off(NextContentPlayer(), arguments: UserData.to.ContentDatas[contentData!.id! + 1]);
-                      print('다음회차 보기 누름');
-                    },
-                    icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
+                        Get.off(NextContentPlayer(), arguments: [contentRes, selectedIndex + 1]);
+                        print('다음회차 보기 누름');
+                      },
+                      icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
+                    ),
                   )
                 ],
               ),
@@ -481,7 +498,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             ),
           ),
           contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
-          contentUIButtons(StringTable().Table![100023]!, contentData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
+          contentUIButtons(StringTable().Table![100023]!, episodeData.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
           contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
           contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
           Container
@@ -1073,7 +1090,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                 SizedBox(height: 8,),
                                 Text
                                 (
-                                  SetTableStringArgument(400025, ['${contentData!.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
+                                  SetTableStringArgument(400025, ['${episodeData.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
                                   ,
                                   style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),

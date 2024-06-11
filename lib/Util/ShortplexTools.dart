@@ -5,7 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 
+import '../Network/Content_Res.dart';
 import '../table/StringTable.dart';
+import '../table/UserData.dart';
 import 'ExpandableText.dart';
 
 void showDialogTwoButton(String _titie, String _content, VoidCallback _callback, [VoidCallback? _noCallBack = null])

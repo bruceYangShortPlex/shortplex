@@ -390,6 +390,9 @@ class Episode {
   String? get shareLink => _shareLink;
   String? get contentId => _contentId;
   String? get createdAt => _createdAt;
+  bool isLock  = false;
+  bool isCheck = false;
+  int cost = 0;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

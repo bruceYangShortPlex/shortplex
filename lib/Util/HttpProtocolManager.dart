@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/HomeData_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Search_Res.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 
+import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
 import '../Network/OAuth_Res.dart';
 import '../table/UserData.dart';
@@ -225,9 +227,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID');
       var res = await http.get(url, headers: heads);
 
-      // print('url = $url');
-      // print('heads = $heads');
-      // print('res.body = ${res.body}');
+      print('get_ContentData url = $url');
+      print('get_ContentData heads = $heads');
+      print('get_ContentData res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -245,5 +247,68 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return null;
+  }
+
+  Future<CommentRes?> get_CommentData(String _contentID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/comment/$_contentID');
+      var res = await http.get(url, headers: heads);
+
+      print('get_CommentData url = $url');
+      print('get_CommentData heads = $heads');
+      print('get_CommentData res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_CommentData data = ${data}');
+        return data;
+      }
+      else
+      {
+        print('get_CommentData FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_CommentData error : ${e}');
+    }
+
+    return null;
+  }
+
+  Future<bool> send_Comment(String _contentID, String _comment, String _replyParentID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/comment/$_contentID';
+
+      var comment =  CommentReq(content: _comment, parentId: _replyParentID, typeCd: '');
+
+      var bodys = jsonEncode(comment.toJson());
+      print('send Logout heads : ${heads} / bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        return true;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('LOGOUT FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send logout error : ${e}');
+    }
+
+    return false;
   }
 }

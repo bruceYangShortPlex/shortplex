@@ -41,7 +41,7 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
         date: '24.09.06',
         episodeNumber: '',
         iconUrl: '',
-        ID: i,
+        ID: i.toString(),
         isLikeCheck: i % 2 == 0,
         likeCount: '12',
         replyCount: '3',

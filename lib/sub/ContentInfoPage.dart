@@ -27,23 +27,21 @@ class ContentInfoPage extends StatefulWidget
 
 class _ContentInfoPageState extends State<ContentInfoPage>
 {
+  ContentRes? contentRes;
+  ContentData? contentData;
   bool check = false;
 
+  //회차 정보.
   var selections = List.generate(3, (_) => false);
-
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
-
   late Map<int, List<Episode>> mapEpisodeData = {};
 
   //comment 관련
-  var episodeCommentList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
+  var episodeCommentList = <EpisodeCommentData>[];
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.LATEST;
-
-  ContentRes? contentRes;
-  ContentData? contentData;
 
   void GetContentData() async
   {
@@ -120,7 +118,46 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     }
     catch(e)
     {
-      print(e);
+      print('GetContentData Catch $e');
+    }
+  }
+
+  void GetCommentData() async
+  {
+    try
+    {
+      await HttpProtocolManager.to.get_CommentData(contentData!.id!).then((value)
+      {
+        var commentRes = value;
+        totalCommentCount = commentRes!.data!.length;
+        for(var item in commentRes.data!)
+        {
+          var commentData = EpisodeCommentData
+          (
+            name: 'GUEST ${item.id}',
+            comment: item.content,
+            date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
+            episodeNumber: '11',
+            iconUrl: '',
+            ID: item.id!,
+            isLikeCheck: false,
+            likeCount: '0',
+            replyCount: '${item.replies!.length}',
+            isOwner: false,
+            commentType: CommentType.BEST,
+          );
+
+          episodeCommentList.add(commentData);
+        }
+
+        setState(() {
+
+        });
+      });
+    }
+    catch(e)
+    {
+      print('GetCommentData Catch $e');
     }
   }
 
@@ -129,33 +166,15 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   void initState()
   {
     super.initState();
-    GetContentData();
-
-    for(int i = 0; i < 10; ++i)
-    {
-      var commentData = EpisodeCommentData
-      (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '11',
-        iconUrl: '',
-        ID: i,
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isOwner: i == 0,
-        commentType: CommentType.BEST,
-      );
-      episodeCommentList.add(commentData);
-    }
-
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
         onEndOfPage();
       }
     });
+
+    GetContentData();
+    GetCommentData();
 
     setState(()
     {
@@ -173,42 +192,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   void onEndOfPage() async
   {
-    if (!selections[1])
+    if (!selections[1]) {
       return;
+    }
 
     try
     {
-      //여기서 리스트 요청하고 만들고 해야한다.
-      // Replace with your method to fetch data from the server.
-      final newItems = await Future.delayed(Duration(seconds: 1),
-          ()
-          {
-            for(int i = 0; i < 10; ++i)
-            {
-              var commentData = EpisodeCommentData
-              (
-                name: '황후마마가 돌아왔다.',
-                comment: '이건 재미있다. 무조건 된다고 생각한다.',
-                date: '24.09.06',
-                episodeNumber: '11',
-                iconUrl: '',
-                ID: i,
-                isLikeCheck: i % 2 == 0,
-                likeCount: '12',
-                replyCount: '3',
-                isOwner: i == 0,
-                commentType: CommentType.BEST,
-              );
-              episodeCommentList.add(commentData);
 
-            }
-            setState(()
-            {
-
-            });
-
-          }
-      );
     }
     catch (e)
     {
@@ -1039,7 +1029,7 @@ enum CommentType
 
 class EpisodeCommentData
 {
-  int ID = 0;
+  String ID = '';
   String? iconUrl;
   String? episodeNumber;
   String? name;

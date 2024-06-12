@@ -3,18 +3,18 @@
 class ContentRes
 {
   ContentRes({
-      required Data data,}){
+      required ContentResData data,}){
     _data = data;
 }
 
   ContentRes.fromJson(dynamic json) {
-    _data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    _data = json['data'] != null ? ContentResData.fromJson(json['data']) : null;
   }
-  Data? _data;
-ContentRes copyWith({  required Data data,
+  ContentResData? _data;
+ContentRes copyWith({  required ContentResData data,
 }) => ContentRes(  data: _data!,
 );
-  Data? get data => _data;
+  ContentResData? get data => _data;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -51,9 +51,9 @@ ContentRes copyWith({  required Data data,
 /// episode : [{"id":"EP1","no":1,"title":"1회차","episode_fhd":"EP1-fhd-1717993295708.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-10T11:21:56.639Z"},{"id":"EP2","no":2,"title":"2회차","episode_fhd":"EP2-fhd-1718016749608.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-10T14:47:38.552Z"},{"id":"EP3","no":3,"title":"3회차","episode_fhd":"EP3-fhd-1718078652244.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-11T13:03:48.731Z"}]
 /// stat : [{"platform":"Quadra System","type_cd":"content","key":"CONT1","host":null,"path":null,"href":null,"slug":null,"action":"view","cnt":"2","amt":"2","users":"0"}]
 
-class Data
+class ContentResData
 {
-  Data({
+  ContentResData({
       required String? id,
     required String? title,
     required String? subtitle,
@@ -102,7 +102,7 @@ class Data
     _stat = stat;
 }
 
-  Data.fromJson(dynamic json) {
+  ContentResData.fromJson(dynamic json) {
     _id = json['id'];
     _title = json['title'];
     _subtitle = json['subtitle'];

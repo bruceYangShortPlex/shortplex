@@ -107,6 +107,9 @@ class _HomePageState extends State<HomePage>
             //대문 리스트.
             for (int i = 0 ; i < item.items!.length; ++i)
             {
+              if (rankContentsDataList.length > 9)
+                break;
+
               var listitem = item.items![i];
               var data = ContentData
               (

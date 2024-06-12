@@ -2,14 +2,14 @@
 
 class SearchRes
 {
-  Data? _data;
-  Data get data => _data!;
+  SearchResData? _data;
+  SearchResData get data => _data!;
 
   SearchRes.fromJson(dynamic json)
   {
     print('json[data] : ${json['data']}');
 
-    _data = (json['data'] != null ? Data.fromJson(json['data']) : null)!;
+    _data = (json['data'] != null ? SearchResData.fromJson(json['data']) : null)!;
   }
 
   Map<String, dynamic> toJson() {
@@ -29,7 +29,7 @@ class SearchRes
 /// max_page : 0
 /// items : [{"seq":"1","id":"CONT1","title":"황후마마가 돌아왔다","subtitle":"황후마마가 돌아왔다 부제목","slug":"hwang-hu-ma-ma-ga-dor-a-wass-da","description":"황후마마가 돌아왔다 설명","teaser":"황후마마가 돌아왔다 티져","release_at":null,"restrain_at":null,"preview_yn":true,"preview_start_at":"2024-06-10T00:00:00.000Z","genre":"전생물,로맨스","tag":"SF,요즘뜨는,추천","share_link":null,"cover_img_url":"https://storage.googleapis.com/quadra-content/CONT1-coverimage-1717985451250.jpeg","thumbnail_img_url":"https://storage.googleapis.com/quadra-content/CONT1-thumbnailimage-1717985440793.jpeg","poster_landscape_img_url":null,"poster_portrait_img_url":"https://storage.googleapis.com/quadra-content/CONT1-posterimageportrait-1717985447237.jpeg","string_key":null,"weight":500,"featured":true,"created_at":"2024-06-10T11:09:08.297Z","created_by":null,"updated_at":null,"updated_by":null,"deleted_at":null,"deleted_by":null,"remark":null}]
 
-class Data
+class SearchResData
 {
   int _count = 0;
   int _total = 0;
@@ -38,7 +38,7 @@ class Data
   int _maxPage = 0;
   List<Items> _items = <Items>[];
 
-  Data({
+  SearchResData({
       required int count,
       required int total,
       required int itemsPerPage,
@@ -53,7 +53,7 @@ class Data
     _items = items;
 }
 
-  Data.fromJson(dynamic json)
+  SearchResData.fromJson(dynamic json)
   {
     _count = json['count'];
     _total = json['total'];
@@ -68,13 +68,13 @@ class Data
     }
   }
 
-Data copyWith({  required int count,
+SearchResData copyWith({  required int count,
   required int total,
   required int itemsPerPage,
   required int page,
   required int maxPage,
   required List<Items> items,
-}) => Data(  count: count ?? _count,
+}) => SearchResData(  count: count ?? _count,
   total: total ?? _total,
   itemsPerPage: itemsPerPage ?? _itemsPerPage,
   page: page ?? _page,

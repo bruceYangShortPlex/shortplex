@@ -228,7 +228,7 @@ Widget VirtualKeybord(String _defaultString, TextEditingController _controller, 
 
 Widget CommentWidget
       (
-        int _index,
+        String _id,
         String _iconUrl,
         String _episodeNumber,
         String _name,
@@ -240,9 +240,9 @@ Widget CommentWidget
         bool _isOwner,
         CommentType _commentType,
         bool _isReply,
-        Function(int) _callClickLike, Function(int) _callOpenCommant,Function(int) _callDelete)
+        Function(String) _callClickLike, Function(String) _callOpenComment,Function(String) _callDelete)
 {
-  var index = _index;
+  var id = _id;
   var bannerStringID = _commentType == CommentType.TOP10 ? 500015 : 100037;
   var likeCount = _commentType == CommentType.TOP10 ? '???' :_likeCount;
 
@@ -458,7 +458,7 @@ Widget CommentWidget
                           padding: EdgeInsets.zero,
                           onPressed: ()
                           {
-                            _callClickLike(index);
+                            _callClickLike(id);
                           },
                           icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
                             color: Colors.white,size: 15,),
@@ -496,7 +496,7 @@ Widget CommentWidget
                             padding: EdgeInsets.zero,
                             onPressed: ()
                             {
-                              _callOpenCommant(index);
+                              _callOpenComment(id);
                             },
                             icon: Icon( CupertinoIcons.ellipses_bubble, color: Colors.white,size: 15,),
 
@@ -529,7 +529,7 @@ Widget CommentWidget
                     padding: EdgeInsets.zero,
                     onPressed: ()
                     {
-                      _callOpenCommant(index);
+                      _callOpenComment(id);
                     },
                     icon: Icon( CupertinoIcons.delete, color: Colors.white,size: 15,),
                   ),
@@ -588,4 +588,15 @@ SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position)
     snackPosition: _position,
     duration: Duration(seconds: 3),
   );
+}
+
+String ConvertCommentDate(String _date)
+{
+  var result = DateTime.parse(_date);
+
+  var year = result.year.toString().padLeft(2, '0');
+  var month = result.month.toString().padLeft(2, '0');
+  var day = result.day.toString().padLeft(2, '0');
+
+  return '$year.$month.$day';
 }

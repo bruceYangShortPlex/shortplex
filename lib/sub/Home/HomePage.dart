@@ -594,7 +594,7 @@ class _HomePageState extends State<HomePage>
     return
     Padding
     (
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(right: 15),
       child:
       Column
       (

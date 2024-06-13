@@ -142,8 +142,8 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             ID: item.id!,
             isLikeCheck: false,
             likeCount: '0',
-            replyCount: '${item.replies!.length}',
-            isOwner: false,
+            replyCount: '${item.replies}',
+            isOwner: UserData.to.userId ==  item.userId,
             commentType: CommentType.BEST,
           );
 
@@ -758,7 +758,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     ),
                     Visibility
                     (
-                      visible: list[i].isLock,
+                      visible: UserData.to.isSubscription.value == false && list[i].isLock,
                       child:
                       Container
                       (

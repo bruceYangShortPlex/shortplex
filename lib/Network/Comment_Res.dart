@@ -50,7 +50,7 @@ class CommentResData {
     required bool blocked,
     required String? createdAt,
     required String? updatedAt,
-    required  List<Replies>? replies,}){
+    required String? replies,}){
     _id = id;
     _parentId = parentId;
     _platform = platform;
@@ -89,7 +89,7 @@ class CommentResData {
   bool _blocked = false;
   String? _createdAt;
   String? _updatedAt;
-  List<Replies>? _replies;
+  String? _replies;
 
   CommentResData.fromJson(dynamic json)
   {
@@ -110,14 +110,8 @@ class CommentResData {
     _blocked = json['blocked'] ?? false;
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
-    if (json['replies'] != null) {
-      _replies = [];
-      json['replies'].forEach((v) {
-        _replies?.add(Replies.fromJson(v));
-      });
-    }
+    _replies = json['replies'] ?? '';
   }
-
 
   String? get id => _id;
   String? get parentId => _parentId;
@@ -136,9 +130,10 @@ class CommentResData {
   bool get blocked => _blocked;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
-  List<Replies>? get replies => _replies;
+  String? get replies => _replies;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson()
+  {
     final map = <String, dynamic>{};
     map['id'] = _id;
     map['parent_id'] = _parentId;
@@ -157,80 +152,7 @@ class CommentResData {
     map['blocked'] = _blocked;
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
-    if (_replies != null) {
-      map['replies'] = _replies?.map((v) => v.toJson()).toList();
-    }
+    map['replies'] = replies;
     return map;
   }
-
-}
-
-class Replies {
-  Replies({
-      required String? id,
-    required String? userId,
-    required String? displayname,
-    required String? photourl,
-      required int value,
-    required String? content,
-     required bool blocked,
-    required String? createdAt,
-    required String? updatedAt,}){
-    _id = id;
-    _userId = userId;
-    _displayname = displayname;
-    _photourl = photourl;
-    _value = value;
-    _content = content;
-    _blocked = blocked;
-    _createdAt = createdAt;
-    _updatedAt = updatedAt;
-}
-
-  Replies.fromJson(dynamic json)
-  {
-    _id = json['id'];
-    _userId = json['user_id'];
-    _displayname = json['displayname'];
-    _photourl = json['photourl'];
-    _value = json['value'];
-    _content = json['content'];
-    _blocked = json['blocked'] ?? false;
-    _createdAt = json['created_at'];
-    _updatedAt = json['updated_at'];
-  }
-  String? _id;
-  String? _userId;
-  String? _displayname;
-  String? _photourl;
-  int _value = 0;
-  String? _content;
-  bool _blocked = false;
-  String? _createdAt;
-  String? _updatedAt;
-
-  String? get id => _id;
-  String? get userId => _userId;
-  String? get displayname => _displayname;
-  String? get photourl => _photourl;
-  int get value => _value;
-  String? get content => _content;
-  bool get blocked => _blocked;
-  String? get createdAt => _createdAt;
-  String? get updatedAt => _updatedAt;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['id'] = _id;
-    map['user_id'] = _userId;
-    map['displayname'] = _displayname;
-    map['photourl'] = _photourl;
-    map['value'] = _value;
-    map['content'] = _content;
-    map['blocked'] = _blocked;
-    map['created_at'] = _createdAt;
-    map['updated_at'] = _updatedAt;
-    return map;
-  }
-
 }

@@ -52,7 +52,8 @@ class FirebaseSetting {
 
       setupInteractedMessage();
 
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message)
+      {
         print('Got a message whilst in the foreground!');
         print('Message data: ${message.data}');
 

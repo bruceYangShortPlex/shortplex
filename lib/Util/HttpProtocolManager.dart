@@ -12,30 +12,11 @@ import '../Network/Content_Res.dart';
 import '../Network/OAuth_Res.dart';
 import '../table/UserData.dart';
 
-// import 'package:flutter/cupertino.dart';
-// import 'package:get/get.dart';
-//
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   Get.put(HttpProtocolManager());
-//   var manager = Get.find<HttpProtocolManager>();
-//   manager.getData();
-//   manager.postData();
-//   manager.sendOAuthLogin(OAuthLogin(email: 'email', displayname: 'displayname', providerid: 'providerid', provideruserid: 'provideruserid', privacypolicies: 'privacypolicies', photourl: 'photourl'));
-//   runApp(const HttpTest());
-// }
-//
-// class HttpTest extends StatelessWidget {
-//   const HttpTest({super.key});
-//
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context)
-//   {
-//     return Placeholder();
-//   }
-// }
+enum Comment_CD_Type
+{
+  episode,
+  title_school,
+}
 
 class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin
 {
@@ -280,35 +261,65 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<bool> send_Comment(String _contentID, String _comment, String _replyParentID) async
+  Future<CommentRes?> send_Comment(String _episodeID, String _comment, String _replyParentID, Comment_CD_Type _type) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/comment/$_contentID';
-
-      var comment =  CommentReq(content: _comment, parentId: _replyParentID, typeCd: '');
-
+      var url = 'https://www.quadra-system.com/api/v1/comment/$_episodeID';
+      var type_cd = _type.toString().replaceAll('Comment_CD_Type.', '');
+      var comment =  CommentReq(content: _comment, parentId: _replyParentID, typeCd: type_cd);
       var bodys = jsonEncode(comment.toJson());
-      print('send Logout heads : ${heads} / bodys : ${bodys}');
+      print('send_Comment heads : ${heads} / send bodys : ${bodys}');
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
-      print('res.body ${res.body}');
+      print('send_Comment res.body ${res.body}');
 
       if (res.statusCode == 200)
       {
-        return true;
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('send_Comment data = $data');
+        return data;
       }
       else
       {
         //TODO:에러때 팝업 어떻게 할것인지.
-        print('LOGOUT FAILD : ${res.statusCode}');
+        print('send_Comment FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('send logout error : ${e}');
+      print('send_Comment error : $e');
     }
 
-    return false;
+    return null;
+  }
+
+  Future<CommentRes?> get_Comment(String _episodeID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/comment/$_episodeID';
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('get_Comment res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_Comment data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('get_Comment FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_Comment error : $e');
+    }
+
+    return null;
   }
 }

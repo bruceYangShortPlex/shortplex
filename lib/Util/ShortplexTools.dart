@@ -199,9 +199,20 @@ Widget VirtualKeybord(String _defaultString, TextEditingController _controller, 
                         color: Colors.grey,
                         fontWeight: FontWeight.w500//placeholder 글자색을 빨간색으로 설정
                       ),
+                      style:  TextStyle
+                        (
+                          fontSize: 12,
+                          fontFamily: 'NotoSans',
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500//placeholder 글자색을 빨간색으로 설정
+                      ),
                       padding:
                       EdgeInsets.only(left: 20, bottom: 2),
                       //decoration: ,
+                      onEditingComplete: () {
+                        _focusNode.unfocus();
+                        _callback();
+                      },
                     ),
                   ),
                 ),

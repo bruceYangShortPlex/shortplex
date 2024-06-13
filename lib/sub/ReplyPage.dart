@@ -4,7 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
+import '../table/UserData.dart';
 import 'ContentInfoPage.dart';
+import 'UserInfo/LoginPage.dart';
 
 class ReplyPage extends StatefulWidget
 {
@@ -18,6 +20,8 @@ class _ReplyPageState extends State<ReplyPage>
 {
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
+  TextEditingController textEditingController = TextEditingController();
+  FocusNode textFocusNode = FocusNode();
 
   var commentData = EpisodeCommentData
   (
@@ -41,24 +45,24 @@ class _ReplyPageState extends State<ReplyPage>
     commentData = Get.arguments;
     print('data 1 : ${commentData}');
 
-    for(int i = 0; i < 10; ++i)
-    {
-      var commentData = EpisodeCommentData
-      (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '11',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isOwner: i == 0,
-        commentType: CommentType.NORMAL,
-      );
-      replyList.add(commentData);
-    }
+    // for(int i = 0; i < 10; ++i)
+    // {
+    //   var commentData = EpisodeCommentData
+    //   (
+    //     name: '황후마마가 돌아왔다.',
+    //     comment: '이건 재미있다. 무조건 된다고 생각한다.',
+    //     date: '24.09.06',
+    //     episodeNumber: '11',
+    //     iconUrl: '',
+    //     ID: i.toString(),
+    //     isLikeCheck: i % 2 == 0,
+    //     likeCount: '12',
+    //     replyCount: '3',
+    //     isOwner: i == 0,
+    //     commentType: CommentType.NORMAL,
+    //   );
+    //   replyList.add(commentData);
+    // }
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -66,11 +70,35 @@ class _ReplyPageState extends State<ReplyPage>
         onEndOfPage();
       }
     });
+
+    // FocusNode에 리스너 추가
+    textFocusNode.addListener(()
+    {
+      if (textFocusNode.hasFocus)
+      {
+        if (UserData.to.isLogin.value == false)
+        {
+          textFocusNode.unfocus();
+
+          showDialogTwoButton(StringTable().Table![600018]!, '',
+                  ()
+              {
+                Get.to(() => LoginPage());
+              });
+        }
+      }
+      else
+      {
+        // CupertinoTextField가 포커스를 잃었을 때 실행할 코드
+      }
+    });
   }
 
   @override
   void dispose()
   {
+    textEditingController.dispose();
+    textFocusNode.dispose();
     scrollController.dispose();
     replyList.clear();
     super.dispose();
@@ -81,36 +109,36 @@ class _ReplyPageState extends State<ReplyPage>
     try
     {
       //여기서 리스트 요청하고 만들고 해야한다.
-      // Replace with your method to fetch data from the server.
-      final newItems = await Future.delayed(Duration(seconds: 1),
-              ()
-          {
-            for(int i = 0; i < 10; ++i)
-            {
-              var commentData = EpisodeCommentData
-              (
-                name: '황후마마가 돌아왔다.',
-                comment: '이건 재미있다. 무조건 된다고 생각한다.',
-                date: '24.09.06',
-                episodeNumber: '11',
-                iconUrl: '',
-                ID: i.toString(),
-                isLikeCheck: i % 2 == 0,
-                likeCount: i.toString(),
-                replyCount: '3',
-                isOwner: i == 0,
-                commentType: CommentType.NORMAL,
-              );
-              replyList.add(commentData);
-            }
-
-            setState(()
-            {
-
-            });
-
-          }
-      );
+      // // Replace with your method to fetch data from the server.
+      // final newItems = await Future.delayed(Duration(seconds: 1),
+      //         ()
+      //     {
+      //       for(int i = 0; i < 10; ++i)
+      //       {
+      //         var commentData = EpisodeCommentData
+      //         (
+      //           name: '황후마마가 돌아왔다.',
+      //           comment: '이건 재미있다. 무조건 된다고 생각한다.',
+      //           date: '24.09.06',
+      //           episodeNumber: '11',
+      //           iconUrl: '',
+      //           ID: i.toString(),
+      //           isLikeCheck: i % 2 == 0,
+      //           likeCount: i.toString(),
+      //           replyCount: '3',
+      //           isOwner: i == 0,
+      //           commentType: CommentType.NORMAL,
+      //         );
+      //         replyList.add(commentData);
+      //       }
+      //
+      //       setState(()
+      //       {
+      //
+      //       });
+      //
+      //     }
+      // );
     }
     catch (e)
     {
@@ -133,6 +161,7 @@ SafeArea
     home:
     CupertinoPageScaffold
     (
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
       navigationBar:
       CupertinoNavigationBar
@@ -190,7 +219,22 @@ SafeArea
         (
           padding: EdgeInsets.only(top: 10),
           child:
-          ReplyPopup(scrollController, commentData, replyList)
+          Stack
+          (
+            children:
+            [
+              ReplyPopup(scrollController, commentData, replyList),
+              VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom,  ()
+              {
+                print('reply send ${textEditingController.text}');
+
+                if (textEditingController.text.isEmpty)
+                {
+                  return;
+                }
+              })
+            ],
+          ),
         ),
       ),
       ),
@@ -203,7 +247,6 @@ Widget ReplyPopup(ScrollController _scrollController,
 {
 
   return
-
   Padding
   (
     padding: EdgeInsets.only(top: _padding),

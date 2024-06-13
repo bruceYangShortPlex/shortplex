@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/Content_Res.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
+import 'package:shortplex/sub/UserInfo/LoginPage.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/table/UserData.dart';
 import 'package:video_player/video_player.dart';
@@ -15,21 +18,13 @@ import 'ContentPlayer.dart';
 import 'CupertinoMain.dart';
 import 'ReplyPage.dart';
 
-enum ContentPlayButtonType
-{
-  COMMENT,
-  CHECK,
-  SHARE,
-  CONTENT_INFO,
-}
-
 class NextContentPlayer extends StatefulWidget
 {
   @override
-  _NextContentPlayerState createState() => _NextContentPlayerState();
+  _NextContentPlayer createState() => _NextContentPlayer();
 }
 
-class _NextContentPlayerState extends State<NextContentPlayer> with TickerProviderStateMixin
+class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderStateMixin
 {
   late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
@@ -41,14 +36,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
 
   late AnimationController tweenController;
   bool controlUIVisible = false;
-  ContentRes? contentRes;
-  int selectedIndex = 0;
+  late List<Episode> episodeList;
+  int selectedEpisodeNo = 0;
   bool isShowContent = false;
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
 
   late String playUrl;
-  late Episode episodeData;
+  Episode? episodeData;
 
   void VideoControllerInit()
   {
@@ -62,15 +57,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
         });
       });
 
-    videoController.addListener(()
-    {
+    videoController.addListener(() {
       if (videoController.value.position >= videoController.value.duration)
       {
         // 동영상 재생이 끝났을 때 실행할 로직
         print("동영상 재생이 끝났습니다.");
-        if (selectedIndex < contentRes!.data!.episode!.length - 1)
+        if (selectedEpisodeNo < episodeList.length)
         {
-          Get.off(ContentPlayer(), arguments: [contentRes, selectedIndex + 1]);
+          Get.off(ContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
           return;
         }
       }
@@ -84,19 +78,28 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   @override
   void initState()
   {
-    contentRes = Get.arguments[0] as ContentRes;
-    selectedIndex = Get.arguments[1] as int;
-    episodeData = contentRes!.data!.episode![selectedIndex];
-    print('play content ${contentRes!.data!.id}');
-    playUrl = "https://www.quadra-system.com/api/v1/vod/stream/${episodeData.episodeFhd}";
+    selectedEpisodeNo = Get.arguments[0];
+    episodeList = Get.arguments[1];
+
+    try
+    {
+      episodeData = episodeList.firstWhere((item) => item.no == selectedEpisodeNo);
+    }
+    catch(e)
+    {
+      print(e);
+    }
+
+    print('play content ${episodeData!.no}');
+    playUrl = "https://www.quadra-system.com/api/v1/vod/stream/${episodeData!.episodeFhd}";
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
     //이번회차의 가격을 알아온다.
-    if (episodeData.cost != 0 && episodeData.isLock)
+    if (episodeData!.cost != 0 && episodeData!.isLock)
     {
       //구독중이면 그냥 다음진행.
       if (UserData.to.isSubscription == false)
       {
-        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData.cost)
+        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData!.cost)
         {
           isShowContent = false;
           isShowShop =  true;
@@ -178,43 +181,24 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
       }
     });
 
-    for(int i = 0; i < 10; ++i)
-    {
-      var commentData = EpisodeCommentData
-        (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '11',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isOwner: i == 0,
-        commentType: CommentType.BEST,
-      );
-      episodeCommentList.add(commentData);
-    }
-
-    for(int i = 0; i < 10; ++i)
-    {
-      var commentData = EpisodeCommentData
-        (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '11',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isOwner: i == 0,
-        commentType: CommentType.NORMAL,
-      );
-      replyList.add(commentData);
-    }
+    // for(int i = 0; i < 10; ++i)
+    // {
+    //   var commentData = EpisodeCommentData
+    //   (
+    //     name: '황후마마가 돌아왔다.',
+    //     comment: '이건 재미있다. 무조건 된다고 생각한다.',
+    //     date: '24.09.06',
+    //     episodeNumber: '11',
+    //     iconUrl: '',
+    //     ID: '$i',
+    //     isLikeCheck: i % 2 == 0,
+    //     likeCount: '12',
+    //     replyCount: '3',
+    //     isOwner: i == 0,
+    //     commentType: CommentType.NORMAL,
+    //   );
+    //   replyList.add(commentData);
+    // }
 
     ticker = createTicker((elapsed)
     {
@@ -231,6 +215,30 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
         }
       }
     });
+
+    // FocusNode에 리스너 추가
+    textFocusNode.addListener(()
+    {
+      if (textFocusNode.hasFocus)
+      {
+        if (UserData.to.isLogin.value == false)
+        {
+          textFocusNode.unfocus();
+
+          showDialogTwoButton(StringTable().Table![600018]!, '',
+                  ()
+              {
+                Get.to(() => LoginPage());
+              });
+        }
+      }
+      else
+      {
+        // CupertinoTextField가 포커스를 잃었을 때 실행할 코드
+      }
+    });
+
+    GetComment();
 
     super.initState();
   }
@@ -254,6 +262,85 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   void didChangeDependencies() async
   {
     super.didChangeDependencies();
+  }
+
+  void SendComment() async
+  {
+    try
+    {
+      connecting = true;
+      await HttpProtocolManager.to.send_Comment(episodeData!.id!, textEditingController.text, '', Comment_CD_Type.episode).then((value)
+      {
+        CommentRefresh(value);
+        print('send_Comment result $value');
+        connecting = false;
+        textEditingController.text = '';
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
+    }
+  }
+
+  void GetComment() async
+  {
+    try
+    {
+      print('Get Comment');
+      await HttpProtocolManager.to.get_Comment(episodeData!.id!).then((value)
+      {
+        print('send_Comment result $value');
+
+        CommentRefresh(value);
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
+    }
+  }
+
+  void CommentRefresh(CommentRes? _data)
+  {
+    if (_data == null)
+    {
+      print("CommentRefresh data null return");
+      return;
+    }
+
+    for(var item in _data.data!)
+    {
+      if (episodeCommentList.any((element) => element.ID == item.id))
+      {
+        print('already data id cotinue');
+        continue;
+      }
+
+      var commentData = EpisodeCommentData
+        (
+        name: 'GUEST ${item.id}',
+        comment: item.content,
+        date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
+        episodeNumber: '11',
+        iconUrl: '',
+        ID: item.id!,
+        isLikeCheck: false,
+        likeCount: '0',
+        replyCount: '${item.replies}',
+        isOwner: UserData.to.userId ==  item.userId,
+        commentType: episodeCommentList.length < 3 ? CommentType.BEST : CommentType.NORMAL,
+      );
+      episodeCommentList.add(commentData);
+    }
+    commentCount = episodeCommentList.length;
+    print('commentCount : $commentCount');
+
+    if (controlUIVisible) {
+      setState(() {
+
+      });
+    }
   }
 
   void setScrollPosition(double _offset) {
@@ -296,9 +383,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     tweenTime = 300;
                     bottomOffset = 0;
                     tweenController.reverse();
-                    setState(()
-                    {
-                    });
+                    GetComment();
                   }
                   break;
                 case ContentPlayButtonType.CONTENT_INFO:
@@ -308,7 +393,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                   break;
                 case ContentPlayButtonType.CHECK:
                   {
-                    episodeData.isCheck = episodeData.isCheck;
+                    episodeData!.isCheck = !episodeData!.isCheck;
                     setState(() {
 
                     });
@@ -324,7 +409,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
             Opacity
               (
               opacity: 0.70,
-              child: Container(
+              child:
+              Container
+                (
                 width: 56,
                 height: 45,
                 decoration: ShapeDecoration(
@@ -421,11 +508,11 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       },
                     ),
                     Visibility
-                    (
-                      visible:  selectedIndex < contentRes!.data!.episode!.length - 1,
+                      (
+                      visible: selectedEpisodeNo < episodeList.length,
                       child:
                       IconButton
-                      (
+                        (
                         onPressed: ()
                         {
                           if (showCheck() == false)
@@ -433,7 +520,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                             return;
                           }
 
-                          Get.off(ContentPlayer(), arguments: [contentRes, selectedIndex + 1]);
+                          Get.off(ContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
                           print('다음회차 보기 누름');
                         },
                         icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
@@ -499,7 +586,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               ),
             ),
             contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
-            contentUIButtons(StringTable().Table![100023]!, episodeData.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
+            contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
             contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
             contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
             Container
@@ -654,6 +741,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
     }
   }
 
+  bool connecting = false;
   double bottomOffset = -840.h;
   int tweenTime = 0;
   Widget bottomCanvas()
@@ -714,10 +802,21 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                           [
                             isShowReply == false ?
                             contentComment() : commentReply(),
-                            VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, ()
-                            {
-                              //TODO: 댓글 입력.
-                            },)
+                            IgnorePointer
+                              (
+                              ignoring: connecting,
+                              child:
+                              VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, ()
+                              {
+                                print('comment complete ${textEditingController.text}');
+
+                                if (textEditingController.text.isEmpty) {
+                                  return;
+                                }
+
+                                SendComment();
+                              },),
+                            )
                           ],
                         )
                     ),
@@ -906,7 +1005,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                               commentData = episodeCommentList[i];
                               isShowReply = true;
                               commentScrollOffset = scrollController.offset;
-                              setState(() {
+                              setState(()
+                              {
 
                               });
                               //Get.to(() => ReplyPage(), arguments: episodeCommentList[i]);
@@ -975,62 +1075,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   {
     try
     {
-      //여기서 리스트 요청하고 만들고 해야한다.
-      // Replace with your method to fetch data from the server.
-      await Future.delayed(Duration(seconds: 1),
-              ()
-          {
-            print('update !');
-            if (isShowReply)
-            {
-              for(int i = 0; i < 10; ++i)
-              {
-                var commentData = EpisodeCommentData
-                  (
-                  name: '황후마마가 돌아왔다.',
-                  comment: '이건 재미있다. 무조건 된다고 생각한다.',
-                  date: '24.09.06',
-                  episodeNumber: '11',
-                  iconUrl: '',
-                  ID: i.toString(),
-                  isLikeCheck: i % 2 == 0,
-                  likeCount: '12',
-                  replyCount: '3',
-                  isOwner: i == 0,
-                  commentType: CommentType.NORMAL,
-                );
-                replyList.add(commentData);
-              }
-              print('replyList.length : ${replyList.length}');
-            }
-            else
-            {
-              for(int i = 0; i < 10; ++i)
-              {
-                var commentData = EpisodeCommentData
-                  (
-                  name: '황후마마가 돌아왔다.',
-                  comment: '이건 재미있다. 무조건 된다고 생각한다.',
-                  date: '24.09.06',
-                  episodeNumber: '11',
-                  iconUrl: '',
-                  ID: i.toString(),
-                  isLikeCheck: i % 2 == 0,
-                  likeCount: '12',
-                  replyCount: '3',
-                  isOwner: i == 0,
-                  commentType: CommentType.NORMAL,
-                );
-                episodeCommentList.add(commentData);
-              }
-              print('episodeCommentList.length : ${episodeCommentList.length}');
-            }
+      if (isShowReply)
+      {
 
-            setState(()
-            {
-            });
-          }
-      );
+      }
+      else
+      {
+        GetComment();
+      }
     }
     catch (e)
     {
@@ -1091,7 +1143,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                                   SizedBox(height: 8,),
                                   Text
                                     (
-                                    SetTableStringArgument(400025, ['${episodeData.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
+                                    SetTableStringArgument(400025, ['${episodeData!.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
                                     ,
                                     style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                   ),
@@ -1190,7 +1242,11 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       Text
                         (
                         StringTable().Table![400027]!,
-                        style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                        style:
+                        TextStyle
+                          (
+                          fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
 

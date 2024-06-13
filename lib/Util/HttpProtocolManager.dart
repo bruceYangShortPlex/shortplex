@@ -10,6 +10,7 @@ import 'package:shortplex/sub/Home/SearchPage.dart';
 
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
+import '../Network/EpisodeGroup_Res.dart';
 import '../Network/OAuth_Res.dart';
 import '../table/UserData.dart';
 
@@ -262,6 +263,36 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('get content data error : ${e}');
+    }
+
+    return null;
+  }
+
+  Future<EpisodeGroupRes?> get_EpisodeGroup(String _contentID, int _page) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/episode?page=$_page');
+      var res = await http.get(url, headers: heads);
+
+      print('get_EpisodeGroup url = $url');
+      print('get_EpisodeGroup heads = $heads');
+      print('get_EpisodeGroup res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  EpisodeGroupRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('get_EpisodeGroup FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_EpisodeGroup data error : ${e}');
     }
 
     return null;

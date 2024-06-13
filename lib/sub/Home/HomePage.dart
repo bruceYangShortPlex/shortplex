@@ -7,6 +7,7 @@ import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/sub/Home/HomeData.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 
+import '../../Network/Content_Res.dart';
 import '../../Network/HomeData_Res.dart';
 import '../../Network/Home_Content_Res.dart';
 import '../../Util/HttpProtocolManager.dart';
@@ -27,8 +28,7 @@ class _HomePageState extends State<HomePage>
   var watchingContentsDataList = <ContentData>[];
   var rankContentsDataList = <ContentData>[];
   var recentList = <ContentData>[];
-  var themesList = <List<ContentData>>[];
-
+  Map<String, List<ContentData>> themesList = {};
   var pageIndex = 0;
 
   void GetHomeData() async
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage>
         for (var item in value!.data!.items!)
         {
           var data = ContentData
-            (
+          (
             id: item.id,
             title: value.data!.title,
             imagePath: item.posterPortraitImgUrl,
@@ -143,9 +143,13 @@ class _HomePageState extends State<HomePage>
 
       HttpProtocolManager.to.get_HomeContentData(HomeDataType.activethemes, 0, 100).then((value)
       {
-        themesList.clear();
         for(var themse in value!.data!.items!)
         {
+          if (themesList.containsKey(themse.id))
+          {
+            continue;
+          }
+
           HttpProtocolManager.to.get_HomeContentData(HomeDataType.themes, 0, 20, themse.id!).then((result)
           {
             var list = <ContentData>[];
@@ -165,8 +169,7 @@ class _HomePageState extends State<HomePage>
               data.contentTitle = item.subtitle ?? '';
               list.add(data);
             }
-            themesList.add(list);
-
+            themesList[themse.id!] = list;
             setState(() {
 
             });
@@ -184,6 +187,39 @@ class _HomePageState extends State<HomePage>
     {
       print('GetHomeData error : $e');
     }
+  }
+
+
+  Future<List<Episode>?> GetEpisodeData(String _contentID) async
+  {
+    try
+    {
+      List<Episode> contentEpisodes = <Episode>[];
+      await HttpProtocolManager.to.get_ContentData(_contentID).then((value)
+      {
+        var contentRes = value;
+        contentEpisodes.addAll(contentRes!.data!.episode!);
+        int totalEpisodeCount = contentRes.data!.episode_total;
+
+        for(int i = 1 ; i <= contentRes.data!.episode_maxpage; ++i)
+        {
+          HttpProtocolManager.to.get_EpisodeGroup(_contentID, i).then((value)
+          {
+            contentEpisodes.addAll(value!.data!.episode!);
+            if (contentEpisodes.length == totalEpisodeCount)
+              {
+                return contentEpisodes;
+              }
+          });
+        }
+      });
+    }
+    catch(e)
+    {
+      print('GetEpisodeData Catch $e');
+    }
+
+    return null;
   }
 
   @override
@@ -326,7 +362,7 @@ class _HomePageState extends State<HomePage>
                   contentsView(watchingContentsDataList),
                   rankContentView(rankContentsDataList),
                   contentsView(recentList),
-                  for(var item in themesList)
+                  for(var item in themesList.values)
                     contentsView(item),
                 ],
               ),
@@ -408,7 +444,7 @@ class _HomePageState extends State<HomePage>
 
   Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
   {
-    if (_list.isEmpty) {
+    if (_list == null || _list.isEmpty) {
       return SizedBox();
     }
 
@@ -578,6 +614,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  bool buttonEnable = true;
   Widget contentItem(ContentData _data)
   {
     return
@@ -591,13 +628,20 @@ class _HomePageState extends State<HomePage>
         [
           GestureDetector
           (
-            onTap: ()
+            onTap: () async
             {
+              if (buttonEnable == false)
+                return;
+
               if (_data.isWatching)
               {
-                print(_data.id);
-                print('go to content player');
-                Get.to(() => ContentPlayer(), arguments: _data.id);
+                buttonEnable = false;
+                //TODO:몇화차 인지 받아서 넘겨줘야한다.
+                var episode = await GetEpisodeData(_data.id!).then((value) {
+                  //Get.to(() => ContentPlayer(), arguments: _data.id, episode);
+
+                  print('go to content player');
+                },);
               }
               else
               {

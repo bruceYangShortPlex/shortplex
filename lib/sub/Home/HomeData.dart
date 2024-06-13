@@ -9,7 +9,7 @@ class HomeData extends GetxController
   static var _pageList = <ContentData>[];
   static var _watchingContentsDataList = <ContentData>[];
   static var _rankContentsDataList = <ContentData>[];
-  static var _themesList = <List<ContentData>>[];
+  static Map<String, List<ContentData>> _themesList = {};
   static var _recentList = <ContentData>[];
 
   get pageList => _pageList;
@@ -33,9 +33,9 @@ class HomeData extends GetxController
     _rankContentsDataList = _list;
   }
 
-  void SetThemesList(List<List<ContentData>> _list)
+  void SetThemesList(Map<String,List<ContentData>> _map)
   {
-    _themesList = _list;
+    _themesList = _map;
   }
 
   void SetRecentList(List<ContentData> _list)

@@ -21,13 +21,6 @@ class CommentReq
   String? _parentId;
   String? _typeCd;
   String? _content;
-CommentReq copyWith({ String? parentId,
-  String? typeCd,
-  String? content,
-}) => CommentReq(  parentId: parentId ?? _parentId,
-  typeCd: typeCd ?? _typeCd,
-  content: content ?? _content,
-);
 
   String? get parentId => _parentId;
   String? get typeCd => _typeCd;

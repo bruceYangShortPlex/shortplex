@@ -89,7 +89,6 @@ class ContentData
   String? contentTitle;
   String? releaseAt;
   String? landScapeImageUrl;
-  List<Episode>? episodeList;
 
   ContentData
   (

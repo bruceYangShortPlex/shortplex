@@ -45,14 +45,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   late AnimationController tweenController;
   bool controlUIVisible = false;
-  ContentRes? contentRes;
-  int selectedIndex = 0;
+  late List<Episode> episodeList;
+  int selectedEpisodeNo = 0;
   bool isShowContent = false;
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
 
   late String playUrl;
-  late Episode episodeData;
+  Episode? episodeData;
 
   void VideoControllerInit()
   {
@@ -71,9 +71,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       {
         // 동영상 재생이 끝났을 때 실행할 로직
         print("동영상 재생이 끝났습니다.");
-        if (selectedIndex < contentRes!.data!.episode!.length - 1)
+        if (selectedEpisodeNo < episodeList.length)
         {
-          Get.off(NextContentPlayer(), arguments: [contentRes, selectedIndex + 1]);
+          Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
           return;
         }
       }
@@ -87,19 +87,28 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   @override
   void initState()
   {
-    contentRes = Get.arguments[0] as ContentRes;
-    selectedIndex = Get.arguments[1] as int;
-    episodeData = contentRes!.data!.episode![selectedIndex];
-    print('play content ${contentRes!.data!.id}');
-    playUrl = "https://www.quadra-system.com/api/v1/vod/stream/${episodeData.episodeFhd}";
+    selectedEpisodeNo = Get.arguments[0];
+    episodeList = Get.arguments[1];
+
+    try
+    {
+      episodeData = episodeList.firstWhere((item) => item.no == selectedEpisodeNo);
+    }
+    catch(e)
+    {
+      print(e);
+    }
+
+    print('play content ${episodeData!.no}');
+    playUrl = "https://www.quadra-system.com/api/v1/vod/stream/${episodeData!.episodeFhd}";
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
     //이번회차의 가격을 알아온다.
-    if (episodeData.cost != 0 && episodeData.isLock)
+    if (episodeData!.cost != 0 && episodeData!.isLock)
     {
       //구독중이면 그냥 다음진행.
       if (UserData.to.isSubscription == false)
       {
-        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData.cost)
+        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData!.cost)
         {
           isShowContent = false;
           isShowShop =  true;
@@ -269,7 +278,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     try
     {
       connecting = true;
-      await HttpProtocolManager.to.send_Comment(episodeData.id!, textEditingController.text, '', Comment_CD_Type.episode).then((value)
+      await HttpProtocolManager.to.send_Comment(episodeData!.id!, textEditingController.text, '', Comment_CD_Type.episode).then((value)
       {
         CommentRefresh(value);
         print('send_Comment result $value');
@@ -288,7 +297,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     try
     {
       print('Get Comment');
-      await HttpProtocolManager.to.get_Comment(episodeData.id!).then((value)
+      await HttpProtocolManager.to.get_Comment(episodeData!.id!).then((value)
       {
         print('send_Comment result $value');
 
@@ -393,7 +402,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 break;
               case ContentPlayButtonType.CHECK:
                 {
-                  episodeData.isCheck = episodeData.isCheck;
+                  episodeData!.isCheck = !episodeData!.isCheck;
                   setState(() {
 
                   });
@@ -509,7 +518,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   ),
                   Visibility
                   (
-                    visible: selectedIndex < contentRes!.data!.episode!.length - 1,
+                    visible: selectedEpisodeNo < episodeList.length,
                     child:
                     IconButton
                     (
@@ -520,7 +529,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                           return;
                         }
 
-                        Get.off(NextContentPlayer(), arguments: [contentRes, selectedIndex + 1]);
+                        Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
                         print('다음회차 보기 누름');
                       },
                       icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
@@ -586,7 +595,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             ),
           ),
           contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
-          contentUIButtons(StringTable().Table![100023]!, episodeData.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
+          contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
           contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
           contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
           Container
@@ -1143,7 +1152,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                 SizedBox(height: 8,),
                                 Text
                                 (
-                                  SetTableStringArgument(400025, ['${episodeData.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
+                                  SetTableStringArgument(400025, ['${episodeData!.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
                                   ,
                                   style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),

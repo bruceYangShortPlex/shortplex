@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
@@ -36,6 +35,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
   late Map<int, List<Episode>> mapEpisodeData = {};
+  List<Episode> contentEpisodes = <Episode>[];
 
   //comment 관련
   var scrollController = ScrollController();
@@ -43,7 +43,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.LATEST;
 
-  void GetContentData() async
+  void GetContentData()
   {
     try
     {
@@ -53,59 +53,29 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         return;
       }
 
-      await HttpProtocolManager.to.get_ContentData(contentData!.id!).then((value)
+      HttpProtocolManager.to.get_ContentData(contentData!.id!).then((value)
       {
         contentRes = value;
-
-        int totalEpisodeCount = contentRes!.data!.episode!.length;
-        print('totalEpisodeCount = $totalEpisodeCount');
+        mapEpisodeData[0] = contentRes!.data!.episode!;
+        contentEpisodes.addAll(contentRes!.data!.episode!);
+        int totalEpisodeCount = contentRes!.data!.episode_total;
+        print('totalEpisodeCount : $totalEpisodeCount / total page : ${contentRes!.data!.episode_maxpage}');
         int dividingNumber = 20;
-        int groupCount = totalEpisodeCount ~/ dividingNumber;
+        int groupCount = contentRes!.data!.episode_maxpage;
         print('groupCount = $groupCount');
         for (int i = 0; i < groupCount; ++i)
         {
           var startString = i * dividingNumber + 1;
           var endString = i * dividingNumber + dividingNumber;
           episodeGroupList.add('${startString}~${SetTableStringArgument(100033, ['$endString'],)}');
-
-          var episodeList = <Episode>[];
-          for (int j = 0 ; j < dividingNumber; ++j)
-          {
-            var index = i * dividingNumber + j;
-            if (index >= contentRes!.data!.episode!.length)
-            {
-              print('episode data length overflow');
-              break;
-            }
-            var episodeData = contentRes!.data!.episode![index];
-            episodeList.add(episodeData);
-          }
-          
-          mapEpisodeData[i] = episodeList;
         }
 
         var remain = totalEpisodeCount % 20;
         if (remain != 0)
         {
-          //print('remain : $remain');
-
           var startIndex = groupCount * dividingNumber + 1;
           var endIndex = groupCount * dividingNumber + remain;
           episodeGroupList.add('${startIndex}~${SetTableStringArgument(100033, ['$endIndex'],)}');
-
-          var episodeList = <Episode>[];
-          for(int i = startIndex; i <= endIndex; ++i)
-          {
-            if (i >= contentRes!.data!.episode!.length )
-            {
-              print('episode data length overflow');
-              break;
-            }
-
-            var episodeData = contentRes!.data!.episode![i];
-            episodeList.add(episodeData);
-          }
-          mapEpisodeData[groupCount] = episodeList;
         }
 
         episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
@@ -114,6 +84,15 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         setState(() {
 
         });
+
+        for(int i = 1 ; i <= contentRes!.data!.episode_maxpage; ++i)
+        {
+          HttpProtocolManager.to.get_EpisodeGroup(contentData!.id!, i).then((value)
+          {
+            mapEpisodeData[i] = value!.data!.episode!;
+            contentEpisodes.addAll(value.data!.episode!);
+          });
+        }
       });
     }
     catch(e)
@@ -354,7 +333,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               child:
               Text
               (
-                contentData?.rank != 0 ? StringTable().Table![300037]! : '',
+                contentData!.rank ? StringTable().Table![300037]! : '',
                 style:
                 TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
@@ -740,7 +719,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     return;
                   }
 
-                  Get.to(() => ContentPlayer(), arguments: [contentRes, i]);
+                  Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
                   print('click');
                 },
                 child:
@@ -786,7 +765,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 child:
                 Text
                 (
-                  SetTableStringArgument(100033, ['${i + 1}']),
+                  SetTableStringArgument(100033, ['${list[i].no}']),
                   style:
                   TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),

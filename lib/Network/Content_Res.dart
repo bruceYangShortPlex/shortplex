@@ -124,6 +124,8 @@ class ContentResData
     _weight = json['weight'];
     _featured = json['featured'];
     _createdAt = json['created_at'];
+    episode_total = json['episode_total'] ?? 0;
+    episode_maxpage = json['episode_maxpage'] ?? 0;
     if (json['episode'] != null) {
       _episode = [];
       json['episode'].forEach((v) {
@@ -160,6 +162,8 @@ class ContentResData
   String? _createdAt;
   List<Episode>? _episode;
   List<Stat>? _stat;
+  int episode_total = 0;
+  int episode_maxpage = 0;
 
   String? get id => _id;
   String? get title => _title;
@@ -208,6 +212,8 @@ class ContentResData
     map['weight'] = _weight;
     map['featured'] = _featured;
     map['created_at'] = _createdAt;
+    map['episode_total'] = episode_total;
+    map['episode_maxpage'] = episode_maxpage;
     final _episode = this._episode;
     if (_episode != null) {
       map['episode'] = _episode.map((v) => v.toJson()).toList();

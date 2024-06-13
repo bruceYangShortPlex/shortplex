@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/HomeData_Res.dart';
+import 'package:shortplex/Network/Home_Content_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Search_Res.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
@@ -190,6 +191,42 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       else
       {
         print('get home data FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get home data error : ${e}');
+    }
+
+    return null;
+  }
+
+  Future<HomeContentRes?> get_HomeContentData(HomeDataType _type, int _page, int _itemsPerPage, [String _themesID = '']) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var type = _type.toString().replaceAll('HomeDataType.', '');
+      var url = 'https://www.quadra-system.com/api/v1/home/$type?page=$_page&itemsPerPage=$_itemsPerPage';
+      if (_type == HomeDataType.themes)
+      {
+        url = 'https://www.quadra-system.com/api/v1/home/$type/$_themesID?page=$_page&itemsPerPage=$_itemsPerPage';
+      }
+
+      var res = await http.get(Uri.parse(url), headers: heads);
+
+      // print('get_HomeContentData send url = $url');
+      // print('heads = $heads');
+      // print('res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  HomeContentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('get home data FAILD : ${res.statusCode} send url = $url');
       }
     }
     catch (e)

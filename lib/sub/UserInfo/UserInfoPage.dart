@@ -985,7 +985,7 @@ class UserInfoMainListView extends GetxController
                     child:
                     Visibility
                       (
-                        visible: _data.rank != 0,
+                        visible: _data.rank,
                         child:
                         Container
                           (

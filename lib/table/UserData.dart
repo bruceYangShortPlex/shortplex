@@ -81,7 +81,7 @@ class ContentData
   bool isNew = false;
   bool isWatching = false;
   String? watchingEpisode;
-  int rank = 0;
+  bool rank = false;
   int cost = 0;
   String? contentUrl;
   bool isLock = false;
@@ -100,6 +100,7 @@ class ContentData
       required this.cost,
       required this.releaseAt,
       required this.landScapeImageUrl,
+      required this.rank,
     }
   );
 

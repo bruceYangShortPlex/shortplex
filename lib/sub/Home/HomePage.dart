@@ -8,6 +8,7 @@ import 'package:shortplex/sub/Home/HomeData.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 
 import '../../Network/HomeData_Res.dart';
+import '../../Network/Home_Content_Res.dart';
 import '../../Util/HttpProtocolManager.dart';
 import '../../table/UserData.dart';
 import '../ContentPlayer.dart';
@@ -25,178 +26,165 @@ class _HomePageState extends State<HomePage>
   var pageList = <ContentData>[];
   var watchingContentsDataList = <ContentData>[];
   var rankContentsDataList = <ContentData>[];
+  var recentList = <ContentData>[];
   var themesList = <List<ContentData>>[];
 
   var pageIndex = 0;
 
-  Future GetHomeData() async
+  void GetHomeData() async
   {
     pageList = HomeData.to.pageList;
     watchingContentsDataList = HomeData.to.watchingContentsDataList;
+    recentList = HomeData.to.recentList;
     rankContentsDataList = HomeData.to.rankContentsDataList;
     themesList = HomeData.to.themesList;
 
     try
     {
       Get.lazyPut(() => HttpProtocolManager());
-      await HttpProtocolManager.to.get_HomeData().then((value)
+
+      HttpProtocolManager.to.get_HomeContentData(HomeDataType.featured, 0, 20).then((value)
       {
-        var homeData = value;
-        if(homeData == null) {
-          return;
-        }
-
         pageList.clear();
-        watchingContentsDataList.clear();
-        rankContentsDataList.clear();
-        themesList.clear();
-
-        for(var item in homeData.data!.content!)
+        for (var item in value!.data!.items!)
         {
-          //대문 page
-          if (HomeDataType.featured.toString().contains(item.code.toString()))
-          {
-            for (int i = 0 ; i < item.items!.length; ++i)
-            {
-              var listitem = item.items![i];
-              var data = ContentData
-              (
-                  id: listitem.id,
-                  title: item.title,
-                  imagePath: listitem.posterPortraitImgUrl,
-                  cost: 0,
-                  releaseAt: listitem.releaseAt,
-                  landScapeImageUrl: listitem.posterLandscapeImgUrl
-              );
+          var data = ContentData
+          (
+              id: item.id,
+              title: value.data!.title,
+              imagePath: item.posterPortraitImgUrl,
+              cost: 0,
+              releaseAt: item.releaseAt ?? '',
+              landScapeImageUrl: item.posterLandscapeImgUrl,
+              rank: item.topten,
+          );
 
-              data.contentTitle = listitem.title;
-              pageList.add(data);
-            }
-
-            continue;
-          }
-
-          //시청중
-          if (HomeDataType.watch.toString().contains(item.code.toString()))
-          {
-            for (int i = 0 ; i < item.items!.length; ++i)
-            {
-              var listitem = item.items![i];
-
-              var data = ContentData
-              (
-                  id: listitem.id,
-                  title: item.title,
-                  imagePath: listitem.thumbnailImgUrl,
-                  cost: 0,
-                  releaseAt: listitem.releaseAt,
-                  landScapeImageUrl: listitem.posterLandscapeImgUrl
-              );
-              data.contentTitle = listitem.title;
-              data.isWatching = true;
-              data.watchingEpisode = '';
-              watchingContentsDataList.add(data);
-            }
-
-            continue;
-          }
-
-          //top10
-          if (HomeDataType.top.toString().contains(item.code.toString()))
-          {
-            //대문 리스트.
-            for (int i = 0 ; i < item.items!.length; ++i)
-            {
-              if (rankContentsDataList.length > 9)
-                break;
-
-              var listitem = item.items![i];
-              var data = ContentData
-              (
-                  id: listitem.id,
-                  title: item.title,
-                  imagePath: listitem.thumbnailImgUrl,
-                  cost: 0,
-                  releaseAt: listitem.releaseAt,
-                  landScapeImageUrl: listitem.posterLandscapeImgUrl
-              );
-              data.contentTitle = listitem.title;
-              data.rank = i;
-              rankContentsDataList.add(data);
-            }
-
-            continue;
-          }
-
-          var list = <ContentData>[];
-          for (int i = 0 ; i < item.items!.length; ++i)
-          {
-            var listitem = item.items![i];
-            var data = ContentData
-            (
-                id: listitem.id,
-                title: item.title,
-                imagePath: listitem.thumbnailImgUrl,
-                cost: 0,
-                releaseAt: listitem.releaseAt,
-                landScapeImageUrl: listitem.posterLandscapeImgUrl
-            );
-            data.contentTitle = listitem.title;
-            data.isNew = HomeDataType.recent.toString().contains(item.code.toString());
-            list.add(data);
-          }
-          themesList.add(list);
+          data.contentTitle = item.subtitle ?? '';
+          pageList.add(data);
         }
 
         setState(() {
 
         });
-
-        HomeData.to.SetPageList(pageList);
-        HomeData.to.SetWatchList(watchingContentsDataList);
-        HomeData.to.SetRankList(rankContentsDataList);
-        HomeData.to.SetThemesList(themesList);
       });
+
+      HttpProtocolManager.to.get_HomeContentData(HomeDataType.top, 0, 20).then((value)
+      {
+        rankContentsDataList.clear();
+        for (var item in value!.data!.items!)
+        {
+          var data = ContentData
+          (
+            id: item.id,
+            title: value.data!.title ?? '타이틀 없음',
+            imagePath: item.posterPortraitImgUrl,
+            cost: 0,
+            releaseAt: item.releaseAt ?? '',
+            landScapeImageUrl: item.posterLandscapeImgUrl,
+            rank: item.topten,
+          );
+
+          data.contentTitle = item.subtitle ?? '';
+          rankContentsDataList.add(data);
+        }
+
+        setState(() {
+
+        });
+      });
+
+      // HttpProtocolManager.to.get_HomeContentData(HomeDataType.watch, 0, 20).then((value)
+      // {
+      //   watchingContentsDataList.clear();
+      //   for (var item in value!.data!.items!)
+      //   {
+      //     var data = ContentData
+      //     (
+      //       id: item.id,
+      //       title: value.data!.title,
+      //       imagePath: item.posterPortraitImgUrl,
+      //       cost: 0,
+      //       releaseAt: item.releaseAt ?? '',
+      //       landScapeImageUrl: item.posterLandscapeImgUrl,
+      //       rank: item.topten,
+      //     );
+      //     data.isWatching = true;
+      //     data.contentTitle = item.subtitle ?? '';
+      //     watchingContentsDataList.add(data);
+      //   }
+      //   setState(() {
+      //
+      //   });
+      // });
+
+      HttpProtocolManager.to.get_HomeContentData(HomeDataType.recent, 0, 20).then((value)
+      {
+        recentList.clear();
+        for (var item in value!.data!.items!)
+        {
+          var data = ContentData
+            (
+            id: item.id,
+            title: value.data!.title,
+            imagePath: item.posterPortraitImgUrl,
+            cost: 0,
+            releaseAt: item.releaseAt ?? '',
+            landScapeImageUrl: item.posterLandscapeImgUrl,
+            rank: item.topten,
+          );
+          data.isNew = true;
+          data.contentTitle = item.subtitle ?? '';
+          recentList.add(data);
+        }
+        setState(() {
+
+        });
+      });
+
+      HttpProtocolManager.to.get_HomeContentData(HomeDataType.activethemes, 0, 100).then((value)
+      {
+        themesList.clear();
+        for(var themse in value!.data!.items!)
+        {
+          HttpProtocolManager.to.get_HomeContentData(HomeDataType.themes, 0, 20, themse.id!).then((result)
+          {
+            var list = <ContentData>[];
+            for (var item in result!.data!.items!)
+            {
+              var data = ContentData
+              (
+                id: item.id,
+                title: item.theme_title ?? '',
+                imagePath: item.posterPortraitImgUrl,
+                cost: 0,
+                releaseAt: item.releaseAt ?? '',
+                landScapeImageUrl: item.posterLandscapeImgUrl,
+                rank: item.topten,
+              );
+
+              data.contentTitle = item.subtitle ?? '';
+              list.add(data);
+            }
+            themesList.add(list);
+
+            setState(() {
+
+            });
+          });
+        }
+      });
+
+      HomeData.to.SetPageList(pageList);
+      HomeData.to.SetWatchList(watchingContentsDataList);
+      HomeData.to.SetRankList(rankContentsDataList);
+      HomeData.to.SetThemesList(themesList);
+      HomeData.to.SetRecentList(recentList);
     }
     catch(e)
     {
       print('GetHomeData error : $e');
     }
   }
-
-  // Future GetContentList(HomeDataType _type) async
-  // {
-  //   try
-  //   {
-  //     Get.lazyPut(() => HttpProtocolManager());
-  //     var type = HomeDataType.top.toString().replaceAll('SearchType.', '');
-  //     var url = 'https://www.quadra-system.com/api/v1/home/$type?page=0&itemPerPage=20';
-  //     await HttpProtocolManager.to.get_SearchData(url).then((value)
-  //     {
-  //       var searchData = value;
-  //       if(searchData == null) {
-  //         return;
-  //       }
-  //
-  //       for(int i = 0; i < searchData.data.items.length; ++i)
-  //       {
-  //         var item = searchData.data.items[i];
-  //         var data = ContentData(id: item.id, title: item.title, imagePath: item.posterPortraitImgUrl, cost: 0);
-  //
-  //         data.rank = _type == HomeDataType.top ? i : 0;
-  //         data.isWatching = _type == HomeDataType.watch;
-  //         data.isLock = false;
-  //         data.isNew = _type == HomeDataType.recent;
-  //       }
-  //     });
-  //   }
-  //   catch (error)
-  //   {
-  //     if (kDebugMode) {
-  //       print(error);
-  //     }
-  //   }
-  // }
 
   @override
   void initState()
@@ -337,6 +325,7 @@ class _HomePageState extends State<HomePage>
                   SizedBox(height: 30,),
                   contentsView(watchingContentsDataList),
                   rankContentView(rankContentsDataList),
+                  contentsView(recentList),
                   for(var item in themesList)
                     contentsView(item),
                 ],
@@ -689,7 +678,7 @@ class _HomePageState extends State<HomePage>
                   child:
                   Visibility
                   (
-                    visible: _data.rank != 0,
+                    visible: _data.rank,
                     child:
                     Container
                     (

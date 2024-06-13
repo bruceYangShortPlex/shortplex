@@ -10,6 +10,7 @@ import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 
 import '../../Network/HomeData_Res.dart';
+import '../../Network/Home_Content_Res.dart';
 
 const int _pageSize = 15;
 enum SearchGroupType

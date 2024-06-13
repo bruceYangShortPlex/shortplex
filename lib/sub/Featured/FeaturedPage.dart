@@ -59,11 +59,10 @@ class _FeaturedPageState extends State<FeaturedPage>
 
     for(int i = 0; i < 10; ++i)
     {
-      var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i, releaseAt: '', landScapeImageUrl: '');
+      var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i, releaseAt: '', landScapeImageUrl: '', rank: false);
       contentsData.isNew = false;
       contentsData.isWatching = true;
       contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);
-      contentsData.rank = i;
     }
   }
 

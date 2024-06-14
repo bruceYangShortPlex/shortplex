@@ -208,6 +208,8 @@ class ContentItems {
     _topten = json['topten'] ?? false;
     _createdAt = json['created_at'];
     _theme_title = json['theme_title'];
+    content_id = json['content_id'];
+    no = json['no'] ?? 0;
   }
   String? _id;
   String? _title;
@@ -232,6 +234,8 @@ class ContentItems {
   bool _topten = false;
   String? _createdAt;
   String? _theme_title;
+  String? content_id;
+  int no = 0;
 
   String? get id => _id;
   String? get title => _title;

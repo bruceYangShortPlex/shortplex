@@ -62,7 +62,7 @@ class _FeaturedPageState extends State<FeaturedPage>
       var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i, releaseAt: '', landScapeImageUrl: '', rank: false);
       contentsData.isNew = false;
       contentsData.isWatching = true;
-      contentsData.watchingEpisode = '1/77화'; //SetTableStringArgument(100010, ['1', '72']);
+      contentsData.watchingEpisode = i; //SetTableStringArgument(100010, ['1', '72']);
     }
   }
 

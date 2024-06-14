@@ -4,14 +4,19 @@
 
 class CommentReq
 {
-  CommentReq({
-      required String? parentId,
+  CommentReq
+  (
+    {
+    required String? parentId,
     required String? typeCd,
-    required String? content,}){
+    required String? content,
+    }
+    )
+  {
     _parentId = parentId;
     _typeCd = typeCd;
     _content = content;
-}
+  }
 
   CommentReq.fromJson(dynamic json) {
     _parentId = json['parent_id'];

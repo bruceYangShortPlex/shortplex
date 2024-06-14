@@ -80,7 +80,7 @@ class ContentData
   String? imagePath;
   bool isNew = false;
   bool isWatching = false;
-  String? watchingEpisode;
+  int? watchingEpisode;
   bool rank = false;
   int cost = 0;
   String? contentUrl;

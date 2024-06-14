@@ -1000,7 +1000,7 @@ class UserInfoMainListView extends GetxController
             ),
             Visibility
               (
-              visible: _data.isWatching!,
+              visible: _data.isWatching,
               child:
               SizedBox
                 (
@@ -1012,11 +1012,11 @@ class UserInfoMainListView extends GetxController
                   children:
                   [
                     Padding
-                      (
+                    (
                       padding: const EdgeInsets.only(left: 6, bottom: 2.1),
                       child: Text
-                        (
-                        _data.watchingEpisode!,
+                      (
+                        '${_data.watchingEpisode}',
                         style:
                         const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),

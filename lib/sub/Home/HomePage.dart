@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -93,29 +95,30 @@ class _HomePageState extends State<HomePage>
         });
       });
 
-      // HttpProtocolManager.to.get_HomeContentData(HomeDataType.watch, 0, 20).then((value)
-      // {
-      //   watchingContentsDataList.clear();
-      //   for (var item in value!.data!.items!)
-      //   {
-      //     var data = ContentData
-      //     (
-      //       id: item.id,
-      //       title: value.data!.title,
-      //       imagePath: item.posterPortraitImgUrl,
-      //       cost: 0,
-      //       releaseAt: item.releaseAt ?? '',
-      //       landScapeImageUrl: item.posterLandscapeImgUrl,
-      //       rank: item.topten,
-      //     );
-      //     data.isWatching = true;
-      //     data.contentTitle = item.subtitle ?? '';
-      //     watchingContentsDataList.add(data);
-      //   }
-      //   setState(() {
-      //
-      //   });
-      // });
+      HttpProtocolManager.to.get_HomeContentData(HomeDataType.watch, 0, 20).then((value)
+      {
+        watchingContentsDataList.clear();
+        for (var item in value!.data!.items!)
+        {
+          var data = ContentData
+          (
+            id: item.content_id,
+            title: value.data!.title,
+            imagePath: item.posterPortraitImgUrl,
+            cost: 0,
+            releaseAt: item.releaseAt ?? '',
+            landScapeImageUrl: item.posterLandscapeImgUrl,
+            rank: item.topten,
+          );
+          data.isWatching = true;
+          data.watchingEpisode = item.no;
+          data.contentTitle = item.subtitle ?? '';
+          watchingContentsDataList.add(data);
+        }
+        setState(() {
+
+        });
+      });
 
       HttpProtocolManager.to.get_HomeContentData(HomeDataType.recent, 0, 20).then((value)
       {
@@ -192,10 +195,11 @@ class _HomePageState extends State<HomePage>
 
   Future<List<Episode>?> GetEpisodeData(String _contentID) async
   {
+    List<Episode> contentEpisodes = <Episode>[];
     try
     {
-      List<Episode> contentEpisodes = <Episode>[];
-      await HttpProtocolManager.to.get_ContentData(_contentID).then((value)
+
+      await HttpProtocolManager.to.get_ContentData(_contentID).then((value) async
       {
         var contentRes = value;
         contentEpisodes.addAll(contentRes!.data!.episode!);
@@ -203,13 +207,14 @@ class _HomePageState extends State<HomePage>
 
         for(int i = 1 ; i <= contentRes.data!.episode_maxpage; ++i)
         {
-          HttpProtocolManager.to.get_EpisodeGroup(_contentID, i).then((value)
+          await HttpProtocolManager.to.get_EpisodeGroup(_contentID, i).then((value)
           {
             contentEpisodes.addAll(value!.data!.episode!);
             if (contentEpisodes.length == totalEpisodeCount)
-              {
-                return contentEpisodes;
-              }
+            {
+              print('episode list add complete ${contentEpisodes.length}');
+              return contentEpisodes;
+            }
           });
         }
       });
@@ -219,7 +224,7 @@ class _HomePageState extends State<HomePage>
       print('GetEpisodeData Catch $e');
     }
 
-    return null;
+    return contentEpisodes;
   }
 
   @override
@@ -636,12 +641,20 @@ class _HomePageState extends State<HomePage>
               if (_data.isWatching)
               {
                 buttonEnable = false;
-                //TODO:몇화차 인지 받아서 넘겨줘야한다.
-                var episode = await GetEpisodeData(_data.id!).then((value) {
-                  //Get.to(() => ContentPlayer(), arguments: _data.id, episode);
-
-                  print('go to content player');
-                },);
+                try
+                {
+                  GetEpisodeData(_data.id!).then((value) {
+                    print('_data.watchingEpisode : ${_data
+                        .watchingEpisode} / episode length : ${value?.length}');
+                    Get.to(() => ContentPlayer(),
+                        arguments: [_data.watchingEpisode, value]);
+                  },);
+                }
+                catch(e)
+                {
+                  buttonEnable = true;
+                  print('Get.to(() => ContentPlayer() error $e');
+                }
               }
               else
               {
@@ -665,7 +678,7 @@ class _HomePageState extends State<HomePage>
                     color: Colors.black, // Color(0xFFC4C4C4),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
                   ),
-                  child: Image.network(_data.imagePath!, fit: BoxFit.fill,),
+                  child: _data.imagePath == null || _data.imagePath!.isEmpty ? SizedBox() : Image.network(_data.imagePath!, fit: BoxFit.fill,),
                 ),
                 Visibility
                 (
@@ -754,7 +767,7 @@ class _HomePageState extends State<HomePage>
                     child:
                     Text
                     (
-                      _data.watchingEpisode ?? '',
+                      _data.watchingEpisode != null ? _data.watchingEpisode.toString() : '',
                       style:
                       const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),

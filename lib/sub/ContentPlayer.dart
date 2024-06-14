@@ -1,5 +1,4 @@
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -318,7 +317,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       return;
     }
 
-    for(var item in _data.data!)
+    for(var item in _data.data!.items!)
     {
       if (episodeCommentList.any((element) => element.ID == item.id))
       {
@@ -339,6 +338,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         replyCount: '${item.replies}',
         isOwner: UserData.to.userId ==  item.userId,
         commentType: episodeCommentList.length < 3 ? CommentType.BEST : CommentType.NORMAL,
+        parentID: episodeData!.id!,
       );
       episodeCommentList.add(commentData);
     }

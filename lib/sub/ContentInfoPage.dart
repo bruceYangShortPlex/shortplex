@@ -39,7 +39,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   //comment 관련
   var scrollController = ScrollController();
-  var episodeCommentList = <EpisodeCommentData>[];
+  var commentList = <EpisodeCommentData>[];
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.LATEST;
 
@@ -59,10 +59,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         mapEpisodeData[0] = contentRes!.data!.episode!;
         contentEpisodes.addAll(contentRes!.data!.episode!);
         int totalEpisodeCount = contentRes!.data!.episode_total;
-        print('totalEpisodeCount : $totalEpisodeCount / total page : ${contentRes!.data!.episode_maxpage}');
+        //print('totalEpisodeCount : $totalEpisodeCount / total page : ${contentRes!.data!.episode_maxpage}');
         int dividingNumber = 20;
         int groupCount = contentRes!.data!.episode_maxpage;
-        print('groupCount = $groupCount');
+        //print('groupCount = $groupCount');
         for (int i = 0; i < groupCount; ++i)
         {
           var startString = i * dividingNumber + 1;
@@ -108,8 +108,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       await HttpProtocolManager.to.get_CommentData(contentData!.id!).then((value)
       {
         var commentRes = value;
-        totalCommentCount = commentRes!.data!.length;
-        for(var item in commentRes.data!)
+        totalCommentCount = commentRes!.data!.total;
+        int i = 0;
+        for(var item in commentRes.data!.items!)
         {
           var commentData = EpisodeCommentData
           (
@@ -120,13 +121,14 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             iconUrl: '',
             ID: item.id!,
             isLikeCheck: false,
-            likeCount: '0',
-            replyCount: '${item.replies}',
+            likeCount: item.likes ?? '0',
+            replyCount: item.replies ?? '0',
             isOwner: UserData.to.userId ==  item.userId,
-            commentType: CommentType.BEST,
+            commentType: i < 3 ? CommentType.BEST : CommentType.NORMAL,
+            parentID: contentData!.id!,
           );
-
-          episodeCommentList.add(commentData);
+          ++i;
+          commentList.add(commentData);
         }
 
         setState(() {
@@ -139,7 +141,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       print('GetCommentData Catch $e');
     }
   }
-
 
   @override
   void initState()
@@ -171,13 +172,18 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   void onEndOfPage() async
   {
-    if (!selections[1]) {
+    if (!selections[1])
+    {
       return;
     }
 
     try
     {
+      //TODO:Page로 불러오기 나오면 작업.
+      if (totalCommentCount > commentList.length)
+      {
 
+      }
     }
     catch (e)
     {
@@ -878,20 +884,20 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           ),
         ),
         SizedBox(height: 10,),
-        for(int i = 0; i < episodeCommentList.length; ++i)
+        for(int i = 0; i < commentList.length; ++i)
           CommentWidget
           (
-            episodeCommentList[i].ID,
-            episodeCommentList[i].iconUrl!,
-            episodeCommentList[i].episodeNumber!,
-            episodeCommentList[i].name!,
-            episodeCommentList[i].date!,
-            episodeCommentList[i].isLikeCheck!,
-            episodeCommentList[i].comment!,
-            episodeCommentList[i].likeCount!,
-            episodeCommentList[i].replyCount!,
-            episodeCommentList[i].isOwner!,
-            episodeCommentList[i].commentType!,
+            commentList[i].ID,
+            commentList[i].iconUrl!,
+            commentList[i].episodeNumber!,
+            commentList[i].name!,
+            commentList[i].date!,
+            commentList[i].isLikeCheck!,
+            commentList[i].comment!,
+            commentList[i].likeCount!,
+            commentList[i].replyCount!,
+            commentList[i].isOwner!,
+            commentList[i].commentType!,
             false,
             (id)
             {
@@ -901,7 +907,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (id)
             {
               //TODO : 댓글의 답글 열기 버튼 처리
-              Get.to(() => ReplyPage(), arguments: episodeCommentList[i]);
+              Get.to(() => ReplyPage(), arguments: commentList[i]);
             },
                 (id)
             {
@@ -1019,6 +1025,7 @@ class EpisodeCommentData
   String? likeCount;
   bool? isOwner;
   CommentType? commentType;
+  String? parentID;
 
   EpisodeCommentData
   (
@@ -1034,6 +1041,7 @@ class EpisodeCommentData
       required this.likeCount,
       required this.isOwner,
       required this.commentType,
+      required this.parentID,
     }
   );
 }

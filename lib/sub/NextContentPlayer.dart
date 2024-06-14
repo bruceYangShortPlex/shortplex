@@ -309,7 +309,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       return;
     }
 
-    for(var item in _data.data!)
+    for(var item in _data.data!.items!)
     {
       if (episodeCommentList.any((element) => element.ID == item.id))
       {
@@ -330,6 +330,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
         replyCount: '${item.replies}',
         isOwner: UserData.to.userId ==  item.userId,
         commentType: episodeCommentList.length < 3 ? CommentType.BEST : CommentType.NORMAL,
+        parentID: episodeData!.id!,
       );
       episodeCommentList.add(commentData);
     }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import '../Util/HttpProtocolManager.dart';
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import '../table/UserData.dart';
@@ -36,33 +37,59 @@ class _ReplyPageState extends State<ReplyPage>
     replyCount: '',
     isOwner: false,
     commentType: CommentType.NORMAL,
+    parentID: '',
   );
+
+  int totalCount = 0;
+  void GetRepliesData() async
+  {
+    try
+    {
+      await HttpProtocolManager.to.get_RepliesData(commentData.parentID!, commentData.ID).then((value)
+      {
+        var commentRes = value;
+        totalCount = commentRes!.data!.total;
+        int i = 0;
+        for(var item in commentRes.data!.items!)
+        {
+          var data = EpisodeCommentData
+          (
+            name: item.displayname ?? '',
+            comment: item.content,
+            date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
+            episodeNumber: '',
+            iconUrl: item.photourl ?? '',
+            ID: item.id!,
+            isLikeCheck: false,
+            likeCount: item.likes ?? '0',
+            replyCount: item.replies ?? '0',
+            isOwner: UserData.to.userId ==  item.userId,
+            commentType: CommentType.NORMAL,
+            parentID: commentData.ID,
+          );
+          ++i;
+          replyList.add(data);
+        }
+
+        setState(() {
+
+        });
+      });
+    }
+    catch(e)
+    {
+      print('GetCommentData Catch $e');
+    }
+  }
 
   @override
   void initState()
   {
     super.initState();
     commentData = Get.arguments;
-    print('data 1 : ${commentData}');
+    print('data 1 : $commentData');
 
-    // for(int i = 0; i < 10; ++i)
-    // {
-    //   var commentData = EpisodeCommentData
-    //   (
-    //     name: '황후마마가 돌아왔다.',
-    //     comment: '이건 재미있다. 무조건 된다고 생각한다.',
-    //     date: '24.09.06',
-    //     episodeNumber: '11',
-    //     iconUrl: '',
-    //     ID: i.toString(),
-    //     isLikeCheck: i % 2 == 0,
-    //     likeCount: '12',
-    //     replyCount: '3',
-    //     isOwner: i == 0,
-    //     commentType: CommentType.NORMAL,
-    //   );
-    //   replyList.add(commentData);
-    // }
+    GetRepliesData();
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -108,37 +135,11 @@ class _ReplyPageState extends State<ReplyPage>
   {
     try
     {
-      //여기서 리스트 요청하고 만들고 해야한다.
-      // // Replace with your method to fetch data from the server.
-      // final newItems = await Future.delayed(Duration(seconds: 1),
-      //         ()
-      //     {
-      //       for(int i = 0; i < 10; ++i)
-      //       {
-      //         var commentData = EpisodeCommentData
-      //         (
-      //           name: '황후마마가 돌아왔다.',
-      //           comment: '이건 재미있다. 무조건 된다고 생각한다.',
-      //           date: '24.09.06',
-      //           episodeNumber: '11',
-      //           iconUrl: '',
-      //           ID: i.toString(),
-      //           isLikeCheck: i % 2 == 0,
-      //           likeCount: i.toString(),
-      //           replyCount: '3',
-      //           isOwner: i == 0,
-      //           commentType: CommentType.NORMAL,
-      //         );
-      //         replyList.add(commentData);
-      //       }
-      //
-      //       setState(()
-      //       {
-      //
-      //       });
-      //
-      //     }
-      // );
+      //TODO:Page로 불러오기 나오면 작업.
+      if (totalCount > replyList.length)
+      {
+
+      }
     }
     catch (e)
     {

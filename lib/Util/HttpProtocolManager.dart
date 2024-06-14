@@ -246,9 +246,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID');
       var res = await http.get(url, headers: heads);
 
-      print('get_ContentData url = $url');
-      print('get_ContentData heads = $heads');
-      print('get_ContentData res.body = ${res.body}');
+      // print('get_ContentData url = $url');
+      // print('get_ContentData heads = $heads');
+      // print('get_ContentData res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -276,9 +276,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/episode?page=$_page');
       var res = await http.get(url, headers: heads);
 
-      print('get_EpisodeGroup url = $url');
-      print('get_EpisodeGroup heads = $heads');
-      print('get_EpisodeGroup res.body = ${res.body}');
+      // print('get_EpisodeGroup url = $url');
+      // print('get_EpisodeGroup heads = $heads');
+      // print('get_EpisodeGroup res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -303,11 +303,42 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     try
     {
       var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
-      var url = Uri.parse('https://www.quadra-system.com/api/v1/comment/$_contentID');
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/addition/comment/$_contentID');
+      var res = await http.get(url, headers: heads);
+
+       print('get_CommentData url = $url');
+      // print('get_CommentData heads = $heads');
+       print('get_CommentData res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_CommentData data = ${data}');
+        return data;
+      }
+      else
+      {
+        print('get_CommentData FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_CommentData error : ${e}');
+    }
+
+    return null;
+  }
+
+  Future<CommentRes?> get_RepliesData(String _contentID, String _commentID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/addition/comment/$_contentID/replies/$_commentID');
       var res = await http.get(url, headers: heads);
 
       print('get_CommentData url = $url');
-      print('get_CommentData heads = $heads');
+      // print('get_CommentData heads = $heads');
       print('get_CommentData res.body = ${res.body}');
 
       if (res.statusCode == 200)

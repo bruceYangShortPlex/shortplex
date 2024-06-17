@@ -301,7 +301,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     }
   }
 
-  String replyID = '';
   void SendReply() async
   {
     try
@@ -332,10 +331,32 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       else
       {
         await HttpProtocolManager.to.send_Reply(
-            episodeData!.id!, textEditingController.text, commentData!.ID, Comment_CD_Type.episode).then((value) {
+            episodeData!.id!, textEditingController.text, commentData!.ID, Comment_CD_Type.episode).then((value)
+        {
           CommentRefresh(value, true);
           print('send_Reply result $value');
           connecting = false;
+
+          //comment replise count update.
+          HttpProtocolManager.to.get_Comment(episodeData!.id!).then((value)
+          {
+            for(var item in value!.data!.items!)
+            {
+              if (commentData == null)
+              {
+                break;
+              }
+
+              if (item.id == commentData!.ID)
+              {
+                commentData!.replyCount = item.replies;
+                setState(() {
+
+                });
+                break;
+              }
+            }
+          });
         });
       }
     }
@@ -479,7 +500,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       print('send Comment error : $e');
     }
   }
-
 
   void GetRepliesData() async
   {

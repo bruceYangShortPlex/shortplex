@@ -20,7 +20,7 @@ class ReplyPage extends StatefulWidget
 
 class _ReplyPageState extends State<ReplyPage>
 {
-  String editID = '';
+  String replyID = '';
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
   TextEditingController textEditingController = TextEditingController();
@@ -143,7 +143,7 @@ class _ReplyPageState extends State<ReplyPage>
       else
       {
         // CupertinoTextField가 포커스를 잃었을 때 실행할 코드
-        editID = '';
+        replyID = '';
         textEditingController.text = '';
         print('lost focus');
       }
@@ -173,6 +173,106 @@ class _ReplyPageState extends State<ReplyPage>
     catch (e)
     {
       print(e);
+    }
+  }
+
+  bool connecting = false;
+
+  void SendReply() async
+  {
+    try
+    {
+      connecting = true;
+      if (replyID.isNotEmpty)
+      {
+        await HttpProtocolManager.to.send_edit_reply
+          (
+            commentData.parentID!, textEditingController.text, commentData.ID, replyID, Comment_CD_Type.episode).then((value) {
+          for(var item in value!.data!.items!)
+          {
+            for(int i = 0 ; i < replyList.length; ++i)
+            {
+              if (replyList[i].ID == item.id && replyList[i].comment != item.content)
+              {
+                replyList[i].comment = item.content;
+                break;
+              }
+            }
+          }
+          setState(() {
+
+          });
+          connecting = false;
+        });
+      }
+      else
+      {
+        await HttpProtocolManager.to.send_Reply(
+            commentData.parentID!, textEditingController.text, commentData.ID, Comment_CD_Type.episode).then((value)
+        {
+          CommentUpdate();
+          print('send_Reply result $value');
+          connecting = false;
+        });
+      }
+    }
+    catch(e)
+    {
+      connecting = false;
+      print('send send_Reply error : $e');
+    }
+  }
+
+  void CommentUpdate() async
+  {
+    try
+    {
+      await HttpProtocolManager.to.get_Comment(commentData.parentID!).then((value)
+      {
+        for(var item in value!.data!.items!)
+        {
+          if (item.id == commentData.ID)
+          {
+            commentData.replyCount = item.replies;
+            setState(() {
+
+            });
+            break;
+          }
+        }
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
+    }
+  }
+
+  void DeleteReply(String _replyID) async
+  {
+    try
+    {
+      await HttpProtocolManager.to.send_delete_reply(commentData.parentID!,commentData.ID, _replyID).then((value)
+      {
+        for(var item  in value!.data!.items!)
+        {
+          for(int i = 0; i < replyList.length; ++i)
+          {
+            if (replyList[i].ID == item.id)
+            {
+              replyList.removeAt(i);
+              setState(() {
+
+              });
+              break;
+            }
+          }
+        }
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
     }
   }
 
@@ -256,7 +356,7 @@ SafeArea
               ReplyPopup(scrollController, commentData, replyList,
               (id)
               {
-                editID = id;
+                replyID = id;
                 var item = replyList.firstWhere((element) => element.ID == id);
                 textEditingController.text = item.comment!;
                 FocusScope.of(context).requestFocus(textFocusNode);
@@ -267,7 +367,7 @@ SafeArea
               (id)
               {
                 //삭제
-
+                DeleteReply(id);
               }),
               Obx(()
               {
@@ -285,18 +385,12 @@ SafeArea
                                   return;
                                 }
 
-                                if (editID.isNotEmpty)
+                                var item = replyList.firstWhere((element) => element.ID == replyID);
+                                if (item.comment != null && item.comment == textEditingController.text)
                                 {
-                                  var item = replyList.firstWhere((element) => element.ID == editID);
-                                  if (item.comment! != textEditingController.text)
-                                  {
-                                    print('Send comment / reply edit');
-                                  }
+                                  return;
                                 }
-                                else
-                                {
-
-                                }
+                                SendReply();
                               });
               })
             ],
@@ -309,7 +403,7 @@ SafeArea
 }
 
 Widget ReplyPopup(ScrollController _scrollController,
-    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList, Function(String) _callback,  Function(String) _callbackDelete, [double _padding = 60])
+    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList, Function(String) _callbackEdit,  Function(String) _callbackDelete, [double _padding = 60])
 {
 
   return
@@ -370,11 +464,11 @@ Widget ReplyPopup(ScrollController _scrollController,
 
                             },
                             (id)
-                        {
-                          //TODO : 수정하기 버튼 처리
-                          print('click edit');
-                          _callback(id);
-                        },
+                            {
+                              //TODO : 수정하기 버튼 처리
+                              print('click edit');
+                              _callbackEdit(id);
+                            },
                             (id)
                             {
                               _callbackDelete(id);

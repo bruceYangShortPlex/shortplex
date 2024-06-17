@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shortplex/table/UserData.dart';
 
 import '../Util/ShortplexTools.dart';
 
@@ -50,7 +51,7 @@ class _KeyboardOverlayExampleState extends State<KeyboardOverlayExample> {
               child: Text('Tap the input field below'),
             ),
           ),
-          VirtualKeybord('테스트용',_controller,_focusNode,MediaQuery.of(context).viewInsets.bottom, () {
+          VirtualKeybord('테스트용',_controller,_focusNode, UserData.to.isLogin.value, MediaQuery.of(context).viewInsets.bottom, () {
 
           }),
           // Align(

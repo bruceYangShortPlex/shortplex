@@ -4,10 +4,8 @@ import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
-
-import '../Network/Content_Res.dart';
+import 'dart:io';
 import '../table/StringTable.dart';
-import '../table/UserData.dart';
 import 'ExpandableText.dart';
 
 void showDialogTwoButton(String _titie, String _content, VoidCallback _callback, [VoidCallback? _noCallBack = null])
@@ -150,7 +148,7 @@ Widget profileRect(double _size, String _imageUrl)
   );
 }
 
-Widget VirtualKeybord(String _defaultString, TextEditingController _controller, FocusNode _focusNode,  double _bottomHeight, VoidCallback _callback)
+Widget VirtualKeybord(String _defaultString, TextEditingController _controller, FocusNode _focusNode, bool _isReadOnly, double _bottomHeight, VoidCallback _callback)
 {
   //print(_bottomHeight);
   return
@@ -187,6 +185,7 @@ Widget VirtualKeybord(String _defaultString, TextEditingController _controller, 
                       controller: _controller,
                       focusNode: _focusNode,
                       placeholder: _defaultString,
+                      readOnly: _isReadOnly,
                       decoration: BoxDecoration(
                         color: Color(0xFF1E1E1E), // 배경색을 회색으로 설정
                         borderRadius: BorderRadius.circular(20),
@@ -238,24 +237,18 @@ Widget VirtualKeybord(String _defaultString, TextEditingController _controller, 
 }
 
 Widget CommentWidget
-      (
-        String _id,
-        String _iconUrl,
-        String _episodeNumber,
-        String _name,
-        String _date,
-        bool _likeCheck,
-        String _commant,
-        String _replyCount,
-        String _likeCount,
-        bool _isOwner,
-        CommentType _commentType,
-        bool _isReply,
-        Function(String) _callClickLike, Function(String) _callOpenComment,Function(String) _callDelete)
+    (
+      EpisodeCommentData _data,
+      bool _isReply,
+      Function(String) _callClickLike,
+      Function(String) _callOpenComment,
+      Function(String) _callEdit,
+      Function(String) _callDelete
+    )
 {
-  var id = _id;
-  var bannerStringID = _commentType == CommentType.TOP10 ? 500015 : 100037;
-  var likeCount = _commentType == CommentType.TOP10 ? '???' :_likeCount;
+  var id = _data.ID;
+  var bannerStringID = _data.commentType == CommentType.TOP10 ? 500015 : 100037;
+  var likeCount = _data.commentType == CommentType.TOP10 ? '???' : _data.likeCount!;
 
   return
   Container
@@ -302,13 +295,13 @@ Widget CommentWidget
                     ClipRRect
                     (
                       borderRadius: BorderRadius.circular(100),
-                      child: _iconUrl == '' ?
+                      child: _data.iconUrl == '' ?
                       Container
                       (
                         //color: Colors.black,
                         child: Image.asset('assets/images/User/my_picture.png', fit: BoxFit.cover,),
                       ) :
-                      Image.network(_iconUrl,
+                      Image.network(_data.iconUrl!,
                           fit: BoxFit.cover),
                       ),
                 ),
@@ -329,7 +322,7 @@ Widget CommentWidget
                       [
                         Visibility
                         (
-                          visible: _commentType != CommentType.NORMAL,
+                          visible: _data.commentType != CommentType.NORMAL,
                           child:
                           Padding
                           (
@@ -374,7 +367,7 @@ Widget CommentWidget
                             child:
                             Text
                             (
-                              _episodeNumber.isEmpty ? '' : SetTableStringArgument(100034, [_episodeNumber]),
+                              _data.episodeNumber!.isEmpty ? '' : SetTableStringArgument(100034, [_data.episodeNumber!]),
                               style: TextStyle(fontSize: 12, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),
@@ -393,7 +386,7 @@ Widget CommentWidget
                             child:
                             Text
                             (
-                              _name == '' ? '...' : _name = _name.length > 10 ? _name.substring(0, 10) : _name,
+                              _data.name == '' ? '...' : _data.name = _data.name!.length > 10 ? _data.name!.substring(0, 10) : _data.name!,
                               style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),
@@ -414,7 +407,7 @@ Widget CommentWidget
                               child:
                               Text
                               (
-                                _date,
+                                _data.date!.isEmpty ? '00.00.00' : _data.date!,
                                 style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                               ),
                           ),
@@ -429,7 +422,7 @@ Widget CommentWidget
                     width: 310 - 36,
                     //color: Colors.red,
                     child:
-                    ExpandableText(text: _commant, limitLine: 4,),
+                    ExpandableText(text: _data.comment!, limitLine: 4,),
                   ),
                 ],
               ),
@@ -471,7 +464,7 @@ Widget CommentWidget
                           {
                             _callClickLike(id);
                           },
-                          icon: Icon( _likeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
+                          icon: Icon( _data.isLikeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
                             color: Colors.white,size: 15,),
                         ),
                         Text
@@ -515,7 +508,7 @@ Widget CommentWidget
                           Text
                             (
                             textAlign: TextAlign.start,
-                            _replyCount,
+                            _data.replyCount!,
                             style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                         ],
@@ -533,14 +526,35 @@ Widget CommentWidget
                 child:
                 Visibility
                 (
-                  visible: _isOwner,
+                  visible: _data.isEdit!,
                   child:
                   IconButton
                   (
                     padding: EdgeInsets.zero,
                     onPressed: ()
                     {
-                      _callOpenComment(id);
+                      _callEdit(id);
+                    },
+                    icon: Icon( CupertinoIcons.pencil, color: Colors.white,size: 15,),
+                  ),
+                ),
+              ),
+              Container
+              (
+                //color: Colors.blue,
+                width: 50,
+                alignment: Alignment.centerRight,
+                child:
+                Visibility
+                (
+                  visible: _data.isDelete!,
+                  child:
+                  IconButton
+                  (
+                    padding: EdgeInsets.zero,
+                    onPressed: ()
+                    {
+                      _callDelete(id);
                     },
                     icon: Icon( CupertinoIcons.delete, color: Colors.white,size: 15,),
                   ),
@@ -610,4 +624,9 @@ String ConvertCommentDate(String _date)
   var day = result.day.toString().padLeft(2, '0');
 
   return '$year.$month.$day';
+}
+
+bool isEmulator() {
+  // Android 에뮬레이터 확인
+  return Platform.environment.containsKey('FLUTTER_TEST');
 }

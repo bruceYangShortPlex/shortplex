@@ -643,11 +643,13 @@ class _HomePageState extends State<HomePage>
                 buttonEnable = false;
                 try
                 {
-                  GetEpisodeData(_data.id!).then((value) {
+                  GetEpisodeData(_data.id!).then((value)
+                  {
                     print('_data.watchingEpisode : ${_data
                         .watchingEpisode} / episode length : ${value?.length}');
                     Get.to(() => ContentPlayer(),
                         arguments: [_data.watchingEpisode, value]);
+                    buttonEnable = true;
                   },);
                 }
                 catch(e)

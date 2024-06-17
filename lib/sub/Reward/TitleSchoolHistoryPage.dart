@@ -45,8 +45,10 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
         isLikeCheck: i % 2 == 0,
         likeCount: '12',
         replyCount: '3',
-        isOwner: false,
+        isDelete: false,
         commentType: CommentType.NORMAL,
+        parentID: '',
+        isEdit: false,
       );
       recordCommentList.add(commentData);
     }
@@ -313,17 +315,7 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
                   child:
                   CommentWidget
                   (
-                    _data.ID,
-                    _data.iconUrl!,
-                    _data.episodeNumber!,
-                    _data.name!,
-                    _data.date!,
-                    _data.isLikeCheck!,
-                    _data.comment!,
-                    _data.likeCount!,
-                    _data.replyCount!,
-                    _data.isOwner!,
-                    _data.commentType!,
+                    _data,
                     false,
                         (id)
                     {
@@ -333,6 +325,11 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
                         (id)
                     {
                       //TODO : 댓글의 답글 열기 버튼 처리
+
+                    },
+                        (id)
+                    {
+                      //TODO :수정하기.
 
                     },
                         (id)

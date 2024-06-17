@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolHistoryPage.dart';
+import 'package:shortplex/table/UserData.dart';
 
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
@@ -100,8 +101,9 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                 isLikeCheck: i % 2 == 0,
                 likeCount: '12',
                 replyCount: '3',
-                isOwner: i == 0,
-                commentType: CommentType.NORMAL,
+                isDelete: i == 0,
+                commentType: CommentType.NORMAL, parentID: '',
+                isEdit: false,
               );
               commentList.add(commentData);
             }
@@ -145,8 +147,10 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         isLikeCheck: i % 2 == 0,
         likeCount: '12',
         replyCount: '3',
-        isOwner: i == 0,
+        isDelete: i == 0,
         commentType: CommentType.TOP10,
+        parentID: '',
+        isEdit: false,
       );
       rankedCommentList.add(commentData);
     }
@@ -164,8 +168,10 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         isLikeCheck: i % 2 == 0,
         likeCount: '12',
         replyCount: '3',
-        isOwner: i == 0,
+        isDelete: i == 0,
         commentType: CommentType.NORMAL,
+        parentID: '',
+        isEdit: false,
       );
       commentList.add(commentData);
     }
@@ -706,10 +712,15 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   {
     return
     pageType == TitleSchoolPageType.COMMENT ?
-    VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, 0, ()
+    Obx(()
     {
+      return     VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
+        !UserData.to.isLogin.value,
+        0, ()
+        {
 
-    },)
+        },);
+    })
     :
     Align
     (
@@ -916,17 +927,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                 for(var data in rankedCommentList)
                   CommentWidget
                     (
-                    data.ID,
-                    data.iconUrl!,
-                    data.episodeNumber!,
-                    data.name!,
-                    data.date!,
-                    data.isLikeCheck!,
-                    data.comment!,
-                    data.likeCount!,
-                    data.replyCount!,
-                    data.isOwner!,
-                    data.commentType!,
+                    data,
                     false,
                         (id)
                     {
@@ -936,6 +937,11 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                         (id)
                     {
                       //TODO : 댓글의 답글 열기 버튼 처리
+
+                    },
+                        (id)
+                    {
+                      //TODO : 수정하기 버튼 처리
 
                     },
                         (id)
@@ -974,17 +980,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         for(int i = 0; i < commentList.length; ++i)
           CommentWidget
           (
-            commentList[i].ID,
-            commentList[i].iconUrl!,
-            commentList[i].episodeNumber!,
-            commentList[i].name!,
-            commentList[i].date!,
-            commentList[i].isLikeCheck!,
-            commentList[i].comment!,
-            commentList[i].likeCount!,
-            commentList[i].replyCount!,
-            commentList[i].isOwner!,
-            commentList[i].commentType!,
+            commentList[i],
             false,
                 (id)
             {
@@ -994,6 +990,11 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                 (id)
             {
               //TODO : 댓글의 답글 열기 버튼 처리
+
+            },
+                (id)
+            {
+              //TODO : 수정하기 버튼 처리
 
             },
                 (id)

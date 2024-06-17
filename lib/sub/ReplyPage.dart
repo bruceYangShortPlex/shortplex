@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ class ReplyPage extends StatefulWidget
 
 class _ReplyPageState extends State<ReplyPage>
 {
+  String editID = '';
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
   TextEditingController textEditingController = TextEditingController();
@@ -35,9 +37,10 @@ class _ReplyPageState extends State<ReplyPage>
     isLikeCheck: false,
     likeCount: '',
     replyCount: '',
-    isOwner: false,
+    isDelete: false,
     commentType: CommentType.NORMAL,
     parentID: '',
+    isEdit: false,
   );
 
   int totalCount = 0;
@@ -49,7 +52,6 @@ class _ReplyPageState extends State<ReplyPage>
       {
         var commentRes = value;
         totalCount = commentRes!.data!.total;
-        int i = 0;
         for(var item in commentRes.data!.items!)
         {
           var data = EpisodeCommentData
@@ -63,11 +65,11 @@ class _ReplyPageState extends State<ReplyPage>
             isLikeCheck: false,
             likeCount: item.likes ?? '0',
             replyCount: item.replies ?? '0',
-            isOwner: UserData.to.userId ==  item.userId,
+            isDelete: UserData.to.userId ==  item.userId,
             commentType: CommentType.NORMAL,
             parentID: commentData.ID,
+            isEdit: false,
           );
-          ++i;
           replyList.add(data);
         }
 
@@ -79,6 +81,30 @@ class _ReplyPageState extends State<ReplyPage>
     catch(e)
     {
       print('GetCommentData Catch $e');
+    }
+  }
+
+  void TestReplies()
+  {
+    for(int i = 0 ; i < 10; ++i)
+    {
+      var data = EpisodeCommentData
+      (
+        name: '홍길동 $i',
+        comment: '이렇쿵 저렇쿵 알아서 잘해보자쿵.',
+        date: DateTime.now().toString(),
+        episodeNumber: '',
+        iconUrl: '',
+        ID: i.toString(),
+        isLikeCheck: false,
+        likeCount: '0',
+        replyCount: '0',
+        isDelete: true,
+        commentType: CommentType.NORMAL,
+        parentID: commentData.ID,
+        isEdit: true,
+      );
+      replyList.add(data);
     }
   }
 
@@ -117,6 +143,9 @@ class _ReplyPageState extends State<ReplyPage>
       else
       {
         // CupertinoTextField가 포커스를 잃었을 때 실행할 코드
+        editID = '';
+        textEditingController.text = '';
+        print('lost focus');
       }
     });
   }
@@ -224,15 +253,51 @@ SafeArea
           (
             children:
             [
-              ReplyPopup(scrollController, commentData, replyList),
-              VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom,  ()
+              ReplyPopup(scrollController, commentData, replyList,
+              (id)
               {
-                print('reply send ${textEditingController.text}');
+                editID = id;
+                var item = replyList.firstWhere((element) => element.ID == id);
+                textEditingController.text = item.comment!;
+                FocusScope.of(context).requestFocus(textFocusNode);
+                setState(() {
 
-                if (textEditingController.text.isEmpty)
-                {
-                  return;
-                }
+                });
+              },
+              (id)
+              {
+                //삭제
+
+              }),
+              Obx(()
+              {
+                return
+                VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
+                              !UserData.to.isLogin.value,
+                              MediaQuery.of(context).viewInsets.bottom,  ()
+                              {
+                                if (kDebugMode) {
+                                  print('reply ${textEditingController.text}');
+                                }
+
+                                if (textEditingController.text.isEmpty)
+                                {
+                                  return;
+                                }
+
+                                if (editID.isNotEmpty)
+                                {
+                                  var item = replyList.firstWhere((element) => element.ID == editID);
+                                  if (item.comment! != textEditingController.text)
+                                  {
+                                    print('Send comment / reply edit');
+                                  }
+                                }
+                                else
+                                {
+
+                                }
+                              });
               })
             ],
           ),
@@ -244,7 +309,7 @@ SafeArea
 }
 
 Widget ReplyPopup(ScrollController _scrollController,
-    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList, [double _padding = 60])
+    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList, Function(String) _callback,  Function(String) _callbackDelete, [double _padding = 60])
 {
 
   return
@@ -266,20 +331,14 @@ Widget ReplyPopup(ScrollController _scrollController,
             child:
             CommentWidget
             (
-              _commentData.ID,
-              _commentData.iconUrl!,
-              _commentData.episodeNumber!,
-              _commentData.name!,
-              _commentData.date!,
-              _commentData.isLikeCheck!,
-              _commentData.comment!,
-              _commentData.likeCount!,
-              _commentData.replyCount!,
-              _commentData.isOwner!,
-              _commentData.commentType!,
+              _commentData,
               false,
               (p0) {},
               (p0) {},
+                  (id)
+              {
+
+              },
               (p0) {},
             ),
           ),
@@ -298,22 +357,28 @@ Widget ReplyPopup(ScrollController _scrollController,
                   Padding(
                     padding: const EdgeInsets.only(left: 80),
                     child: Container(
-                      child: CommentWidget(
-                        _replyList[i].ID,
-                        _replyList[i].iconUrl!,
-                        _replyList[i].episodeNumber!,
-                        _replyList[i].name!,
-                        _replyList[i].date!,
-                        _replyList[i].isLikeCheck!,
-                        _replyList[i].comment!,
-                        _replyList[i].likeCount!,
-                        _replyList[i].replyCount!,
-                        _replyList[i].isOwner!,
-                        _replyList[i].commentType!,
+                      child: CommentWidget
+                        (
+                        _replyList[i],
                             true,
-                            (p0) {},
-                            (p0) {},
-                            (p0) {},
+                            (p0)
+                            {
+
+                            },
+                            (p0)
+                            {
+
+                            },
+                            (id)
+                        {
+                          //TODO : 수정하기 버튼 처리
+                          print('click edit');
+                          _callback(id);
+                        },
+                            (id)
+                            {
+                              _callbackDelete(id);
+                            },
                       ),
                     ),
                   ),

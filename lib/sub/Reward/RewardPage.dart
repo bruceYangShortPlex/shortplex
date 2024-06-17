@@ -41,6 +41,8 @@ class _RewardPageState extends State<RewardPage> {
   var eventTimerList = <ShortPlexEventData>[];
   var dailyMissionList = <DailyMissionData>[];
 
+  bool isInteractionDisabled = false;
+
   String featureCode = '숏플렉스대박!';
 
   void startTimer()
@@ -130,8 +132,14 @@ class _RewardPageState extends State<RewardPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return mainWidget(context);
+  Widget build(BuildContext context)
+  {
+    return
+    AbsorbPointer
+    (
+      absorbing: isInteractionDisabled,
+      child: mainWidget(context),
+    );
   }
 
 Widget mainWidget(BuildContext context)=>
@@ -1193,11 +1201,16 @@ Widget mainWidget(BuildContext context)=>
                   pressedOpacity: 0.5,
                   padding: EdgeInsets.only(bottom: 2),
                   color: Color(0xFF00FFBF),
-                  onPressed: () async
+                  onPressed: ()
                   {
-                    AdManager.loadRewardedAd(() =>
+                    setState(() {
+                      isInteractionDisabled = true;
+                    });
+
+                    AdManager.loadRewardedAd((reward) =>
                     {
-                      print('print reward'),
+                      print('print reward $reward'),
+                      isInteractionDisabled = false,
                     });
 
                     print('print ads');

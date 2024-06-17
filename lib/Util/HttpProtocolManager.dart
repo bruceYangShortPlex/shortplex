@@ -365,7 +365,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/comment/$_episodeID';
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID';
       var type_cd = _type.toString().replaceAll('Comment_CD_Type.', '');
       var comment =  CommentReq(content: _comment, parentId: _replyParentID, typeCd: type_cd);
       var bodys = jsonEncode(comment.toJson());
@@ -398,7 +398,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/comment/$_episodeID';
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID';
       var res = await http.get(Uri.parse(url), headers: heads);
       print('get_Comment res.body ${res.body}');
 
@@ -419,6 +419,171 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       print('get_Comment error : $e');
     }
 
+    return null;
+  }
+
+  Future<CommentRes?> send_Reply(String _episodeID, String _comment, String _replyParentID, Comment_CD_Type _type) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/replies/$_replyParentID';
+      var type_cd = _type.toString().replaceAll('Comment_CD_Type.', '');
+      var comment =  CommentReq(content: _comment, parentId: _replyParentID, typeCd: type_cd);
+      var bodys = jsonEncode(comment.toJson());
+      print('send_Reply url : ${url} / heads : ${heads} / bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('send_Reply res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('send_Reply data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('send_Reply FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send_Reply error : $e');
+    }
+
+    return null;
+  }
+
+  Future<CommentRes?> send_edit_comment(String _episodeID, String _comment, String _comment_id, Comment_CD_Type _type) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/$_comment_id';
+      var type_cd = _type.toString().replaceAll('Comment_CD_Type.', '');
+      var comment =  CommentReq(content: _comment, parentId: null, typeCd: type_cd);
+      var bodys = jsonEncode(comment.toJson());
+      print('send_edit_comment url : ${url} / heads : ${heads} / bodys : ${bodys}');
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
+      print('send_edit_comment res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('send_edit_comment data = ${data}');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('send_edit_comment FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send_edit_comment error : $e');
+    }
+
+    print('send_edit_comment return null!!!');
+    return null;
+  }
+
+  Future<CommentRes?> send_edit_reply(String _episodeID, String _comment, String _commentID, String _replyID, Comment_CD_Type _type) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/replies/$_commentID/$_replyID';
+      var type_cd = _type.toString().replaceAll('Comment_CD_Type.', '');
+      var comment =  CommentReq(content: _comment, parentId: _commentID, typeCd: type_cd);
+      var bodys = jsonEncode(comment.toJson());
+      print('send_edit_reply url : ${url} / heads : ${heads} / bodys : ${bodys}');
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
+      print('send_edit_reply res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('send_edit_reply data = ${data}');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('send_edit_reply FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send_edit_reply error : $e');
+    }
+
+    print('send_edit_reply return null!!!!');
+    return null;
+  }
+
+  Future<CommentRes?> send_delete_comment(String _episodeID, String _comment_id) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/$_comment_id';
+
+      print('send_delete_comment url : ${url} / heads : ${heads}');
+      var res = await http.delete(Uri.parse(url), headers: heads);
+      print('send_delete_comment res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('send_edit_comment data = ${data}');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('send_delete_comment FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send_delete_comment error : $e');
+    }
+
+    print('send_delete_comment return null!!!');
+    return null;
+  }
+
+  Future<CommentRes?> send_delete_reply(String _episodeID, String _comment_id, String _replyID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID//replies/$_comment_id/$_replyID';
+
+      print('send_delete_comment url : ${url} / heads : ${heads}');
+      var res = await http.delete(Uri.parse(url), headers: heads);
+      print('send_delete_comment res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('send_edit_comment data = ${data}');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('send_delete_comment FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send_delete_comment error : $e');
+    }
+
+    print('send_delete_comment return null!!!');
     return null;
   }
 }

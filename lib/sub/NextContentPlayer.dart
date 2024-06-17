@@ -16,6 +16,7 @@ import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
 import 'ContentPlayer.dart';
 import 'CupertinoMain.dart';
+import 'NextContentPlayer.dart';
 import 'ReplyPage.dart';
 
 class NextContentPlayer extends StatefulWidget
@@ -150,8 +151,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       isShowContent = true;
     }
 
-    print('check cost isShowContent : $isShowContent');
-
+    //print('check cost isShowContent : $isShowContent');
 
     if (isShowContent == true)
     {
@@ -180,25 +180,6 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
         onEndOfPage();
       }
     });
-
-    // for(int i = 0; i < 10; ++i)
-    // {
-    //   var commentData = EpisodeCommentData
-    //   (
-    //     name: '황후마마가 돌아왔다.',
-    //     comment: '이건 재미있다. 무조건 된다고 생각한다.',
-    //     date: '24.09.06',
-    //     episodeNumber: '11',
-    //     iconUrl: '',
-    //     ID: '$i',
-    //     isLikeCheck: i % 2 == 0,
-    //     likeCount: '12',
-    //     replyCount: '3',
-    //     isOwner: i == 0,
-    //     commentType: CommentType.NORMAL,
-    //   );
-    //   replyList.add(commentData);
-    // }
 
     ticker = createTicker((elapsed)
     {
@@ -235,6 +216,9 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       else
       {
         // CupertinoTextField가 포커스를 잃었을 때 실행할 코드
+        textEditingController.text = '';
+        isEdit = false;
+        editReplyID = '';
       }
     });
 
@@ -269,17 +253,76 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     try
     {
       connecting = true;
-      await HttpProtocolManager.to.send_Comment(episodeData!.id!, textEditingController.text, '', Comment_CD_Type.episode).then((value)
+      if (isEdit)
       {
-        CommentRefresh(value);
-        print('send_Comment result $value');
-        connecting = false;
-        textEditingController.text = '';
-      });
+        await HttpProtocolManager.to.send_edit_comment
+          (
+            episodeData!.id!, textEditingController.text, commentData!.ID,
+            Comment_CD_Type.episode).then((value)
+        {
+          for(var item in value!.data!.items!)
+          {
+            for(int i = 0 ; i < episodeCommentList.length; ++i)
+            {
+              if (episodeCommentList[i].ID == item.id && episodeCommentList[i].comment != item.content)
+              {
+                episodeCommentList[i].comment = item.content;
+                break;
+              }
+            }
+          }
+          setState(() {
+
+          });
+          connecting = false;
+        });
+      }
+      else
+      {
+        await HttpProtocolManager.to.send_Comment(
+            episodeData!.id!, textEditingController.text, '', Comment_CD_Type.episode).then((value)
+        {
+          CommentRefresh(value, false);
+          connecting = false;
+        });
+      }
     }
     catch(e)
     {
+      connecting = false;
       print('send Comment error : $e');
+    }
+  }
+
+  String replyID = '';
+  void SendReply() async
+  {
+    try
+    {
+      connecting = true;
+      if (isEdit)
+      {
+        await HttpProtocolManager.to.send_edit_reply(
+            episodeData!.id!, textEditingController.text, commentData!.ID, editReplyID, Comment_CD_Type.episode).then((value) {
+          CommentRefresh(value, true);
+          print('send_Reply result $value');
+          connecting = false;
+        });
+      }
+      else
+      {
+        await HttpProtocolManager.to.send_Reply(
+            episodeData!.id!, textEditingController.text, commentData!.ID, Comment_CD_Type.episode).then((value) {
+          CommentRefresh(value, true);
+          print('send_Reply result $value');
+          connecting = false;
+        });
+      }
+    }
+    catch(e)
+    {
+      connecting = false;
+      print('send send_Reply error : $e');
     }
   }
 
@@ -290,9 +333,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       print('Get Comment');
       await HttpProtocolManager.to.get_Comment(episodeData!.id!).then((value)
       {
-        print('send_Comment result $value');
-
-        CommentRefresh(value);
+        CommentRefresh(value, false);
       });
     }
     catch(e)
@@ -301,47 +342,147 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     }
   }
 
-  void CommentRefresh(CommentRes? _data)
+  void CommentRefresh(CommentRes? _data, bool _isReply)
   {
+    print('Receive Comment');
+
     if (_data == null)
     {
       print("CommentRefresh data null return");
       return;
     }
 
-    for(var item in _data.data!.items!)
+    for (var item in _data.data!.items!)
     {
-      if (episodeCommentList.any((element) => element.ID == item.id))
+      //print('item.id : ${item.id}');
+
+      var selectList = _isReply ? replyList : episodeCommentList;
+      if (selectList.any((element) => element.ID == item.id))
       {
-        print('already data id cotinue');
+        print('already data continue');
         continue;
+      }
+
+      String? displayname = item.displayname;
+      if(displayname == null)
+      {
+        if ( item.userId == UserData.to.userId)
+        {
+          displayname = UserData.to.name.value;
+        }
+        else
+        {
+          print('Not Found displayname !!!');
+        }
       }
 
       var commentData = EpisodeCommentData
         (
-        name: 'GUEST ${item.id}',
-        comment: item.content,
-        date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
-        episodeNumber: '11',
+        name: displayname,
+        comment: item.content ?? '',
+        date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '00.00.00',
+        episodeNumber: '',
         iconUrl: '',
         ID: item.id!,
         isLikeCheck: false,
         likeCount: '0',
         replyCount: '${item.replies}',
-        isOwner: UserData.to.userId ==  item.userId,
-        commentType: episodeCommentList.length < 3 ? CommentType.BEST : CommentType.NORMAL,
+        isDelete: UserData.to.userId == item.userId,
+        commentType: CommentType.NORMAL,
         parentID: episodeData!.id!,
+        isEdit: UserData.to.userId == item.userId,
       );
-      episodeCommentList.add(commentData);
-    }
-    commentCount = episodeCommentList.length;
-    print('commentCount : $commentCount');
-
-    if (controlUIVisible) {
+      selectList.add(commentData);
       setState(() {
 
       });
     }
+    commentCount = episodeCommentList.length;
+    setState(() {
+
+    });
+  }
+
+  void DeleteComment(String _id) async
+  {
+    try
+    {
+      await HttpProtocolManager.to.send_delete_comment(episodeData!.id!, _id).then((value)
+      {
+        for(var item  in value!.data!.items!)
+        {
+          print('receive delete id : ${item.id}');
+          for(int i = 0; i < episodeCommentList.length; ++i)
+          {
+            if (episodeCommentList[i].ID == item.id)
+            {
+              episodeCommentList.removeAt(i);
+              commentCount = episodeCommentList.length;
+              print('delete complete id : ${item.id}');
+              setState(() {
+
+              });
+              break;
+            }
+          }
+        }
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
+    }
+  }
+
+  void DeleteReply(String _replyID) async
+  {
+    try
+    {
+      await HttpProtocolManager.to.send_delete_reply(episodeData!.id!,commentData!.ID, _replyID).then((value)
+      {
+        for(var item  in value!.data!.items!)
+        {
+          for(int i = 0; i < replyList.length; ++i)
+          {
+            if (replyList[i].ID == item.id)
+            {
+              replyList.removeAt(i);
+              setState(() {
+
+              });
+              break;
+            }
+          }
+        }
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
+    }
+  }
+
+
+  void GetRepliesData() async
+  {
+    replyList.clear();
+    setState(() {
+
+    });
+    try
+    {
+      await HttpProtocolManager.to.get_RepliesData(episodeData!.id!, commentData!.ID).then((value)
+      {
+        CommentRefresh(value, true);
+        print('Get Replies Complete');
+      });
+    }
+    catch(e)
+    {
+      print('GetCommentData Catch $e');
+    }
+
+    print('Get Replies');
   }
 
   void setScrollPosition(double _offset) {
@@ -384,6 +525,9 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                     tweenTime = 300;
                     bottomOffset = 0;
                     tweenController.reverse();
+                    setState(() {
+
+                    });
                     GetComment();
                   }
                   break;
@@ -807,16 +951,35 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                               (
                               ignoring: connecting,
                               child:
-                              VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode, MediaQuery.of(context).viewInsets.bottom, ()
+                              Obx(()
                               {
-                                print('comment complete ${textEditingController.text}');
+                                return
+                                  VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
+                                    !UserData.to.isLogin.value, MediaQuery.of(context).viewInsets.bottom,
+                                        ()
+                                    {
+                                      print('comment complete ${textEditingController.text}');
 
-                                if (textEditingController.text.isEmpty) {
-                                  return;
-                                }
+                                      if (textEditingController.text.isEmpty)
+                                      {
+                                        return;
+                                      }
 
-                                SendComment();
-                              },),
+                                      if (commentData != null && textEditingController.text == commentData!.comment)
+                                      {
+                                        return;
+                                      }
+
+                                      if (isShowReply)
+                                      {
+                                        SendReply();
+                                      }
+                                      else
+                                      {
+                                        SendComment();
+                                      }
+                                    },);
+                              }),
                             )
                           ],
                         )
@@ -984,17 +1147,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                         for(int i = 0; i < episodeCommentList.length; ++i)
                           CommentWidget
                             (
-                            episodeCommentList[i].ID,
-                            episodeCommentList[i].iconUrl!,
-                            episodeCommentList[i].episodeNumber!,
-                            episodeCommentList[i].name!,
-                            episodeCommentList[i].date!,
-                            episodeCommentList[i].isLikeCheck!,
-                            episodeCommentList[i].comment!,
-                            episodeCommentList[i].likeCount!,
-                            episodeCommentList[i].replyCount!,
-                            episodeCommentList[i].isOwner!,
-                            episodeCommentList[i].commentType!,
+                            episodeCommentList[i],
                             false,
                                 (id)
                             {
@@ -1003,18 +1156,25 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                             },
                                 (id)
                             {
+                              //답글 보기.
                               commentData = episodeCommentList[i];
                               isShowReply = true;
-                              commentScrollOffset = scrollController.offset;
-                              setState(()
-                              {
-
-                              });
-                              //Get.to(() => ReplyPage(), arguments: episodeCommentList[i]);
+                              //commentScrollOffset = scrollController.offset;
+                              GetRepliesData();
+                            },
+                                (id)
+                            {
+                              //TODO : 수정하기 버튼 처리
+                              print('edit start');
+                              commentData = episodeCommentList[i];
+                              textEditingController.text = commentData!.comment!;
+                              FocusScope.of(context).requestFocus(textFocusNode);
+                              isEdit = true;
                             },
                                 (id)
                             {
                               //TODO : 삭제 버튼 처리
+                              DeleteComment(id);
                             },
                           ),
                       ]
@@ -1027,8 +1187,10 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
   }
 
   bool isShowReply = false;
+  bool isEdit = false;
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   EpisodeCommentData? commentData;
+  String editReplyID = '';
 
   Widget commentReply()
   {
@@ -1057,7 +1219,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                   print('on tap reply off');
                   setState(()
                   {
-                    setScrollPosition(commentScrollOffset);
+                    //setScrollPosition(commentScrollOffset);
                   });
                 },
               ),
@@ -1065,7 +1227,21 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
             Expanded
               (
               child:
-              ReplyPopup(scrollController, commentData!, replyList, 20),
+              ReplyPopup(scrollController, commentData!, replyList,
+                      (id)
+                  {
+                    //수정하기,
+                    editReplyID = id;
+                    isEdit = true;
+                    var item = replyList.firstWhere((element) => element.ID == id);
+                    textEditingController.text = item.comment!;
+                    FocusScope.of(context).requestFocus(textFocusNode);
+                  },
+                      (id)
+                  {
+                    DeleteReply(id);
+                  },
+                  20),
             )
           ],
         ),

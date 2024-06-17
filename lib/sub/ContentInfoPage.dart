@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -114,7 +115,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         {
           var commentData = EpisodeCommentData
           (
-            name: 'GUEST ${item.id}',
+            name: item.displayname ?? '',
             comment: item.content,
             date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
             episodeNumber: '11',
@@ -123,9 +124,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             isLikeCheck: false,
             likeCount: item.likes ?? '0',
             replyCount: item.replies ?? '0',
-            isOwner: UserData.to.userId ==  item.userId,
+            isDelete: UserData.to.userId ==  item.userId,
             commentType: i < 3 ? CommentType.BEST : CommentType.NORMAL,
             parentID: contentData!.id!,
+            isEdit: false,
           );
           ++i;
           commentList.add(commentData);
@@ -887,17 +889,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         for(int i = 0; i < commentList.length; ++i)
           CommentWidget
           (
-            commentList[i].ID,
-            commentList[i].iconUrl!,
-            commentList[i].episodeNumber!,
-            commentList[i].name!,
-            commentList[i].date!,
-            commentList[i].isLikeCheck!,
-            commentList[i].comment!,
-            commentList[i].likeCount!,
-            commentList[i].replyCount!,
-            commentList[i].isOwner!,
-            commentList[i].commentType!,
+            commentList[i],
             false,
             (id)
             {
@@ -911,7 +903,15 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             },
                 (id)
             {
+              //TODO : 수정하기 버튼 처리
+
+            },
+                (id)
+            {
               //TODO : 삭제 버튼 처리
+              setState(() {
+                commentList.remove(commentList[i]);
+              });
             },
           ),
       ],
@@ -1023,7 +1023,8 @@ class EpisodeCommentData
   String? comment;
   String? replyCount;
   String? likeCount;
-  bool? isOwner;
+  bool? isDelete;
+  bool? isEdit;
   CommentType? commentType;
   String? parentID;
 
@@ -1039,7 +1040,8 @@ class EpisodeCommentData
       required this.comment,
       required this.replyCount,
       required this.likeCount,
-      required this.isOwner,
+      required this.isDelete,
+      required this.isEdit,
       required this.commentType,
       required this.parentID,
     }

@@ -47,11 +47,11 @@ class CommentResData {
   }
 
   CommentResData.fromJson(dynamic json) {
-    _count = json['count'];
-    _total = json['total'];
-    _itemsPerPage = json['itemsPerPage'];
-    _page = json['page'];
-    _maxPage = json['max_page'];
+    _count = json['count'] ?? 0;
+    _total = json['total'] ?? 0;
+    _itemsPerPage = json['itemsPerPage'] ?? 0;
+    _page = json['page'] ?? 0;
+    _maxPage = json['max_page'] ?? 0;
     if (json['items'] != null) {
       _items = [];
       json['items'].forEach((v) {
@@ -151,7 +151,8 @@ class CommentItems {
     _replies = replies;
   }
 
-  CommentItems.fromJson(dynamic json) {
+  CommentItems.fromJson(dynamic json)
+  {
     _id = json['id'];
     _parentId = json['parent_id'];
     _platform = json['platform'];
@@ -170,7 +171,7 @@ class CommentItems {
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
     _likes = json['likes'];
-    _replies = json['replies'];
+    _replies = json['replies'] ?? '0';
   }
   String? _id;
   String? _parentId;

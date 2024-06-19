@@ -21,14 +21,14 @@ enum PopcornAnimationState
   END,
 }
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  Get.lazyPut(() => UserData());
-  await Event2table().InitTable();
-  await StringTable().InitTable();
-  runApp(const BonusPage());
-}
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   Get.lazyPut(() => UserData());
+//   await Event2table().InitTable();
+//   await StringTable().InitTable();
+//   runApp(const BonusPage());
+// }
 
 class BonusPage extends StatefulWidget
 {

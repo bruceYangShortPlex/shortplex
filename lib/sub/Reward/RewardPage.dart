@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/AdsManager.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
+import 'package:shortplex/sub/Reward/BonusPage.dart';
 import 'package:shortplex/sub/Reward/RewardHistoryPage.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolPage.dart';
 
@@ -95,13 +96,18 @@ class _RewardPageState extends State<RewardPage> {
     textFieldFocusNode = FocusNode();
     textFieldFocusNode.addListener(onFocusChange);
 
-    for (int i = 0 ; i < 3; ++i)
+    for (int i = 0 ; i < 2; ++i)
     {
       var testData = ShortPlexEventData();
       if (i % 2 == 0)
       {
-        testData.eventPage = EventPageType.SEARCH;
+        testData.Title = '팝콘 거시기 해보즈아';
+        testData.eventPage = EventPageType.BONUS;
         testData.SetTestTime();
+      }
+      else
+      {
+        testData.eventPage = EventPageType.SEARCH;
       }
       testData.Title = '왭하드 테이블에서 받든지 서버에서 받든지';
       eventList.add(testData);
@@ -259,9 +265,13 @@ Widget mainWidget(BuildContext context)=>
       onTap: ()
       {
         if (_data.eventPage == EventPageType.SEARCH)
-          {
-            Get.to(() => SearchPage(), arguments: SearchGroupType.EVENT);
-          }
+        {
+          Get.to(() => SearchPage(), arguments: SearchGroupType.EVENT);
+        }
+        else if (_data.eventPage == EventPageType.BONUS)
+        {
+          Get.to(() => BonusPage());
+        }
       },
       child:
       Container
@@ -1234,6 +1244,7 @@ enum EventPageType
 {
   NONE,
   SEARCH,
+  BONUS,
 }
 
 class ShortPlexEventData

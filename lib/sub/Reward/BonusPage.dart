@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gif/gif.dart';
+import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 
 import '../../Util/ShortplexTools.dart';
 import '../../table/Event2Table.dart';
@@ -46,7 +47,9 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   DateTime? endTime;
   Duration? difference;
   bool isOpenInfo = false;
+  bool isOpenResult = false;
   int stackCount = 0;
+  int bonusResult = 4;
 
   var pageList = <Widget>[];
 
@@ -95,6 +98,10 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       if (controller1.status == AnimationStatus.completed )
       {
           print(' gif play complete');
+          isOpenResult = true;
+          setState(() {
+
+          });
       }
     },);
   }
@@ -148,7 +155,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       ],
     )));
     pageList.add(SizedBox(width: 50, height: 50, child: Stack
-      (
+    (
       children:
       [
         SvgPicture.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_icon_frame.svg',width: 50,height: 50,),
@@ -289,7 +296,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   Widget mainWidget(BuildContext context)=>
     SafeArea
-      (
+    (
       child:
       CupertinoApp
       (
@@ -355,6 +362,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
               [
                 popcornAnimation(),
                 bounusInfoPageView(),
+                bonusResultPopup(),
                 infoPopup(),
               ],
             ),
@@ -402,19 +410,16 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Padding
           (
-            padding: EdgeInsets.only(top: 6, left: 8, right: 8),
+            padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 32),
             child:
-            SizedBox
+            Text
             (
-              child:
-              Text
-              (
-                endTime != null ? SetTableStringArgument(800007, [formatDuration(difference!).$1,formatDuration(difference!).$2]) : '',
-                style:
-                TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-              ),
+              textAlign: TextAlign.center,
+              endTime != null ? SetTableStringArgument(800007, [formatDuration(difference!).$1,formatDuration(difference!).$2]) : '',
+              style:
+              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
-          ),
+            ),
         ),
       ),
     );
@@ -484,7 +489,11 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         [
           remainTimer(),
           Image.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_bg.png', width: 350, height: 622,),
-          Image.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_bt.png', width: 350, height: 622,),
+          Visibility
+          (
+            visible: playCount > 0,
+            child: Image.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_bt.png', width: 350, height: 622,)
+          ),
           Padding
           (
             padding: const EdgeInsets.only(bottom: 106, left: 2),
@@ -547,7 +556,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                 [
                   Container
                   (
-                    padding: const EdgeInsets.only(left: 5),
+                    padding: const EdgeInsets.only(left: 8),
                     alignment: Alignment.center,
                     width: 248,
                     height: 60,
@@ -631,7 +640,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                     ),
                   ),
                   GestureDetector
-                    (
+                  (
                     onTap: ()
                     {
                       if (animationState == PopcornAnimationState.START)
@@ -639,17 +648,9 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                         print('on tap start button');
                         animationState = PopcornAnimationState.END;
                         setState(() {
-                          controller1.forward();
+                          controller1.forward(from: 0);
                         });
                       }
-                      else
-                        {
-                          animationState = PopcornAnimationState.START;
-                          controller1.stop();
-                          setState(() {
-
-                          });
-                        }
                     },
                     child:
                     Container
@@ -684,7 +685,8 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   (
                     onTap: ()
                     {
-                      print('on tap start button 2');
+                      //('on tap start button 2');
+                      Get.to(() => ShopPage());
                     },
                     child:
                     Container
@@ -954,5 +956,162 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   {
     var result = _count * _rate - _count;
     return result  as int;
+  }
+
+  Widget bonusResultPopup()
+  {
+    var resultBonus = getResultPoint(bonusResult);
+    return
+    Visibility
+    (
+      visible: isOpenResult,
+      child:
+      Container
+      (
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Colors.black45,
+        alignment: Alignment.center,
+        child:
+        Container
+        (
+          width: 220,
+          height: 315,
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(
+            gradient: LinearGradient(
+              begin: Alignment(0.00, -1.00),
+              end: Alignment(0, 1),
+              colors: [Color(0xFF043B33), Color(0xFF092C3D)],
+            ),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 3, color: Color(0xFF00FFBF)),
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+          child:
+          Stack
+          (
+            children:
+            [
+              SvgPicture.asset('assets/images/Reward/reward_event_popcorn/reward_popcorn_light.svg'),
+              Container
+              (
+                padding: EdgeInsets.only(left: 2, bottom: 110),
+                alignment: Alignment.center,
+                child:
+                Image.asset('assets/images/Reward/reward_event_popcorn/reward_bonus$bonusResult.png'),
+              ),
+
+              Container
+              (
+                padding: EdgeInsets.only(top: 40),
+                alignment: Alignment.center,
+                child:
+                Text
+                (
+                  SetTableStringArgument(400061, ['${resultBonus.$1}']),
+                  style:
+                  TextStyle(fontSize: 24, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                ),
+              ),
+
+              Container
+              (
+                padding: EdgeInsets.only(top: 110),
+                alignment: Alignment.center,
+                child:
+                Text
+                (
+                  SetTableStringArgument(800008, ['${resultBonus.$2}']),
+                  style:
+                  TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                ),
+              ),
+
+              Container
+              (
+                padding: EdgeInsets.only(bottom: 20),
+                alignment: Alignment.bottomCenter,
+                child:
+                GestureDetector
+                (
+                  onTap: ()
+                  {
+                    isOpenResult = false;
+                    animationState = PopcornAnimationState.START;
+                    controller1.stop();
+                    setState(() {
+
+                    });
+                  },
+                  child:
+                  Container
+                  (
+                    padding: EdgeInsets.only(bottom: 2),
+                    alignment: Alignment.center,
+                    width: 164,
+                    height: 40,
+                    decoration: ShapeDecoration(
+                      color: Color(0xFF00FFBF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child:
+                    Text
+                    (
+                      StringTable().Table![800016]!,
+                      style:
+                      TextStyle(fontSize: 16, color:Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                ),
+              ),
+            ]
+          ),
+        )
+      )
+    );
+  }
+
+  (int, int) getResultPoint(int _result)
+  {
+    var tableData = Event2table.to.tableData[stackCount];
+
+    if (_result == 0)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate1), tableData.chance1);
+    }
+    if (_result == 1)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate2), tableData.chance2);
+    }
+    if (_result == 2)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate3), tableData.chance3);
+    }
+    if (_result == 3)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate4), tableData.chance4);
+    }
+    if (_result == 4)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate5), tableData.chance5);
+    }
+    if (_result == 5)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate6), tableData.chance6);
+    }
+    if (_result == 6)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate7), tableData.chance7);
+    }
+    if (_result == 7)
+    {
+      return (BonusCalculator(tableData.condition, tableData.rate8), tableData.chance8);
+    }
+
+    return (0,0);
   }
 }

@@ -384,7 +384,8 @@ class _HomePageState extends State<HomePage>
     Padding
     (
       padding: const EdgeInsets.only(top: 10),
-      child: Container
+      child:
+      Container
       (
         width: 390,
         height: 410,
@@ -449,7 +450,7 @@ class _HomePageState extends State<HomePage>
 
   Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
   {
-    if (_list == null || _list.isEmpty) {
+    if (_list.isEmpty) {
       return SizedBox();
     }
 

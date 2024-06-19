@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:shortplex/Util/AdsManager.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 import 'package:shortplex/sub/Reward/RewardHistoryPage.dart';
@@ -15,13 +13,13 @@ import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  Get.lazyPut(() => UserData());
-  await StringTable().InitTable();
-  runApp(const RewardPage());
-}
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   Get.lazyPut(() => UserData());
+//   await StringTable().InitTable();
+//   runApp(const RewardPage());
+// }
 
 class RewardPage extends StatefulWidget
 {

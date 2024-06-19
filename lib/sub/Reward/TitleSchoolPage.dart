@@ -409,6 +409,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
             onTap: ()
             {
               pageType = TitleSchoolPageType.COMMENT;
+              scrollController.jumpTo(0);
               setState(() {
 
               });
@@ -731,6 +732,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         onTap: ()
         {
           pageType = TitleSchoolPageType.COMMENT;
+          scrollController.jumpTo(0);
           setState(() {
 
           });

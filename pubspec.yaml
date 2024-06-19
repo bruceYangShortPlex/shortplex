@@ -53,6 +53,7 @@ dependencies:
   carousel_slider: ^4.2.1
   infinite_scroll_pagination: ^4.0.0
   google_mobile_ads: ^5.1.0
+  gif: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -86,7 +87,7 @@ flutter:
     - assets/images/User/
     - assets/images/pick/
     - assets/images/Reward/
-    - assets/images/Reward/event_popcorn/
+    - assets/images/Reward/reward_event_popcorn/
     - assets/json/
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -9,7 +9,7 @@ class StringTableData
   });
 
   factory StringTableData.fromJson(Map<String, dynamic> json) => StringTableData
-    (
+  (
     id: int.parse(json["id"]),
     kor: json["kor"],
   );

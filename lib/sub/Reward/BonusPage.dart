@@ -410,7 +410,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Padding
           (
-            padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 32),
+            padding: EdgeInsets.only(top: 2, left: 8, right: 8, bottom: 32),
             child:
             Text
             (
@@ -419,7 +419,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
               style:
               TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
-            ),
+          ),
         ),
       ),
     );

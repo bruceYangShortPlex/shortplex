@@ -17,6 +17,7 @@ void main() async
 {
   WidgetsFlutterBinding.ensureInitialized();
   await StringTable().InitTable();
+  Get.lazyPut(() => UserData());
   runApp(const TitleSchoolPage());
 }
 
@@ -62,9 +63,15 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
     {
         if (mounted)
         {
+          endTimeDifference = endTimeDifference! - const Duration(minutes: 1);
+          if (endTimeDifference! < Duration.zero)
+          {
+            timer.cancel();
+            endTimeDifference = Duration.zero;
+          }
           setState(()
           {
-            endTimeDifference = endTimeDifference! - const Duration(minutes: 1);
+
           });
         }
         else
@@ -260,7 +267,8 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
               children:
               [
                 SingleChildScrollView
-                  (
+                (
+                  physics: pageType == TitleSchoolPageType.INFO ? BouncingScrollPhysics() : NeverScrollableScrollPhysics(),
                   controller: scrollController,
                   child:
                   Container
@@ -316,7 +324,8 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     padding: const EdgeInsets.only(right: 30),
                                     child:
                                     Container
-                                      (
+                                    (
+                                      alignment: Alignment.topCenter,
                                       width: 130,
                                       height: 55,
                                       decoration: ShapeDecoration(
@@ -341,16 +350,15 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                       ),
                                       child:
                                       Padding
-                                        (
-                                        padding: EdgeInsets.only(
-                                            top: 4, left: 8, right: 8),
+                                      (
+                                        padding: EdgeInsets.only(top: 2, left: 8, right: 8, bottom: 32),
                                         child:
                                         FittedBox
-                                          (
+                                        (
                                           alignment: Alignment.topCenter,
                                           child:
                                           Text
-                                            (
+                                          (
                                             endTime != null
                                                 ? SetTableStringArgument(800007,
                                                 [
@@ -715,12 +723,13 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
     pageType == TitleSchoolPageType.COMMENT ?
     Obx(()
     {
-      return     VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
-        !UserData.to.isLogin.value,
-        0, ()
-        {
+      return
+      VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
+      !UserData.to.isLogin.value,
+      0, ()
+      {
 
-        },);
+      },);
     })
     :
     Align
@@ -787,225 +796,246 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   Widget titleSchoolCommnet()
   {
     return
-    Column
+    Container
     (
-      children:
-      [
-        SizedBox
+      height: 400,
+      child:
+        Column
         (
-          width: 390,
-          child:
-          Row
-          (
-            children:
-            [
-              Expanded
-              (
-                child:
-                Container
-                (
-                  padding: EdgeInsets.only(left: 30, bottom: 1),
-                  child: Text
-                    (
-                    '${StringTable().Table![100026]!} (${totalCommentCount})',
-                    style:
-                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ),
-              GestureDetector
-              (
-                onTap: ()
-                {
-                  setState(()
-                  {
-                    commentSortType = CommentSortType.LIKE;
-                  });
-                },
-                child: Container
-                (
-                  width: 73,
-                  height: 26,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFF1E1E1E),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LIKE ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.only(bottom: 1),
-                  child:
-                  Text
-                    (
-                    StringTable().Table![100035]!,
-                    style:
-                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10,),
-              GestureDetector
-              (
-                onTap: ()
-                {
-                  setState(()
-                  {
-                    commentSortType = CommentSortType.LATEST;
-                  });
-                },
-                child: Container
-                  (
-                  width: 73,
-                  height: 26,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFF1E1E1E),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LATEST ? Color(0xFF00FFBF) : Color(0xFF878787)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.only(bottom: 1),
-                  child:
-                  Text
-                  (
-                    StringTable().Table![100036]!,
-                    style:
-                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10,),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10,),
-        Stack
-        (
-          alignment: Alignment.topCenter,
           children:
           [
-            Container
-            (
-              alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 20),
-                child:
-                Image.asset('assets/images/Reward/reward_Top10_BG.png',width: 390, height: 1024,)
-            ),
-            Container
-            (
-              height: 300,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black, Colors.transparent],
-                ),
-              ),
-            ),
-            Padding
-            (
-              padding: EdgeInsets.only(top: 744),
-              child:
-              Container
+            SizedBox
               (
-                height: 300,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [Colors.black, Colors.transparent],
-                  ),
-                ),
-              ),
-            ),
-            Column
-            (
-              children:
-              [
-                Image.asset('assets/images/Reward/reward_Top10_text.png'),
-                const SizedBox(height: 20,),
-                for(var data in rankedCommentList)
-                  CommentWidget
+              width: 390,
+              child:
+              Row
+                (
+                children:
+                [
+                  Expanded
                     (
-                    data,
-                    false,
-                        (id)
-                    {
-                      //TODO : 좋아요 버튼 처리
-                      print(id);
-                    },
-                        (id)
-                    {
-                      //TODO : 댓글의 답글 열기 버튼 처리
-
-                    },
-                        (id)
-                    {
-                      //TODO : 수정하기 버튼 처리
-
-                    },
-                        (id)
-                    {
-                      //TODO : 삭제 버튼 처리
-                    },
+                    child:
+                    Container
+                      (
+                      padding: EdgeInsets.only(left: 30, bottom: 1),
+                      child:
+                      Text
+                        (
+                        '${StringTable().Table![100026]!} (${totalCommentCount})',
+                        style:
+                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      ),
+                    ),
                   ),
-              ],
-            )
-
-          ],
-        ),
-        const SizedBox(height: 40,),
-        Stack
-        (
-          alignment: Alignment.center,
-          children:
-          [
-            Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
-            Container
-              (
-              color: Colors.black,
-              padding: EdgeInsets.only(bottom: 3, left: 10, right: 10),
+                  GestureDetector
+                    (
+                    onTap: ()
+                    {
+                      setState(()
+                      {
+                        commentSortType = CommentSortType.LIKE;
+                      });
+                    },
+                    child: Container
+                      (
+                      width: 73,
+                      height: 26,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LIKE ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.only(bottom: 1),
+                      child:
+                      Text
+                        (
+                        StringTable().Table![100035]!,
+                        style:
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  GestureDetector
+                    (
+                    onTap: ()
+                    {
+                      setState(()
+                      {
+                        commentSortType = CommentSortType.LATEST;
+                      });
+                    },
+                    child: Container
+                      (
+                      width: 73,
+                      height: 26,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LATEST ? Color(0xFF00FFBF) : Color(0xFF878787)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.only(bottom: 1),
+                      child:
+                      Text
+                        (
+                        StringTable().Table![100036]!,
+                        style:
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Expanded
+            (
               child:
-              Text
+              SingleChildScrollView
               (
-                textAlign: TextAlign.center,
-                StringTable().Table![300038]!,
-                style:
-                TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                child:
+                Column
+                  (
+                  children:
+                  [
+                    const SizedBox(height: 10,),
+                    Stack
+                      (
+                      alignment: Alignment.topCenter,
+                      children:
+                      [
+                        Container
+                          (
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.only(top: 20),
+                            child:
+                            Image.asset('assets/images/Reward/reward_Top10_BG.png',width: 390, height: 1024,)
+                        ),
+                        Container
+                          (
+                          height: 300,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black, Colors.transparent],
+                            ),
+                          ),
+                        ),
+                        Padding
+                          (
+                          padding: EdgeInsets.only(top: 744),
+                          child:
+                          Container
+                            (
+                            height: 300,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [Colors.black, Colors.transparent],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Column
+                          (
+                          children:
+                          [
+                            Image.asset('assets/images/Reward/reward_Top10_text.png'),
+                            const SizedBox(height: 20,),
+                            for(var data in rankedCommentList)
+                              CommentWidget
+                                (
+                                data,
+                                false,
+                                    (id)
+                                {
+                                  //TODO : 좋아요 버튼 처리
+                                  print(id);
+                                },
+                                    (id)
+                                {
+                                  //TODO : 댓글의 답글 열기 버튼 처리
+              
+                                },
+                                    (id)
+                                {
+                                  //TODO : 수정하기 버튼 처리
+              
+                                },
+                                    (id)
+                                {
+                                  //TODO : 삭제 버튼 처리
+                                },
+                              ),
+                          ],
+                        )
+              
+                      ],
+                    ),
+                    const SizedBox(height: 40,),
+                    Stack
+                      (
+                      alignment: Alignment.center,
+                      children:
+                      [
+                        Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
+                        Container
+                          (
+                          color: Colors.black,
+                          padding: EdgeInsets.only(bottom: 3, left: 10, right: 10),
+                          child:
+                          Text
+                            (
+                            textAlign: TextAlign.center,
+                            StringTable().Table![300038]!,
+                            style:
+                            TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30,),
+                    for(int i = 0; i < commentList.length; ++i)
+                      CommentWidget
+                        (
+                        commentList[i],
+                        false,
+                            (id)
+                        {
+                          //TODO : 좋아요 버튼 처리
+                          print(id);
+                        },
+                            (id)
+                        {
+                          //TODO : 댓글의 답글 열기 버튼 처리
+              
+                        },
+                            (id)
+                        {
+                          //TODO : 수정하기 버튼 처리
+              
+                        },
+                            (id)
+                        {
+                          //TODO : 삭제 버튼 처리
+                        },
+                      ),
+                    const SizedBox(height: 40,),
+                  ],
+                ),
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 30,),
-        for(int i = 0; i < commentList.length; ++i)
-          CommentWidget
-          (
-            commentList[i],
-            false,
-                (id)
-            {
-              //TODO : 좋아요 버튼 처리
-              print(id);
-            },
-                (id)
-            {
-              //TODO : 댓글의 답글 열기 버튼 처리
-
-            },
-                (id)
-            {
-              //TODO : 수정하기 버튼 처리
-
-            },
-                (id)
-            {
-              //TODO : 삭제 버튼 처리
-            },
-          ),
-        const SizedBox(height: 40,),
-      ],
+        )
     );
   }
 

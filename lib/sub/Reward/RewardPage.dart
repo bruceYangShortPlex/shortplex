@@ -317,7 +317,7 @@ Widget mainWidget(BuildContext context)=>
                     child:
                     Padding
                     (
-                      padding: EdgeInsets.only(top: 4, left: 8, right: 8),
+                      padding: EdgeInsets.only(top: 2, left: 8, right: 8, bottom: 32),
                       child:
                       FittedBox
                       (

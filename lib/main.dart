@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
 import 'package:shortplex/sub/LogoPage.dart';
+import 'package:shortplex/table/Event2Table.dart';
 import 'package:shortplex/table/UserData.dart';
 import 'Util/AdsManager.dart';
 import 'table/StringTable.dart';
@@ -16,9 +17,10 @@ void main() async
     DeviceOrientation.portraitDown,
   ]);
   AdManager.initGoogleMobileAds();
+  Event2table().InitTable();
   StringTable().InitTable();
   Get.lazyPut(() => LoginMananger());
-  Get.lazyPut(()=> UserData());
+  Get.lazyPut(() => UserData());
   Get.find<LoginMananger>().Check();
   runApp(const MyApp());
 }

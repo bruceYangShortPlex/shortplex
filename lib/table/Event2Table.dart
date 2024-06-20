@@ -5,7 +5,17 @@ import 'JsonTypeReader.dart';
 
 class Event2table
 {
-  static Event2table get to => Get.find();
+  Event2table._privateConstructor();
+
+
+  // 생성자를 호출하고 반환된 Singleton 인스턴스를 _instance 변수에 할당
+  static final Event2table _instance = Event2table._privateConstructor();
+
+  // Singleton() 호출시에 _instance 변수를 반환
+  factory Event2table()
+  {
+    return _instance;
+  }
 
   //Map<int?, String>? Table = null;
   static List<Event2TableData> tableDataList = <Event2TableData>[];

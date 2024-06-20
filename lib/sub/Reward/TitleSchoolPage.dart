@@ -11,6 +11,7 @@ import 'package:shortplex/table/UserData.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../ContentInfoPage.dart';
+import '../UserInfo/LoginPage.dart';
 
 
 void main() async
@@ -129,10 +130,34 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   }
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     endTime = DateTime.now().add(Duration(minutes: 3));
     endTimeDifference = endTime!.difference(DateTime.now());
+
+    // FocusNode에 리스너 추가
+    textFocusNode.addListener(()
+    {
+      if (textFocusNode.hasFocus)
+      {
+        if (UserData.to.isLogin.value == false)
+        {
+          textFocusNode.unfocus();
+
+          showDialogTwoButton(StringTable().Table![600018]!, '',
+                  ()
+              {
+                Get.to(() => LoginPage());
+              });
+        }
+      }
+      else
+      {
+        // CupertinoTextField가 포커스를 잃었을 때 실행할 코드
+        textEditingController.text = '';
+      }
+    });
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==

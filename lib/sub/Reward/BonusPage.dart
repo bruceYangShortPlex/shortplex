@@ -108,7 +108,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   void createBonusInfoScroll()
   {
-    var tableData = Event2table.to.tableData[stackCount];
+    var tableData = Event2table().tableData[stackCount];
 
     pageList.add(SizedBox(width: 50, height: 50, child: Stack
     (
@@ -475,7 +475,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   Widget popcornAnimation()
   {
-    var tableData = Event2table.to.tableData[stackCount];
+    var tableData = Event2table().tableData[stackCount];
 
     return
     Container
@@ -715,7 +715,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   
   Widget infoPopup()
   {
-    var tableData = Event2table.to.tableData[stackCount];
+    var tableData = Event2table().tableData[stackCount];
 
     return
     Visibility
@@ -955,7 +955,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   int BonusCalculator(num _count, num _rate)
   {
     var result = _count * _rate - _count;
-    return result  as int;
+    return result.toInt();
   }
 
   Widget bonusResultPopup()
@@ -1077,7 +1077,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   (int, int) getResultPoint(int _result)
   {
-    var tableData = Event2table.to.tableData[stackCount];
+    var tableData = Event2table().tableData[stackCount];
 
     if (_result == 0)
     {

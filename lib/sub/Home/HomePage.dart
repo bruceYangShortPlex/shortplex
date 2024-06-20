@@ -603,7 +603,8 @@ class _HomePageState extends State<HomePage>
                                   color: Colors.black, // Color(0xFFC4C4C4),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
                                 ),
-                                child: Image.network(_list[i].imagePath!, fit: BoxFit.fill,),
+                                child: _list[i].imagePath != null ?
+                                Image.network(_list[i].imagePath!, fit: BoxFit.fill,) : Container(),
                               ),
                             ),
                           ],

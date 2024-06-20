@@ -1,5 +1,6 @@
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +19,20 @@ import 'CupertinoMain.dart';
 import 'NextContentPlayer.dart';
 import 'ReplyPage.dart';
 
-enum ContentPlayButtonType
+enum ContentUI_ButtonType
 {
   COMMENT,
   CHECK,
   SHARE,
   CONTENT_INFO,
+}
+
+enum Bottom_UI_Type
+{
+  NONE,
+  COMMENT,
+  REPLY,
+  EPISODE,
 }
 
 class ContentPlayer extends StatefulWidget
@@ -41,17 +50,23 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   double tweenDelay = 3;
   double commentScrollOffset = 0;
   late Ticker ticker;
-
   late AnimationController tweenController;
   bool controlUIVisible = false;
-  late List<Episode> episodeList;
   int selectedEpisodeNo = 0;
   bool isShowContent = false;
+  bool isEdit = false;
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
-
   late String playUrl;
+
+  Bottom_UI_Type bottomUItype = Bottom_UI_Type.NONE;
+
   Episode? episodeData;
+  late List<Episode> episodeList;
+  var episodeGroupList = <String>[];
+  var episodeGroupSelections = <bool>[];
+  late Map<int, List<Episode>> mapEpisodeData = {};
+  var episodeGroupScrollController = ScrollController();
 
   void VideoControllerInit()
   {
@@ -83,6 +98,50 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     });
   }
 
+  void initEpisodeGroup()
+  {
+    int totalEpisodeCount = episodeList.length;
+    //print('totalEpisodeCount : $totalEpisodeCount / total page : ${contentRes!.data!.episode_maxpage}');
+    int dividingNumber = 20;
+    int groupCount = episodeList.length ~/ dividingNumber;
+    //print('groupCount = $groupCount');
+    for (int i = 0; i < groupCount; ++i)
+    {
+      var startString = i * dividingNumber + 1;
+      var endString = i * dividingNumber + dividingNumber;
+      episodeGroupList.add('${startString}~${SetTableStringArgument(100033, ['$endString'],)}');
+
+      var list = <Episode>[];
+      for(int j = startString - 1; j < endString; ++j)
+      {
+        list.add(episodeList[j]);
+      }
+      mapEpisodeData[i] = list;
+    }
+
+    var remain = totalEpisodeCount % 20;
+    if (remain != 0)
+    {
+      var startIndex = groupCount * dividingNumber + 1;
+      var endIndex = groupCount * dividingNumber + remain;
+      episodeGroupList.add('${startIndex}~${SetTableStringArgument(100033, ['$endIndex'],)}');
+
+      var list = <Episode>[];
+      for(int j = startIndex - 1; j < endIndex; ++j)
+      {
+        list.add(episodeList[j]);
+      }
+      mapEpisodeData[mapEpisodeData.length] = list;
+    }
+
+    episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
+    episodeGroupSelections[0] = true;
+
+    setState(() {
+
+    });
+  }
+
   @override
   void initState()
   {
@@ -110,7 +169,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData!.cost)
         {
           isShowContent = false;
-          isShowShop =  true;
           bottomOffset = 0;
           tweenTime = 300;
           setState(()
@@ -230,6 +288,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     });
 
     GetComment();
+    initEpisodeGroup();
 
     super.initState();
   }
@@ -237,6 +296,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   @override
   void dispose()
   {
+    episodeGroupScrollController.dispose();
     textFocusNode.dispose();
     textEditingController.dispose();
     ticker.dispose();
@@ -531,7 +591,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     );
   }
 
-  Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon, ContentPlayButtonType _type)
+  Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon, ContentUI_ButtonType _type)
   {
     return
     Container
@@ -554,27 +614,34 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
             switch(_type)
             {
-              case ContentPlayButtonType.COMMENT:
+              case ContentUI_ButtonType.COMMENT:
               {
-                  isShowShop = false;
+                bottomUItype = Bottom_UI_Type.COMMENT;
+                ticker.stop();
+                controlUIVisible = false;
+                tweenTime = 300;
+                bottomOffset = 0;
+                tweenController.reverse();
+                setState(() {
+
+                });
+                GetComment();
+              }
+              break;
+              case ContentUI_ButtonType.CONTENT_INFO:
+                {
+                  bottomUItype = Bottom_UI_Type.EPISODE;
                   ticker.stop();
                   controlUIVisible = false;
-                  isShowReply = false;
                   tweenTime = 300;
                   bottomOffset = 0;
                   tweenController.reverse();
                   setState(() {
 
                   });
-                  GetComment();
                 }
                 break;
-              case ContentPlayButtonType.CONTENT_INFO:
-                {
-                  Get.to(() => ContentInfoPage());
-                }
-                break;
-              case ContentPlayButtonType.CHECK:
+              case ContentUI_ButtonType.CHECK:
                 {
                   episodeData!.isCheck = !episodeData!.isCheck;
                   setState(() {
@@ -626,7 +693,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     (
                       _buttonLabel,
                       style:
-                      TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      const TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                 ],
@@ -768,10 +835,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               ),
             ),
           ),
-          contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
-          contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
-          contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
-          contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
+          contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
+          contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
+          contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentUI_ButtonType.SHARE),
+          contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentUI_ButtonType.CONTENT_INFO),
           Container
           (
             color: Colors.black.withOpacity(0.9),
@@ -977,47 +1044,55 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     height: 500.h,
                     color: Colors.black,
                     child:
-                    isShowShop ?
+                    isShowContent == false ?
                     showShop() :
                     Stack
                     (
                       children:
                       [
-                        isShowReply == false ?
-                        contentComment() : commentReply(),
-                        IgnorePointer
+                        if (bottomUItype == Bottom_UI_Type.COMMENT)
+                          contentComment(),
+                        if (bottomUItype == Bottom_UI_Type.REPLY)
+                          commentReply(),
+                        if (bottomUItype == Bottom_UI_Type.EPISODE)
+                          episodeInfo(),
+                        Visibility
                         (
-                          ignoring: connecting,
-                          child:
-                          Obx(()
-                          {
-                            return
-                            VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
-                              !UserData.to.isLogin.value, MediaQuery.of(context).viewInsets.bottom,
-                            ()
+                          visible: bottomUItype == Bottom_UI_Type.COMMENT || bottomUItype == Bottom_UI_Type.REPLY,
+                          child: IgnorePointer
+                          (
+                            ignoring: connecting,
+                            child:
+                            Obx(()
                             {
-                              print('comment complete ${textEditingController.text}');
+                              return
+                              VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
+                                !UserData.to.isLogin.value, MediaQuery.of(context).viewInsets.bottom,
+                              ()
+                              {
+                                print('comment complete ${textEditingController.text}');
 
-                              if (textEditingController.text.isEmpty)
-                              {
-                                return;
-                              }
+                                if (textEditingController.text.isEmpty)
+                                {
+                                  return;
+                                }
 
-                              if (commentData != null && textEditingController.text == commentData!.comment)
-                              {
-                                return;
-                              }
+                                if (commentData != null && textEditingController.text == commentData!.comment)
+                                {
+                                  return;
+                                }
 
-                              if (isShowReply)
-                              {
-                                SendReply();
-                              }
-                              else
-                              {
-                                SendComment();
-                              }
-                            },);
-                          }),
+                                if (bottomUItype == Bottom_UI_Type.REPLY)
+                                {
+                                  SendReply();
+                                }
+                                else
+                                {
+                                  SendComment();
+                                }
+                              },);
+                            }),
+                          ),
                         )
                       ],
                     )
@@ -1196,7 +1271,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         {
                           //답글 보기.
                           commentData = episodeCommentList[i];
-                          isShowReply = true;
+                          bottomUItype = Bottom_UI_Type.REPLY;
                           //commentScrollOffset = scrollController.offset;
                           GetRepliesData();
                         },
@@ -1225,8 +1300,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     );
   }
 
-  bool isShowReply = false;
-  bool isEdit = false;
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   EpisodeCommentData? commentData;
   String editReplyID = '';
@@ -1254,7 +1327,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               color: Colors.white,
               onPressed: ()
               {
-                isShowReply = false;
+                bottomUItype = Bottom_UI_Type.COMMENT;
                 print('on tap reply off');
                 setState(()
                 {
@@ -1291,11 +1364,11 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      if (isShowReply)
+      if (bottomUItype == Bottom_UI_Type.REPLY)
       {
 
       }
-      else
+      else if (bottomUItype == Bottom_UI_Type.COMMENT)
       {
         GetComment();
       }
@@ -1306,7 +1379,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     }
   }
 
-  bool isShowShop = false;
   Widget showShop()
   {
     return
@@ -1475,23 +1547,295 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     );
   }
 
-  Widget toggleButton() =>
-      Transform.scale
-        (
-        scale: 0.7,
+  Widget toggleButton()
+  {
+    return
+    Transform.scale
+    (
+      scale: 0.7,
+      child:
+      CupertinoSwitch
+      (
+        value: UserData.to.autoPlay,
+        activeColor: Color(0xFF00FFBF),
+        onChanged: (bool? value) {
+          //TODO : 서버에 알리기
+          setState(() {
+            UserData.to.autoPlay = value ?? false;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget episodeInfo()
+  {
+    return
+    Visibility
+    (
+      visible: bottomUItype == Bottom_UI_Type.EPISODE,
+      child:
+      Container
+      (
+        //color: Colors.white,
+        width: 390,
+        padding: EdgeInsets.only(top: 40),
         child:
-        CupertinoSwitch
+        Column
+        (
+          mainAxisAlignment: MainAxisAlignment.start,
+          children:
+          [
+            episodeContentInfo(),
+            Container
+            (
+              width: 390,
+              height: 26,
+              //color: Colors.green,
+              child:
+              SingleChildScrollView
+              (
+                scrollDirection: Axis.horizontal,
+                child:
+                ToggleButtons
+                (
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  fillColor: Colors.transparent,
+                  renderBorder: false,
+                  selectedBorderColor: Colors.transparent,
+                  color: Colors.white.withOpacity(0.6),
+                  selectedColor: Colors.white,
+                  children: <Widget>
+                  [
+                    for(int i = 0; i < episodeGroupList.length; ++i)
+                      episodeGroup(episodeGroupList[i], episodeGroupSelections[i]),
+                  ],
+                  isSelected: episodeGroupSelections,
+                  onPressed: (int index)
+                  {
+                    setState(()
+                    {
+                      episodeGroupScrollController.jumpTo(0);
+                      for (int i = 0; i < episodeGroupSelections.length; ++i)
+                      {
+                        episodeGroupSelections[i] = i == index;
+                      }
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 20,),
+            episodeWrap(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget episodeContentInfo()
+  {
+    return
+    Container
+    (
+      child:
+      Column
+      (
+        children:
+        [
+          Container
           (
-          value: UserData.to.autoPlay,
-          activeColor: Color(0xFF00FFBF),
-          onChanged: (bool? value)
-          {
-            //TODO : 서버에 알리기
-            setState(()
-            {
-              UserData.to.autoPlay = value ?? false;
-            });
-          },
+            width: 390,
+            padding: EdgeInsets.only(left: 20),
+            //color: Colors.white,
+            child:
+            Text
+            (
+              episodeData!.title!,
+              style:
+              TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+            ),
+          ),
+          SizedBox(height: 20,),
+        ],
+      ),
+    );
+  }
+
+  Widget episodeWrap()
+  {
+    if (mapEpisodeData.length == 0)
+    {
+      return Container();
+    }
+
+    //어떤회차 그룹을 선택했는지 인덱스를 찾아온다. 1~20화 를 눌렀다면 0번이 true이므로 0번을 찾는다.
+    var data = episodeGroupSelections.asMap().entries.firstWhere((element) => element.value);
+    print(data.key);
+    var index = data.key;
+
+    if (!mapEpisodeData.containsKey(data.key))
+    {
+      return Container();
+    }
+
+    var list = mapEpisodeData[index];
+    return
+      Expanded
+      (
+        child:
+        SingleChildScrollView
+        (
+          controller: episodeGroupScrollController,
+          scrollDirection: Axis.vertical,
+          child:
+          Column
+          (
+            children:
+            [
+              Wrap
+              (
+                direction: Axis.horizontal,  // 가로 방향으로 배치
+                children: <Widget>
+                [
+                  for (var i = 0; i < list!.length; i++)
+                    Container
+                    (
+                      height: 137,
+                      width: 390 / 4,
+                      //color: Colors.grey,
+                      child:
+                      Column
+                      (
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children:
+                        [
+                          GestureDetector
+                            (
+                            onTap: ()
+                            {
+                              if (list[i].isLock)
+                              {
+                                //TODO:구매안한 컨텐츠임둥.
+                                print('is lock');
+        
+                                return;
+                              }
+        
+                              Get.off(() => NextContentPlayer(), arguments: [list[i].no, episodeList]);
+                            },
+                            child:
+                            Stack
+                            (
+                              children:
+                              [
+                                Container
+                                (
+                                  width: 77,
+                                  height: 107,
+                                  color: Colors.blueGrey,
+                                  child: list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
+                                      ? SizedBox() : Image.network(list[i].altImgUrl!),
+                                ),
+                                Visibility
+                                  (
+                                  visible: UserData.to.isSubscription.value == false && list[i].isLock,
+                                  child:
+                                  Container
+                                    (
+                                    width: 77,
+                                    height: 107,
+                                    color: Colors.black.withOpacity(0.7),
+                                    child:
+                                    SizedBox
+                                      (
+                                      child:
+                                      SvgPicture.asset
+                                        (
+                                        'assets/images/pick/pick_lock.svg',
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding
+                            (
+                            padding: const EdgeInsets.only(top: 5),
+                            child:
+                            Text
+                              (
+                              SetTableStringArgument(100033, ['${list[i].no}']),
+                              style:
+                              TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // 화면 너비의 1/4 크기로 설정
+                      //child: Image.network('이미지 URL', fit: BoxFit.cover,),  // '이미지 URL' 부분을 실제 이미지 URL로 교체해야 합니다.
+                    ),
+                ],
+              ),
+              SizedBox(height: 20,),
+            ],
+          ),
+        ),
+      );
+  }
+
+  Widget episodeGroup(String _title, bool _select) =>
+      Padding
+        (
+        padding: const EdgeInsets.only(left: 5, right: 5),
+        child: _select ?
+        Container
+          (
+          width: 73,
+          height: 26,
+          decoration: ShapeDecoration
+            (
+            color: Color(0xFF1E1E1E),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(bottom: 2),
+          child:
+          Text
+            (
+            _title,
+            style:
+            TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+          ),
+        )
+            :
+        Container
+          (
+          width: 73,
+          height: 26,
+          decoration: ShapeDecoration
+            (
+            color: Color(0xFF1E1E1E),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.50, color: Color(0xFF999999)),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(bottom: 2),
+          child:
+          Text
+            (
+            _title,
+            style:
+            TextStyle(fontSize: 11, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+          ),
         ),
       );
 }

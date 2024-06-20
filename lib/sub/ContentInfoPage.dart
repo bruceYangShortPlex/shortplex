@@ -625,7 +625,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     );
   }
 
-
   Widget episodeGroup(String _title, bool _select) =>
   Padding
   (

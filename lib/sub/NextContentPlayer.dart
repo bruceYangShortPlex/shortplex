@@ -493,7 +493,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     );
   }
 
-  Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon, ContentPlayButtonType _type)
+  Widget contentUIButtons(String _buttonLabel, IconData _buttonIcon, ContentUI_ButtonType _type)
   {
     return
       Container
@@ -516,7 +516,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
 
               switch(_type)
               {
-                case ContentPlayButtonType.COMMENT:
+                case ContentUI_ButtonType.COMMENT:
                   {
                     isShowShop = false;
                     ticker.stop();
@@ -531,12 +531,12 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                     GetComment();
                   }
                   break;
-                case ContentPlayButtonType.CONTENT_INFO:
+                case ContentUI_ButtonType.CONTENT_INFO:
                   {
                     Get.to(() => ContentInfoPage());
                   }
                   break;
-                case ContentPlayButtonType.CHECK:
+                case ContentUI_ButtonType.CHECK:
                   {
                     episodeData!.isCheck = !episodeData!.isCheck;
                     setState(() {
@@ -730,10 +730,10 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                 ),
               ),
             ),
-            contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentPlayButtonType.COMMENT),
-            contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentPlayButtonType.CHECK),
-            contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentPlayButtonType.SHARE),
-            contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentPlayButtonType.CONTENT_INFO),
+            contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
+            contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
+            contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentUI_ButtonType.SHARE),
+            contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentUI_ButtonType.CONTENT_INFO),
             Container
               (
               color: Colors.black.withOpacity(0.9),

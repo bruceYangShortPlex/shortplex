@@ -443,7 +443,13 @@ class _HomePageState extends State<HomePage>
         borderRadius: BorderRadius.circular(10),
         ),
         ),
-        child: Image.network(_data.imagePath!, fit: BoxFit.fill,),
+        child:
+        ClipRRect
+        (
+          borderRadius: BorderRadius.circular(10),
+          child:
+          Image.network(_data.imagePath!, fit: BoxFit.cover,)
+        ),
       ),
     );
   }
@@ -598,13 +604,19 @@ class _HomePageState extends State<HomePage>
                               (
                                 width: 105,
                                 height: 160,
-                                decoration: ShapeDecoration
+                                // decoration: ShapeDecoration
+                                // (
+                                //   color: Colors.black, // Color(0xFFC4C4C4),
+                                //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                                // ),
+                                child:
+                                ClipRRect
                                 (
-                                  color: Colors.black, // Color(0xFFC4C4C4),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                                  borderRadius: BorderRadius.circular(7),
+                                  child:
+                                  _list[i].imagePath != null ?
+                                  Image.network(_list[i].imagePath!, fit: BoxFit.cover,) : Container(),
                                 ),
-                                child: _list[i].imagePath != null ?
-                                Image.network(_list[i].imagePath!, fit: BoxFit.fill,) : Container(),
                               ),
                             ),
                           ],
@@ -677,12 +689,18 @@ class _HomePageState extends State<HomePage>
                 (
                   width: 105,
                   height: 160,
-                  decoration: ShapeDecoration
+                  // decoration: ShapeDecoration
+                  // (
+                  //   color: Colors.black, // Color(0xFFC4C4C4),
+                  //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                  // ),
+                  child:
+                  ClipRRect
                   (
-                    color: Colors.black, // Color(0xFFC4C4C4),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-                  ),
-                  child: _data.imagePath == null || _data.imagePath!.isEmpty ? SizedBox() : Image.network(_data.imagePath!, fit: BoxFit.fill,),
+                    borderRadius: BorderRadius.circular(7),
+                    child:
+                    _data.imagePath == null || _data.imagePath!.isEmpty ? SizedBox() : Image.network(_data.imagePath!, fit: BoxFit.cover,),
+                  )
                 ),
                 Visibility
                 (

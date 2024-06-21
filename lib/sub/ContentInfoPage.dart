@@ -738,8 +738,15 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                       width: 77,
                       height: 107,
                       color: Colors.blueGrey,
-                      child: list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
-                          ? SizedBox() : Image.network(list[i].altImgUrl!),
+                      child:
+                      ClipRRect
+                      (
+                        borderRadius: BorderRadius.circular(7),
+                        child:                      
+                        list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
+                        ? SizedBox() : Image.network(list[i].altImgUrl!, fit: BoxFit.cover,),
+                      ),
+
                     ),
                     Visibility
                     (

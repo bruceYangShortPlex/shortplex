@@ -1735,24 +1735,30 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                   width: 77,
                                   height: 107,
                                   color: Colors.blueGrey,
-                                  child: list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
-                                      ? SizedBox() : Image.network(list[i].altImgUrl!),
+                                  child:
+                                  ClipRRect
+                                  (
+                                    borderRadius: BorderRadius.circular(7),
+                                    child:
+                                    list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
+                                    ? SizedBox() : Image.network(list[i].altImgUrl!),
+                                  )
                                 ),
                                 Visibility
-                                  (
+                                (
                                   visible: UserData.to.isSubscription.value == false && list[i].isLock,
                                   child:
                                   Container
-                                    (
+                                  (
                                     width: 77,
                                     height: 107,
                                     color: Colors.black.withOpacity(0.7),
                                     child:
                                     SizedBox
-                                      (
+                                    (
                                       child:
                                       SvgPicture.asset
-                                        (
+                                      (
                                         'assets/images/pick/pick_lock.svg',
                                         fit: BoxFit.scaleDown,
                                       ),
@@ -1763,11 +1769,11 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                             ),
                           ),
                           Padding
-                            (
+                          (
                             padding: const EdgeInsets.only(top: 5),
                             child:
                             Text
-                              (
+                            (
                               SetTableStringArgument(100033, ['${list[i].no}']),
                               style:
                               TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),

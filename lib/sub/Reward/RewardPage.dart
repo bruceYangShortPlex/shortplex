@@ -14,13 +14,13 @@ import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   Get.lazyPut(() => UserData());
-//   await StringTable().InitTable();
-//   runApp(const RewardPage());
-// }
+void main() async
+{
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.lazyPut(() => UserData());
+  await StringTable().InitTable();
+  runApp(const RewardPage());
+}
 
 class RewardPage extends StatefulWidget
 {
@@ -362,7 +362,12 @@ Widget mainWidget(BuildContext context)=>
                   (
                     children:
                     [
-                      Image.network(_data.BG_Url, width: 356, height: 64,fit: BoxFit.fill, ),
+                      ClipRRect
+                      (
+                          borderRadius: BorderRadius.circular(7),
+                          child:
+                          Image.network(_data.BG_Url, width: 356, height: 64,fit: BoxFit.cover, )
+                      ),
                       Align
                       (
                         alignment: Alignment.centerLeft,

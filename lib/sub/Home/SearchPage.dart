@@ -273,7 +273,13 @@ Widget mainWidget(BuildContext context)=>
           color: Color(0xFFC4C4C4),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
         ),
-        child: Image.network(_item.thumbnailImgUrl!, fit: BoxFit.contain,),
+        child:
+        ClipRRect
+        (
+          borderRadius: BorderRadius.circular(7),
+          child:         
+          Image.network(_item.thumbnailImgUrl!, fit: BoxFit.cover,),
+        )
       ),
     );
   }

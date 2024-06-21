@@ -1,6 +1,16 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:shortplex/Network/Content_Res.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+enum SelectResolution
+{
+  HD,
+  FHD,
+  SD,
+}
 
 class UserData extends GetxController
 {
@@ -22,6 +32,7 @@ class UserData extends GetxController
   String recommendedName = '';
   String id = '';//barer token.
   String userId = ''; //server id
+  SelectResolution selectResolution = SelectResolution.HD;
 
   InitValue()
   {
@@ -35,6 +46,25 @@ class UserData extends GetxController
     isSubscription.value = false;
     popcornCount.value = 0;
     bonusCornCount = 0;
+  }
+
+  Future SaveSetting() async
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setInt('SR', selectResolution.index);
+  }
+
+  Future<SelectResolution> LoadResolution() async
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    int index = prefs.getInt('SR') ?? 0;
+    selectResolution = SelectResolution.values[index];
+
+    print(selectResolution.name.toString());
+
+    return selectResolution;
   }
 
   (String, String) GetPopupcornCount()

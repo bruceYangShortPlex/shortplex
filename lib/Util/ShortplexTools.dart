@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'dart:io';
 import '../table/StringTable.dart';
+import '../table/UserData.dart';
 import 'ExpandableText.dart';
 
 void showDialogTwoButton(String _titie, String _content, VoidCallback _callback, [VoidCallback? _noCallBack = null])
@@ -629,4 +630,25 @@ String ConvertCommentDate(String _date)
 bool isEmulator() {
   // Android 에뮬레이터 확인
   return Platform.environment.containsKey('FLUTTER_TEST');
+}
+
+Widget ResolutionSettingButton(SelectResolution _value)
+{
+  return
+  DropdownButton<SelectResolution>
+  (
+    value: _value,
+    onChanged: (value)
+    {
+      _value = value!;
+      UserData.to.SaveSetting();
+    },
+    items: SelectResolution.values
+        .map<DropdownMenuItem<SelectResolution>>((SelectResolution value) {
+      return DropdownMenuItem<SelectResolution>(
+        value: value,
+        child: Text(value.name),
+      );
+    }).toList(),
+  );
 }

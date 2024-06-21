@@ -22,6 +22,7 @@ void main() async
   Get.lazyPut(() => LoginMananger());
   Get.lazyPut(() => UserData());
   Get.find<LoginMananger>().Check();
+  UserData.to.LoadResolution();
   runApp(const MyApp());
 }
 

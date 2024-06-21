@@ -1,197 +1,226 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shortplex/table/UserData.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AnimationPage(),
-    );
-  }
-}
-
-enum AnimationStatType
+void main() async
 {
-  START,
-  LOOP,
-  END,
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.lazyPut(() => UserData());
+  await UserData.to.LoadResolution();
+  runApp(const TestWidget());
 }
 
-class AnimationPage extends StatefulWidget {
+class TestWidget extends StatefulWidget
+{
+  const TestWidget({super.key});
+
   @override
-  _AnimationPageState createState() => _AnimationPageState();
+  State<TestWidget> createState() => _TestWidgetState();
 }
 
-class _AnimationPageState extends State<AnimationPage> with TickerProviderStateMixin {
-  late AnimationController _controller1;
-  late AnimationController _controller2;
-  late AnimationController _controller3;
-  late Animation<int> _animation;
-  int _frameIndex = 0;
-  AnimationStatType animationStatType = AnimationStatType.START;
-
-  List<String> _firstAnimationFrames =
-  [
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_1.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_1.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_2.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_3.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_4.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_5.png',
-  ];
-
-  List<String> _loopAnimationFrames =
-  [
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_6.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_7.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_8.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_9.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_10.png',
-  ];
-
-  List<String> _secondAnimationFrames = [
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_11.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_12.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_13.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_14.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_15.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_16.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_17.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_18.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_19.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_20.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_21.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_22.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_23.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_24.png',
-    'assets/images/Reward/event_popcorn/Reward_event_popcorn_play_25.png',
-  ];
+class _TestWidgetState extends State<TestWidget>
+{
+  var resolutinosMenu = ['1080P', '720P', '480P'];
+  String selectedResolution = '720P';
+  var selections = List.generate(3, (_) => false);
 
   @override
-  void initState() {
+  void initState()
+  {
+    selections = List.generate(resolutinosMenu.length, (_) => false);
+    selectedResolution = resolutinosMenu[UserData.to.selectResolution.index];
+    selections[UserData.to.selectResolution.index] = true;
+    setState(() {
+
+    });
+
     super.initState();
-    _startFirstAnimation();
   }
 
-  void _startFirstAnimation()
-  {
-    animationStatType = AnimationStatType.START;
+  Widget mainWidget(BuildContext context)=>
+    SafeArea
+      (
+      child:
+      CupertinoApp
+        (
+        home:
+        CupertinoPageScaffold
+          (
+          backgroundColor: Colors.black,
+          navigationBar:
+          CupertinoNavigationBar
+          (
+            backgroundColor: Colors.transparent,
+            leading:
+            Row
+              (
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:
+              [
+                Container
+                  (
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  height: 50,
+                  //color: Colors.blue,
+                  padding: EdgeInsets.zero,
+                  alignment: Alignment.centerLeft,
+                  child:
+                  CupertinoNavigationBarBackButton
+                    (
+                    color: Colors.white,
+                    onPressed: ()
+                    {
+                      //Get.back();
+                    },
+                  ),
+                ),
+                Container
+                  (
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  height: 50,
+                  //color: Colors.green,
+                  alignment: Alignment.center,
+                  child:
+                  Text
+                    (
+                    'TEST',
+                    style:
+                    TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  ),
+                ),
+                Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
+              ],
+            ),
+          ),
+          child:
+          Container
+          (
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child:
+            Column
+            (
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:
+              [
+                ResolutionMenu(),
+                SizedBox(height: 20,),
+                RoundButton(),
+              ],
+            )
 
-    _controller1 = AnimationController(
-      duration: Duration(milliseconds: 500), // Adjust the duration as needed
-      vsync: this,
+            //color: Colors.blue,
+
+          ),
+        ),
+      ),
     );
-
-    _frameIndex = 0;
-
-    _animation = IntTween(begin: 0, end: _firstAnimationFrames.length - 1).animate(_controller1)
-      ..addListener(() {
-        setState(()
-        {
-          print(_animation.value);
-          _frameIndex = _animation.value;
-        });
-      })
-      ..addStatusListener((status)
-      {
-        if (status == AnimationStatus.completed)
-        {
-          print('play loop');
-          _playLoopAnimation();
-          return;
-        }
-      });
-
-    _controller1.forward();
-  }
-
-  void _playLoopAnimation()
-  {
-    animationStatType = AnimationStatType.LOOP;
-    _controller1.stop();
-
-    _frameIndex = 0;
-
-    _controller2 = AnimationController
-    (
-      duration: Duration(milliseconds: 500), // Adjust the duration as needed
-      vsync: this,
-    );
-
-    _animation = IntTween(begin: 0, end: _loopAnimationFrames.length - 1).animate(_controller2)
-      ..addListener(() {
-        setState(() {
-          _frameIndex = _animation.value;
-        });
-      })
-      ..addStatusListener((status)
-      {
-        if (status == AnimationStatus.completed)
-        {
-          print('repeat');
-          _controller2.repeat();
-          return;
-        }
-      });
-
-    _controller2.forward();
-  }
-
-  void _playSecondAnimation() {
-    _controller2.stop();
-    animationStatType = AnimationStatType.END;
-    _frameIndex = 0;
-    _controller3 = AnimationController(
-      duration: Duration(milliseconds: 1000), // Adjust the duration as needed
-      vsync: this,
-    );
-
-    _animation = IntTween(begin: 0, end: _secondAnimationFrames.length - 1).animate(_controller3)
-      ..addListener(() {
-        setState(() {
-          _frameIndex = _animation.value;
-        });
-      })
-      ..addStatusListener((status)
-      {
-        if (status == AnimationStatus.completed) {
-          _controller3.stop();
-         return;
-        }
-      });
-
-    _controller3.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller2.dispose();
-    _controller3.dispose();
-    _controller1.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    String currentFrame = animationStatType == AnimationStatType.START ? _firstAnimationFrames[_frameIndex]
-    :animationStatType == AnimationStatType.LOOP ? _loopAnimationFrames[_frameIndex] : _secondAnimationFrames[_frameIndex];
+    return mainWidget(context);
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Animation Example'),
+  Widget ResolutionMenu()
+  {
+    return
+    Container
+    (
+      width: 106,
+      height: 180,
+      decoration: ShapeDecoration(
+        color: Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(currentFrame),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _playSecondAnimation,
-              child: Text('Play Second Animation'),
-            ),
-          ],
+      child:
+      Column
+      (
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children:
+        [
+          for(int i = 0 ; i < resolutinosMenu.length ; ++i)
+            ResolutionSelectButton(resolutinosMenu[i], i, selections[i]),
+        ],
+      ),
+    );
+  }
+
+  Widget ResolutionSelectButton(String _title, int _index, [bool _select = false])
+  {
+    return
+    GestureDetector
+    (
+      onTap: ()
+      {
+        for (int i = 0 ; i < selections.length; ++i)
+        {
+          selections[i] = i == _index;
+        }
+        UserData.to.SaveResoluton(_index);
+        setState(() {
+
+        });
+      },
+      child:
+      Container
+      (
+        alignment: Alignment.center,
+        width: 75,
+        height: 30,
+        decoration:
+        ShapeDecoration
+        (
+          color:Color(0xFF2E2E2E),
+          shape: RoundedRectangleBorder(
+          side: _select ? BorderSide(width: 1.50, color: Color(0xFF00FFBF)) : BorderSide(width: 0, color: Color(0xFF2E2E2E)),
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        child:
+        Text
+        (
+          _title,
+          style:
+          const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+        ),
+      ),
+    );
+  }
+
+  var isLoading = false;
+  Widget RoundButton()
+  {
+    return
+    GestureDetector
+    (
+      onTap: ()
+      {
+        print('open menu');
+      },
+      child:
+      Container
+      (
+        padding: isLoading ? EdgeInsets.zero : const EdgeInsets.only(bottom: 2),
+        alignment: Alignment.center,
+        width: 69,
+        height: 24,
+        decoration: ShapeDecoration(
+          color: Color(0xFF1E1E1E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        child:
+        isLoading ? Container( width: 15, height: 15, child: CircularProgressIndicator()) :
+        Text
+        (
+          selectedResolution,
+          style:
+          TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
     );

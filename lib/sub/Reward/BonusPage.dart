@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gif/gif.dart';
@@ -21,14 +20,14 @@ enum PopcornAnimationState
   END,
 }
 
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   Get.lazyPut(() => UserData());
-//   await Event2table().InitTable();
-//   await StringTable().InitTable();
-//   runApp(const BonusPage());
-// }
+void main() async
+{
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.lazyPut(() => UserData());
+  await Event2table().InitTable();
+  await StringTable().InitTable();
+  runApp(const BonusPage());
+}
 
 class BonusPage extends StatefulWidget
 {
@@ -49,9 +48,12 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   bool isOpenInfo = false;
   bool isOpenResult = false;
   int stackCount = 0;
-  int bonusResult = 4;
-
+  int bonusResult = 2;
   var pageList = <Widget>[];
+  late AnimationController tweenController;
+  late AnimationController tweenController2;
+  var prevState1 = AnimationStatus.completed;
+  var prevState2 = AnimationStatus.completed;
 
   void startTimer()
   {
@@ -88,6 +90,17 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     Get.lazyPut(() => Event2table());
     stackCount = 0; //서버에서 받아야한드아..
     controller1 = GifController(vsync: this);
+
+    tweenController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    tweenController2 = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
     super.initState();
 
     startTimer();
@@ -97,13 +110,38 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     {
       if (controller1.status == AnimationStatus.completed )
       {
-          print(' gif play complete');
           isOpenResult = true;
+          tweenController.forward(from: 0);
           setState(() {
 
           });
       }
     },);
+
+
+    tweenController.addListener(()
+    {
+      if (prevState1 == AnimationStatus.reverse && tweenController.status == AnimationStatus.dismissed)
+      {
+        isOpenResult = false;
+        setState(() {
+
+        });
+      }
+      prevState1 = tweenController.status;
+    });
+
+    tweenController2.addListener(()
+    {
+      if (prevState2 == AnimationStatus.reverse && tweenController2.status == AnimationStatus.dismissed)
+      {
+        isOpenInfo = false;
+        setState(() {
+
+        });
+      }
+      prevState2 = tweenController2.status;
+    });
   }
 
   void createBonusInfoScroll()
@@ -177,7 +215,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       ],
     )));
     pageList.add(SizedBox(width: 50, height: 50, child: Stack
-      (
+    (
       children:
       [
         SvgPicture.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_icon_frame.svg',width: 50,height: 50,),
@@ -289,7 +327,10 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   }
 
   @override
-  void dispose() {
+  void dispose()
+  {
+    tweenController2.dispose();
+    tweenController.dispose();
     controller1.dispose();
     super.dispose();
   }
@@ -410,7 +451,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Padding
           (
-            padding: EdgeInsets.only(top: 2, left: 8, right: 8, bottom: 32),
+            padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 32),
             child:
             Text
             (
@@ -511,7 +552,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   (
                     fit: BoxFit.contain,
                     //fps: 30,
-                    duration: const Duration(milliseconds: 5500),
+                    duration: const Duration(milliseconds: 3000),
                     controller: controller1,
                     autostart: Autostart.no,
                     //repeat: ImageRepeat.repeat,
@@ -528,7 +569,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                       fit: BoxFit.contain,
                       //fps: 30,
                       autostart: Autostart.once,
-                      duration: Duration(milliseconds: 2300),
+                      duration: Duration(milliseconds: 1150),
                       placeholder: (context) =>
                       const Center(child: CircularProgressIndicator()),
                       image: const AssetImage('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_open.gif'),
@@ -536,7 +577,6 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   ),
                 ],
               ),
-
             ),
           ),
           Padding
@@ -619,6 +659,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                     onTap: ()
                     {
                       isOpenInfo = true;
+                      tweenController2.forward(from: 0);
                       setState(() {
 
                       });
@@ -645,7 +686,6 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                     {
                       if (animationState == PopcornAnimationState.START)
                       {
-                        print('on tap start button');
                         animationState = PopcornAnimationState.END;
                         setState(() {
                           controller1.forward(from: 0);
@@ -722,138 +762,143 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     (
       visible: isOpenInfo,
       child:
-      Container
+      FadeTransition
       (
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.black45,
-        alignment: Alignment.center,
+        opacity: tweenController2,
         child:
         Container
         (
-          width: 320,
-          height: 597,
-          decoration: ShapeDecoration(
-            gradient: LinearGradient(
-              begin: Alignment(0.00, -1.00),
-              end: Alignment(0, 1),
-              colors: [Color(0xFF043B34), Color(0xFF092D3D)],
-            ),
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 2, color: Color(0xFF00FFBF)),
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.black45,
+          alignment: Alignment.center,
           child:
-          Column
+          Container
           (
-            mainAxisAlignment: MainAxisAlignment.start,
-            children:
-            [
-              Padding
-              (
-                padding: EdgeInsets.only(top: 20),
-                child:
-                Container
+            width: 320,
+            height: 597,
+            decoration: ShapeDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(0.00, -1.00),
+                end: Alignment(0, 1),
+                colors: [Color(0xFF043B34), Color(0xFF092D3D)],
+              ),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 2, color: Color(0xFF00FFBF)),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child:
+            Column
+            (
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:
+              [
+                Padding
                 (
-                  padding: EdgeInsets.only(bottom: 2),
-                  alignment: Alignment.center,
-                  width: 120,
-                  height: 35,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF1E1E1E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                  padding: EdgeInsets.only(top: 20),
+                  child:
+                  Container
+                  (
+                    padding: EdgeInsets.only(bottom: 2),
+                    alignment: Alignment.center,
+                    width: 120,
+                    height: 35,
+                    decoration: ShapeDecoration(
+                      color: Color(0xFF1E1E1E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child:
+                    Text
+                    (
+                      StringTable().Table![800011]!,
+                      style:
+                      TextStyle(fontSize: 16, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
-                  child:
-                  Text
-                  (
-                    StringTable().Table![800011]!,
-                    style:
-                    TextStyle(fontSize: 16, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
                 ),
-              ),
-              SizedBox(height: 20,),
-              InfoPopupItemGroup
-              (
-                'assets/images/Reward/reward_event_popcorn/reward_bonus1.png',
-                BonusCalculator(tableData.condition, tableData.rate1),
-                tableData.chance1,
-                'assets/images/Reward/reward_event_popcorn/reward_bonus2.png',
-                BonusCalculator(tableData.condition, tableData.rate2),
-                tableData.chance2
-              ),
-              SizedBox(height: 20,),
-              InfoPopupItemGroup
-              (
-                'assets/images/Reward/reward_event_popcorn/reward_bonus3.png',
-                BonusCalculator(tableData.condition, tableData.rate3),
-                tableData.chance3,
-                'assets/images/Reward/reward_event_popcorn/reward_bonus4.png',
-                BonusCalculator(tableData.condition, tableData.rate4),
-                tableData.chance4
-              ),
-              SizedBox(height: 20,),
-              InfoPopupItemGroup
-              (
-                'assets/images/Reward/reward_event_popcorn/reward_bonus5.png',
-                BonusCalculator(tableData.condition, tableData.rate5),
-                tableData.chance5,
-                'assets/images/Reward/reward_event_popcorn/reward_bonus6.png',
-                BonusCalculator(tableData.condition, tableData.rate6),
-                tableData.chance6
-              ),
-              SizedBox(height: 20,),
-              InfoPopupItemGroup
-              (
-                'assets/images/Reward/reward_event_popcorn/reward_bonus7.png',
-                BonusCalculator(tableData.condition, tableData.rate7),
-                tableData.chance7,
-                'assets/images/Reward/reward_event_popcorn/reward_bonus8.png',
-                BonusCalculator(tableData.condition, tableData.rate8),
-                tableData.chance8
-              ),
-              SizedBox(height: 5,),
-              Text
-              (
-                StringTable().Table![800015]!,
-                style:
-                TextStyle(fontSize: 11, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
-              ),
-              SizedBox(height: 10,),
-              GestureDetector
-              (
-                onTap: () {
-                  isOpenInfo = false;
-                  setState(() {
+                SizedBox(height: 20,),
+                InfoPopupItemGroup
+                (
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus1.png',
+                  BonusCalculator(tableData.condition, tableData.rate1),
+                  tableData.chance1,
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus2.png',
+                  BonusCalculator(tableData.condition, tableData.rate2),
+                  tableData.chance2
+                ),
+                SizedBox(height: 20,),
+                InfoPopupItemGroup
+                (
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus3.png',
+                  BonusCalculator(tableData.condition, tableData.rate3),
+                  tableData.chance3,
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus4.png',
+                  BonusCalculator(tableData.condition, tableData.rate4),
+                  tableData.chance4
+                ),
+                SizedBox(height: 20,),
+                InfoPopupItemGroup
+                (
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus5.png',
+                  BonusCalculator(tableData.condition, tableData.rate5),
+                  tableData.chance5,
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus6.png',
+                  BonusCalculator(tableData.condition, tableData.rate6),
+                  tableData.chance6
+                ),
+                SizedBox(height: 20,),
+                InfoPopupItemGroup
+                (
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus7.png',
+                  BonusCalculator(tableData.condition, tableData.rate7),
+                  tableData.chance7,
+                  'assets/images/Reward/reward_event_popcorn/reward_bonus8.png',
+                  BonusCalculator(tableData.condition, tableData.rate8),
+                  tableData.chance8
+                ),
+                SizedBox(height: 5,),
+                Text
+                (
+                  StringTable().Table![800015]!,
+                  style:
+                  TextStyle(fontSize: 11, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
+                ),
+                SizedBox(height: 10,),
+                GestureDetector
+                (
+                  onTap: () {
+                    tweenController2.reverse();
+                    setState(() {
 
-                  });
-                },
-                child:
-                Container
-                (
-                  padding: EdgeInsets.only(bottom: 2),
-                  alignment: Alignment.center,
-                  width: 164,
-                  height: 40,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF00FFBF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                    });
+                  },
+                  child:
+                  Container
+                  (
+                    padding: EdgeInsets.only(bottom: 2),
+                    alignment: Alignment.center,
+                    width: 164,
+                    height: 40,
+                    decoration: ShapeDecoration(
+                      color: Color(0xFF00FFBF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child:
+                    Text
+                    (
+                      StringTable().Table![800016]!,
+                      style:
+                      TextStyle(fontSize: 16, color:Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
-                  child:
-                  Text
-                  (
-                    StringTable().Table![800016]!,
-                    style:
-                    TextStyle(fontSize: 16, color:Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -966,111 +1011,116 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     (
       visible: isOpenResult,
       child:
-      Container
+      FadeTransition
       (
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.black45,
-        alignment: Alignment.center,
+        opacity: tweenController,
         child:
         Container
         (
-          width: 220,
-          height: 315,
-          clipBehavior: Clip.antiAlias,
-          decoration: ShapeDecoration(
-            gradient: LinearGradient(
-              begin: Alignment(0.00, -1.00),
-              end: Alignment(0, 1),
-              colors: [Color(0xFF043B33), Color(0xFF092C3D)],
-            ),
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 3, color: Color(0xFF00FFBF)),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.black45,
+          alignment: Alignment.center,
           child:
-          Stack
+          Container
           (
-            children:
-            [
-              SvgPicture.asset('assets/images/Reward/reward_event_popcorn/reward_popcorn_light.svg'),
-              Container
-              (
-                padding: EdgeInsets.only(left: 2, bottom: 110),
-                alignment: Alignment.center,
-                child:
-                Image.asset('assets/images/Reward/reward_event_popcorn/reward_bonus$bonusResult.png'),
+            width: 220,
+            height: 315,
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(0.00, -1.00),
+                end: Alignment(0, 1),
+                colors: [Color(0xFF043B33), Color(0xFF092C3D)],
               ),
-
-              Container
-              (
-                padding: EdgeInsets.only(top: 40),
-                alignment: Alignment.center,
-                child:
-                Text
-                (
-                  SetTableStringArgument(400061, ['${resultBonus.$1}']),
-                  style:
-                  TextStyle(fontSize: 24, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                ),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 3, color: Color(0xFF00FFBF)),
+                borderRadius: BorderRadius.circular(15),
               ),
-
-              Container
-              (
-                padding: EdgeInsets.only(top: 110),
-                alignment: Alignment.center,
-                child:
-                Text
+            ),
+            child:
+            Stack
+            (
+              children:
+              [
+                SvgPicture.asset('assets/images/Reward/reward_event_popcorn/reward_popcorn_light.svg'),
+                Container
                 (
-                  SetTableStringArgument(800008, ['${resultBonus.$2}']),
-                  style:
-                  TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                ),
-              ),
-
-              Container
-              (
-                padding: EdgeInsets.only(bottom: 20),
-                alignment: Alignment.bottomCenter,
-                child:
-                GestureDetector
-                (
-                  onTap: ()
-                  {
-                    isOpenResult = false;
-                    animationState = PopcornAnimationState.START;
-                    controller1.stop();
-                    setState(() {
-
-                    });
-                  },
+                  padding: EdgeInsets.only(left: 2, bottom: 110),
+                  alignment: Alignment.center,
                   child:
-                  Container
+                  Image.asset('assets/images/Reward/reward_event_popcorn/reward_bonus$bonusResult.png'),
+                ),
+
+                Container
+                (
+                  padding: EdgeInsets.only(top: 40),
+                  alignment: Alignment.center,
+                  child:
+                  Text
                   (
-                    padding: EdgeInsets.only(bottom: 2),
-                    alignment: Alignment.center,
-                    width: 164,
-                    height: 40,
-                    decoration: ShapeDecoration(
-                      color: Color(0xFF00FFBF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
+                    SetTableStringArgument(400061, ['${resultBonus.$1}']),
+                    style:
+                    TextStyle(fontSize: 24, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  ),
+                ),
+
+                Container
+                (
+                  padding: EdgeInsets.only(top: 110),
+                  alignment: Alignment.center,
+                  child:
+                  Text
+                  (
+                    SetTableStringArgument(800008, ['${resultBonus.$2}']),
+                    style:
+                    TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  ),
+                ),
+
+                Container
+                (
+                  padding: EdgeInsets.only(bottom: 20),
+                  alignment: Alignment.bottomCenter,
+                  child:
+                  GestureDetector
+                  (
+                    onTap: ()
+                    {
+                      tweenController.reverse();
+                      animationState = PopcornAnimationState.START;
+                      controller1.stop();
+                      setState(() {
+
+                      });
+                    },
                     child:
-                    Text
+                    Container
                     (
-                      StringTable().Table![800016]!,
-                      style:
-                      TextStyle(fontSize: 16, color:Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      padding: EdgeInsets.only(bottom: 2),
+                      alignment: Alignment.center,
+                      width: 164,
+                      height: 40,
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF00FFBF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child:
+                      Text
+                      (
+                        StringTable().Table![800016]!,
+                        style:
+                        TextStyle(fontSize: 16, color:Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ]
-          ),
-        )
+              ]
+            ),
+          )
+        ),
       )
     );
   }

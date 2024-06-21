@@ -309,11 +309,11 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() async
-  {
-    super.didChangeDependencies();
-  }
+  // @override
+  // void didChangeDependencies() async
+  // {
+  //   super.didChangeDependencies();
+  // }
 
   void SendComment() async
   {

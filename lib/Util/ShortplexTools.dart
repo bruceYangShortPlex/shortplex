@@ -631,24 +631,3 @@ bool isEmulator() {
   // Android 에뮬레이터 확인
   return Platform.environment.containsKey('FLUTTER_TEST');
 }
-
-Widget ResolutionSettingButton(SelectResolution _value)
-{
-  return
-  DropdownButton<SelectResolution>
-  (
-    value: _value,
-    onChanged: (value)
-    {
-      _value = value!;
-      UserData.to.SaveSetting();
-    },
-    items: SelectResolution.values
-        .map<DropdownMenuItem<SelectResolution>>((SelectResolution value) {
-      return DropdownMenuItem<SelectResolution>(
-        value: value,
-        child: Text(value.name),
-      );
-    }).toList(),
-  );
-}

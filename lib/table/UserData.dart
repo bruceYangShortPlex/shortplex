@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum SelectResolution
+enum SelectResolutionType
 {
-  HD,
   FHD,
+  HD,
   SD,
 }
 
@@ -32,7 +32,7 @@ class UserData extends GetxController
   String recommendedName = '';
   String id = '';//barer token.
   String userId = ''; //server id
-  SelectResolution selectResolution = SelectResolution.HD;
+  SelectResolutionType selectResolution = SelectResolutionType.HD;
 
   InitValue()
   {
@@ -48,19 +48,27 @@ class UserData extends GetxController
     bonusCornCount = 0;
   }
 
-  Future SaveSetting() async
+  Future SaveResoluton(int _index) async
   {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    selectResolution = SelectResolutionType.values[_index];
     await prefs.setInt('SR', selectResolution.index);
+
+    print('save index : ${selectResolution.index} / name ${selectResolution.name}');
   }
 
-  Future<SelectResolution> LoadResolution() async
+  Future<SelectResolutionType> LoadResolution() async
   {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    int index = prefs.getInt('SR') ?? 0;
-    selectResolution = SelectResolution.values[index];
+    var oo =  prefs.getInt('SR');
+    print('oo $oo');
+
+    int index = prefs.getInt('SR') ?? 1;
+
+    print('load index : $index');
+
+    selectResolution = SelectResolutionType.values[index];
 
     print(selectResolution.name.toString());
 

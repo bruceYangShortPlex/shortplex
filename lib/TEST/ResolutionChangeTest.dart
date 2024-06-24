@@ -1,180 +1,282 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-void main() => runApp(VideoPlayerApp());
-
-class VideoPlayerApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Video Player Demo',
-      home: Container(
-          padding: EdgeInsets.all(100),
-          color: Colors.black,
-          child: VideoPlayerScreen()),
-    );
-  }
-}
-
-class VideoPlayerScreen extends StatefulWidget {
-  VideoPlayerScreen({Key? key}) : super(key: key);
-
-  @override
-  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
-}
-
-class _VideoPlayerScreenState extends State<VideoPlayerScreen>
+void main() async
 {
-  late VideoPlayerController _controller1;
-  late VideoPlayerController _controller2;
-  late VideoPlayerController _controller3;
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ShortsPlayer(shortsUrl: 'https://archive.org/download/Damas_BB_28F8B535_D_406/DaMaS.mp4'));
+}
 
-  late VideoPlayerController _controller;
-  late double _playBackTime;
+class ShortsPlayer extends StatefulWidget
+{
+  final String shortsUrl;
+  const ShortsPlayer({Key? key, required this.shortsUrl}) : super(key: key);
 
-  //The values that are passed when changing quality
-  late Duration newCurrentPosition;
+  @override
+  State<ShortsPlayer> createState() => _ShortsPlayerState();
+}
 
-  String defaultStream = 'https://archive.org/download/Damas_BB_28F8B535_D_406/DaMaS.mp4';
-  String stream2 = 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
+class _ShortsPlayerState extends State<ShortsPlayer>
+{
+  late VideoPlayerController videoController1;
+  late VideoPlayerController videoController2;
+  late VideoPlayerController videoController3;
+
+  String defaultStream ='https://archive.org/download/Damas_BB_28F8B535_D_406/DaMaS.mp4';
+  String stream2 = 'https://archive.org/download/cCloud_20151126/cCloud.mp4';
   String stream3 = 'https://archive.org/download/mblbhs/mblbhs.mp4';
 
+  double currentTime = 0.0;
+
+  int selectControllerNumber = 0;
+  int reserveControllerNumber = 0;
+
   @override
-  void initState() {
-    _controller = VideoPlayerController.networkUrl(Uri.parse(defaultStream));
-    _controller.addListener(() {
-      setState(() {
-        _playBackTime = _controller1.value.position.inSeconds.toDouble();
+  void initState()
+  {
+    super.initState();
+
+    videoController1 = VideoPlayerController.networkUrl(Uri.parse(defaultStream))
+      ..initialize().then((value)
+      {
+        videoController1.setVolume(1);
+
+        if (selectControllerNumber == 0)
+        {
+        setState(() {
+
+          videoController1.play();
+            // videoController1.setLooping(true);
+
+          });
+        }
+      });
+
+    videoController1.addListener(() {
+      if (videoController1.value.position >= videoController1.value.duration)
+      {
+        // 동영상 재생이 끝났을 때 실행할 로직
+        print("동영상 재생이 끝났습니다.");
+      }
+
+      setState(()
+      {
+        if (selectControllerNumber == 0) {
+          currentTime = videoController1.value.position.inSeconds.toDouble();
+        }
       });
     });
+/////////////////////////////
+    videoController2 = VideoPlayerController.networkUrl(Uri.parse(defaultStream))
+      ..initialize().then((value)
+      {
+        videoController2.setVolume(1);
 
-    super.initState();
+        if (selectControllerNumber == 1)
+        {
+        setState(() {
+          videoController2.play();
+            //videoController2.setLooping(true);
+          });
+        }
+
+      });
+
+    videoController2.addListener(() {
+      if (videoController2.value.position >= videoController2.value.duration)
+      {
+        // 동영상 재생이 끝났을 때 실행할 로직
+        print("동영상 재생이 끝났습니다.");
+      }
+
+      setState(() {
+        if (selectControllerNumber==1) {
+          currentTime = videoController2.value.position.inSeconds.toDouble();
+        }
+      });
+    });
+/////////////////////////
+    videoController3 = VideoPlayerController.networkUrl(Uri.parse(defaultStream))
+      ..initialize().then((value)
+      {
+        videoController3.setVolume(1);
+        if (selectControllerNumber ==2)
+        {
+          setState(()
+          {
+            videoController3.play();
+            //videoController3.setLooping(true);
+          });
+        }
+      });
+
+    videoController3.addListener(() {
+      if (videoController3.value.position >= videoController3.value.duration)
+      {
+        // 동영상 재생이 끝났을 때 실행할 로직
+        print("동영상 재생이 끝났습니다.");
+      }
+
+      setState(()
+      {
+        if (selectControllerNumber == 2) {
+          currentTime = videoController3.value.position.inSeconds.toDouble();
+        }
+      });
+    });
+  }
+
+  VideoPlayerController getControlelr()
+  {
+    if (selectControllerNumber == 0)
+    {
+      print(0);
+      return videoController1;
+    }
+
+    if (selectControllerNumber == 2)
+    {
+      print(1);
+      return videoController3;
+    }
+
+    return videoController2;
+  }
+
+  void setChageController(int _reserve)
+  {
+    if (selectControllerNumber == _reserve) {
+      return;
+    }
+
+    // if (getControlelr().value.position == getControlelr().value.duration)
+    // {
+    //   //영상 끝남
+    //   print('영상 끝남');
+    //   return;
+    // }
+
+    reserveControllerNumber = _reserve;
+
+    //currentTime += 0.5;
+
+    if (_reserve == 0)
+    {
+      videoController1.seekTo(getControlelr().value.position).then((value)
+      {
+        if (reserveControllerNumber == 0)
+        {
+           setState(() {
+             videoController1.play();
+             videoController2.pause();
+             videoController3.pause();
+             selectControllerNumber = reserveControllerNumber;
+           });
+        }
+      },);
+    }
+
+    if (_reserve == 1)
+    {
+      videoController2.seekTo(getControlelr().value.position).then((value)
+      {
+        if (reserveControllerNumber == 1)
+        {
+          setState(() {
+            videoController2.play();
+            videoController1.pause();
+            videoController3.pause();
+            selectControllerNumber = reserveControllerNumber;
+          });
+        }
+      },);
+    }
+
+    if (_reserve == 2)
+    {
+      videoController3.seekTo(getControlelr().value.position).then((value)
+      {
+        if (reserveControllerNumber == 2)
+        {
+          setState(()
+          {
+            videoController3.play();
+            videoController1.pause();
+            videoController2.pause();
+            selectControllerNumber = reserveControllerNumber;
+          });
+        }
+      },);
+    }
   }
 
   @override
   void dispose() {
-
-    _controller?.pause()?.then((_) {
-      _controller.dispose();
-    });
+    videoController1.dispose();
+    videoController2.dispose();
+    videoController3.dispose();
     super.dispose();
-  }
-
-  Future<bool> _clearPrevious() async {
-    await _controller?.pause();
-    return true;
-  }
-
-  Future<void> _initializePlay(String videoPath) async {
-    _controller = VideoPlayerController.networkUrl(Uri.parse(videoPath));
-    _controller.addListener(() {
-      setState(() {
-        _playBackTime = _controller.value.position.inSeconds.toDouble();
-      });
-    });
-  }
-
-  void _getValuesAndPlay(String videoPath) {
-    newCurrentPosition = _controller.value.position;
-    _startPlay(videoPath);
-    print(newCurrentPosition.toString());
-  }
-
-  Future<void> _startPlay(String videoPath) async {
-
-    Future.delayed(const Duration(milliseconds: 200), () {
-      _clearPrevious().then((_) {
-        _initializePlay(videoPath);
-      });
-    });
   }
 
   @override
   Widget build(BuildContext context)
   {
-    return  Stack(
-            children: <Widget>[
-              Center(
-                child: AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  // Use the VideoPlayer widget to display the video.
-                  child: VideoPlayer(_controller),
-                ),
+    return
+    MaterialApp(
+      home: Stack
+      (
+        children:
+        [
+          Container
+          (
+            alignment: Alignment.center,
+            child:
+            AspectRatio
+              (
+              aspectRatio: 9/16,
+              child:
+              Container
+                (
+                alignment: Alignment.center,
+                //color: Colors.blue,
+                child:
+                VideoPlayer(getControlelr()),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  color: Colors.black54,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Container(
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            // Wrap the play or pause in a call to `setState`. This ensures the
-                            // correct icon is shown.
-                            setState(() {
-                              // If the video is playing, pause it.
-                              if (_controller.value.isPlaying) {
-                                _controller.pause();
-                              } else {
-                                // If the video is paused, play it.
-                                _controller.play();
-                              }
-                            });
-                          },
-                          // Display the correct icon depending on the state of the player.
-                          child: Icon(
-                            _controller.value.isPlaying
-                                ? Icons.pause
-                                : Icons.play_arrow,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          _controller.value.position
-                              .toString()
-                              .split('.')
-                              .first
-                              .padLeft(8, "0"),
-                        ),
-                      ),
-                      Container(
-                        child: ElevatedButton(
-                          //color: Colors.yellow,
-                          onPressed: () {
-                            _getValuesAndPlay(defaultStream);
-                          },
-                          child: Text('Default Stream'),
-                        ),
-                      ),
-                      Container(
-                        child: ElevatedButton(
-                          //color: Colors.red,
-                          onPressed: () {
-                            _getValuesAndPlay(stream2);
-                          },
-                          child: Text('Video Stream 2'),
-                        ),
-                      ),
-                      Container(
-                        child: ElevatedButton(
-                          //color: Colors.green,
-                          onPressed: () {
-                            _getValuesAndPlay(stream3);
-
-                            print('Green Button');
-                          },
-                          child: Text('Video Stream 3'),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+            ),
+          ),
+      
+          Align
+          (
+            alignment: Alignment.bottomCenter,
+            child: Container
+            (
+              width: MediaQuery.of(context).size.width,
+              height: 100,
+              color: Colors.transparent,
+              child:
+              Row
+              (
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children:
+                [
+                  ElevatedButton(onPressed: ()
+                  {
+                    setChageController(0);
+                  }, child: Text('1')),
+                  ElevatedButton(onPressed: ()
+                  {
+                    setChageController(1);
+                  }, child: Text('2')),
+                  ElevatedButton(onPressed: ()
+                  {
+                    setChageController(2);
+                  }, child: Text('3')),
+                ],
               ),
-            ],
-          );
-
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

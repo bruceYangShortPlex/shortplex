@@ -57,7 +57,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   bool isEdit = false;
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
-  late String playUrl;
 
   Bottom_UI_Type bottomUItype = Bottom_UI_Type.NONE;
 
@@ -70,32 +69,42 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   void VideoControllerInit()
   {
-    var uri = playUrl;//"https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4";
-    videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
-      ..initialize().then((_) {
-        setState(() {
-          if (isShowContent) {
-            videoController.play();
-          }
-        });
-      });
 
-    videoController.addListener(() {
-      if (videoController.value.position >= videoController.value.duration)
+    HttpProtocolManager.to.get_streamUrl(episodeData!.episodeHd!).then((value)
+    {
+      //print('Play Url : $value');
+      var uri = value;
+      videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
+        ..initialize().then((_)
       {
-        // 동영상 재생이 끝났을 때 실행할 로직
-        print("동영상 재생이 끝났습니다.");
-        if (selectedEpisodeNo < episodeList.length)
+        if (isShowContent)
         {
-          Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
-          return;
-        }
-      }
+          setState(()
+          {
+            videoController.play();
+          });
 
-      setState(() {
-        currentTime = videoController.value.position.inSeconds.toDouble();
+          videoController.addListener(()
+          {
+            if (videoController.value.position >=
+                videoController.value.duration) {
+              // 동영상 재생이 끝났을 때 실행할 로직
+              print("동영상 재생이 끝났습니다.");
+              if (selectedEpisodeNo < episodeList.length) {
+                Get.off(NextContentPlayer(),
+                    arguments: [selectedEpisodeNo + 1, episodeList]);
+                return;
+              }
+            }
+
+            setState(()
+            {
+              currentTime = videoController.value.position.inSeconds.toDouble();
+            });
+          });
+        }
       });
-    });
+    },);
   }
 
   void initEpisodeGroup()
@@ -157,8 +166,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       print(e);
     }
 
-    print('play content ${episodeData!.no}');
-    playUrl = "https://www.quadra-system.com/api/v1/vod/stream/${episodeData!.episodeFhd}";
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
     //이번회차의 가격을 알아온다.
     if (episodeData!.cost != 0 && episodeData!.isLock)
@@ -228,9 +235,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       vsync: this,
     );
 
-    // Add a listener to update the current time variable
-    Future.delayed(Duration(milliseconds: 500)).then((_)
-    {
+    //사용팝콘 알려준다.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (UserData.to.usedPopcorn != 0) {
         ShowCustomSnackbar(StringTable().Table![100047]!, SnackPosition.BOTTOM);
         UserData.to.usedPopcorn = 0;
@@ -1740,8 +1746,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                   (
                                     borderRadius: BorderRadius.circular(7),
                                     child:
-                                    list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
-                                    ? SizedBox() : Image.network(list[i].altImgUrl!),
+                                    list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
+                                    ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!),
                                   )
                                 ),
                                 Visibility

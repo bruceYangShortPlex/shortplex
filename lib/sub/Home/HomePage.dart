@@ -203,9 +203,9 @@ class _HomePageState extends State<HomePage>
       {
         var contentRes = value;
         contentEpisodes.addAll(contentRes!.data!.episode!);
-        int totalEpisodeCount = contentRes.data!.episode_total;
+        int totalEpisodeCount = contentRes.data!.episodeTotal;
 
-        for(int i = 1 ; i <= contentRes.data!.episode_maxpage; ++i)
+        for(int i = 1 ; i <= contentRes.data!.episodeMaxpage; ++i)
         {
           await HttpProtocolManager.to.get_EpisodeGroup(_contentID, i).then((value)
           {

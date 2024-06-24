@@ -1,19 +1,16 @@
-/// data : {"id":"CONT1","title":"황후마마가 돌아왔다","subtitle":"황후마마가 돌아왔다 부제목","slug":"hwang-hu-ma-ma-ga-dor-a-wass-da","description":"황후마마가 돌아왔다 설명","teaser":"황후마마가 돌아왔다 티져","release_at":null,"restrain_at":null,"preview_yn":true,"preview_start_at":"2024-06-10T00:00:00.000Z","genre":"로맨스,로판,시대물","tag":"SF,요즘뜨는,추천","share_link":null,"cover_img_url":"https://storage.googleapis.com/quadra-content/CONT1-coverimage-1717985451250.jpeg","thumbnail_img_url":"https://storage.googleapis.com/quadra-content/CONT1-thumbnailimage-1717985440793.jpeg","poster_landscape_img_url":null,"poster_portrait_img_url":"https://storage.googleapis.com/quadra-content/CONT1-posterimageportrait-1717985447237.jpeg","string_key":null,"weight":500,"featured":true,"created_at":"2024-06-10T11:09:08.297Z","episode":[{"id":"EP1","no":1,"title":"1회차","episode_fhd":"EP1-fhd-1717993295708.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-10T11:21:56.639Z"},{"id":"EP2","no":2,"title":"2회차","episode_fhd":"EP2-fhd-1718016749608.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-10T14:47:38.552Z"},{"id":"EP3","no":3,"title":"3회차","episode_fhd":"EP3-fhd-1718078652244.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-11T13:03:48.731Z"}],"stat":[{"platform":"Quadra System","type_cd":"content","key":"CONT1","host":null,"path":null,"href":null,"slug":null,"action":"view","cnt":"2","amt":"2","users":"0"}]}
 
 class ContentRes
 {
-  ContentRes({
-      required ContentResData data,}){
+  ContentInfoRes({
+    required ContentResData data,}){
     _data = data;
-}
+  }
 
   ContentRes.fromJson(dynamic json) {
-    _data = json['data'] != null ? ContentResData.fromJson(json['data']) : null;
+    _data = (json['data'] != null ? ContentResData.fromJson(json['data']) : null)!;
   }
   ContentResData? _data;
-ContentRes copyWith({  required ContentResData data,
-}) => ContentRes(  data: _data!,
-);
+
   ContentResData? get data => _data;
 
   Map<String, dynamic> toJson() {
@@ -24,59 +21,36 @@ ContentRes copyWith({  required ContentResData data,
     }
     return map;
   }
-
 }
 
-/// id : "CONT1"
-/// title : "황후마마가 돌아왔다"
-/// subtitle : "황후마마가 돌아왔다 부제목"
-/// slug : "hwang-hu-ma-ma-ga-dor-a-wass-da"
-/// description : "황후마마가 돌아왔다 설명"
-/// teaser : "황후마마가 돌아왔다 티져"
-/// release_at : null
-/// restrain_at : null
-/// preview_yn : true
-/// preview_start_at : "2024-06-10T00:00:00.000Z"
-/// genre : "로맨스,로판,시대물"
-/// tag : "SF,요즘뜨는,추천"
-/// share_link : null
-/// cover_img_url : "https://storage.googleapis.com/quadra-content/CONT1-coverimage-1717985451250.jpeg"
-/// thumbnail_img_url : "https://storage.googleapis.com/quadra-content/CONT1-thumbnailimage-1717985440793.jpeg"
-/// poster_landscape_img_url : null
-/// poster_portrait_img_url : "https://storage.googleapis.com/quadra-content/CONT1-posterimageportrait-1717985447237.jpeg"
-/// string_key : null
-/// weight : 500
-/// featured : true
-/// created_at : "2024-06-10T11:09:08.297Z"
-/// episode : [{"id":"EP1","no":1,"title":"1회차","episode_fhd":"EP1-fhd-1717993295708.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-10T11:21:56.639Z"},{"id":"EP2","no":2,"title":"2회차","episode_fhd":"EP2-fhd-1718016749608.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-10T14:47:38.552Z"},{"id":"EP3","no":3,"title":"3회차","episode_fhd":"EP3-fhd-1718078652244.mp4","episode_hd":null,"episode_sd":null,"alt_img_url":null,"price_amt":"1000","share_link":null,"content_id":"CONT1","created_at":"2024-06-11T13:03:48.731Z"}]
-/// stat : [{"platform":"Quadra System","type_cd":"content","key":"CONT1","host":null,"path":null,"href":null,"slug":null,"action":"view","cnt":"2","amt":"2","users":"0"}]
-
-class ContentResData
-{
+class ContentResData {
   ContentResData({
-      required String? id,
-    required String? title,
-    required String? subtitle,
-    required String? slug,
-    required String? description,
-    required String? teaser,
-    required String? releaseAt,
-    required String? restrainAt,
-    required bool previewYn,
-    required String? previewStartAt,
-    required String? genre,
-    required String? tag,
-    required String? shareLink,
-    required String? coverImgUrl,
-    required String? thumbnailImgUrl,
-    required String? posterLandscapeImgUrl,
-    required String? posterPortraitImgUrl,
-    required String? stringKey,
+    required String id,
+    required String title,
+    required String subtitle,
+    required String slug,
+    required String description,
+    required String teaser,
+    required String releaseAt,
+    required String restrainAt,
+    required String previewStartAt,
+    required String genre,
+    required String tag,
+    required String shareLink,
+    required String coverImgUrl,
+    required String thumbnailImgUrl,
+    required String posterLandscapeImgUrl,
+    required String posterPortraitImgUrl,
+    required String stringKey,
+    required String createdAt,
+    required int episodeTotal,
+    required int episodeMaxpage,
     required int weight,
+    required bool previewYn,
     required bool featured,
-    required String? createdAt,
-    required List<Episode>? episode,
-    required List<Stat>? stat,}){
+    required bool topten,
+    required List<Episode> episode,
+    required List<Stat> stat,}){
     _id = id;
     _title = title;
     _subtitle = subtitle;
@@ -97,10 +71,13 @@ class ContentResData
     _stringKey = stringKey;
     _weight = weight;
     _featured = featured;
+    _topten = topten;
     _createdAt = createdAt;
+    _episodeTotal = episodeTotal;
+    _episodeMaxpage = episodeMaxpage;
     _episode = episode;
     _stat = stat;
-}
+  }
 
   ContentResData.fromJson(dynamic json) {
     _id = json['id'];
@@ -111,7 +88,7 @@ class ContentResData
     _teaser = json['teaser'];
     _releaseAt = json['release_at'];
     _restrainAt = json['restrain_at'];
-    _previewYn = json['preview_yn'];
+    _previewYn = json['preview_yn'] ?? false;
     _previewStartAt = json['preview_start_at'];
     _genre = json['genre'];
     _tag = json['tag'];
@@ -121,11 +98,12 @@ class ContentResData
     _posterLandscapeImgUrl = json['poster_landscape_img_url'];
     _posterPortraitImgUrl = json['poster_portrait_img_url'];
     _stringKey = json['string_key'];
-    _weight = json['weight'];
-    _featured = json['featured'];
+    _weight = json['weight'] ?? 0;
+    _featured = json['featured'] ?? false;
+    _topten = json['topten'] ?? false;
     _createdAt = json['created_at'];
-    episode_total = json['episode_total'] ?? 0;
-    episode_maxpage = json['episode_maxpage'] ?? 0;
+    _episodeTotal = json['episode_total'] ?? 0;
+    _episodeMaxpage = json['episode_maxpage'] ?? 0;
     if (json['episode'] != null) {
       _episode = [];
       json['episode'].forEach((v) {
@@ -159,11 +137,12 @@ class ContentResData
   String? _stringKey;
   int _weight = 0;
   bool _featured = false;
+  bool _topten = false;
   String? _createdAt;
+  int _episodeTotal = 0;
+  int _episodeMaxpage = 0;
   List<Episode>? _episode;
   List<Stat>? _stat;
-  int episode_total = 0;
-  int episode_maxpage = 0;
 
   String? get id => _id;
   String? get title => _title;
@@ -185,7 +164,10 @@ class ContentResData
   String? get stringKey => _stringKey;
   int get weight => _weight;
   bool get featured => _featured;
+  bool get topten => _topten;
   String? get createdAt => _createdAt;
+  int get episodeTotal => _episodeTotal;
+  int get episodeMaxpage => _episodeMaxpage;
   List<Episode>? get episode => _episode;
   List<Stat>? get stat => _stat;
 
@@ -211,9 +193,10 @@ class ContentResData
     map['string_key'] = _stringKey;
     map['weight'] = _weight;
     map['featured'] = _featured;
+    map['topten'] = _topten;
     map['created_at'] = _createdAt;
-    map['episode_total'] = episode_total;
-    map['episode_maxpage'] = episode_maxpage;
+    map['episode_total'] = _episodeTotal;
+    map['episode_maxpage'] = _episodeMaxpage;
     final _episode = this._episode;
     if (_episode != null) {
       map['episode'] = _episode.map((v) => v.toJson()).toList();
@@ -227,31 +210,19 @@ class ContentResData
 
 }
 
-/// platform : "Quadra System"
-/// type_cd : "content"
-/// key : "CONT1"
-/// host : null
-/// path : null
-/// href : null
-/// slug : null
-/// action : "view"
-/// cnt : "2"
-/// amt : "2"
-/// users : "0"
-
 class Stat {
   Stat({
-      required String? platform,
-    required String? typeCd,
-    required String? key,
-    required String? host,
-    required String? path,
-    required String? href,
-    required String? slug,
-    required String? action,
-    required String? cnt,
-    required String? amt,
-    required String? users,}){
+    required String platform,
+    required String typeCd,
+    required String key,
+    required String host,
+    required String path,
+    required String href,
+    required String slug,
+    required String action,
+    required String cnt,
+    required String amt,
+    required String users,}){
     _platform = platform;
     _typeCd = typeCd;
     _key = key;
@@ -263,10 +234,9 @@ class Stat {
     _cnt = cnt;
     _amt = amt;
     _users = users;
-}
+  }
 
-  Stat.fromJson(dynamic json)
-  {
+  Stat.fromJson(dynamic json) {
     _platform = json['platform'];
     _typeCd = json['type_cd'];
     _key = json['key'];
@@ -321,54 +291,56 @@ class Stat {
 
 }
 
-/// id : "EP1"
-/// no : 1
-/// title : "1회차"
-/// episode_fhd : "EP1-fhd-1717993295708.mp4"
-/// episode_hd : null
-/// episode_sd : null
-/// alt_img_url : null
-/// price_amt : "1000"
-/// share_link : null
-/// content_id : "CONT1"
-/// created_at : "2024-06-10T11:21:56.639Z"
-
 class Episode {
   Episode({
-      required String? id,
-      required int no,
-    required String? title,
-    required String? episodeFhd,
-    required String? episodeHd,
-    required String? episodeSd,
-    required String? altImgUrl,
-    required String? priceAmt,
-    required String? shareLink,
-    required String? contentId,
-    required String? createdAt,}){
+    required String id,
+    required int no,
+    required String title,
+    required String episodeFhd,
+    required String episodeHd,
+    required String episodeSd,
+    required String altImgUrlFhd,
+    required String altImgUrlHd,
+    required String altImgUrlSd,
+    required String thumbnailImgUrlFhd,
+    required String thumbnailImgUrlHd,
+    required String thumbnailImgUrlSd,
+    required String priceAmt,
+    required String shareLink,
+    required String contentId,
+    required String createdAt,}){
     _id = id;
     _no = no;
     _title = title;
     _episodeFhd = episodeFhd;
     _episodeHd = episodeHd;
     _episodeSd = episodeSd;
-    _altImgUrl = altImgUrl;
+    _altImgUrlFhd = altImgUrlFhd;
+    _altImgUrlHd = altImgUrlHd;
+    _altImgUrlSd = altImgUrlSd;
+    _thumbnailImgUrlFhd = thumbnailImgUrlFhd;
+    _thumbnailImgUrlHd = thumbnailImgUrlHd;
+    _thumbnailImgUrlSd = thumbnailImgUrlSd;
     _priceAmt = priceAmt;
     _shareLink = shareLink;
     _contentId = contentId;
     _createdAt = createdAt;
-}
+  }
 
-  Episode.fromJson(dynamic json)
-  {
+  Episode.fromJson(dynamic json) {
     _id = json['id'];
-    _no = json['no'];
+    _no = json['no'] ?? 0;
     _title = json['title'];
     _episodeFhd = json['episode_fhd'];
     _episodeHd = json['episode_hd'];
     _episodeSd = json['episode_sd'];
-    _altImgUrl = json['alt_img_url'];
-    _priceAmt = json['price_amt'];
+    _altImgUrlFhd = json['alt_img_url_fhd'];
+    _altImgUrlHd = json['alt_img_url_hd'];
+    _altImgUrlSd = json['alt_img_url_sd'];
+    _thumbnailImgUrlFhd = json['thumbnail_img_url_fhd'];
+    _thumbnailImgUrlHd = json['thumbnail_img_url_hd'];
+    _thumbnailImgUrlSd = json['thumbnail_img_url_sd'];
+    _priceAmt = json['price_amt'] ?? 0;
     _shareLink = json['share_link'];
     _contentId = json['content_id'];
     _createdAt = json['created_at'];
@@ -379,11 +351,23 @@ class Episode {
   String? _episodeFhd;
   String? _episodeHd;
   String? _episodeSd;
-  String? _altImgUrl;
+  String? _altImgUrlFhd;
+  String? _altImgUrlHd;
+  String? _altImgUrlSd;
+  String? _thumbnailImgUrlFhd;
+  String? _thumbnailImgUrlHd;
+  String? _thumbnailImgUrlSd;
   String? _priceAmt;
   String? _shareLink;
   String? _contentId;
   String? _createdAt;
+
+  bool isLock = false;
+  bool isCheck = false;
+  int get cost
+  {
+   return int.parse(_priceAmt!);
+  }
 
   String? get id => _id;
   int get no => _no;
@@ -391,14 +375,16 @@ class Episode {
   String? get episodeFhd => _episodeFhd;
   String? get episodeHd => _episodeHd;
   String? get episodeSd => _episodeSd;
-  String? get altImgUrl => _altImgUrl;
+  String? get altImgUrlFhd => _altImgUrlFhd;
+  String? get altImgUrlHd => _altImgUrlHd;
+  String? get altImgUrlSd => _altImgUrlSd;
+  String? get thumbnailImgUrlFhd => _thumbnailImgUrlFhd;
+  String? get thumbnailImgUrlHd => _thumbnailImgUrlHd;
+  String? get thumbnailImgUrlSd => _thumbnailImgUrlSd;
   String? get priceAmt => _priceAmt;
   String? get shareLink => _shareLink;
   String? get contentId => _contentId;
   String? get createdAt => _createdAt;
-  bool isLock  = false;
-  bool isCheck = false;
-  int cost = 0;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -408,7 +394,12 @@ class Episode {
     map['episode_fhd'] = _episodeFhd;
     map['episode_hd'] = _episodeHd;
     map['episode_sd'] = _episodeSd;
-    map['alt_img_url'] = _altImgUrl;
+    map['alt_img_url_fhd'] = _altImgUrlFhd;
+    map['alt_img_url_hd'] = _altImgUrlHd;
+    map['alt_img_url_sd'] = _altImgUrlSd;
+    map['thumbnail_img_url_fhd'] = _thumbnailImgUrlFhd;
+    map['thumbnail_img_url_hd'] = _thumbnailImgUrlHd;
+    map['thumbnail_img_url_sd'] = _thumbnailImgUrlSd;
     map['price_amt'] = _priceAmt;
     map['share_link'] = _shareLink;
     map['content_id'] = _contentId;

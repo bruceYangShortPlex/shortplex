@@ -58,10 +58,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         contentRes = value;
         mapEpisodeData[0] = contentRes!.data!.episode!;
         contentEpisodes.addAll(contentRes!.data!.episode!);
-        int totalEpisodeCount = contentRes!.data!.episode_total;
+        int totalEpisodeCount = contentRes!.data!.episodeTotal;
         //print('totalEpisodeCount : $totalEpisodeCount / total page : ${contentRes!.data!.episode_maxpage}');
         int dividingNumber = 20;
-        int groupCount = contentRes!.data!.episode_maxpage;
+        int groupCount = contentRes!.data!.episodeMaxpage;
         //print('groupCount = $groupCount');
         for (int i = 0; i < groupCount; ++i)
         {
@@ -85,7 +85,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
         });
 
-        for(int i = 1 ; i <= contentRes!.data!.episode_maxpage; ++i)
+        for(int i = 1 ; i <= contentRes!.data!.episodeMaxpage; ++i)
         {
           HttpProtocolManager.to.get_EpisodeGroup(contentData!.id!, i).then((value)
           {
@@ -743,10 +743,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                       (
                         borderRadius: BorderRadius.circular(7),
                         child:                      
-                        list[i].altImgUrl == null || list[i].altImgUrl!.isEmpty
-                        ? SizedBox() : Image.network(list[i].altImgUrl!, fit: BoxFit.cover,),
+                        list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
+                        ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!, fit: BoxFit.cover,),
                       ),
-
                     ),
                     Visibility
                     (

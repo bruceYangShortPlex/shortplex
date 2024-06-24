@@ -6,7 +6,6 @@ import 'package:shortplex/Network/HomeData_Res.dart';
 import 'package:shortplex/Network/Home_Content_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Search_Res.dart';
-import 'package:shortplex/sub/Home/SearchPage.dart';
 
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
@@ -218,7 +217,8 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       // print('get_HomeContentData send url = $url');
       // print('heads = $heads');
-      // print('res.body = ${res.body}');
+      // if (_type == HomeDataType.featured)
+      //   print('res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -248,7 +248,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       // print('get_ContentData url = $url');
       // print('get_ContentData heads = $heads');
-      // print('get_ContentData res.body = ${res.body}');
+      print('get_ContentData res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -585,5 +585,33 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
     print('send_delete_comment return null!!!');
     return null;
+  }
+
+  Future<String> get_streamUrl(String _fileName) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/vod/stream/direct/$_fileName';
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('get_streamUrl res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data = res.body;
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('get_streamUrl FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_streamUrl error : $e');
+    }
+
+    return '';
   }
 }

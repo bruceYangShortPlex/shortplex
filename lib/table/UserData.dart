@@ -19,6 +19,7 @@ class UserData extends GetxController
   RxString name = 'Guest'.obs;
   RxString photoUrl = ''.obs;
   RxBool isLogin = false.obs;
+  RxBool contentFavoriteCheck = false.obs;
   String email = '';
   String providerid = 'guest';
   String privacypolicies = 'true';
@@ -33,6 +34,7 @@ class UserData extends GetxController
   String id = '';//barer token.
   String userId = ''; //server id
   SelectResolutionType selectResolution = SelectResolutionType.HD;
+
 
   InitValue()
   {
@@ -60,9 +62,6 @@ class UserData extends GetxController
   Future<SelectResolutionType> LoadResolution() async
   {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    var oo =  prefs.getInt('SR');
-    print('oo $oo');
 
     int index = prefs.getInt('SR') ?? 1;
 

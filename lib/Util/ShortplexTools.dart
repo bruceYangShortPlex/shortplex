@@ -387,7 +387,7 @@ Widget CommentWidget
                             child:
                             Text
                             (
-                              _data.name == '' ? '...' : _data.name = _data.name!.length > 10 ? _data.name!.substring(0, 10) : _data.name!,
+                                _data.name == null || _data.name == '' ? '...' : _data.name = _data.name!.length > 10 ? _data.name!.substring(0, 10) : _data.name!,
                               style: TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),

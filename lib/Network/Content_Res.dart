@@ -362,7 +362,6 @@ class Episode {
   String? _createdAt;
 
   bool isLock = false;
-  bool isCheck = false;
   int get cost
   {
    return int.parse(_priceAmt!);

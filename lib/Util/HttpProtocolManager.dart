@@ -408,6 +408,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID';
+      print('send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
       print('get_Comment res.body ${res.body}');
 
@@ -664,6 +665,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/action/personal/stat/$_parentID';
+      print('get_Stat send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
       print('get_Stat res.body ${res.body}');
 

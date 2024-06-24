@@ -29,21 +29,23 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
 {
   late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
-  double currentTime = 0.0;
   int commentCount = 0;
+  int selectedEpisodeNo = 0;
+  double currentTime = 0.0;
   double tweenDelay = 3;
   double commentScrollOffset = 0;
-  late Ticker ticker;
-  late AnimationController tweenController;
   bool controlUIVisible = false;
-  int selectedEpisodeNo = 0;
   bool isShowContent = false;
   bool isEdit = false;
+  bool checkFavorite = false;
+
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
 
   Bottom_UI_Type bottomUItype = Bottom_UI_Type.NONE;
 
+  late Ticker ticker;
+  late AnimationController tweenController;
   Episode? episodeData;
   late List<Episode> episodeList;
   var episodeGroupList = <String>[];
@@ -53,8 +55,10 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
 
   void VideoControllerInit()
   {
+
     HttpProtocolManager.to.get_streamUrl(episodeData!.episodeHd!).then((value)
     {
+      //print('Play Url : $value');
       var uri = value;
       videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
         ..initialize().then((_)
@@ -130,6 +134,50 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
 
     setState(() {
 
+    });
+  }
+
+  void GetFavorite()
+  {
+    if (UserData.to.isLogin.value == false)
+    {
+      checkFavorite = false;
+
+      setState(() {
+
+      });
+
+      return;
+    }
+
+    HttpProtocolManager.to.get_Stat(episodeData!.contentId!).then((value)
+    {
+      if (value == null || value.data == null || value.data!.isEmpty )
+      {
+        checkFavorite = false;
+        setState(() {
+
+        });
+
+        print('check 1 : $checkFavorite');
+
+        return;
+      }
+
+      for(var item in value.data!)
+      {
+        if (item.action == Stat_Type.favorite.name)
+        {
+          var amt = int.parse(item.amt!);
+          checkFavorite = amt > 0;
+          setState(() {
+
+          });
+
+          print('item.amt ${item.amt} / check 3 : $checkFavorite');
+          return;
+        }
+      }
     });
   }
 
@@ -275,6 +323,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       }
     });
 
+    GetFavorite();
     GetComment();
     initEpisodeGroup();
 
@@ -593,7 +642,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
           padding: const EdgeInsets.only(top:2, bottom: 10.0, right: 25),
           child: GestureDetector
             (
-            onTap: ()
+            onTap: connecting == false ? ()
             {
               if (showCheck() == false)
               {
@@ -631,7 +680,24 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                   break;
                 case ContentUI_ButtonType.CHECK:
                   {
-                    episodeData!.isCheck = !episodeData!.isCheck;
+                    if (UserData.to.isLogin.value == false)
+                    {
+                      showDialogTwoButton(StringTable().Table![600018]!, '',
+                              ()
+                          {
+                            Get.to(() => LoginPage());
+                          });
+                      return;
+                    }
+
+                    connecting = true;
+                    var value = checkFavorite ? -1 : 1;
+                    HttpProtocolManager.to.send_Stat(episodeData!.contentId!, value, Stat_Type.favorite).then((value)
+                    {
+                      GetFavorite();
+                      connecting = false;
+                    });
+
                     setState(() {
 
                     });
@@ -642,7 +708,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                   break;
               }
               print('contentUIButtons tap');
-            },
+            } : null,
             child:
             Opacity
               (
@@ -824,7 +890,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
               ),
             ),
             contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
-            contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
+            contentUIButtons(StringTable().Table![100023]!, checkFavorite ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
             contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentUI_ButtonType.SHARE),
             contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentUI_ButtonType.CONTENT_INFO),
             Container
@@ -1253,6 +1319,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                                 (id)
                             {
                               //TODO : 좋아요 버튼 처리
+
                               print(id);
                             },
                                 (id)
@@ -1591,7 +1658,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                     fillColor: Colors.transparent,
                     renderBorder: false,
                     selectedBorderColor: Colors.transparent,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.grey,
                     selectedColor: Colors.white,
                     children: <Widget>
                     [
@@ -1722,14 +1789,48 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                                   (
                                     width: 77,
                                     height: 107,
-                                    color: Colors.blueGrey,
+                                    //color: Colors.blueGrey,
                                     child:
                                     ClipRRect
                                       (
                                       borderRadius: BorderRadius.circular(7),
                                       child:
-                                      list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
-                                          ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!),
+                                      Stack
+                                        (
+                                        children:
+                                        [
+                                          list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
+                                              ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!, fit: BoxFit.cover,),
+                                          Visibility
+                                            (
+                                            visible:list[i].no == episodeData!.no,
+                                            child:
+                                            Center
+                                              (
+                                              child:
+                                              Container
+                                                (
+                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.only(left: 3.5),
+                                                width: 50,
+                                                height: 50,
+                                                decoration: ShapeDecoration(
+                                                  color: Colors.black.withOpacity(0.6),
+                                                  shape: OvalBorder(
+                                                    side: BorderSide(
+                                                      width: 1.50,
+                                                      strokeAlign: BorderSide.strokeAlignCenter,
+                                                      color: Color(0xFF00FFBF),
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Icon(CupertinoIcons.pause_solid, size: 28, color: Colors.white,),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
                                     )
                                 ),
                                 Visibility

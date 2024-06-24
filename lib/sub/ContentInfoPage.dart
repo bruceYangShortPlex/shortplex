@@ -29,7 +29,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 {
   ContentRes? contentRes;
   ContentData? contentData;
-  bool check = false;
   bool buttonEnabled = true;
 
   //회차 정보.
@@ -149,13 +148,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   {
     if (UserData.to.isLogin.value == false)
     {
-      check = false;
-
-      setState(() {
-
-      });
-
-      print('check 1 : $check');
+      UserData.to.contentFavoriteCheck.value = false;
 
       return;
     }
@@ -164,12 +157,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     {
       if (value == null || value.data == null || value.data!.isEmpty )
       {
-        check = false;
-        setState(() {
-
-        });
-
-        print('check 1 : $check');
+        UserData.to.contentFavoriteCheck.value = false;
 
         return;
       }
@@ -179,12 +167,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         if (item.action == Stat_Type.favorite.name)
         {
           var amt = int.parse(item.amt!);
-          check = amt > 0;
-          setState(() {
+          UserData.to.contentFavoriteCheck.value = amt > 0;
 
-          });
-
-          print('item.amt ${item.amt} / check 3 : $check');
+          print('item.amt ${item.amt} / check  : ${UserData.to.contentFavoriteCheck.value}');
           return;
         }
       }
@@ -436,8 +421,14 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               [
                 IconButton
                 (
-                  icon: check ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
-                  Icon(CupertinoIcons.heart, size: 30, color: Colors.white, ),
+                  icon:
+                      Obx(()
+                      {
+                        return
+                        UserData.to.contentFavoriteCheck.value ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
+                        Icon(CupertinoIcons.heart, size: 30, color: Colors.white, );
+                      },),
+
                   onPressed: buttonEnabled ? ()
                   {
                     if (UserData.to.isLogin.value == false)
@@ -451,8 +442,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     }
 
                     buttonEnabled = false;
-                    var value = check ? -1 : 1;
-                    print('value : $value');
+                    int value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
                     HttpProtocolManager.to.send_Stat(contentData!.id!, value, Stat_Type.favorite).then((value)
                     {
                       GetFavorite();

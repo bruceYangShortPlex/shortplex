@@ -45,21 +45,22 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 {
   late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
-  double currentTime = 0.0;
   int commentCount = 0;
+  int selectedEpisodeNo = 0;
+  double currentTime = 0.0;
   double tweenDelay = 3;
   double commentScrollOffset = 0;
-  late Ticker ticker;
-  late AnimationController tweenController;
   bool controlUIVisible = false;
-  int selectedEpisodeNo = 0;
   bool isShowContent = false;
   bool isEdit = false;
+
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
 
   Bottom_UI_Type bottomUItype = Bottom_UI_Type.NONE;
 
+  late Ticker ticker;
+  late AnimationController tweenController;
   Episode? episodeData;
   late List<Episode> episodeList;
   var episodeGroupList = <String>[];
@@ -148,6 +149,39 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
     setState(() {
 
+    });
+  }
+
+  void GetFavorite()
+  {
+    if (UserData.to.isLogin.value == false)
+    {
+      UserData.to.contentFavoriteCheck.value = false;
+      return;
+    }
+
+    HttpProtocolManager.to.get_Stat(episodeData!.contentId!).then((value)
+    {
+      if (value == null || value.data == null || value.data!.isEmpty )
+      {
+        UserData.to.contentFavoriteCheck.value = false;
+
+        return;
+      }
+
+      for(var item in value.data!)
+      {
+        if (item.action == Stat_Type.favorite.name)
+        {
+          var amt = int.parse(item.amt!);
+          UserData.to.contentFavoriteCheck.value = amt > 0;
+          print('item.amt ${item.amt} / check 3 : ${UserData.to.contentFavoriteCheck}');
+          setState(() {
+
+          });
+          return;
+        }
+      }
     });
   }
 
@@ -293,6 +327,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       }
     });
 
+    GetFavorite();
     GetComment();
     initEpisodeGroup();
 
@@ -611,7 +646,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         padding: const EdgeInsets.only(top:2, bottom: 10.0, right: 25),
         child: GestureDetector
         (
-          onTap: ()
+          onTap: connecting == false ? ()
           {
             if (showCheck() == false)
             {
@@ -649,9 +684,25 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 break;
               case ContentUI_ButtonType.CHECK:
                 {
-                  episodeData!.isCheck = !episodeData!.isCheck;
-                  setState(() {
+                  ticker.stop();
+                  ticker.start();
 
+                  if (UserData.to.isLogin.value == false)
+                  {
+                    showDialogTwoButton(StringTable().Table![600018]!, '',
+                            ()
+                        {
+                          Get.to(() => LoginPage());
+                        });
+                    return;
+                  }
+
+                  connecting = true;
+                  var value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
+                  HttpProtocolManager.to.send_Stat(episodeData!.contentId!, value, Stat_Type.favorite).then((value)
+                  {
+                    GetFavorite();
+                    connecting = false;
                   });
                 }
                 break;
@@ -660,7 +711,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 break;
             }
             print('contentUIButtons tap');
-          },
+          } : null,
           child:
           Opacity
           (
@@ -842,7 +893,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             ),
           ),
           contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
-          contentUIButtons(StringTable().Table![100023]!, episodeData!.isCheck ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
+          contentUIButtons(StringTable().Table![100023]!, UserData.to.contentFavoriteCheck.value ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
           contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentUI_ButtonType.SHARE),
           contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentUI_ButtonType.CONTENT_INFO),
           Container
@@ -1271,6 +1322,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                             (id)
                         {
                           //TODO : 좋아요 버튼 처리
+
                           print(id);
                         },
                             (id)

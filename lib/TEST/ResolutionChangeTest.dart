@@ -158,8 +158,6 @@ class _ShortsPlayerState extends State<ShortsPlayer>
 
     reserveControllerNumber = _reserve;
 
-    //currentTime += 0.5;
-
     if (_reserve == 0)
     {
       videoController1.seekTo(getControlelr().value.position).then((value)

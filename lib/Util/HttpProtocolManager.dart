@@ -6,6 +6,8 @@ import 'package:shortplex/Network/HomeData_Res.dart';
 import 'package:shortplex/Network/Home_Content_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Search_Res.dart';
+import 'package:shortplex/Network/Stat_Req.dart';
+import 'package:shortplex/Network/Stat_Res.dart';
 
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
@@ -13,10 +15,17 @@ import '../Network/EpisodeGroup_Res.dart';
 import '../Network/OAuth_Res.dart';
 import '../table/UserData.dart';
 
+enum Stat_Type
+{
+  like,
+  favorite,
+}
+
 enum Comment_CD_Type
 {
   episode,
   title_school,
+  content,
 }
 
 class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin
@@ -217,8 +226,8 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       // print('get_HomeContentData send url = $url');
       // print('heads = $heads');
-      // if (_type == HomeDataType.featured)
-      //   print('res.body = ${res.body}');
+      //  if (_type == HomeDataType.recent)
+      //    print('res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -613,5 +622,68 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return '';
+  }
+
+  Future<StatRes?> send_Stat(String _contentID, int _active, Stat_Type _type ) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/action/stat/$_contentID';
+      var type_cd = Comment_CD_Type.content.name;
+      var stat =  StatReq(action: _type.name, value: _active, typeCd: type_cd);
+      //print('stat : ${stat.value}');
+      var bodys = jsonEncode(stat.toJson());
+      //print('send_Stat heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      //print('send_Stat res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  StatRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        //print('send_Comment data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('send_Comment FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('send_Comment error : $e');
+    }
+
+    return null;
+  }
+
+  Future<StatRes?> get_Stat(String _parentID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/action/personal/stat/$_parentID';
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('get_Stat res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  StatRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_Stat data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('get_Stat FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_Stat error : $e');
+    }
+
+    return null;
   }
 }

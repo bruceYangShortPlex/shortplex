@@ -1609,7 +1609,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   fillColor: Colors.transparent,
                   renderBorder: false,
                   selectedBorderColor: Colors.transparent,
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.grey,
                   selectedColor: Colors.white,
                   children: <Widget>
                   [
@@ -1740,14 +1740,48 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                 (
                                   width: 77,
                                   height: 107,
-                                  color: Colors.blueGrey,
+                                  //color: Colors.blueGrey,
                                   child:
                                   ClipRRect
                                   (
                                     borderRadius: BorderRadius.circular(7),
                                     child:
-                                    list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
-                                    ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!),
+                                    Stack
+                                    (
+                                      children:
+                                      [
+                                        list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
+                                            ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!, fit: BoxFit.cover,),
+                                        Visibility
+                                        (
+                                          visible:list[i].no == episodeData!.no,
+                                          child:
+                                          Center
+                                          (
+                                            child:
+                                            Container
+                                            (
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.only(left: 3.5),
+                                              width: 50,
+                                              height: 50,
+                                              decoration: ShapeDecoration(
+                                                color: Colors.black.withOpacity(0.6),
+                                                shape: OvalBorder(
+                                                  side: BorderSide(
+                                                    width: 1.50,
+                                                    strokeAlign: BorderSide.strokeAlignCenter,
+                                                    color: Color(0xFF00FFBF),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Icon(CupertinoIcons.pause_solid, size: 28, color: Colors.white,),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
                                   )
                                 ),
                                 Visibility

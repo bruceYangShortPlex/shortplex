@@ -246,7 +246,7 @@ class Stat {
     _slug = json['slug'];
     _action = json['action'];
     _cnt = json['cnt'];
-    _amt = json['amt'];
+    _amt = json['amt'] ?? '0';
     _users = json['users'];
   }
   String? _platform;
@@ -288,7 +288,6 @@ class Stat {
     map['users'] = _users;
     return map;
   }
-
 }
 
 class Episode {

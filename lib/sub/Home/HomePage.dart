@@ -198,7 +198,6 @@ class _HomePageState extends State<HomePage>
     List<Episode> contentEpisodes = <Episode>[];
     try
     {
-
       await HttpProtocolManager.to.get_ContentData(_contentID).then((value) async
       {
         var contentRes = value;
@@ -358,7 +357,7 @@ class _HomePageState extends State<HomePage>
                           pageList.length != 0 && pageIndex < pageList.length ?
                           pageList[pageIndex].contentTitle! : '',
                           style:
-                          const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ],
@@ -431,7 +430,7 @@ class _HomePageState extends State<HomePage>
       onTap: ()
       {
         Get.to(()=> ContentInfoPage(), arguments: _data);
-        print(pageIndex);
+        print('pageIndex : $pageIndex');
       },
       child: Container
       (
@@ -567,7 +566,7 @@ class _HomePageState extends State<HomePage>
                       onTap: ()
                       {
                         Get.to(()=> ContentInfoPage(), arguments: _list[i]);
-                        print(_list[i].id);
+                        //print(_list[i].id);
                       },
                       child: Container
                       (
@@ -675,7 +674,7 @@ class _HomePageState extends State<HomePage>
               else
               {
                 print('go to info page');
-                print(_data.id);
+                //print(_data.id);
                 Get.to(() => const ContentInfoPage(), arguments: _data);
               }
             },
@@ -802,7 +801,7 @@ class _HomePageState extends State<HomePage>
                     onPressed: ()
                     {
                       print('go to info page');
-                      print(_data.id);
+                      //print(_data.id);
                     },
                     icon: Icon(CupertinoIcons.info), color: Colors.white,)
                 ],

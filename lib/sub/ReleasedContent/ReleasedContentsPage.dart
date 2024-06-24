@@ -192,7 +192,7 @@ Widget mainWidget(BuildContext context)=>
             setState(()
             {
               selectedIndex = _index;
-              print(selectedIndex);
+              print('selectedIndex : $selectedIndex');
             });
           },
           child:

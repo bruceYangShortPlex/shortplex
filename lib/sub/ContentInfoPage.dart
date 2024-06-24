@@ -9,6 +9,7 @@ import 'package:shortplex/sub/ReplyPage.dart';
 import 'package:shortplex/table/UserData.dart';
 import '../Network/Content_Res.dart';
 import '../table/StringTable.dart';
+import 'UserInfo/LoginPage.dart';
 
 enum CommentSortType
 {
@@ -29,6 +30,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   ContentRes? contentRes;
   ContentData? contentData;
   bool check = false;
+  bool buttonEnabled = true;
 
   //회차 정보.
   var selections = List.generate(3, (_) => false);
@@ -143,6 +145,52 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     }
   }
 
+  void GetFavorite()
+  {
+    if (UserData.to.isLogin.value == false)
+    {
+      check = false;
+
+      setState(() {
+
+      });
+
+      print('check 1 : $check');
+
+      return;
+    }
+
+    HttpProtocolManager.to.get_Stat(contentData!.id!).then((value)
+    {
+      if (value == null || value.data == null || value.data!.isEmpty )
+      {
+        check = false;
+        setState(() {
+
+        });
+
+        print('check 1 : $check');
+
+        return;
+      }
+
+      for(var item in value.data!)
+      {
+        if (item.action == Stat_Type.favorite.name)
+        {
+          var amt = int.parse(item.amt!);
+          check = amt > 0;
+          setState(() {
+
+          });
+
+          print('item.amt ${item.amt} / check 3 : $check');
+          return;
+        }
+      }
+    });
+  }
+
   @override
   void initState()
   {
@@ -155,6 +203,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     });
 
     GetContentData();
+    GetFavorite();
     GetCommentData();
 
     setState(()
@@ -270,10 +319,17 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       Container
       (
         width: 390,
-        height: 260,
-        color: Colors.blueGrey,
-        child: contentData!.landScapeImageUrl == null || contentData!.landScapeImageUrl!.isEmpty ?
-        SizedBox() : Image.network(contentData!.landScapeImageUrl!, fit: BoxFit.contain,),
+        height: 220,
+        //color: Colors.blueGrey,
+        child:
+        ClipRRect
+        (
+          borderRadius: BorderRadius.circular(7),
+          child:
+          contentData!.landScapeImageUrl == null || contentData!.landScapeImageUrl!.isEmpty ?
+          SizedBox() : Image.network(contentData!.landScapeImageUrl!, fit: BoxFit.cover
+            ,),
+        ),
       ),
       SizedBox(height: 20,),
       Container
@@ -283,7 +339,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         child:
         Text
         (
-          contentData!.contentTitle!,
+          contentData!.title!,
           style:
           TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
@@ -382,13 +438,27 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (
                   icon: check ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
                   Icon(CupertinoIcons.heart, size: 30, color: Colors.white, ),
-                  onPressed: ()
+                  onPressed: buttonEnabled ? ()
                   {
-                    setState(()
+                    if (UserData.to.isLogin.value == false)
                     {
-                      check = !check;
+                      showDialogTwoButton(StringTable().Table![600018]!, '',
+                      ()
+                      {
+                        Get.to(() => LoginPage());
+                      });
+                      return;
+                    }
+
+                    buttonEnabled = false;
+                    var value = check ? -1 : 1;
+                    print('value : $value');
+                    HttpProtocolManager.to.send_Stat(contentData!.id!, value, Stat_Type.favorite).then((value)
+                    {
+                      GetFavorite();
+                      buttonEnabled = true;
                     });
-                  },
+                  } : null,
                 ),
                 Text
                 (
@@ -685,7 +755,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
     //어떤회차 그룹을 선택했는지 인덱스를 찾아온다. 1~20화 를 눌렀다면 0번이 true이므로 0번을 찾는다.
     var data = episodeGroupSelections.asMap().entries.firstWhere((element) => element.value);
-    print(data.key);
+    //print(data.key);
     var index = data.key;
 
     if (!mapEpisodeData.containsKey(data.key))
@@ -737,12 +807,12 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     (
                       width: 77,
                       height: 107,
-                      color: Colors.blueGrey,
+                      //color: Colors.blueGrey,
                       child:
                       ClipRRect
                       (
-                        borderRadius: BorderRadius.circular(7),
-                        child:                      
+                          borderRadius: BorderRadius.circular(7),
+                          child:
                         list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
                         ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!, fit: BoxFit.cover,),
                       ),

@@ -273,7 +273,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         height: 260,
         color: Colors.blueGrey,
         child: contentData!.landScapeImageUrl == null || contentData!.landScapeImageUrl!.isEmpty ?
-        SizedBox() : Image.network(contentData!.landScapeImageUrl!),
+        SizedBox() : Image.network(contentData!.landScapeImageUrl!, fit: BoxFit.contain,),
       ),
       SizedBox(height: 20,),
       Container

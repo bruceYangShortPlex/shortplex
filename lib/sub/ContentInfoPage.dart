@@ -102,37 +102,48 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     }
   }
 
+  int downCompletePage = 0;
+  int maxPage = 0;
   void GetCommentData() async
   {
+    if (downCompletePage > maxPage) {
+      return;
+    }
+
     try
     {
-      await HttpProtocolManager.to.get_CommentData(contentData!.id!).then((value)
+      await HttpProtocolManager.to.get_CommentData(contentData!.id!, downCompletePage).then((value)
       {
         var commentRes = value;
         totalCommentCount = commentRes!.data!.total;
-        int i = 0;
+        maxPage = commentRes.data!.maxPage;
         for(var item in commentRes.data!.items!)
         {
+          if (commentList.any((element) => element.ID == item.id))
+          {
+            continue;
+          }
+
           var commentData = EpisodeCommentData
           (
-            name: item.displayname ?? '',
+            name: item.displayname,
             comment: item.content,
-            date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
-            episodeNumber: '11',
-            iconUrl: '',
+            date: ConvertCommentDate(item.createdAt!),
+            episodeNumber: item.episode_no.toString(),
+            iconUrl: item.photourl ?? '',
             ID: item.id!,
             isLikeCheck: false,
             likeCount: item.likes ?? '0',
             replyCount: item.replies ?? '0',
             isDelete: UserData.to.userId ==  item.userId,
-            commentType: i < 3 ? CommentType.BEST : CommentType.NORMAL,
+            commentType: item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL,
             parentID: contentData!.id!,
             isEdit: false,
+            userID: item.userId,
           );
-          ++i;
           commentList.add(commentData);
         }
-
+        downCompletePage++;
         setState(() {
 
         });
@@ -149,7 +160,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     if (UserData.to.isLogin.value == false)
     {
       UserData.to.contentFavoriteCheck.value = false;
-
       return;
     }
 
@@ -217,7 +227,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       //TODO:Page로 불러오기 나오면 작업.
       if (totalCommentCount > commentList.length)
       {
-
+        GetCommentData();
       }
     }
     catch (e)
@@ -422,12 +432,12 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 IconButton
                 (
                   icon:
-                      Obx(()
-                      {
-                        return
-                        UserData.to.contentFavoriteCheck.value ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
-                        Icon(CupertinoIcons.heart, size: 30, color: Colors.white, );
-                      },),
+                  Obx(()
+                  {
+                    return
+                    UserData.to.contentFavoriteCheck.value ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
+                    Icon(CupertinoIcons.heart, size: 30, color: Colors.white, );
+                  },),
 
                   onPressed: buttonEnabled ? ()
                   {
@@ -454,7 +464,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (
                   StringTable().Table![100023]!,
                   style:
-                  TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  TextStyle(fontSize: 10, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ],
             ),
@@ -851,136 +861,178 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     );
   }
 
-  Widget contentComment() =>
-  Visibility
-  (
-    visible: selections[1],
-    child:
-    Column
-    (
-      children:
-      [
-        SizedBox
+  Widget contentComment()
+  {
+    return
+      Visibility
         (
-          width: 390,
-          child:
-          Row
+        visible: selections[1],
+        child:
+        Column
           (
-            children:
-            [
-              Expanded
+          children:
+          [
+            SizedBox
               (
-                child:
-                Container
+              width: 390,
+              child:
+              Row
                 (
-                  padding: EdgeInsets.only(left: 30, bottom: 1),
-                  child: Text
-                  (
-                    '${StringTable().Table![100026]!} (${totalCommentCount})',
-                    style:
-                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ),
-              GestureDetector
-              (
-                onTap: ()
-                {
-                  setState(()
-                  {
-                    commentSortType = CommentSortType.LIKE;
-                  });
-                },
-                child: Container
-                (
-                  width: 73,
-                  height: 26,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFF1E1E1E),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LIKE ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
-                      borderRadius: BorderRadius.circular(20),
+                children:
+                [
+                  Expanded
+                    (
+                    child:
+                    Container
+                      (
+                      padding: EdgeInsets.only(left: 30, bottom: 1),
+                      child: Text
+                        (
+                        '${StringTable()
+                            .Table![100026]!} (${totalCommentCount})',
+                        style:
+                        TextStyle(fontSize: 13,
+                          color: Colors.white,
+                          fontFamily: 'NotoSans',
+                          fontWeight: FontWeight.bold,),
+                      ),
                     ),
                   ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.only(bottom: 1),
-                  child:
-                  Text
-                  (
-                    StringTable().Table![100035]!,
-                    style:
-                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10,),
-              GestureDetector
-              (
-                onTap: ()
-                {
-                  setState(()
-                  {
-                    commentSortType = CommentSortType.LATEST;
-                  });
-                },
-                child: Container
-                (
-                  width: 73,
-                  height: 26,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFF1E1E1E),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LATEST ? Color(0xFF00FFBF) : Color(0xFF878787)),
-                      borderRadius: BorderRadius.circular(20),
+                  GestureDetector
+                    (
+                    onTap: () {
+                      setState(() {
+                        commentSortType = CommentSortType.LIKE;
+                      });
+                    },
+                    child: Container
+                      (
+                      width: 73,
+                      height: 26,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 1.50,
+                              color: commentSortType == CommentSortType.LIKE
+                                  ? const Color(0xFF00FFBF)
+                                  : const Color(0xFF878787)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.only(bottom: 1),
+                      child:
+                      Text
+                        (
+                        StringTable().Table![100035]!,
+                        style:
+                        TextStyle(fontSize: 11,
+                          color: commentSortType == CommentSortType.LIKE
+                              ? Colors.white
+                              : const Color(0xFF878787),
+                          fontFamily: 'NotoSans',
+                          fontWeight: FontWeight.bold,),
+                      ),
                     ),
                   ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.only(bottom: 1),
-                  child:
-                  Text
-                  (
-                    StringTable().Table![100036]!,
-                    style:
-                    TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  const SizedBox(width: 10,),
+                  GestureDetector
+                    (
+                    onTap: () {
+                      setState(() {
+                        commentSortType = CommentSortType.LATEST;
+                      });
+                    },
+                    child: Container
+                      (
+                      width: 73,
+                      height: 26,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 1.50,
+                              color: commentSortType == CommentSortType.LATEST
+                                  ? Color(0xFF00FFBF)
+                                  : Color(0xFF878787)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.only(bottom: 1),
+                      child:
+                      Text
+                        (
+                        StringTable().Table![100036]!,
+                        style:
+                        TextStyle(fontSize: 11,
+                          color: commentSortType == CommentSortType.LATEST
+                              ? Colors.white
+                              : const Color(0xFF878787),
+                          fontFamily: 'NotoSans',
+                          fontWeight: FontWeight.bold,),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 10,),
+                ],
               ),
-              const SizedBox(width: 10,),
-            ],
-          ),
-        ),
-        SizedBox(height: 10,),
-        for(int i = 0; i < commentList.length; ++i)
-          CommentWidget
-          (
-            commentList[i],
-            false,
-            (id)
-            {
-              //TODO : 좋아요 버튼 처리
-              print(id);
-            },
-                (id)
-            {
-              //TODO : 댓글의 답글 열기 버튼 처리
-              Get.to(() => ReplyPage(), arguments: commentList[i]);
-            },
-                (id)
-            {
-              //TODO : 수정하기 버튼 처리
+            ),
+            SizedBox(height: 10,),
+            for(int i = 0; i < commentList.length; ++i)
+              Obx(()
+              {
+                if (UserData.to.isLogin.value == true)
+                {
+                  //commentList[i].isLikeCheck =  commentList[i].userID == UserData.to.userId;
+                }
+                return
+                CommentWidget
+                (
+                  commentList[i],
+                  false,
+                      (id) {
+                    print(id);
 
-            },
-                (id)
-            {
-              //TODO : 삭제 버튼 처리
-              setState(() {
-                commentList.remove(commentList[i]);
-              });
-            },
-          ),
-      ],
-    ),
-  );
+                    if (buttonEnabled == false) {
+                      return;
+                    }
+
+                    if (UserData.to.isLogin.value == false) {
+                      showDialogTwoButton(StringTable().Table![600018]!, '',
+                              () {
+                            Get.to(() => LoginPage());
+                          });
+                      return;
+                    }
+
+                    buttonEnabled = false;
+                    int value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
+                    HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                        .then((value) {
+                      //GetFavorite();
+                      buttonEnabled = true;
+                    });
+                  },
+                      (id) {
+                    //TODO : 댓글의 답글 열기 버튼 처리
+                    Get.to(() => ReplyPage(), arguments: commentList[i]);
+                  },
+                      (id) {
+                    //TODO : 수정하기 버튼 처리
+
+                  },
+                      (id) {
+                    //TODO : 삭제 버튼 처리
+                    setState(() {
+                      commentList.remove(commentList[i]);
+                    });
+                  },
+                );
+            },),
+          ],
+        ),
+      );
+  }
 
   Widget contentEventAnnounce([bool _active = true])
   {
@@ -1091,6 +1143,7 @@ class EpisodeCommentData
   bool? isEdit;
   CommentType? commentType;
   String? parentID;
+  String? userID;
 
   EpisodeCommentData
   (
@@ -1108,6 +1161,7 @@ class EpisodeCommentData
       required this.isEdit,
       required this.commentType,
       required this.parentID,
+      required this.userID,
     }
   );
 }

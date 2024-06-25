@@ -307,12 +307,13 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_CommentData(String _contentID) async
+  Future<CommentRes?> get_CommentData(String _contentID, int _page) async
   {
     try
     {
+
       var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
-      var url = Uri.parse('https://www.quadra-system.com/api/v1/addition/comment/$_contentID');
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/comments?page=$_page&itemsPerPage=20');
       var res = await http.get(url, headers: heads);
 
        print('get_CommentData url = $url');
@@ -665,6 +666,40 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/action/personal/stat/$_parentID';
+      print('get_Stat send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('get_Stat res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  StatRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_Stat data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('get_Stat FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_Stat error : $e');
+    }
+
+    return null;
+  }
+
+  Future<StatRes?> GetUserStat() async
+  {
+    if (UserData.to.isLogin.value == false) {
+      return null;
+    }
+
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/action/personal/stat/${UserData.to.userId}';
       print('get_Stat send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
       print('get_Stat res.body ${res.body}');

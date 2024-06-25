@@ -531,6 +531,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         commentType: CommentType.NORMAL,
         parentID: episodeData!.id!,
         isEdit: UserData.to.userId == item.userId,
+        userID: item.userId,
       );
       selectList.add(commentData);
       setState(() {

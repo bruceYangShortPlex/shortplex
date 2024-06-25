@@ -527,6 +527,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
         commentType: CommentType.NORMAL,
         parentID: episodeData!.id!,
         isEdit: UserData.to.userId == item.userId,
+        userID: item.userId,
       );
       selectList.add(commentData);
       setState(() {

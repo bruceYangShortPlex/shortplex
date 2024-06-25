@@ -41,6 +41,7 @@ class _ReplyPageState extends State<ReplyPage>
     commentType: CommentType.NORMAL,
     parentID: '',
     isEdit: false,
+    userID: '',
   );
 
   int totalCount = 0;
@@ -69,6 +70,7 @@ class _ReplyPageState extends State<ReplyPage>
             commentType: CommentType.NORMAL,
             parentID: commentData.ID,
             isEdit: false,
+            userID: item.userId,
           );
           replyList.add(data);
         }
@@ -103,6 +105,7 @@ class _ReplyPageState extends State<ReplyPage>
         commentType: CommentType.NORMAL,
         parentID: commentData.ID,
         isEdit: true,
+        userID: '',
       );
       replyList.add(data);
     }

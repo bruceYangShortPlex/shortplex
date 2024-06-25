@@ -465,7 +465,8 @@ Widget CommentWidget
                           {
                             _callClickLike(id);
                           },
-                          icon: Icon( _data.isLikeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
+                          icon:
+                          Icon( _data.isLikeCheck == true ? CupertinoIcons.heart_solid : CupertinoIcons.heart,
                             color: Colors.white,size: 15,),
                         ),
                         Text
@@ -618,6 +619,10 @@ SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position)
 
 String ConvertCommentDate(String _date)
 {
+  if (_date.isEmpty) {
+    return '';
+  }
+
   var result = DateTime.parse(_date);
 
   var year = result.year.toString().padLeft(2, '0');

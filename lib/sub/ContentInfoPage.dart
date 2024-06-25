@@ -121,6 +121,26 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         {
           if (commentList.any((element) => element.ID == item.id))
           {
+            for(int i = 0; i < commentList.length; ++i)
+            {
+              if (commentList[i].ID == item.id)
+              {
+                commentList[i].name = item.displayname;
+                commentList[i].comment = item.content;
+                commentList[i].date = ConvertCommentDate(item.createdAt!);
+                commentList[i].episodeNumber = item.episode_no.toString();
+                commentList[i].iconUrl = item.photourl ?? '';
+                commentList[i].isLikeCheck = false;
+                commentList[i].likeCount = item.likes ?? '0';
+                commentList[i].replyCount = item.replies ?? '0';
+                commentList[i].isDelete = UserData.to.userId ==  item.userId;
+                commentList[i].commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
+                commentList[i].parentID = contentData!.id!;
+                commentList[i].isEdit = false;
+                commentList[i].userID = item.userId;
+                break;
+              }
+            }
             continue;
           }
 
@@ -983,7 +1003,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               {
                 if (UserData.to.isLogin.value == true)
                 {
-                  //commentList[i].isLikeCheck =  commentList[i].userID == UserData.to.userId;
+                  commentList[i].isLikeCheck =  commentList[i].userID == UserData.to.userId;
                 }
                 return
                 CommentWidget

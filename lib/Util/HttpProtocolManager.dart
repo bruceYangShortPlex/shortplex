@@ -307,11 +307,10 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_CommentData(String _contentID, int _page) async
+  Future<CommentRes?> get_Comments(String _contentID, int _page) async
   {
     try
     {
-
       var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
       var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/comments?page=$_page&itemsPerPage=20');
       var res = await http.get(url, headers: heads);
@@ -339,12 +338,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_RepliesData(String _contentID, String _commentID) async
+  Future<CommentRes?> get_RepliesData(String _contentID, String _commentID, int _page) async
   {
     try
     {
       var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
-      var url = Uri.parse('https://www.quadra-system.com/api/v1/addition/comment/$_contentID/replies/$_commentID');
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/addition/comment/$_contentID/replies/$_commentID?page=$_page&itemsPerPage=20');
       var res = await http.get(url, headers: heads);
 
       print('get_CommentData url = $url');
@@ -403,12 +402,42 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_Comment(String _episodeID) async
+  Future<CommentRes?> get_EpisodeComments(String _episodeID, int _page) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID';
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID?page=$_page&itemsPerPage=20';
+      //print('send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('get_EpisodeComments res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_EpisodeComments data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('get_EpisodeComments FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_EpisodeComments error : $e');
+    }
+
+    return null;
+  }
+
+  Future<CommentRes?> get_Comment(String _episodeID, String _commentID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/$_commentID';
       print('send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
       print('get_Comment res.body ${res.body}');
@@ -461,6 +490,36 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('send_Reply error : $e');
+    }
+
+    return null;
+  }
+
+  Future<CommentRes?> get_Reply(String _episodeID, String _commentID, String _replyID) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/replies/$_commentID/$_replyID';
+      print('get_Reply send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('get_Reply res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_Reply data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('get_Reply FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('get_Reply error : $e');
     }
 
     return null;
@@ -571,7 +630,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID//replies/$_comment_id/$_replyID';
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/replies/$_comment_id/$_replyID';
 
       print('send_delete_comment url : ${url} / heads : ${heads}');
       var res = await http.delete(Uri.parse(url), headers: heads);
@@ -634,11 +693,11 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = 'https://www.quadra-system.com/api/v1/action/stat/$_contentID';
       var type_cd = Comment_CD_Type.content.name;
       var stat =  StatReq(action: _type.name, value: _active, typeCd: type_cd);
-      //print('stat : ${stat.value}');
+      print('stat : ${stat.value}');
       var bodys = jsonEncode(stat.toJson());
-      //print('send_Stat heads : ${heads} / send bodys : ${bodys}');
+      print('send_Stat heads : ${heads} / send bodys : ${bodys}');
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
-      //print('send_Stat res.body ${res.body}');
+      print('send_Stat res.body ${res.body}');
 
       if (res.statusCode == 200)
       {

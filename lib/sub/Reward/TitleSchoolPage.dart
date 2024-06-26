@@ -112,6 +112,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                 isDelete: i == 0,
                 commentType: CommentType.NORMAL, parentID: '',
                 isEdit: false,
+                userID: '',
               );
               commentList.add(commentData);
             }
@@ -183,6 +184,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         commentType: CommentType.TOP10,
         parentID: '',
         isEdit: false,
+        userID: '',
       );
       rankedCommentList.add(commentData);
     }
@@ -204,6 +206,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         commentType: CommentType.NORMAL,
         parentID: '',
         isEdit: false,
+        userID: '',
       );
       commentList.add(commentData);
     }

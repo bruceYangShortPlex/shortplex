@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/Network/Comment_Res.dart';
 import '../Util/HttpProtocolManager.dart';
 import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
@@ -20,11 +21,13 @@ class ReplyPage extends StatefulWidget
 
 class _ReplyPageState extends State<ReplyPage>
 {
+  ContentData? contentData;
   String replyID = '';
   List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
   var scrollController = ScrollController();
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
+  bool prevLogin = false;
 
   var commentData = EpisodeCommentData
   (
@@ -45,79 +48,112 @@ class _ReplyPageState extends State<ReplyPage>
   );
 
   int totalCount = 0;
-  void GetRepliesData() async
+  int downReplyPage = 0;
+  int maxReplyPage = 0;
+
+  void GetRepliesData([bool _refresh = false])
+  {
+    if (_refresh)
+    {
+      for(int i = 0; i < downReplyPage; ++i)
+      {
+        GetReplies(i);
+      }
+    }
+    else
+    {
+      if (downReplyPage > maxReplyPage)
+      {
+        return;
+      }
+
+      GetReplies(downReplyPage).then((value) => downReplyPage++);
+    }
+  }
+
+  Future GetReplies(int _page) async
   {
     try
     {
-      await HttpProtocolManager.to.get_RepliesData(commentData.parentID!, commentData.ID).then((value)
+      HttpProtocolManager.to.get_RepliesData(commentData.parentID!, commentData.ID, _page).then((value)
       {
-        var commentRes = value;
-        totalCount = commentRes!.data!.total;
-        for(var item in commentRes.data!.items!)
+        if (value == null)
         {
-          var data = EpisodeCommentData
-          (
-            name: item.displayname ?? '',
-            comment: item.content,
-            date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
-            episodeNumber: '',
-            iconUrl: item.photourl ?? '',
-            ID: item.id!,
-            isLikeCheck: false,
-            likeCount: item.likes ?? '0',
-            replyCount: item.replies ?? '0',
-            isDelete: UserData.to.userId ==  item.userId,
-            commentType: CommentType.NORMAL,
-            parentID: commentData.ID,
-            isEdit: false,
-            userID: item.userId,
-          );
-          replyList.add(data);
+          if (kDebugMode) {
+            print('GetReplies value null RETURN');
+          }
+          return;
         }
-
-        setState(() {
-
-        });
+        totalCount = value.data!.total;
+        maxReplyPage = value.data!.maxPage;
+        SetRepliesData(value);
+        if (kDebugMode) {
+          print('Get Replies Complete');
+        }
       });
     }
     catch(e)
     {
-      print('GetCommentData Catch $e');
+      if (kDebugMode) {
+        print('send Comment error : $e');
+      }
     }
   }
 
-  void TestReplies()
+  void SetRepliesData(CommentRes _value)
   {
-    for(int i = 0 ; i < 10; ++i)
+    for(var item in _value.data!.items!)
     {
+      if (replyList.any((element) => element.ID == item.id))
+      {
+        var refreshData = replyList.firstWhere((element) => element.ID == item.id);
+        refreshData.name = item.displayname;
+        refreshData.comment = item.content;
+        refreshData.date = ConvertCommentDate(item.createdAt!);
+        refreshData.episodeNumber = item.episode_no.toString();
+        refreshData.iconUrl = item.photourl;
+        refreshData.isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
+        refreshData.likeCount = item.likes;
+        refreshData.replyCount = item.replies;
+        refreshData.isDelete = UserData.to.userId ==  item.userId;
+        refreshData.commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
+        refreshData.parentID = item.key;
+        refreshData.isEdit = UserData.to.userId == item.userId;
+        refreshData.userID = item.userId;
+        continue;
+      }
+
       var data = EpisodeCommentData
       (
-        name: '홍길동 $i',
-        comment: '이렇쿵 저렇쿵 알아서 잘해보자쿵.',
-        date: DateTime.now().toString(),
+        name: item.displayname,
+        comment: item.content,
+        date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
         episodeNumber: '',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: false,
-        likeCount: '0',
-        replyCount: '0',
-        isDelete: true,
+        iconUrl: item.photourl,
+        ID: item.id!,
+        isLikeCheck: item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0,
+        likeCount: item.likes,
+        replyCount: item.replies,
+        isDelete: UserData.to.userId ==  item.userId,
         commentType: CommentType.NORMAL,
         parentID: commentData.ID,
-        isEdit: true,
-        userID: '',
+        isEdit: UserData.to.userId == item.userId,
+        userID: item.userId,
       );
       replyList.add(data);
     }
+
+    setState(() {
+
+    });
   }
 
   @override
   void initState()
   {
+    prevLogin = UserData.to.isLogin.value;
     super.initState();
     commentData = Get.arguments;
-    print('data 1 : $commentData');
-
     GetRepliesData();
 
     scrollController.addListener(() {
@@ -167,10 +203,9 @@ class _ReplyPageState extends State<ReplyPage>
   {
     try
     {
-      //TODO:Page로 불러오기 나오면 작업.
       if (totalCount > replyList.length)
       {
-
+        GetRepliesData();
       }
     }
     catch (e)
@@ -214,7 +249,6 @@ class _ReplyPageState extends State<ReplyPage>
             commentData.parentID!, textEditingController.text, commentData.ID, Comment_CD_Type.episode).then((value)
         {
           CommentUpdate();
-          print('send_Reply result $value');
           connecting = false;
         });
       }
@@ -222,20 +256,22 @@ class _ReplyPageState extends State<ReplyPage>
     catch(e)
     {
       connecting = false;
-      print('send send_Reply error : $e');
     }
   }
 
   void CommentUpdate() async
   {
+    UserData.to.contentCommentChange.value = '';
     try
     {
-      await HttpProtocolManager.to.get_Comment(commentData.parentID!).then((value)
+      await HttpProtocolManager.to.get_Comment(commentData.parentID!, commentData.ID).then((value)
       {
         for(var item in value!.data!.items!)
         {
           if (item.id == commentData.ID)
           {
+            commentData.likeCount = item.likes;
+            commentData.isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
             commentData.replyCount = item.replies;
             setState(() {
 
@@ -356,21 +392,111 @@ SafeArea
           (
             children:
             [
-              ReplyPopup(scrollController, commentData, replyList,
-              (id)
+              Obx(()
               {
-                replyID = id;
-                var item = replyList.firstWhere((element) => element.ID == id);
-                textEditingController.text = item.comment!;
-                FocusScope.of(context).requestFocus(textFocusNode);
-                setState(() {
+                if (prevLogin == false && UserData.to.isLogin.value == true)
+                {
+                  GetRepliesData(true);
+                }
+                prevLogin = UserData.to.isLogin.value;
+                return
+                ReplyPopup
+                  (
+                    scrollController, commentData, replyList,
+                    (id)
+                    {
+                      if (connecting) {
+                        return;
+                      }
 
-                });
-              },
-              (id)
-              {
-                //삭제
-                DeleteReply(id);
+                      //comment에 좋아요 눌렀다.
+                      UserData.to.contentCommentChange.value = id;
+                      connecting = true;
+                      var value = commentData.isLikeCheck! ? -1 : 1;
+                      if (kDebugMode) {
+                        print('Content Info Page like check value : $value');
+                      }
+                      HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                          .then((value)
+                      {
+                        CommentUpdate();
+                        connecting = false;
+                     });
+                    },
+                    (id)
+                    {
+                      //좋아요.
+                      if (connecting)
+                      {
+                        return;
+                      }
+
+                      if (UserData.to.isLogin.value == false)
+                      {
+                        showDialogTwoButton(StringTable().Table![600018]!, '',
+                                ()
+                            {
+                              Get.to(() => LoginPage());
+                            });
+                        return;
+                      }
+                      connecting = true;
+                      var item = replyList.firstWhere((element) => element.ID == id);
+                      var value = item.isLikeCheck! ? -1 : 1;
+                      print('comment like check value : $value');
+                      HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                          .then((value)
+                      {
+                        for(var item in value!.data!)
+                        {
+                          for(int i = 0 ; i < replyList.length; ++i)
+                          {
+                            if (replyList[i].ID == item.key)
+                            {
+                              HttpProtocolManager.to.get_Reply(commentData.parentID!, replyList[i].parentID!, id).then((value1)
+                              {
+                                if (value1 == null)
+                                {
+                                  connecting = false;
+                                  return;
+                                }
+                                var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                                if (UserData.to.userId == resData.whoami)
+                                {
+                                  print('find');
+                                  replyList[i].likeCount = resData.likes;
+                                  replyList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                  setState(() {
+
+                                  });
+                                }
+                                print('complete');
+                                connecting = false;
+                              },);
+                              break;
+                            }
+                          }
+                        }
+
+                      });
+                    },
+                        (id)
+                    {
+                      //수정.
+                      replyID = id;
+                      var item = replyList.firstWhere((element) => element.ID == id);
+                      textEditingController.text = item.comment!;
+                      FocusScope.of(context).requestFocus(textFocusNode);
+                      setState(() {
+
+                      });
+                    },
+                        (id)
+                    {
+                      //삭제.
+                      DeleteReply(id);
+                    });
+
               }),
               Obx(()
               {
@@ -395,7 +521,7 @@ SafeArea
                                 }
                                 SendReply();
                               });
-              })
+              }),
             ],
           ),
         ),
@@ -406,7 +532,7 @@ SafeArea
 }
 
 Widget ReplyPopup(ScrollController _scrollController,
-    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList, Function(String) _callbackEdit,  Function(String) _callbackDelete, [double _padding = 60])
+    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList,Function(String) _callbackCommentLike, Function(String) _callbackLike, Function(String) _callbackEdit,  Function(String) _callbackDelete, [double _padding = 60])
 {
 
   return
@@ -430,13 +556,23 @@ Widget ReplyPopup(ScrollController _scrollController,
             (
               _commentData,
               false,
-              (p0) {},
-              (p0) {},
-                  (id)
+              (id)
               {
-
+                //좋아요.
+                _callbackCommentLike(id);
               },
-              (p0) {},
+              (id)
+              {
+                //답글보기 여기선 사용안함.
+              },
+              (id)
+              {
+                //수정.
+              },
+              (id)
+              {
+                //삭제.
+              },
             ),
           ),
         ),
@@ -458,9 +594,10 @@ Widget ReplyPopup(ScrollController _scrollController,
                         (
                         _replyList[i],
                             true,
-                            (p0)
+                            (id)
                             {
-
+                              print('click like');
+                              _callbackLike(id);
                             },
                             (p0)
                             {
@@ -468,7 +605,6 @@ Widget ReplyPopup(ScrollController _scrollController,
                             },
                             (id)
                             {
-                              //TODO : 수정하기 버튼 처리
                               print('click edit');
                               _callbackEdit(id);
                             },

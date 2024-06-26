@@ -221,7 +221,7 @@ class Stat {
     required String slug,
     required String action,
     required String cnt,
-    required String amt,
+    required int amt,
     required String users,}){
     _platform = platform;
     _typeCd = typeCd;
@@ -246,7 +246,7 @@ class Stat {
     _slug = json['slug'];
     _action = json['action'];
     _cnt = json['cnt'];
-    _amt = json['amt'] ?? '0';
+    _amt = json['amt'] != null ? int.parse(json['amt']) : 0;
     _users = json['users'];
   }
   String? _platform;
@@ -258,7 +258,7 @@ class Stat {
   String? _slug;
   String? _action;
   String? _cnt;
-  String? _amt;
+  int _amt = 0;
   String? _users;
 
   String? get platform => _platform;
@@ -270,7 +270,7 @@ class Stat {
   String? get slug => _slug;
   String? get action => _action;
   String? get cnt => _cnt;
-  String? get amt => _amt;
+  int get amt => _amt;
   String? get users => _users;
 
   Map<String, dynamic> toJson() {

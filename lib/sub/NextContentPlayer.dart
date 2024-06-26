@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,13 +20,29 @@ import 'ContentPlayer.dart';
 import 'CupertinoMain.dart';
 import 'ReplyPage.dart';
 
+enum ContentUI_ButtonType
+{
+  COMMENT,
+  CHECK,
+  SHARE,
+  CONTENT_INFO,
+}
+
+enum Bottom_UI_Type
+{
+  NONE,
+  COMMENT,
+  REPLY,
+  EPISODE,
+}
+
 class NextContentPlayer extends StatefulWidget
 {
   @override
-  _NextContentPlayer createState() => _NextContentPlayer();
+  _NextContentPlayerState createState() => _NextContentPlayerState();
 }
 
-class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderStateMixin
+class _NextContentPlayerState extends State<NextContentPlayer> with TickerProviderStateMixin
 {
   late VideoPlayerController videoController;
   // Add a variable to handle the time of video playback
@@ -37,7 +54,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
   bool controlUIVisible = false;
   bool isShowContent = false;
   bool isEdit = false;
-  bool checkFavorite = false;
+  bool prevLogin = false;
 
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
@@ -55,7 +72,6 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
 
   void VideoControllerInit()
   {
-
     HttpProtocolManager.to.get_streamUrl(episodeData!.episodeHd!).then((value)
     {
       //print('Play Url : $value');
@@ -141,12 +157,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
   {
     if (UserData.to.isLogin.value == false)
     {
-      checkFavorite = false;
-
-      setState(() {
-
-      });
-
+      UserData.to.contentFavoriteCheck.value = false;
       return;
     }
 
@@ -154,12 +165,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     {
       if (value == null || value.data == null || value.data!.isEmpty )
       {
-        checkFavorite = false;
-        setState(() {
-
-        });
-
-        print('check 1 : $checkFavorite');
+        UserData.to.contentFavoriteCheck.value = false;
 
         return;
       }
@@ -168,13 +174,12 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       {
         if (item.action == Stat_Type.favorite.name)
         {
-          var amt = int.parse(item.amt!);
-          checkFavorite = amt > 0;
+          var amt = item.amt;
+          UserData.to.contentFavoriteCheck.value = amt > 0;
+          print('item.amt ${item.amt} / check 3 : ${UserData.to.contentFavoriteCheck}');
           setState(() {
 
           });
-
-          print('item.amt ${item.amt} / check 3 : $checkFavorite');
           return;
         }
       }
@@ -184,6 +189,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
   @override
   void initState()
   {
+    prevLogin = UserData.to.isLogin.value;
     selectedEpisodeNo = Get.arguments[0];
     episodeList = Get.arguments[1];
 
@@ -324,7 +330,6 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     });
 
     GetFavorite();
-    GetComment();
     initEpisodeGroup();
 
     super.initState();
@@ -427,7 +432,8 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       }
       else
       {
-        await HttpProtocolManager.to.send_Reply(
+        await HttpProtocolManager.to.send_Reply
+          (
             episodeData!.id!, textEditingController.text, commentData!.ID, Comment_CD_Type.episode).then((value)
         {
           CommentRefresh(value, true);
@@ -435,9 +441,9 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
           connecting = false;
 
           //comment replise count update.
-          HttpProtocolManager.to.get_Comment(episodeData!.id!).then((value)
+          HttpProtocolManager.to.get_Comment(episodeData!.id!, commentData!.ID).then((value1)
           {
-            for(var item in value!.data!.items!)
+            for(var item in value1!.data!.items!)
             {
               if (commentData == null)
               {
@@ -464,13 +470,35 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     }
   }
 
-  void GetComment() async
+  int downCompletePage = 0;
+  int maxPage = 0;
+
+  void GetCommentsData([bool _refresh = false])
+  {
+    if (_refresh)
+    {
+      for(int i = 0; i < downCompletePage; ++i)
+      {
+        GetComment(i);
+      }
+    }
+    else
+    {
+      if (downCompletePage > maxPage) {
+        return;
+      }
+
+      GetComment(downCompletePage).then((value) => downCompletePage++);
+    }
+  }
+
+  Future GetComment(int _page) async
   {
     try
     {
-      await HttpProtocolManager.to.get_Comment(episodeData!.id!).then((value)
+      await HttpProtocolManager.to.get_EpisodeComments(episodeData!.id!, _page).then((value)
       {
-        episodeCommentList.clear();
+        maxPage = value!.data!.maxPage;
         CommentRefresh(value, false);
       });
     }
@@ -482,8 +510,6 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
 
   void CommentRefresh(CommentRes? _data, bool _isReply)
   {
-    print('Receive Comment');
-
     if (_data == null)
     {
       print("CommentRefresh data null return");
@@ -495,7 +521,25 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
       var selectList = _isReply ? replyList : episodeCommentList;
       if (selectList.any((element) => element.ID == item.id))
       {
-        print('already data continue');
+        for(int i = 0 ; i < selectList.length; ++i)
+        {
+          if (selectList[i].ID == item.id)
+          {
+            selectList[i].name = item.displayname;
+            selectList[i].comment = item.content;
+            selectList[i].date = ConvertCommentDate(item.createdAt!);
+            selectList[i].episodeNumber = item.episode_no.toString();
+            selectList[i].iconUrl = item.photourl;
+            selectList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
+            selectList[i].likeCount = item.likes;
+            selectList[i].replyCount = item.replies;
+            selectList[i].isDelete = UserData.to.userId ==  item.userId;
+            selectList[i].commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
+            selectList[i].parentID = item.key;
+            selectList[i].isEdit = UserData.to.userId == item.userId;
+            selectList[i].userID = item.userId;
+          }
+        }
         continue;
       }
 
@@ -518,10 +562,10 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
         comment: item.content ?? '',
         date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '00.00.00',
         episodeNumber: '',
-        iconUrl: '',
+        iconUrl: item.photourl,
         ID: item.id!,
-        isLikeCheck: false,
-        likeCount: '0',
+        isLikeCheck: item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0,
+        likeCount: item.likes,
         replyCount: '${item.replies}',
         isDelete: UserData.to.userId == item.userId,
         commentType: CommentType.NORMAL,
@@ -540,11 +584,11 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     });
   }
 
-  void DeleteComment(String _id) async
+  void DeleteComment(String _id)
   {
     try
     {
-      await HttpProtocolManager.to.send_delete_comment(episodeData!.id!, _id).then((value)
+      HttpProtocolManager.to.send_delete_comment(episodeData!.id!, _id).then((value)
       {
         for(var item  in value!.data!.items!)
         {
@@ -599,27 +643,46 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     }
   }
 
-  void GetRepliesData() async
-  {
-    replyList.clear();
-    setState(() {
+  int downReplyPage = 0;
+  int maxReplyPage = 0;
 
-    });
+  void GetRepliesData([bool _refresh = false])
+  {
+    if (_refresh)
+    {
+      for(int i = 0; i < downReplyPage; ++i)
+      {
+        GetReplies(i);
+      }
+    }
+    else
+    {
+      if (downReplyPage > maxReplyPage)
+      {
+        return;
+      }
+
+      GetReplies(downReplyPage).then((value) => downReplyPage++);
+    }
+  }
+
+  Future GetReplies(int _page) async
+  {
     try
     {
-      await HttpProtocolManager.to.get_RepliesData(episodeData!.id!, commentData!.ID).then((value)
+      HttpProtocolManager.to.get_RepliesData(episodeData!.id!, commentData!.ID, _page).then((value)
       {
+        maxReplyPage = value!.data!.maxPage;
         CommentRefresh(value, true);
         print('Get Replies Complete');
       });
     }
     catch(e)
     {
-      print('GetCommentData Catch $e');
+      print('send Comment error : $e');
     }
-
-    print('Get Replies');
   }
+
 
   void setScrollPosition(double _offset) {
     scrollController.animateTo(
@@ -663,7 +726,10 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                     setState(() {
 
                     });
-                    GetComment();
+
+                    downCompletePage = 0;
+                    episodeCommentList.clear();
+                    GetCommentsData();
                   }
                   break;
                 case ContentUI_ButtonType.CONTENT_INFO:
@@ -681,6 +747,10 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                   break;
                 case ContentUI_ButtonType.CHECK:
                   {
+                    //찜하기.
+                    ticker.stop();
+                    ticker.start();
+
                     if (UserData.to.isLogin.value == false)
                     {
                       showDialogTwoButton(StringTable().Table![600018]!, '',
@@ -692,15 +762,11 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                     }
 
                     connecting = true;
-                    var value = checkFavorite ? -1 : 1;
+                    var value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
                     HttpProtocolManager.to.send_Stat(episodeData!.contentId!, value, Stat_Type.favorite).then((value)
                     {
                       GetFavorite();
                       connecting = false;
-                    });
-
-                    setState(() {
-
                     });
                   }
                   break;
@@ -891,7 +957,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
               ),
             ),
             contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
-            contentUIButtons(StringTable().Table![100023]!, checkFavorite ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
+            contentUIButtons(StringTable().Table![100023]!, UserData.to.contentFavoriteCheck.value ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
             contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentUI_ButtonType.SHARE),
             contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentUI_ButtonType.CONTENT_INFO),
             Container
@@ -1194,6 +1260,7 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
   var scrollController = ScrollController();
   var replyScrollController = ScrollController();
   var totalCommentCount = 0;
+  var totalCommentReplyCount = 0;
   CommentSortType commentSortType = CommentSortType.LATEST;
 
   Widget contentComment()
@@ -1308,47 +1375,104 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
                 (
                   controller: scrollController,
                   child:
-                  Column
-                    (
-                      children:
-                      [
-                        for(int i = 0; i < episodeCommentList.length; ++i)
-                          CommentWidget
-                            (
-                            episodeCommentList[i],
-                            false,
-                                (id)
-                            {
-                              //TODO : 좋아요 버튼 처리
+                  Obx(()
+                  {
+                    if (prevLogin == false && UserData.to.isLogin.value == true)
+                    {
+                      GetCommentsData(true);
+                    }
+                    prevLogin = UserData.to.isLogin.value;
+                    return
+                      Column
+                        (
+                          children:
+                          [
+                            for(int i = 0; i < episodeCommentList.length; ++i)
+                              CommentWidget
+                                (
+                                episodeCommentList[i],
+                                false,
+                                    (id)
+                                {
+                                  //댓글 좋아요 버튼.
+                                  if (connecting)
+                                  {
+                                    return;
+                                  }
 
-                              print(id);
-                            },
-                                (id)
-                            {
-                              //답글 보기.
-                              commentData = episodeCommentList[i];
-                              bottomUItype = Bottom_UI_Type.REPLY;
-                              //commentScrollOffset = scrollController.offset;
-                              GetRepliesData();
-                            },
-                                (id)
-                            {
-                              //TODO : 수정하기 버튼 처리
-                              print('edit start');
-                              commentData = episodeCommentList[i];
-                              textEditingController.text = commentData!.comment!;
-                              FocusScope.of(context).requestFocus(textFocusNode);
-                              isEdit = true;
-                            },
-                                (id)
-                            {
-                              //TODO : 삭제 버튼 처리
-                              DeleteComment(id);
-                            },
-                          ),
-                        SizedBox(height:  50),
-                      ]
-                  )
+                                  if (UserData.to.isLogin.value == false)
+                                  {
+                                    showDialogTwoButton(StringTable().Table![600018]!, '',
+                                            ()
+                                        {
+                                          Get.to(() => LoginPage());
+                                        });
+                                    return;
+                                  }
+                                  connecting = true;
+                                  var item = episodeCommentList.firstWhere((element) => element.ID == id);
+                                  var value = item.isLikeCheck! ? -1 : 1;
+                                  HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                                      .then((value)
+                                  {
+                                    for(var item in value!.data!)
+                                    {
+                                      for(int i = 0 ; i < episodeCommentList.length; ++i)
+                                      {
+                                        if (episodeCommentList[i].ID == item.key)
+                                        {
+                                          HttpProtocolManager.to.get_Comment(episodeCommentList[i].parentID!, id).then((value1)
+                                          {
+                                            if (value1 == null)
+                                            {
+                                              connecting = false;
+                                              return;
+                                            }
+                                            var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                                            if (UserData.to.userId == resData.whoami)
+                                            {
+                                              episodeCommentList[i].likeCount = resData.likes;
+                                              episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                              setState(() {
+
+                                              });
+                                            }
+                                            connecting = false;
+                                          },);
+                                          break;
+                                        }
+                                      }
+                                    }
+                                  });
+                                },
+                                    (id)
+                                {
+                                  //댓글 답글 보기.
+                                  commentData = episodeCommentList[i];
+                                  bottomUItype = Bottom_UI_Type.REPLY;
+                                  //commentScrollOffset = scrollController.offset;
+                                  downReplyPage = 0;
+                                  replyList.clear();
+                                  GetRepliesData();
+                                },
+                                    (id)
+                                {
+                                  //댓글 수정.
+                                  commentData = episodeCommentList[i];
+                                  textEditingController.text = commentData!.comment!;
+                                  FocusScope.of(context).requestFocus(textFocusNode);
+                                  isEdit = true;
+                                },
+                                    (id)
+                                {
+                                  //댓글 삭제.
+                                  DeleteComment(id);
+                                },
+                              ),
+                            SizedBox(height:  50),
+                          ]
+                      );
+                  },)
               ),
             )
           ],
@@ -1396,6 +1520,58 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
               (
               child:
               ReplyPopup(scrollController, commentData!, replyList,
+                  (id)
+                  {
+                    //댓글 좋아요.
+                  },
+                  (id)
+                  {
+                    //답글 좋아요.
+                    if (connecting)
+                    {
+                      return;
+                    }
+                    connecting = true;
+                    var item = replyList.firstWhere((element) => element.ID == id);
+                    var value = item.isLikeCheck! ? -1 : 1;
+
+                    if (kDebugMode) {
+                      print('reply like check value : $value');
+                    }
+
+                    HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                        .then((value)
+                    {
+                      for(var item in value!.data!)
+                      {
+                        for(int i = 0 ; i < replyList.length; ++i)
+                        {
+                          if (replyList[i].ID == item.key)
+                          {
+                            HttpProtocolManager.to.get_Reply(commentData!.parentID!, replyList[i].parentID!, id).then((value1)
+                            {
+                              if (value1 == null)
+                              {
+                                connecting = false;
+                                return;
+                              }
+                              var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                              if (UserData.to.userId == resData.whoami)
+                              {
+                                replyList[i].likeCount = resData.likes;
+                                replyList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                setState(() {
+
+                                });
+                              }
+                              connecting = false;
+                            },);
+                            break;
+                          }
+                        }
+                      }
+                    });
+                  },
                       (id)
                   {
                     //수정하기,
@@ -1422,11 +1598,17 @@ class _NextContentPlayer extends State<NextContentPlayer> with TickerProviderSta
     {
       if (bottomUItype == Bottom_UI_Type.REPLY)
       {
-
+        if (totalCommentReplyCount > replyList.length)
+        {
+          GetRepliesData();
+        }
       }
       else if (bottomUItype == Bottom_UI_Type.COMMENT)
       {
-        GetComment();
+        if (totalCommentCount > episodeCommentList.length)
+        {
+          GetCommentsData();
+        }
       }
     }
     catch (e)

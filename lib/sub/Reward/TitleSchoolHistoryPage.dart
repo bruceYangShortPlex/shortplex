@@ -49,6 +49,7 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
         commentType: CommentType.NORMAL,
         parentID: '',
         isEdit: false,
+        userID: '',
       );
       recordCommentList.add(commentData);
     }

@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -38,6 +41,8 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   late Map<int, List<Episode>> mapEpisodeData = {};
   List<Episode> contentEpisodes = <Episode>[];
 
+  bool prevLogin = false;
+
   //comment 관련
   var scrollController = ScrollController();
   var commentList = <EpisodeCommentData>[];
@@ -48,9 +53,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   {
     try
     {
-      contentData = Get.arguments as ContentData;
       if (contentData == null)
       {
+        print('ContentData is Null');
         return;
       }
 
@@ -104,15 +109,31 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
   int downCompletePage = 0;
   int maxPage = 0;
-  void GetCommentData() async
-  {
-    if (downCompletePage > maxPage) {
-      return;
-    }
 
+  void GetCommentsData([bool _refresh = false])
+  {
+    if (_refresh)
+    {
+      for(int i = 0; i < downCompletePage; ++i)
+      {
+        GetCommentPage(i);
+      }
+    }
+    else
+    {
+      if (downCompletePage > maxPage) {
+        return;
+      }
+
+      GetCommentPage(downCompletePage).then((value) => downCompletePage++);
+    }
+  }
+
+  Future GetCommentPage(int _downloadPage) async
+  {
     try
     {
-      await HttpProtocolManager.to.get_CommentData(contentData!.id!, downCompletePage).then((value)
+      await HttpProtocolManager.to.get_Comments(contentData!.id!, _downloadPage).then((value)
       {
         var commentRes = value;
         totalCommentCount = commentRes!.data!.total;
@@ -130,12 +151,12 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 commentList[i].date = ConvertCommentDate(item.createdAt!);
                 commentList[i].episodeNumber = item.episode_no.toString();
                 commentList[i].iconUrl = item.photourl ?? '';
-                commentList[i].isLikeCheck = false;
+                commentList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
                 commentList[i].likeCount = item.likes ?? '0';
                 commentList[i].replyCount = item.replies ?? '0';
                 commentList[i].isDelete = UserData.to.userId ==  item.userId;
                 commentList[i].commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
-                commentList[i].parentID = contentData!.id!;
+                commentList[i].parentID = item.key!;
                 commentList[i].isEdit = false;
                 commentList[i].userID = item.userId;
                 break;
@@ -152,18 +173,17 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             episodeNumber: item.episode_no.toString(),
             iconUrl: item.photourl ?? '',
             ID: item.id!,
-            isLikeCheck: false,
+            isLikeCheck: item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0,
             likeCount: item.likes ?? '0',
             replyCount: item.replies ?? '0',
             isDelete: UserData.to.userId ==  item.userId,
             commentType: item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL,
-            parentID: contentData!.id!,
+            parentID: item.key!,
             isEdit: false,
             userID: item.userId,
           );
           commentList.add(commentData);
         }
-        downCompletePage++;
         setState(() {
 
         });
@@ -196,7 +216,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       {
         if (item.action == Stat_Type.favorite.name)
         {
-          var amt = int.parse(item.amt!);
+          var amt = item.amt;
           UserData.to.contentFavoriteCheck.value = amt > 0;
 
           print('item.amt ${item.amt} / check  : ${UserData.to.contentFavoriteCheck.value}');
@@ -209,6 +229,8 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   @override
   void initState()
   {
+    prevLogin = UserData.to.isLogin.value;
+
     super.initState();
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -217,9 +239,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       }
     });
 
+    contentData = Get.arguments;
     GetContentData();
     GetFavorite();
-    GetCommentData();
+    GetCommentsData();
 
     setState(()
     {
@@ -244,10 +267,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
     try
     {
-      //TODO:Page로 불러오기 나오면 작업.
       if (totalCommentCount > commentList.length)
       {
-        GetCommentData();
+        print('Start GetCommentsData 222');
+        GetCommentsData();
       }
     }
     catch (e)
@@ -296,6 +319,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           ),
         ),
         child:
+        contentData == null ? SizedBox() :
         SingleChildScrollView
         (
           controller: scrollController,
@@ -998,26 +1022,63 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               ),
             ),
             SizedBox(height: 10,),
-            for(int i = 0; i < commentList.length; ++i)
-              Obx(()
+            Obx(()
+            {
+              if (prevLogin == false && UserData.to.isLogin.value == true)
               {
-                if (UserData.to.isLogin.value == true)
+                GetCommentsData(true);
+              }
+              else if (UserData.to.contentCommentChange.value.isNotEmpty)
+              {
+                buttonEnabled = false;
+                var item = commentList.firstWhere((element) => element.ID == UserData.to.contentCommentChange.value);
+                HttpProtocolManager.to.get_Comment(item.parentID!, item.ID).then((value1)
                 {
-                  commentList[i].isLikeCheck =  commentList[i].userID == UserData.to.userId;
-                }
-                return
-                CommentWidget
-                (
-                  commentList[i],
-                  false,
-                      (id) {
-                    print(id);
+                  if (value1 == null)
+                  {
+                    buttonEnabled = true;
+                    return;
+                  }
+                  var resData = value1.data!.items!.firstWhere((element) => element.id == item.ID);
+                  if (UserData.to.userId == resData.whoami)
+                  {
+                    print('find');
+                    item.likeCount = resData.likes;
+                    item.isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                    setState(() {
 
-                    if (buttonEnabled == false) {
+                    });
+                  }
+                  print('complete');
+                  buttonEnabled = true;
+                },);
+              }
+
+              prevLogin = UserData.to.isLogin.value;
+
+              return
+              Column
+              (
+                children:
+                [
+                  for(int i = 0; i < commentList.length; ++i)
+                  CommentWidget
+                  (
+                   commentList[i],
+                    false,
+                    (id)
+                    {
+                    if (kDebugMode) {
+                      print(id);
+                    }
+
+                    if (buttonEnabled == false)
+                    {
                       return;
                     }
 
-                    if (UserData.to.isLogin.value == false) {
+                    if (UserData.to.isLogin.value == false)
+                    {
                       showDialogTwoButton(StringTable().Table![600018]!, '',
                               () {
                             Get.to(() => LoginPage());
@@ -1026,32 +1087,69 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     }
 
                     buttonEnabled = false;
-                    int value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
+                    var value = commentList[i].isLikeCheck! ? -1 : 1;
+                    if (kDebugMode) {
+                      print('Content Info Page like check value : $value');
+                    }
                     HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
-                        .then((value) {
-                      //GetFavorite();
-                      buttonEnabled = true;
+                        .then((value)
+                    {
+                      for(var item in value!.data!)
+                      {
+                        for(int i = 0 ; i < commentList.length; ++i)
+                        {
+                          if (commentList[i].ID == item.key)
+                          {
+                            HttpProtocolManager.to.get_Comment(commentList[i].parentID!, id).then((value1)
+                            {
+                              if (value1 == null)
+                              {
+                                buttonEnabled = true;
+                                return;
+                              }
+                              var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                              if (UserData.to.userId == resData.whoami)
+                              {
+                                print('find');
+                                commentList[i].likeCount = resData.likes;
+                                commentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                setState(() {
+
+                                });
+                              }
+                              print('complete');
+                              buttonEnabled = true;
+                            },);
+                            break;
+                          }
+                        }
+                      }
                     });
                   },
-                      (id) {
-                    //TODO : 댓글의 답글 열기 버튼 처리
+                      (id)
+                  {
+                    UserData.to.contentCommentChange.value = '';
                     Get.to(() => ReplyPage(), arguments: commentList[i]);
                   },
-                      (id) {
-                    //TODO : 수정하기 버튼 처리
-
+                      (id)
+                  {
+                    //수정 불가.
                   },
-                      (id) {
+                      (id)
+                  {
                     //TODO : 삭제 버튼 처리
-                    setState(() {
+                    setState(()
+                    {
                       commentList.remove(commentList[i]);
                     });
                   },
-                );
-            },),
-          ],
-        ),
-      );
+                ),
+              ],
+            );
+          },),
+        ],
+      ),
+    );
   }
 
   Widget contentEventAnnounce([bool _active = true])

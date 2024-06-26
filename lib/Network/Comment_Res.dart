@@ -170,10 +170,12 @@ class CommentItems {
     _blocked = json['blocked'] ?? false;
     _createdAt = json['created_at'] ?? '';
     _updatedAt = json['updated_at'] ?? '';
-    _likes = json['likes'];
+    _likes = json['likes'] ?? '0';
     _replies = json['replies'] ?? '0';
+    whoami = json['whoami'] ?? '';
     rank =  json['rank'] != null ? int.parse(json['rank']) : 100;
     episode_no =  json['episode_no'] != null ? int.parse(json['rank']) : 0;
+    ilike =  json['ilike'] != null ? int.parse(json['ilike']) : 0;
   }
   String? _id;
   String? _parentId;
@@ -196,6 +198,8 @@ class CommentItems {
   String? _replies;
   int rank = 100;
   int episode_no = 0;
+  String? whoami;
+  int ilike = 0;
 
   String? get id => _id;
   String? get parentId => _parentId;

@@ -154,7 +154,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 commentList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
                 commentList[i].likeCount = item.likes ?? '0';
                 commentList[i].replyCount = item.replies ?? '0';
-                commentList[i].isDelete = UserData.to.userId ==  item.userId;
+                commentList[i].isDelete = false;
                 commentList[i].commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
                 commentList[i].parentID = item.key!;
                 commentList[i].isEdit = false;
@@ -176,7 +176,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
             isLikeCheck: item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0,
             likeCount: item.likes ?? '0',
             replyCount: item.replies ?? '0',
-            isDelete: UserData.to.userId ==  item.userId,
+            isDelete: false,
             commentType: item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL,
             parentID: item.key!,
             isEdit: false,
@@ -1028,12 +1028,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               {
                 GetCommentsData(true);
               }
-              else if (UserData.to.contentCommentChange.value.isNotEmpty)
+              else if (UserData.to.commentChange.value.isNotEmpty)
               {
                 buttonEnabled = false;
-                var item = commentList.firstWhere((element) => element.ID == UserData.to.contentCommentChange.value);
+                var item = commentList.firstWhere((element) => element.ID == UserData.to.commentChange.value);
                 HttpProtocolManager.to.get_Comment(item.parentID!, item.ID).then((value1)
                 {
+                  UserData.to.commentChange.value = '';
                   if (value1 == null)
                   {
                     buttonEnabled = true;
@@ -1042,14 +1043,12 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   var resData = value1.data!.items!.firstWhere((element) => element.id == item.ID);
                   if (UserData.to.userId == resData.whoami)
                   {
-                    print('find');
                     item.likeCount = resData.likes;
                     item.isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
                     setState(() {
 
                     });
                   }
-                  print('complete');
                   buttonEnabled = true;
                 },);
               }
@@ -1128,7 +1127,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   },
                       (id)
                   {
-                    UserData.to.contentCommentChange.value = '';
+                    UserData.to.commentChange.value = '';
                     Get.to(() => ReplyPage(), arguments: commentList[i]);
                   },
                       (id)

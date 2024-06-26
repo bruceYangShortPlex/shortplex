@@ -20,22 +20,6 @@ import 'ContentPlayer.dart';
 import 'CupertinoMain.dart';
 import 'ReplyPage.dart';
 
-enum ContentUI_ButtonType
-{
-  COMMENT,
-  CHECK,
-  SHARE,
-  CONTENT_INFO,
-}
-
-enum Bottom_UI_Type
-{
-  NONE,
-  COMMENT,
-  REPLY,
-  EPISODE,
-}
-
 class NextContentPlayer extends StatefulWidget
 {
   @override
@@ -1520,11 +1504,60 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               (
               child:
               ReplyPopup(scrollController, commentData!, replyList,
-                  (id)
+                      (id)
                   {
+                    if (connecting) {
+                      return;
+                    }
+                    connecting = true;
                     //댓글 좋아요.
+                    var item = episodeCommentList.firstWhere((element) => element.ID == id);
+                    var value = item.isLikeCheck! ? -1 : 1;
+                    HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                        .then((value)
+                    {
+                      for(var item in value!.data!)
+                      {
+                        for(int i = 0 ; i < episodeCommentList.length; ++i)
+                        {
+                          if (episodeCommentList[i].ID == item.key)
+                          {
+                            HttpProtocolManager.to.get_Comment(episodeCommentList[i].parentID!, id).then((value1)
+                            {
+                              if (value1 == null)
+                              {
+                                connecting = false;
+                                return;
+                              }
+                              var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                              if (UserData.to.userId == resData.whoami)
+                              {
+                                episodeCommentList[i].likeCount = resData.likes;
+                                episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                commentData = episodeCommentList[i];
+                                setState(() {
+
+                                });
+                              }
+                              connecting = false;
+                            },);
+                            break;
+                          }
+                        }
+                      }
+                    });
                   },
-                  (id)
+                      (id)
+                  {
+                    //코멘트 삭제.
+                    DeleteComment(id);
+                    bottomUItype = Bottom_UI_Type.COMMENT;
+                    if (kDebugMode)
+                    {
+                      print('comment delete');
+                    }
+                  },
+                      (id)
                   {
                     //답글 좋아요.
                     if (connecting)
@@ -1548,7 +1581,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                         {
                           if (replyList[i].ID == item.key)
                           {
-                            HttpProtocolManager.to.get_Reply(commentData!.parentID!, replyList[i].parentID!, id).then((value1)
+                            HttpProtocolManager.to.get_Reply(commentData!.parentID!, commentData!.ID, id).then((value1)
                             {
                               if (value1 == null)
                               {

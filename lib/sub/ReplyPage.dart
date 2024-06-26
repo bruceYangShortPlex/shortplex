@@ -223,6 +223,12 @@ class _ReplyPageState extends State<ReplyPage>
       connecting = true;
       if (replyID.isNotEmpty)
       {
+        var item = replyList.firstWhere((element) => element.ID == replyID);
+        if (item.comment != null && item.comment == textEditingController.text)
+        {
+          return;
+        }
+
         await HttpProtocolManager.to.send_edit_reply
           (
             commentData.parentID!, textEditingController.text, commentData.ID, replyID, Comment_CD_Type.episode).then((value) {
@@ -249,6 +255,10 @@ class _ReplyPageState extends State<ReplyPage>
             commentData.parentID!, textEditingController.text, commentData.ID, Comment_CD_Type.episode).then((value)
         {
           CommentUpdate();
+          if (value == null) {
+            return;
+          }
+          SetRepliesData(value);
           connecting = false;
         });
       }
@@ -261,7 +271,7 @@ class _ReplyPageState extends State<ReplyPage>
 
   void CommentUpdate() async
   {
-    UserData.to.contentCommentChange.value = '';
+    UserData.to.commentChange.value = '';
     try
     {
       await HttpProtocolManager.to.get_Comment(commentData.parentID!, commentData.ID).then((value)
@@ -270,9 +280,11 @@ class _ReplyPageState extends State<ReplyPage>
         {
           if (item.id == commentData.ID)
           {
+            UserData.to.commentChange.value = commentData.ID;
             commentData.likeCount = item.likes;
             commentData.isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
             commentData.replyCount = item.replies;
+            connecting = false;
             setState(() {
 
             });
@@ -410,7 +422,7 @@ SafeArea
                       }
 
                       //comment에 좋아요 눌렀다.
-                      UserData.to.contentCommentChange.value = id;
+                      UserData.to.commentChange.value = id;
                       connecting = true;
                       var value = commentData.isLikeCheck! ? -1 : 1;
                       if (kDebugMode) {
@@ -420,8 +432,10 @@ SafeArea
                           .then((value)
                       {
                         CommentUpdate();
-                        connecting = false;
                      });
+                    },
+                    (id) {
+                      return;
                     },
                     (id)
                     {
@@ -514,11 +528,6 @@ SafeArea
                                   return;
                                 }
 
-                                var item = replyList.firstWhere((element) => element.ID == replyID);
-                                if (item.comment != null && item.comment == textEditingController.text)
-                                {
-                                  return;
-                                }
                                 SendReply();
                               });
               }),
@@ -532,7 +541,7 @@ SafeArea
 }
 
 Widget ReplyPopup(ScrollController _scrollController,
-    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList,Function(String) _callbackCommentLike, Function(String) _callbackLike, Function(String) _callbackEdit,  Function(String) _callbackDelete, [double _padding = 60])
+    EpisodeCommentData _commentData, List<EpisodeCommentData> _replyList,Function(String) _callbackCommentLike, Function(String) _callbackCommentDelete, Function(String) _callbackLike, Function(String) _callbackEdit,  Function(String) _callbackDelete, [double _padding = 60])
 {
 
   return
@@ -572,6 +581,7 @@ Widget ReplyPopup(ScrollController _scrollController,
               (id)
               {
                 //삭제.
+                _callbackCommentDelete(id);
               },
             ),
           ),

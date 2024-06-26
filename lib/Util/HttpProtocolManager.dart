@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shortplex/Network/Comment_Res.dart';
@@ -438,14 +439,20 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID/$_commentID';
-      print('send url : $url');
+      if (kDebugMode) {
+        print('send url : $url');
+      }
       var res = await http.get(Uri.parse(url), headers: heads);
-      print('get_Comment res.body ${res.body}');
+      if (kDebugMode) {
+        print('get_Comment res.body ${res.body}');
+      }
 
       if (res.statusCode == 200)
       {
         var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        print('get_Comment data = $data');
+        if (kDebugMode) {
+          print('get_Comment data = $data');
+        }
         return data;
       }
       else

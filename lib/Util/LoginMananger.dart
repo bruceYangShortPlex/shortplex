@@ -112,7 +112,7 @@ class LoginMananger
     if (!isLogin)
     {
       Get.lazyPut(()=>HttpProtocolManager());
-      var logout = await HttpProtocolManager.to.send_Logout();
+      var logout = await HttpProtocolManager.to.Send_Logout();
       if (logout)
       {
         UserData.to.InitValue();
@@ -201,7 +201,7 @@ class LoginMananger
     );
 
     userData.isLogin.value = isLogin;
-    var result = await manager.send_OAuthLogin(oauthLogin);
+    var result = await manager.Send_OAuthLogin(oauthLogin);
     if (result != null)
     {
       userData.userId = result.userId!;

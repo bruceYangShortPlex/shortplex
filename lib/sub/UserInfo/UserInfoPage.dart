@@ -59,7 +59,7 @@ class _UserInfoPageState extends State<UserInfoPage>
     super.didUpdateWidget(oldWidget);
 
     var manager = HttpProtocolManager.to;
-    manager.send_GetUserData().then((value)
+    manager.Send_GetUserData().then((value)
     {
       print('send GetUserData value ${value}');
       if (value != '') {

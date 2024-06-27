@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage>
     {
       Get.lazyPut(() => HttpProtocolManager());
 
-      HttpProtocolManager.to.get_HomeContentData(HomeDataType.featured, 0, 20).then((value)
+      HttpProtocolManager.to.Get_HomeContentData(HomeDataType.featured, 0, 20).then((value)
       {
         pageList.clear();
         for (var item in value!.data!.items!)
@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage>
         });
       });
 
-      HttpProtocolManager.to.get_HomeContentData(HomeDataType.top, 0, 20).then((value)
+      HttpProtocolManager.to.Get_HomeContentData(HomeDataType.top, 0, 20).then((value)
       {
         rankContentsDataList.clear();
         for (var item in value!.data!.items!)
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage>
         });
       });
 
-      HttpProtocolManager.to.get_HomeContentData(HomeDataType.watch, 0, 20).then((value)
+      HttpProtocolManager.to.Get_HomeContentData(HomeDataType.watch, 0, 20).then((value)
       {
         watchingContentsDataList.clear();
         for (var item in value!.data!.items!)
@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage>
         });
       });
 
-      HttpProtocolManager.to.get_HomeContentData(HomeDataType.recent, 0, 20).then((value)
+      HttpProtocolManager.to.Get_HomeContentData(HomeDataType.recent, 0, 20).then((value)
       {
         recentList.clear();
         for (var item in value!.data!.items!)
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage>
         });
       });
 
-      HttpProtocolManager.to.get_HomeContentData(HomeDataType.activethemes, 0, 100).then((value)
+      HttpProtocolManager.to.Get_HomeContentData(HomeDataType.activethemes, 0, 100).then((value)
       {
         for(var themse in value!.data!.items!)
         {
@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage>
             continue;
           }
 
-          HttpProtocolManager.to.get_HomeContentData(HomeDataType.themes, 0, 20, themse.id!).then((result)
+          HttpProtocolManager.to.Get_HomeContentData(HomeDataType.themes, 0, 20, themse.id!).then((result)
           {
             var list = <ContentData>[];
             for (var item in result!.data!.items!)
@@ -198,7 +198,7 @@ class _HomePageState extends State<HomePage>
     List<Episode> contentEpisodes = <Episode>[];
     try
     {
-      await HttpProtocolManager.to.get_ContentData(_contentID).then((value) async
+      await HttpProtocolManager.to.Get_ContentData(_contentID).then((value) async
       {
         var contentRes = value;
         contentEpisodes.addAll(contentRes!.data!.episode!);
@@ -206,7 +206,7 @@ class _HomePageState extends State<HomePage>
 
         for(int i = 1 ; i <= contentRes.data!.episodeMaxpage; ++i)
         {
-          await HttpProtocolManager.to.get_EpisodeGroup(_contentID, i).then((value)
+          await HttpProtocolManager.to.Get_EpisodeGroup(_contentID, i).then((value)
           {
             contentEpisodes.addAll(value!.data!.episode!);
             if (contentEpisodes.length == totalEpisodeCount)

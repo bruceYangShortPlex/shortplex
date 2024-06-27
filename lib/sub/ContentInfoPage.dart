@@ -59,7 +59,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         return;
       }
 
-      HttpProtocolManager.to.get_ContentData(contentData!.id!).then((value)
+      HttpProtocolManager.to.Get_ContentData(contentData!.id!).then((value)
       {
         contentRes = value;
         mapEpisodeData[0] = contentRes!.data!.episode!;
@@ -93,7 +93,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
         for(int i = 1 ; i <= contentRes!.data!.episodeMaxpage; ++i)
         {
-          HttpProtocolManager.to.get_EpisodeGroup(contentData!.id!, i).then((value)
+          HttpProtocolManager.to.Get_EpisodeGroup(contentData!.id!, i).then((value)
           {
             mapEpisodeData[i] = value!.data!.episode!;
             contentEpisodes.addAll(value.data!.episode!);
@@ -133,7 +133,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   {
     try
     {
-      await HttpProtocolManager.to.get_Comments(contentData!.id!, _downloadPage).then((value)
+      await HttpProtocolManager.to.Get_Comments(contentData!.id!, _downloadPage).then((value)
       {
         var commentRes = value;
         totalCommentCount = commentRes!.data!.total;
@@ -203,7 +203,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       return;
     }
 
-    HttpProtocolManager.to.get_Stat(contentData!.id!).then((value)
+    HttpProtocolManager.to.Get_Stat(contentData!.id!).then((value)
     {
       if (value == null || value.data == null || value.data!.isEmpty )
       {
@@ -497,7 +497,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
                     buttonEnabled = false;
                     int value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
-                    HttpProtocolManager.to.send_Stat(contentData!.id!, value, Stat_Type.favorite).then((value)
+                    HttpProtocolManager.to.Send_Stat(contentData!.id!, value, Stat_Type.favorite).then((value)
                     {
                       GetFavorite();
                       buttonEnabled = true;
@@ -1032,7 +1032,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               {
                 buttonEnabled = false;
                 var item = commentList.firstWhere((element) => element.ID == UserData.to.commentChange.value);
-                HttpProtocolManager.to.get_Comment(item.parentID!, item.ID).then((value1)
+                HttpProtocolManager.to.Get_Comment(item.parentID!, item.ID).then((value1)
                 {
                   UserData.to.commentChange.value = '';
                   if (value1 == null)
@@ -1090,7 +1090,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     if (kDebugMode) {
                       print('Content Info Page like check value : $value');
                     }
-                    HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                    HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
                         .then((value)
                     {
                       for(var item in value!.data!)
@@ -1099,7 +1099,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                         {
                           if (commentList[i].ID == item.key)
                           {
-                            HttpProtocolManager.to.get_Comment(commentList[i].parentID!, id).then((value1)
+                            HttpProtocolManager.to.Get_Comment(commentList[i].parentID!, id).then((value1)
                             {
                               if (value1 == null)
                               {

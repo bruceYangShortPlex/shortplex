@@ -75,7 +75,7 @@ class _ReplyPageState extends State<ReplyPage>
   {
     try
     {
-      HttpProtocolManager.to.get_RepliesData(commentData.parentID!, commentData.ID, _page).then((value)
+      HttpProtocolManager.to.Get_RepliesData(commentData.parentID!, commentData.ID, _page).then((value)
       {
         if (value == null)
         {
@@ -229,7 +229,7 @@ class _ReplyPageState extends State<ReplyPage>
           return;
         }
 
-        await HttpProtocolManager.to.send_edit_reply
+        await HttpProtocolManager.to.Send_edit_reply
           (
             commentData.parentID!, textEditingController.text, commentData.ID, replyID, Comment_CD_Type.episode).then((value) {
           for(var item in value!.data!.items!)
@@ -251,7 +251,7 @@ class _ReplyPageState extends State<ReplyPage>
       }
       else
       {
-        await HttpProtocolManager.to.send_Reply(
+        await HttpProtocolManager.to.Send_Reply(
             commentData.parentID!, textEditingController.text, commentData.ID, Comment_CD_Type.episode).then((value)
         {
           CommentUpdate();
@@ -274,7 +274,7 @@ class _ReplyPageState extends State<ReplyPage>
     UserData.to.commentChange.value = '';
     try
     {
-      await HttpProtocolManager.to.get_Comment(commentData.parentID!, commentData.ID).then((value)
+      await HttpProtocolManager.to.Get_Comment(commentData.parentID!, commentData.ID).then((value)
       {
         for(var item in value!.data!.items!)
         {
@@ -303,7 +303,7 @@ class _ReplyPageState extends State<ReplyPage>
   {
     try
     {
-      await HttpProtocolManager.to.send_delete_reply(commentData.parentID!,commentData.ID, _replyID).then((value)
+      await HttpProtocolManager.to.Send_delete_reply(commentData.parentID!,commentData.ID, _replyID).then((value)
       {
         for(var item  in value!.data!.items!)
         {
@@ -428,7 +428,7 @@ SafeArea
                       if (kDebugMode) {
                         print('Content Info Page like check value : $value');
                       }
-                      HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                      HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
                           .then((value)
                       {
                         CommentUpdate();
@@ -458,7 +458,7 @@ SafeArea
                       var item = replyList.firstWhere((element) => element.ID == id);
                       var value = item.isLikeCheck! ? -1 : 1;
                       print('comment like check value : $value');
-                      HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                      HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
                           .then((value)
                       {
                         for(var item in value!.data!)
@@ -467,7 +467,7 @@ SafeArea
                           {
                             if (replyList[i].ID == item.key)
                             {
-                              HttpProtocolManager.to.get_Reply(commentData.parentID!, replyList[i].parentID!, id).then((value1)
+                              HttpProtocolManager.to.Get_Reply(commentData.parentID!, replyList[i].parentID!, id).then((value1)
                               {
                                 if (value1 == null)
                                 {

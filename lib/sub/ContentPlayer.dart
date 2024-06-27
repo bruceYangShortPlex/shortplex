@@ -72,11 +72,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   void VideoControllerInit()
   {
-    HttpProtocolManager.to.get_streamUrl(episodeData!.episodeHd!).then((value)
+    HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd!).then((value)
     {
       //print('Play Url : $value');
-      var uri = value;
-      videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
+      videoController = VideoPlayerController.networkUrl(Uri.parse(value))
         ..initialize().then((_)
       {
         if (isShowContent)
@@ -161,7 +160,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       return;
     }
 
-    HttpProtocolManager.to.get_Stat(episodeData!.contentId!).then((value)
+    HttpProtocolManager.to.Get_Stat(episodeData!.contentId!).then((value)
     {
       if (value == null || value.data == null || value.data!.isEmpty )
       {
@@ -364,7 +363,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       connecting = true;
       if (isEdit)
       {
-        await HttpProtocolManager.to.send_edit_comment
+        await HttpProtocolManager.to.Send_edit_comment
         (
           episodeData!.id!, textEditingController.text, commentData!.ID,
           Comment_CD_Type.episode).then((value)
@@ -388,7 +387,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       }
       else
       {
-        await HttpProtocolManager.to.send_Comment(
+        await HttpProtocolManager.to.Send_Comment(
             episodeData!.id!, textEditingController.text, '', Comment_CD_Type.episode).then((value)
         {
           CommentRefresh(value, false);
@@ -410,7 +409,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       connecting = true;
       if (isEdit)
       {
-        await HttpProtocolManager.to.send_edit_reply
+        await HttpProtocolManager.to.Send_edit_reply
           (
             episodeData!.id!, textEditingController.text, commentData!.ID, editReplyID, Comment_CD_Type.episode).then((value) {
           for(var item in value!.data!.items!)
@@ -432,7 +431,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       }
       else
       {
-        await HttpProtocolManager.to.send_Reply
+        await HttpProtocolManager.to.Send_Reply
           (
             episodeData!.id!, textEditingController.text, commentData!.ID, Comment_CD_Type.episode).then((value)
         {
@@ -441,7 +440,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
           connecting = false;
 
           //comment replise count update.
-          HttpProtocolManager.to.get_Comment(episodeData!.id!, commentData!.ID).then((value1)
+          HttpProtocolManager.to.Get_Comment(episodeData!.id!, commentData!.ID).then((value1)
           {
             for(var item in value1!.data!.items!)
             {
@@ -496,7 +495,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      await HttpProtocolManager.to.get_EpisodeComments(episodeData!.id!, _page).then((value)
+      await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id!, _page).then((value)
       {
         maxPage = value!.data!.maxPage;
         CommentRefresh(value, false);
@@ -588,7 +587,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      HttpProtocolManager.to.send_delete_comment(episodeData!.id!, _id).then((value)
+      HttpProtocolManager.to.Send_delete_comment(episodeData!.id!, _id).then((value)
       {
         for(var item  in value!.data!.items!)
         {
@@ -619,7 +618,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      await HttpProtocolManager.to.send_delete_reply(episodeData!.id!,commentData!.ID, _replyID).then((value)
+      await HttpProtocolManager.to.Send_delete_reply(episodeData!.id!,commentData!.ID, _replyID).then((value)
       {
         for(var item  in value!.data!.items!)
         {
@@ -670,7 +669,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      HttpProtocolManager.to.get_RepliesData(episodeData!.id!, commentData!.ID, _page).then((value)
+      HttpProtocolManager.to.Get_RepliesData(episodeData!.id!, commentData!.ID, _page).then((value)
       {
         maxReplyPage = value!.data!.maxPage;
         CommentRefresh(value, true);
@@ -763,7 +762,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
                   connecting = true;
                   var value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
-                  HttpProtocolManager.to.send_Stat(episodeData!.contentId!, value, Stat_Type.favorite).then((value)
+                  HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, value, Stat_Type.favorite).then((value)
                   {
                     GetFavorite();
                     connecting = false;
@@ -1412,7 +1411,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                               connecting = true;
                               var item = episodeCommentList.firstWhere((element) => element.ID == id);
                               var value = item.isLikeCheck! ? -1 : 1;
-                              HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+                              HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
                                   .then((value)
                               {
                                 for(var item in value!.data!)
@@ -1421,7 +1420,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                   {
                                     if (episodeCommentList[i].ID == item.key)
                                     {
-                                      HttpProtocolManager.to.get_Comment(episodeCommentList[i].parentID!, id).then((value1)
+                                      HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
                                       {
                                         if (value1 == null)
                                         {
@@ -1529,7 +1528,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               //댓글 좋아요.
               var item = episodeCommentList.firstWhere((element) => element.ID == id);
               var value = item.isLikeCheck! ? -1 : 1;
-              HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+              HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
                   .then((value)
               {
                 for(var item in value!.data!)
@@ -1538,7 +1537,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   {
                     if (episodeCommentList[i].ID == item.key)
                     {
-                      HttpProtocolManager.to.get_Comment(episodeCommentList[i].parentID!, id).then((value1)
+                      HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
                       {
                         if (value1 == null)
                         {
@@ -1588,7 +1587,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 print('reply like check value : $value');
               }
 
-              HttpProtocolManager.to.send_Stat(id, value, Stat_Type.like)
+              HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
                   .then((value)
               {
                 for(var item in value!.data!)
@@ -1597,7 +1596,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   {
                     if (replyList[i].ID == item.key)
                     {
-                      HttpProtocolManager.to.get_Reply(commentData!.parentID!, commentData!.ID, id).then((value1)
+                      HttpProtocolManager.to.Get_Reply(commentData!.parentID!, commentData!.ID, id).then((value1)
                       {
                         if (value1 == null)
                         {

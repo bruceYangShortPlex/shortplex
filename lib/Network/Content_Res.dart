@@ -84,7 +84,7 @@ class ContentResData {
     _title = json['title'];
     _subtitle = json['subtitle'];
     _slug = json['slug'];
-    _description = json['description'];
+    _description = json['description'] ?? '';
     _teaser = json['teaser'];
     _releaseAt = json['release_at'];
     _restrainAt = json['restrain_at'];

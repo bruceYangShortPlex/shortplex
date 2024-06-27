@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:get/get.dart';
+import 'package:video_player/video_player.dart';
+import '../../Util/HttpProtocolManager.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 
@@ -19,50 +21,57 @@ class FeaturedPage extends StatefulWidget
 class _FeaturedPageState extends State<FeaturedPage>
 {
   List<Widget> pageList = <Widget>[];
-  List<String> urlList = <String>[];
-  List<FeaturedData> dataList = <FeaturedData>[];
+  List<ContentData> dataList = <ContentData>[];
   var currentIndex = 0;
 
   @override
   void initState()
   {
+    get_Datas();
     super.initState();
-    // pageList.add(VideoPage(url: "https://cdn.gro.care/ec12312256ad_1683524903074.mp4",));
-    // pageList.add(VideoPage(url: "https://cdn.gro.care/4dc9fddff1c8_1683731818849.mp4",));
-    // pageList.add(VideoPage(url: "https://cdn.gro.care/045e95f617aa_1683612715343.mp4",));
-     pageList.add(ShortsPlayer(shortsUrl: "https://www.quadra-system.com/api/v1/vod/stream/EP1-fhd-1717993295708.mp4",));
-    // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/6060027/6060027-uhd_2160_3840_25fps.mp4",));
-    // pageList.add(ShortsPlayer(shortsUrl: "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",));
-     //pageList.add(_testWidget('1'));
-     pageList.add(_testWidget('2'));
-     pageList.add(_testWidget('3'));
+  }
 
-    var data1 = FeaturedData();
-    data1.title = '황후마마가 돌아왔다.1';
-    data1.content = '사청과 부명수의 계략으로 억울한 죽음을 맞이한 사음, 환생 후 부명수와의 혼례 한 달 전으로 돌아오게 된다...';
-    dataList.add(data1);
-    var data2 = FeaturedData();
-    data2.title = 'abc';
-    data2.content = 'bbbb';
-    dataList.add(data2);
-    var data3 = FeaturedData();
-    data3.title = 'ccc';
-    data3.content = 'dddd';
-    dataList.add(data3);
-
-    // urlList =
-    // [
-    //   "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4",
-    //   "https://videos.pexels.com/video-files/6060027/6060027-uhd_2160_3840_25fps.mp4",
-    //   "https://videos.pexels.com/video-files/17687288/17687288-uhd_2160_3840_30fps.mp4"
-    // ];
-
-    for(int i = 0; i < 10; ++i)
+  void get_Datas()
+  {
+    try
     {
-      var contentsData = ContentData(id: '$i', imagePath: '', title: '배포할 내용', cost: i, releaseAt: '', landScapeImageUrl: '', rank: false);
-      contentsData.isNew = false;
-      contentsData.isWatching = true;
-      contentsData.watchingEpisode = i; //SetTableStringArgument(100010, ['1', '72']);
+      HttpProtocolManager.to.Get_Recommended().then((value)
+      {
+        if (value == null) {
+          return;
+        }
+
+        for(var item in value.data!.items!)
+        {
+            var data = ContentData
+            (
+              id: item.id,
+              title: item.title,
+              imagePath: item.episode != null ? item.episode!.altImgUrlHd! : '',
+              cost: 0,
+              releaseAt: item.releaseAt ?? '',
+              landScapeImageUrl: item.posterLandscapeImgUrl,
+              rank: item.topten,
+            );
+            data.isNew = false;
+            data.contentTitle = item.subtitle ?? '';
+            data.description = item.description;
+            data.contentUrl = item.episode != null ? item.episode!.episodeHd : '';
+            data.thumbNail = item.thumbnailImgUrl;
+
+            pageList.add(ShortsPlayer(shortsUrl: data.contentUrl!,prevImage: data.imagePath!));
+
+            dataList.add(data);
+        }
+
+        setState(() {
+
+        });
+      });
+    }
+    catch(e)
+    {
+      print('GetContentData Catch $e');
     }
   }
 
@@ -70,7 +79,6 @@ class _FeaturedPageState extends State<FeaturedPage>
   void dispose()
   {
     pageList.clear();
-    urlList.clear();
     dataList.clear();
     super.dispose();
   }
@@ -100,7 +108,9 @@ class _FeaturedPageState extends State<FeaturedPage>
     return mainWidget(context);
   }
 
-  Widget mainWidget(BuildContext context)=>
+  Widget mainWidget(BuildContext context)
+  {
+    return
       SafeArea
       (
         child:
@@ -111,6 +121,8 @@ class _FeaturedPageState extends State<FeaturedPage>
           (
             backgroundColor: Colors.black,
             child:
+            dataList.length == 0 ?
+            SizedBox() :
             Stack
             (
               alignment: Alignment.center,
@@ -118,7 +130,8 @@ class _FeaturedPageState extends State<FeaturedPage>
               [
                 CarouselSlider
                 (
-                  options: CarouselOptions
+                  options:
+                  CarouselOptions
                   (
                     onPageChanged: (index, reason)
                     {
@@ -135,20 +148,28 @@ class _FeaturedPageState extends State<FeaturedPage>
                   items: pageList,
                 ),
                 Align
-                (
+                  (
                   alignment: Alignment.bottomCenter,
                   child:
                   Container
-                  (
-                    width: MediaQuery.of(context).size.width,
-                    height: 125,
-                    color: Colors.transparent,
+                    (
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    height: 134.h,
+                    //color: Colors.red,
                     child:
                     GestureDetector
                     (
                       onTap: ()
                       {
-                        Get.to(()=> ContentInfoPage(), arguments: dataList[currentIndex]);
+                        if (dataList.length < currentIndex) {
+                          return;
+                        }
+
+                        Get.to(() => ContentInfoPage(),
+                            arguments: dataList[currentIndex]);
                       },
                       child:
                       Row
@@ -158,84 +179,116 @@ class _FeaturedPageState extends State<FeaturedPage>
                         [
                           Expanded
                           (
-                            flex: 1,
-                            child:
-                            Container
-                            (
-                              height: 100,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Expanded
-                          (
                             flex: 2,
                             child:
                             Container
                             (
-                              height: 100,
-                              //color: Colors.grey,
+                              height: 130.h,
+                              alignment: Alignment.center,
+                              //color: Colors.white,
                               child:
-                              Column
+                              dataList.length >= currentIndex
+                              ?
+                              ClipRRect
                               (
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children:
-                                [
-                                  Text
+                                borderRadius: BorderRadius.circular(7),
+                                child: Image.network(dataList[currentIndex].thumbNail!, fit: BoxFit.cover,),
+                              )
+                              :
+                              SizedBox(),
+                            ),
+                          ),
+                          Expanded
+                            (
+                              flex: 5,
+                              child:
+                              Container
+                              (
+                                height: 130.h,
+                                //color: Colors.grey,
+                                child:
+                                Column
                                   (
-                                    dataList[currentIndex].title,
-                                    style:
-                                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                                  ),
-                                  Container
-                                  (
-                                    //color: Colors.grey,
-                                    width: 245.w,
-                                    child:
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children:
+                                  [
                                     Text
-                                    (
-                                      dataList[currentIndex].content,
-                                      style:
-                                      TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
-                                    ),
-                                  ),
-                                  Align
-                                  (
-                                    alignment: Alignment.bottomRight,
-                                    child:
-                                    Padding
-                                    (
-                                      padding: const EdgeInsets.only(bottom:15, right: 20),
-                                      child: Container
                                       (
-                                        alignment: Alignment.center,
-                                        width: 73,
-                                        height: 20,
-                                        padding: EdgeInsets.only(bottom: 3),
-                                        decoration:
-                                        ShapeDecoration
+                                      dataList.length >= currentIndex
+                                          ? dataList[currentIndex].title!
+                                          : '',
+                                      style:
+                                      TextStyle(fontSize: 16,
+                                        color: Colors.white,
+                                        fontFamily: 'NotoSans',
+                                        fontWeight: FontWeight.bold,),
+                                    ),
+                                    SizedBox(height: 3,),
+                                    Expanded(
+                                      child: Container
                                         (
-                                          color: Colors.black54,
-                                            shape:
-                                            RoundedRectangleBorder
-                                            (
-                                              side: BorderSide(width: 1.50, color: Colors.grey),
-                                              borderRadius: BorderRadius.circular(20),
-                                             ),
-                                          ),
+                                        //color: Colors.grey,
+                                        width: 270.w,
                                         child:
                                         Text
-                                        (
-                                          StringTable().Table![100006]!,
+                                          (
+                                          dataList.length >= currentIndex
+                                              ? dataList[currentIndex]
+                                              .description!
+                                              : '',
                                           style:
-                                          TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                          TextStyle(fontSize: 11,
+                                            color: Colors.white,
+                                            fontFamily: 'NotoSans',
+                                            fontWeight: FontWeight.w500,),
                                         ),
                                       ),
-                                    )
-                                  ),
-                                ],
-                              ),
-                            )
+                                    ),
+                                    Align
+                                    (
+                                        alignment: Alignment.bottomRight,
+                                        child:
+                                        Padding
+                                        (
+                                          padding: const EdgeInsets.only(
+                                              bottom: 10, right: 20),
+                                          child: Container
+                                            (
+                                            alignment: Alignment.center,
+                                            width: 73,
+                                            height: 20,
+                                            padding: EdgeInsets.only(bottom: 3),
+                                            decoration:
+                                            ShapeDecoration
+                                            (
+                                              color: Colors.black54,
+                                              shape:
+                                              RoundedRectangleBorder
+                                                (
+                                                side: BorderSide(width: 1.50,
+                                                    color: Colors.grey),
+                                                borderRadius: BorderRadius
+                                                    .circular(20),
+                                              ),
+                                            ),
+                                            child:
+                                            Text
+                                              (
+                                              StringTable().Table![100006]!,
+                                              style:
+                                              TextStyle(fontSize: 11,
+                                                color: Colors.white,
+                                                fontFamily: 'NotoSans',
+                                                fontWeight: FontWeight.bold,),
+                                            ),
+                                          ),
+                                        )
+                                    ),
+                                  ],
+                                ),
+                              )
                           )
                         ],
                       ),
@@ -246,15 +299,9 @@ class _FeaturedPageState extends State<FeaturedPage>
               ],
             ),
           ),
-    ),
-  );
+        ),
+      );
+  }
 }
 
-class FeaturedData
-{
-  String iconPath = '';
-  String title = '';
-  String content = '';
-  int id = 0;
-}
 

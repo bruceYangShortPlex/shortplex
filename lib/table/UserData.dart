@@ -116,6 +116,7 @@ class ContentData
   String? id;
   String? title;
   String? imagePath;
+  String? thumbNail;
   bool isNew = false;
   bool isWatching = false;
   int? watchingEpisode;
@@ -127,6 +128,7 @@ class ContentData
   String? contentTitle;
   String? releaseAt;
   String? landScapeImageUrl;
+  String? description;
 
   ContentData
   (

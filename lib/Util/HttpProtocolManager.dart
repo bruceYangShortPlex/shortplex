@@ -14,6 +14,7 @@ import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
 import '../Network/OAuth_Res.dart';
+import '../Network/Recommended_Res.dart';
 import '../table/UserData.dart';
 
 enum Stat_Type
@@ -73,7 +74,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
    // print(await http.read(Uri.https('https://quadra-server.web.app/api/v1/status', 'foobar.txt')));
   }
 
-  Future<OAuthRes?> send_OAuthLogin(OAuthLogin _oauthLogin) async
+  Future<OAuthRes?> Send_OAuthLogin(OAuthLogin _oauthLogin) async
   {
     try
     {
@@ -98,7 +99,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<String> send_GetUserData() async
+  Future<String> Send_GetUserData() async
   {
     var uri = 'https://www.quadra-system.com/api/v1/account/user';
     var userData = UserData.to;
@@ -120,7 +121,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return '';
   }
 
-  Future<bool> send_Logout() async
+  Future<bool> Send_Logout() async
   {
     try
     {
@@ -153,7 +154,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return false;
   }
 
-  Future<SearchRes?> get_SearchData(String _url) async
+  Future<SearchRes?> Get_SearchData(String _url) async
   {
     try
     {
@@ -181,7 +182,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<HomeDataRes?> get_HomeData() async
+  Future<HomeDataRes?> Get_HomeData() async
   {
     try
     {
@@ -211,7 +212,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<HomeContentRes?> get_HomeContentData(HomeDataType _type, int _page, int _itemsPerPage, [String _themesID = '']) async
+  Future<HomeContentRes?> Get_HomeContentData(HomeDataType _type, int _page, int _itemsPerPage, [String _themesID = '']) async
   {
     try
     {
@@ -248,7 +249,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<ContentRes?> get_ContentData(String _contentID) async
+  Future<ContentRes?> Get_ContentData(String _contentID) async
   {
     try
     {
@@ -278,7 +279,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<EpisodeGroupRes?> get_EpisodeGroup(String _contentID, int _page) async
+  Future<EpisodeGroupRes?> Get_EpisodeGroup(String _contentID, int _page) async
   {
     try
     {
@@ -308,7 +309,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_Comments(String _contentID, int _page) async
+  Future<CommentRes?> Get_Comments(String _contentID, int _page) async
   {
     try
     {
@@ -339,7 +340,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_RepliesData(String _contentID, String _commentID, int _page) async
+  Future<CommentRes?> Get_RepliesData(String _contentID, String _commentID, int _page) async
   {
     try
     {
@@ -370,7 +371,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> send_Comment(String _episodeID, String _comment, String _replyParentID, Comment_CD_Type _type) async
+  Future<CommentRes?> Send_Comment(String _episodeID, String _comment, String _replyParentID, Comment_CD_Type _type) async
   {
     try
     {
@@ -403,7 +404,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_EpisodeComments(String _episodeID, int _page) async
+  Future<CommentRes?> Get_EpisodeComments(String _episodeID, int _page) async
   {
     try
     {
@@ -433,7 +434,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_Comment(String _episodeID, String _commentID) async
+  Future<CommentRes?> Get_Comment(String _episodeID, String _commentID) async
   {
     try
     {
@@ -469,7 +470,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> send_Reply(String _episodeID, String _comment, String _replyParentID, Comment_CD_Type _type) async
+  Future<CommentRes?> Send_Reply(String _episodeID, String _comment, String _replyParentID, Comment_CD_Type _type) async
   {
     try
     {
@@ -502,7 +503,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> get_Reply(String _episodeID, String _commentID, String _replyID) async
+  Future<CommentRes?> Get_Reply(String _episodeID, String _commentID, String _replyID) async
   {
     try
     {
@@ -532,7 +533,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> send_edit_comment(String _episodeID, String _comment, String _comment_id, Comment_CD_Type _type) async
+  Future<CommentRes?> Send_edit_comment(String _episodeID, String _comment, String _comment_id, Comment_CD_Type _type) async
   {
     try
     {
@@ -566,7 +567,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> send_edit_reply(String _episodeID, String _comment, String _commentID, String _replyID, Comment_CD_Type _type) async
+  Future<CommentRes?> Send_edit_reply(String _episodeID, String _comment, String _commentID, String _replyID, Comment_CD_Type _type) async
   {
     try
     {
@@ -600,7 +601,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> send_delete_comment(String _episodeID, String _comment_id) async
+  Future<CommentRes?> Send_delete_comment(String _episodeID, String _comment_id) async
   {
     try
     {
@@ -632,7 +633,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> send_delete_reply(String _episodeID, String _comment_id, String _replyID) async
+  Future<CommentRes?> Send_delete_reply(String _episodeID, String _comment_id, String _replyID) async
   {
     try
     {
@@ -664,7 +665,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<String> get_streamUrl(String _fileName) async
+  Future<String> Get_streamUrl(String _fileName) async
   {
     try
     {
@@ -692,7 +693,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return '';
   }
 
-  Future<StatRes?> send_Stat(String _contentID, int _active, Stat_Type _type ) async
+  Future<StatRes?> Send_Stat(String _contentID, int _active, Stat_Type _type ) async
   {
     try
     {
@@ -726,7 +727,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<StatRes?> get_Stat(String _parentID) async
+  Future<StatRes?> Get_Stat(String _parentID) async
   {
     try
     {
@@ -785,6 +786,36 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('get_Stat error : $e');
+    }
+
+    return null;
+  }
+
+  Future<RecommendedRes?> Get_Recommended() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/recommended';
+      print('Get_Recommended send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_Recommended res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  RecommendedRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('get_Stat data = $data');
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('Get_Recommended FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Recommended error : $e');
     }
 
     return null;

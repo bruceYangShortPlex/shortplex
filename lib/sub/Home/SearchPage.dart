@@ -222,7 +222,7 @@ Widget mainWidget(BuildContext context)=>
       Get.lazyPut(() => HttpProtocolManager());
       var type = HomeDataType.all.toString().replaceAll('HomeDataType.', '');
       var url = 'https://www.quadra-system.com/api/v1/vod/$type?page=$pageKey&itemPerPage=$_pageSize';
-      await HttpProtocolManager.to.get_SearchData(url).then((value)
+      await HttpProtocolManager.to.Get_SearchData(url).then((value)
       {
         searchData = value;
         if(searchData == null) {

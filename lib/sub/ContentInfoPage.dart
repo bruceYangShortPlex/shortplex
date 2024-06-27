@@ -404,40 +404,40 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                 (
                   '${contentData?.GetReleaseDate()}',
                   style:
-                  TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ),
             ),
             Expanded
             (
-              child: Text
-              (
-                contentRes != null ?  SetTableStringArgument(100022, ['${contentRes?.data?.episode?.length}']) : '',
-                style:
-                TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-              ),
-            ),
-
-            Expanded
-            (
-              flex: 2,
               child:
               Text
               (
-                contentRes != null ? contentRes!.data!.genre! : '',
+                contentRes != null ?  SetTableStringArgument(100022, ['${contentRes?.data?.episode?.length}']) : '',
                 style:
-                TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
             Expanded
             (
-              flex: 2,
+              flex: 1,
               child:
               Text
               (
                 contentData!.rank ? StringTable().Table![300037]! : '',
                 style:
-                TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              ),
+            ),
+            Expanded
+            (
+              flex: 2,
+              child:
+              Text
+              (
+                contentRes != null ? ConvertCodeToString(contentRes!.data!.genre!) : '',
+                style:
+                const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
           ],
@@ -454,7 +454,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         (
           contentRes != null ? contentRes!.data!.description! : '',
           style:
-          TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+          const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
       SizedBox(height: 10,),

@@ -60,7 +60,7 @@ class RecommendedContentData {
     _restrainAt = json['restrain_at'];
     _previewYn = json['preview_yn'] ?? false;
     _previewStartAt = json['preview_start_at'];
-    _genre = json['genre'];
+    _genre = json['genre_cd'];
     _tag = json['tag'];
     _shareLink = json['share_link'];
     _coverImgUrl = json['cover_img_url'];

@@ -1,16 +1,12 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shortplex/Network/Search_Res.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/table/StringTable.dart';
 
-import '../../Network/HomeData_Res.dart';
-import '../../Network/Home_Content_Res.dart';
+import '../../table/UserData.dart';
 
 const int _pageSize = 15;
 enum SearchGroupType
@@ -37,8 +33,9 @@ class _SearchPageState extends State<SearchPage>
 {
   final PagingController<int, Widget> _pagingController =
   PagingController(firstPageKey: 0);
-  SearchRes? searchData;
 
+  final searchIDs = [100021,500001,500002,500003,500004,500005,500006,800021];
+  int downloadPage = 0;
   @override
   void initState()
   {
@@ -153,7 +150,7 @@ Widget mainWidget(BuildContext context)=>
                     searchTypeSelectButton(SearchGroupType.ACTION, StringTable().Table![500004]!),
                     searchTypeSelectButton(SearchGroupType.HISTORICAL, StringTable().Table![500005]!),
                     searchTypeSelectButton(SearchGroupType.JAEBEOL, StringTable().Table![500006]!),
-                    searchTypeSelectButton(SearchGroupType.EVENT, StringTable().Table![500006]!),
+                    searchTypeSelectButton(SearchGroupType.EVENT, StringTable().Table![800021]!),
                     //SizedBox(width: 73,)
                   ],
                 ),
@@ -176,12 +173,15 @@ Widget mainWidget(BuildContext context)=>
     (
       onTap: ()
       {
+        if (selectedType == _type) {
+          return;
+        }
+        downloadPage = 0;
         setState(()
         {
           selectedType = _type;
+          _pagingController.refresh();
         });
-
-        _pagingController.refresh();
       },
       child:
       Container
@@ -206,7 +206,7 @@ Widget mainWidget(BuildContext context)=>
           TextStyle
           (
             fontSize: 11,
-            color: selectedType == _type ? Colors.white : Colors.white.withOpacity(0.6),
+            color: selectedType == _type ? Colors.white : Colors.grey,
             fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
       ),
@@ -215,26 +215,32 @@ Widget mainWidget(BuildContext context)=>
 
   Future<void> _fetchPage(int pageKey) async
   {
-    //print('_fetch page  selectedSearchIndex : ${selectedType}');
     try
     {
       var newItems = <Widget>[];
       Get.lazyPut(() => HttpProtocolManager());
-      var type = HomeDataType.all.toString().replaceAll('HomeDataType.', '');
-      var url = 'https://www.quadra-system.com/api/v1/vod/$type?page=$pageKey&itemPerPage=$_pageSize';
+
+      var url = 'https://www.quadra-system.com/api/v1/home/all?page=$downloadPage&itemsPerPage=15&genre_cd=${searchIDs[selectedType.index]}';
       await HttpProtocolManager.to.Get_SearchData(url).then((value)
       {
-        searchData = value;
-        if(searchData == null) {
-          return;
-        }
-
-        for(int i = 0; i < searchData!.data.items.length; ++i)
+        for (var item in value!.data!.items!)
         {
-          // DateTime date = DateTime.parse(searchData!.data.items[i].createdAt);
-          // print('date Y : ${date.year} / M : ${date.month} / D : ${date.day} ');
-          newItems.add(gridItem(searchData!.data.items[i]));
+          var data = ContentData
+          (
+            id: item.id,
+            title: item.title ?? '타이틀 없음',
+            imagePath: item.posterPortraitImgUrl,
+            cost: 0,
+            releaseAt: item.releaseAt ?? '',
+            landScapeImageUrl: item.posterLandscapeImgUrl,
+            rank: item.topten,
+          );
+          data.thumbNail = item.thumbnailImgUrl;
+          data.contentTitle = item.subtitle ?? '';
+
+          newItems.add(gridItem(data));
         }
+        downloadPage++;
       });
 
       final isLastPage = newItems.length < _pageSize;
@@ -254,18 +260,17 @@ Widget mainWidget(BuildContext context)=>
     }
   }
 
-  Widget gridItem(Items _item)
+  Widget gridItem(ContentData _item)
   {
     return
     GestureDetector
     (
       onTap: ()
       {
-        print('grid item on tap ${_item.id}');
-
-        //Get.to(() => ContentInfoPage());
+        Get.to(() => ContentInfoPage(), arguments: _item);
       },
-      child: Container
+      child:
+      Container
       (
         width: 105,
         height: 160,
@@ -277,9 +282,10 @@ Widget mainWidget(BuildContext context)=>
         ClipRRect
         (
           borderRadius: BorderRadius.circular(7),
-          child:         
-          Image.network(_item.thumbnailImgUrl!, fit: BoxFit.cover,),
-        )
+          child:
+          _item.thumbNail != null && _item.thumbNail!.isNotEmpty ?
+          Image.network(_item.thumbNail!, fit: BoxFit.cover,) : SizedBox(),
+        ),
       ),
     );
   }

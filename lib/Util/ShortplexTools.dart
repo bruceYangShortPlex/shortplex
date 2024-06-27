@@ -636,3 +636,26 @@ bool isEmulator() {
   // Android 에뮬레이터 확인
   return Platform.environment.containsKey('FLUTTER_TEST');
 }
+
+String ConvertCodeToString(String _genre)
+{
+  List<String> stringList = _genre.split(',');
+  List<int> intList = stringList.map((i) => int.parse(i)).toList();
+
+  var resultString = '';
+  for(var item in intList)
+  {
+    if (StringTable().Table!.containsKey(item))
+    {
+      if (resultString.isEmpty) {
+        resultString = StringTable().Table![item]!;
+      }
+      else
+      {
+        resultString = '$resultString, ${StringTable().Table![item]!}';
+      }
+    }
+  }
+
+  return resultString;
+}

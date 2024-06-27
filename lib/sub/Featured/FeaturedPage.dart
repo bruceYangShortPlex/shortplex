@@ -189,10 +189,16 @@ class _FeaturedPageState extends State<FeaturedPage>
                               child:
                               dataList.length >= currentIndex
                               ?
-                              ClipRRect
+                              SizedBox
                               (
-                                borderRadius: BorderRadius.circular(7),
-                                child: Image.network(dataList[currentIndex].thumbNail!, fit: BoxFit.cover,),
+                                height: 100,
+                                width: 70,
+                                child:
+                                ClipRRect
+                                (
+                                  borderRadius: BorderRadius.circular(7),
+                                  child: Image.network(dataList[currentIndex].thumbNail!, fit: BoxFit.cover,),
+                                ),
                               )
                               :
                               SizedBox(),

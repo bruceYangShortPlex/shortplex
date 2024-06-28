@@ -1245,7 +1245,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   var replyScrollController = ScrollController();
   var totalCommentCount = 0;
   var totalCommentReplyCount = 0;
-  CommentSortType commentSortType = CommentSortType.LATEST;
+  CommentSortType commentSortType = CommentSortType.created_at;
 
   Widget contentComment()
   {
@@ -1287,7 +1287,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     {
                       setState(()
                       {
-                        commentSortType = CommentSortType.LIKE;
+                        commentSortType = CommentSortType.likes;
                       });
                     },
                     child: Container
@@ -1297,7 +1297,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       decoration: ShapeDecoration(
                         color: const Color(0xFF1E1E1E),
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LIKE ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
+                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.likes ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
@@ -1308,7 +1308,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                         (
                         StringTable().Table![100035]!,
                         style:
-                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LIKE ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.likes ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -1319,7 +1319,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     {
                       setState(()
                       {
-                        commentSortType = CommentSortType.LATEST;
+                        commentSortType = CommentSortType.created_at;
                       });
                     },
                     child:
@@ -1330,7 +1330,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       decoration: ShapeDecoration(
                         color: const Color(0xFF1E1E1E),
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.LATEST ? Color(0xFF00FFBF) : Color(0xFF878787)),
+                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.created_at ? Color(0xFF00FFBF) : Color(0xFF878787)),
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
@@ -1341,7 +1341,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                         (
                         StringTable().Table![100036]!,
                         style:
-                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.LATEST ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.created_at ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),

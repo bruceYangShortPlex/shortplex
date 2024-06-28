@@ -16,8 +16,8 @@ import 'UserInfo/LoginPage.dart';
 
 enum CommentSortType
 {
-  LIKE,   //좋아요순.
-  LATEST, //최신순.
+  likes,   //좋아요순.
+  created_at, //최신순.
 }
 
 class ContentInfoPage extends StatefulWidget
@@ -47,7 +47,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   var scrollController = ScrollController();
   var commentList = <EpisodeCommentData>[];
   var totalCommentCount = 0;
-  CommentSortType commentSortType = CommentSortType.LATEST;
+  CommentSortType commentSortType = CommentSortType.created_at;
 
   void GetContentData()
   {
@@ -133,7 +133,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   {
     try
     {
-      await HttpProtocolManager.to.Get_Comments(contentData!.id!, _downloadPage).then((value)
+      await HttpProtocolManager.to.Get_Comments(contentData!.id!, _downloadPage, commentSortType.name).then((value)
       {
         var commentRes = value;
         totalCommentCount = commentRes!.data!.total;
@@ -944,9 +944,15 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   ),
                   GestureDetector
                     (
-                    onTap: () {
-                      setState(() {
-                        commentSortType = CommentSortType.LIKE;
+                    onTap: ()
+                    {
+                      print('click like');
+                      setState(()
+                      {
+                        commentSortType = CommentSortType.likes;
+                        downCompletePage = 0;
+                        commentList.clear();
+                        GetCommentsData();
                       });
                     },
                     child: Container
@@ -957,7 +963,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                         color: const Color(0xFF1E1E1E),
                         shape: RoundedRectangleBorder(
                           side: BorderSide(width: 1.50,
-                              color: commentSortType == CommentSortType.LIKE
+                              color: commentSortType == CommentSortType.likes
                                   ? const Color(0xFF00FFBF)
                                   : const Color(0xFF878787)),
                           borderRadius: BorderRadius.circular(20),
@@ -971,7 +977,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                         StringTable().Table![100035]!,
                         style:
                         TextStyle(fontSize: 11,
-                          color: commentSortType == CommentSortType.LIKE
+                          color: commentSortType == CommentSortType.likes
                               ? Colors.white
                               : const Color(0xFF878787),
                           fontFamily: 'NotoSans',
@@ -982,9 +988,13 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   const SizedBox(width: 10,),
                   GestureDetector
                     (
-                    onTap: () {
+                    onTap: ()
+                    {
+                      print('click create at');
                       setState(() {
-                        commentSortType = CommentSortType.LATEST;
+                        commentSortType = CommentSortType.created_at;
+                        commentList.clear();
+                        GetCommentsData();
                       });
                     },
                     child: Container
@@ -995,7 +1005,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                         color: const Color(0xFF1E1E1E),
                         shape: RoundedRectangleBorder(
                           side: BorderSide(width: 1.50,
-                              color: commentSortType == CommentSortType.LATEST
+                              color: commentSortType == CommentSortType.created_at
                                   ? Color(0xFF00FFBF)
                                   : Color(0xFF878787)),
                           borderRadius: BorderRadius.circular(20),
@@ -1009,7 +1019,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                         StringTable().Table![100036]!,
                         style:
                         TextStyle(fontSize: 11,
-                          color: commentSortType == CommentSortType.LATEST
+                          color: commentSortType == CommentSortType.created_at
                               ? Colors.white
                               : const Color(0xFF878787),
                           fontFamily: 'NotoSans',

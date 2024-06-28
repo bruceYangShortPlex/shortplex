@@ -306,15 +306,15 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> Get_Comments(String _contentID, int _page) async
+  Future<CommentRes?> Get_Comments(String _contentID, int _page, String _sortKey) async
   {
     try
     {
       var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
-      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/comments?page=$_page&itemsPerPage=20');
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/comments?page=$_page&itemsPerPage=20&sortkey=likes&sortorder=desc');
+      print('Get_Comments url : $url');
       var res = await http.get(url, headers: heads);
 
-       print('get_CommentData url = $url');
       // print('get_CommentData heads = $heads');
        print('get_CommentData res.body = ${res.body}');
 
@@ -345,24 +345,24 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = Uri.parse('https://www.quadra-system.com/api/v1/addition/comment/$_contentID/replies/$_commentID?page=$_page&itemsPerPage=20');
       var res = await http.get(url, headers: heads);
 
-      print('get_CommentData url = $url');
+      print('Get_RepliesData url = $url');
       // print('get_CommentData heads = $heads');
-      print('get_CommentData res.body = ${res.body}');
+      print('Get_RepliesData res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
         var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        print('get_CommentData data = ${data}');
+        print('Get_RepliesData data = ${data}');
         return data;
       }
       else
       {
-        print('get_CommentData FAILD : ${res.statusCode}');
+        print('Get_RepliesData FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('get_CommentData error : ${e}');
+      print('Get_RepliesData error : ${e}');
     }
 
     return null;

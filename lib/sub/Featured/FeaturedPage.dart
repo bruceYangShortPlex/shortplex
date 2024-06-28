@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:get/get.dart';
-import 'package:video_player/video_player.dart';
 import '../../Util/HttpProtocolManager.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
@@ -83,25 +82,6 @@ class _FeaturedPageState extends State<FeaturedPage>
     super.dispose();
   }
 
-  Widget _testWidget(String _title)
-  => Container
-  (
-      alignment: Alignment.center,
-      color: Colors.green,
-      child:
-      AspectRatio
-      (
-        aspectRatio: 9 / 16,
-        child:
-        Container
-        (
-          alignment: Alignment.center,
-          color: Colors.red,
-          child: Text(_title),
-        ),
-      ),
-  );
-
   @override
   Widget build(BuildContext context)
   {
@@ -141,24 +121,34 @@ class _FeaturedPageState extends State<FeaturedPage>
                     },
                     aspectRatio: 9 / 16,
                     viewportFraction: 1,
+
                     //enlargeCenterPage: true,
                     scrollDirection: Axis.vertical,
+                    //height: MediaQuery.of(context).size.height,
                     //autoPlay: true,
                   ),
                   items: pageList,
                 ),
                 Align
-                  (
+                (
                   alignment: Alignment.bottomCenter,
                   child:
                   Container
-                    (
+                  (
                     width: MediaQuery
                         .of(context)
                         .size
                         .width,
                     height: 134.h,
-                    //color: Colors.red,
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     begin: Alignment(0, -1),
+                    //     end: Alignment(0, 1),
+                    //     colors: [Colors.transparent, Colors.black],
+                    //   ),
+                    //   //border: Border.all(width: 1),
+                    // ),
+                    color: Colors.black54,
                     child:
                     GestureDetector
                     (
@@ -181,11 +171,13 @@ class _FeaturedPageState extends State<FeaturedPage>
                           (
                             flex: 2,
                             child:
+
                             Container
                             (
                               height: 130.h,
                               alignment: Alignment.center,
                               //color: Colors.white,
+                              padding: EdgeInsets.only(bottom: 26),
                               child:
                               dataList.length >= currentIndex
                               ?

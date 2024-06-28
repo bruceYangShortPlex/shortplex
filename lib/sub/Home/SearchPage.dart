@@ -221,6 +221,10 @@ Widget mainWidget(BuildContext context)=>
       Get.lazyPut(() => HttpProtocolManager());
 
       var url = 'https://www.quadra-system.com/api/v1/home/all?page=$downloadPage&itemsPerPage=15&genre_cd=${searchIDs[selectedType.index]}';
+      if (selectedType == SearchGroupType.ALL)
+      {
+        url = 'https://www.quadra-system.com/api/v1/home/all?page=$downloadPage&itemsPerPage=15';
+      }
       await HttpProtocolManager.to.Get_SearchData(url).then((value)
       {
         for (var item in value!.data!.items!)
@@ -274,10 +278,10 @@ Widget mainWidget(BuildContext context)=>
       (
         width: 105,
         height: 160,
-        decoration: ShapeDecoration(
-          color: Color(0xFFC4C4C4),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-        ),
+        // decoration: ShapeDecoration(
+        //   color: Color(0xFFC4C4C4),
+        //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        // ),
         child:
         ClipRRect
         (

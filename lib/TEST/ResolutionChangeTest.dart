@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ShortsPlayer(shortsUrl: 'https://archive.org/download/Damas_BB_28F8B535_D_406/DaMaS.mp4'));
-}
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   runApp(const ShortsPlayer(shortsUrl: 'https://archive.org/download/Damas_BB_28F8B535_D_406/DaMaS.mp4'));
+// }
 
 class ShortsPlayer extends StatefulWidget
 {

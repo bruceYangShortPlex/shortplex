@@ -311,7 +311,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     try
     {
       var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
-      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/comments?page=$_page&itemsPerPage=20&sortkey=likes&sortorder=desc');
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/comments?page=$_page&itemsPerPage=20&sortkey=$_sortKey&sortorder=desc');
       print('Get_Comments url : $url');
       var res = await http.get(url, headers: heads);
 

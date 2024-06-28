@@ -199,7 +199,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
   {
     if (UserData.to.isLogin.value == false)
     {
-      UserData.to.contentFavoriteCheck.value = false;
+      UserData.to.isFavoriteCheck.value = false;
       return;
     }
 
@@ -207,7 +207,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     {
       if (value == null || value.data == null || value.data!.isEmpty )
       {
-        UserData.to.contentFavoriteCheck.value = false;
+        UserData.to.isFavoriteCheck.value = false;
 
         return;
       }
@@ -217,9 +217,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         if (item.action == Stat_Type.favorite.name)
         {
           var amt = item.amt;
-          UserData.to.contentFavoriteCheck.value = amt > 0;
+          UserData.to.isFavoriteCheck.value = amt > 0;
 
-          print('item.amt ${item.amt} / check  : ${UserData.to.contentFavoriteCheck.value}');
+          print('item.amt ${item.amt} / check  : ${UserData.to.isFavoriteCheck.value}');
           return;
         }
       }
@@ -242,7 +242,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     contentData = Get.arguments;
     GetContentData();
     GetFavorite();
-    GetCommentsData();
+    //GetCommentsData();
 
     setState(()
     {
@@ -313,6 +313,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               color: Colors.white,
               onPressed: ()
               {
+                UserData.to.isOpenPopup.value = false;
                 Get.back();
               },
             ),
@@ -479,7 +480,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   Obx(()
                   {
                     return
-                    UserData.to.contentFavoriteCheck.value ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
+                    UserData.to.isFavoriteCheck.value ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
                     Icon(CupertinoIcons.heart, size: 30, color: Colors.white, );
                   },),
 
@@ -496,7 +497,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     }
 
                     buttonEnabled = false;
-                    int value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
+                    int value = UserData.to.isFavoriteCheck.value ? -1 : 1;
                     HttpProtocolManager.to.Send_Stat(contentData!.id!, value, Stat_Type.favorite).then((value)
                     {
                       GetFavorite();

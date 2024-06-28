@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shortplex/table/UserData.dart';
 import 'package:video_player/video_player.dart';
 
 import 'HttpProtocolManager.dart';
@@ -37,11 +39,6 @@ class _ShortsPlayerState extends State<ShortsPlayer>
     super.dispose();
   }
 
-  void Pause()
-  {
-    videoPlayerController.pause();
-  }
-
   @override
   Widget build(BuildContext context)
   {
@@ -59,13 +56,31 @@ class _ShortsPlayerState extends State<ShortsPlayer>
         {
           if (snapshot.connectionState == ConnectionState.done)
           {
-            // VideoPlayerController가 초기화된 후에 play() 메서드를 호출합니다.
-            // VideoPlayer 위젯을 빌드합니다.
-            snapshot.data!.setVolume(1);
-            snapshot.data!.setLooping(true);
-            snapshot.data!.play();
+            return
+            Obx(()
+            {
+              if (UserData.to.isOpenPopup.value)
+              {
+                if (snapshot.data!.value.isPlaying) {
+                  snapshot.data!.pause();
+                }
+              }
+              else
+                {
+                  if (snapshot.data!.value.isPlaying) {
+                    snapshot.data!.pause();
+                  }
+                  else
+                    {
+                      snapshot.data!.setVolume(1);
+                      snapshot.data!.setLooping(true);
+                      snapshot.data!.play();
+                    }
+                }
 
-            return VideoPlayer(snapshot.data!);
+              return
+              VideoPlayer(snapshot.data!);
+            },);
           }
           else
           {

@@ -19,8 +19,9 @@ class UserData extends GetxController
   RxString name = 'Guest'.obs;
   RxString photoUrl = ''.obs;
   RxBool isLogin = false.obs;
-  RxBool contentFavoriteCheck = false.obs;
+  RxBool isFavoriteCheck = false.obs;
   RxString commentChange = ''.obs;
+  RxBool isOpenPopup = false.obs;
   String email = '';
   String providerid = 'guest';
   String privacypolicies = 'true';

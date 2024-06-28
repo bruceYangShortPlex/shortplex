@@ -157,7 +157,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                         if (dataList.length < currentIndex) {
                           return;
                         }
-
+                        UserData.to.isOpenPopup.value = true;
                         Get.to(() => ContentInfoPage(),
                             arguments: dataList[currentIndex]);
                       },

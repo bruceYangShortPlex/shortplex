@@ -82,6 +82,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         {
           setState(()
           {
+            videoController.setVolume(1);
             videoController.play();
           });
 
@@ -156,7 +157,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     if (UserData.to.isLogin.value == false)
     {
-      UserData.to.contentFavoriteCheck.value = false;
+      UserData.to.isFavoriteCheck.value = false;
       return;
     }
 
@@ -164,7 +165,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     {
       if (value == null || value.data == null || value.data!.isEmpty )
       {
-        UserData.to.contentFavoriteCheck.value = false;
+        UserData.to.isFavoriteCheck.value = false;
 
         return;
       }
@@ -174,8 +175,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         if (item.action == Stat_Type.favorite.name)
         {
           var amt = item.amt;
-          UserData.to.contentFavoriteCheck.value = amt > 0;
-          print('item.amt ${item.amt} / check 3 : ${UserData.to.contentFavoriteCheck}');
+          UserData.to.isFavoriteCheck.value = amt > 0;
+          print('item.amt ${item.amt} / check 3 : ${UserData.to.isFavoriteCheck}');
           setState(() {
 
           });
@@ -761,7 +762,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   }
 
                   connecting = true;
-                  var value = UserData.to.contentFavoriteCheck.value ? -1 : 1;
+                  var value = UserData.to.isFavoriteCheck.value ? -1 : 1;
                   HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, value, Stat_Type.favorite).then((value)
                   {
                     GetFavorite();
@@ -956,7 +957,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             ),
           ),
           contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
-          contentUIButtons(StringTable().Table![100023]!, UserData.to.contentFavoriteCheck.value ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
+          contentUIButtons(StringTable().Table![100023]!, UserData.to.isFavoriteCheck.value ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
           contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentUI_ButtonType.SHARE),
           contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentUI_ButtonType.CONTENT_INFO),
           Container

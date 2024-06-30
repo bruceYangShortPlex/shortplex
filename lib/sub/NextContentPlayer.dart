@@ -59,8 +59,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
     HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd!).then((value)
     {
       //print('Play Url : $value');
-      var uri = value;
-      videoController = VideoPlayerController.networkUrl(Uri.parse(uri))
+      videoController = VideoPlayerController.networkUrl(Uri.parse(value))
         ..initialize().then((_)
         {
           if (isShowContent)
@@ -481,7 +480,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   {
     try
     {
-      await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id!, _page).then((value)
+      await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id!, _page, commentSortType.name).then((value)
       {
         maxPage = value!.data!.maxPage;
         CommentRefresh(value, false);
@@ -1286,9 +1285,16 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     (
                     onTap: ()
                     {
+                      if (commentSortType == CommentSortType.likes) {
+                        return;
+                      }
+                      //좋아요순 누름.
                       setState(()
                       {
                         commentSortType = CommentSortType.likes;
+                        downCompletePage = 0;
+                        episodeCommentList.clear();
+                        GetCommentsData();
                       });
                     },
                     child: Container
@@ -1318,9 +1324,16 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     (
                     onTap: ()
                     {
+                      if (commentSortType == CommentSortType.created_at) {
+                        return;
+                      }
+                      //최신순 누름.
                       setState(()
                       {
                         commentSortType = CommentSortType.created_at;
+                        downCompletePage = 0;
+                        episodeCommentList.clear();
+                        GetCommentsData();
                       });
                     },
                     child:

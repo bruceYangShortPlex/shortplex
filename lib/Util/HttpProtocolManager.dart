@@ -401,12 +401,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<CommentRes?> Get_EpisodeComments(String _episodeID, int _page) async
+  Future<CommentRes?> Get_EpisodeComments(String _episodeID, int _page, String _sortKey) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID?page=$_page&itemsPerPage=20';
+      var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID?page=$_page&itemsPerPage=20&sortkey=$_sortKey&sortorder=desc';
       //print('send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
       print('get_EpisodeComments res.body ${res.body}');

@@ -947,7 +947,10 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     (
                     onTap: ()
                     {
-                      print('click like');
+                      if (commentSortType == CommentSortType.likes) {
+                        return;
+                      }
+
                       setState(()
                       {
                         commentSortType = CommentSortType.likes;
@@ -991,9 +994,14 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     (
                     onTap: ()
                     {
+                      if (commentSortType == CommentSortType.created_at) {
+                        return;
+                      }
+
                       print('click create at');
                       setState(() {
                         commentSortType = CommentSortType.created_at;
+                        downCompletePage = 0;
                         commentList.clear();
                         GetCommentsData();
                       });

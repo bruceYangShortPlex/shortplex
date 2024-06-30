@@ -496,7 +496,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id!, _page).then((value)
+      await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id!, _page, commentSortType.name).then((value)
       {
         maxPage = value!.data!.maxPage;
         CommentRefresh(value, false);
@@ -1301,10 +1301,16 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   (
                     onTap: ()
                     {
+                      if (commentSortType == CommentSortType.likes) {
+                        return;
+                      }
                       //좋아요순 누름.
                       setState(()
                       {
                         commentSortType = CommentSortType.likes;
+                        downCompletePage = 0;
+                        episodeCommentList.clear();
+                        GetCommentsData();
                       });
                     },
                     child: Container
@@ -1334,10 +1340,16 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   (
                     onTap: ()
                     {
+                      if (commentSortType == CommentSortType.created_at) {
+                        return;
+                      }
                       //최신순 누름.
                       setState(()
                       {
                         commentSortType = CommentSortType.created_at;
+                        downCompletePage = 0;
+                        episodeCommentList.clear();
+                        GetCommentsData();
                       });
                     },
                     child:

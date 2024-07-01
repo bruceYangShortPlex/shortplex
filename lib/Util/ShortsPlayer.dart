@@ -17,6 +17,8 @@ class ShortsPlayer extends StatefulWidget {
 class _ShortsPlayerState extends State<ShortsPlayer>
 {
   late VideoPlayerController videoPlayerController;
+  String shortsUrl = '';
+  bool isInit = false;
 
   @override
   void initState()
@@ -27,8 +29,20 @@ class _ShortsPlayerState extends State<ShortsPlayer>
   Future<VideoPlayerController> controllerInit() async
   {
     var url = await HttpProtocolManager.to.Get_streamUrl(widget.shortsUrl);
+    if (url.isNotEmpty && shortsUrl == url)
+    {
+      return videoPlayerController;
+    }
+    shortsUrl = url;
+
+    if (isInit)
+    {
+      videoPlayerController.dispose();
+    }
+
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
     await videoPlayerController.initialize();
+    isInit = true;
     return videoPlayerController;
   }
 

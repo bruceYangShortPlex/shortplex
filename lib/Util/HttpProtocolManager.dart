@@ -226,7 +226,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       // print('get_HomeContentData send url = $url');
       // print('heads = $heads');
       //  if (_type == HomeDataType.recent)
-      //    print('res.body = ${res.body}');
+      print('res.body = ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -776,7 +776,6 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       }
       else
       {
-        //TODO:에러때 팝업 어떻게 할것인지.
         print('get_Stat FAILD : ${res.statusCode}');
       }
     }
@@ -801,18 +800,46 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       if (res.statusCode == 200)
       {
         var data =  RecommendedRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        print('get_Stat data = $data');
+        //print('Get_Recommended data = $data');
         return data;
       }
       else
       {
-        //TODO:에러때 팝업 어떻게 할것인지.
         print('Get_Recommended FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
       print('Get_Recommended error : $e');
+    }
+
+    return null;
+  }
+
+  Future<RecommendedRes?> Get_Preview() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/preview';
+      print('Get_Preview send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_Preview res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  RecommendedRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        //print('Get_Preview data = $data');
+        return data;
+      }
+      else
+      {
+        print('Get_Preview FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Preview error : $e');
     }
 
     return null;

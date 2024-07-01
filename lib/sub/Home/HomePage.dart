@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/sub/Home/HomeData.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
+import 'package:shortplex/table/StringTable.dart';
 
 import '../../Network/Content_Res.dart';
 import '../../Network/HomeData_Res.dart';
@@ -56,7 +57,7 @@ class _HomePageState extends State<HomePage>
               title: value.data!.title,
               imagePath: item.posterPortraitImgUrl,
               cost: 0,
-              releaseAt: item.releaseAt ?? '',
+              releaseAt: item.releaseAt,
               landScapeImageUrl: item.posterLandscapeImgUrl,
               rank: item.topten,
           );
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage>
             title: value.data!.title ?? '타이틀 없음',
             imagePath: item.posterPortraitImgUrl,
             cost: 0,
-            releaseAt: item.releaseAt ?? '',
+            releaseAt: item.releaseAt,
             landScapeImageUrl: item.posterLandscapeImgUrl,
             rank: item.topten,
           );
@@ -106,7 +107,7 @@ class _HomePageState extends State<HomePage>
             title: value.data!.title,
             imagePath: item.posterPortraitImgUrl,
             cost: 0,
-            releaseAt: item.releaseAt ?? '',
+            releaseAt: item.releaseAt,
             landScapeImageUrl: item.posterLandscapeImgUrl,
             rank: item.topten,
           );
@@ -131,11 +132,10 @@ class _HomePageState extends State<HomePage>
             title: value.data!.title,
             imagePath: item.posterPortraitImgUrl,
             cost: 0,
-            releaseAt: item.releaseAt ?? '',
+            releaseAt: item.releaseAt,
             landScapeImageUrl: item.posterLandscapeImgUrl,
             rank: item.topten,
           );
-          data.isNew = true;
           data.contentTitle = item.subtitle ?? '';
           recentList.add(data);
         }
@@ -161,10 +161,10 @@ class _HomePageState extends State<HomePage>
               var data = ContentData
               (
                 id: item.id,
-                title: item.theme_title ?? '',
+                title: item.theme_title,
                 imagePath: item.posterPortraitImgUrl,
                 cost: 0,
-                releaseAt: item.releaseAt ?? '',
+                releaseAt: item.releaseAt,
                 landScapeImageUrl: item.posterLandscapeImgUrl,
                 rank: item.topten,
               );
@@ -744,7 +744,7 @@ class _HomePageState extends State<HomePage>
                     child:
                     Text
                     (
-                      'NEW',
+                      StringTable().Table![500014]!,
                       style:
                       const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),

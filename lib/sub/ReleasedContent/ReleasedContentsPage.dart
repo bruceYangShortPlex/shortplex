@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:shortplex/Util/ShortplexTools.dart';
+import '../../Util/ExpandableText.dart';
+import '../../Util/HttpProtocolManager.dart';
 import '../../table/StringTable.dart';
+import '../../table/UserData.dart';
+import 'package:shortplex/Util/ShortsPlayer.dart';
 
 class ReleasedContentsPage extends StatefulWidget {
   const ReleasedContentsPage({super.key});
@@ -12,24 +18,72 @@ class ReleasedContentsPage extends StatefulWidget {
   State<ReleasedContentsPage> createState() => _ReleasedContentsPageState();
 }
 
-class _ReleasedContentsPageState extends State<ReleasedContentsPage>
+class _ReleasedContentsPageState extends State<ReleasedContentsPage> with TickerProviderStateMixin
 {
   var contentUrl = '';
-  var contentList = <int>[];
   int selectedIndex = 0;
+  List<ContentData> dataList = <ContentData>[];
+  late AnimationController tweenController;
+  bool controlUIVisible = false;
+
+  void get_Datas()
+  {
+    try
+    {
+      HttpProtocolManager.to.Get_Preview().then((value)
+      {
+        if (value == null) {
+          return;
+        }
+
+        for(var item in value.data!.items!)
+        {
+          var data = ContentData
+          (
+            id: item.id,
+            title: item.title,
+            imagePath: item.episode != null ? item.episode!.altImgUrlHd! : '',
+            cost: 0,
+            releaseAt: item.previewStartAt ?? '',
+            landScapeImageUrl: item.posterLandscapeImgUrl,
+            rank: item.topten,
+          );
+          data.contentTitle = item.subtitle ?? '';
+          data.description = item.description;
+          data.contentUrl = item.episode != null ? item.episode!.episodeHd : '';
+          data.thumbNail = item.thumbnailImgUrl;
+          data.genre = item.genre;
+
+          dataList.add(data);
+        }
+
+        setState(() {
+
+        });
+      });
+    }
+    catch(e)
+    {
+      print('GetContentData Catch $e');
+    }
+  }
+
 
   @override
   void initState()
   {
+    get_Datas();
     super.initState();
 
-    for(int i = 0; i < 10 ; ++i)
-      contentList.add(i);
+    tweenController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
   }
 
   @override
   void dispose() {
-    contentList.clear();
+    tweenController.dispose();
     super.dispose();
   }
 
@@ -49,58 +103,13 @@ Widget mainWidget(BuildContext context)=>
         CupertinoPageScaffold
         (
           backgroundColor: Colors.black,
-          // navigationBar:
-          // CupertinoNavigationBar
-          // (
-          //   backgroundColor: Colors.transparent,
-          //   leading:
-          //   Row
-          //   (
-          //     mainAxisAlignment: MainAxisAlignment.start,
-          //     children:
-          //     [
-          //       Container
-          //       (
-          //         width: MediaQuery.of(context).size.width * 0.3,
-          //         height: 50,
-          //         //color: Colors.blue,
-          //         padding: EdgeInsets.zero,
-          //         alignment: Alignment.centerLeft,
-          //         child:
-          //         CupertinoNavigationBarBackButton
-          //         (
-          //           color: Colors.white,
-          //           onPressed: ()
-          //           {
-          //             Get.back();
-          //           },
-          //         ),
-          //       ),
-          //       Container
-          //         (
-          //         width: MediaQuery.of(context).size.width * 0.3,
-          //         height: 50,
-          //         //color: Colors.green,
-          //         alignment: Alignment.center,
-          //         child:
-          //         Text
-          //           (
-          //           StringTable().Table![400021]!,
-          //           style:
-          //           TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-          //         ),
-          //       ),
-          //       Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
-          //     ],
-          //   ),
-          // ),
           child:
           Container
           (
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             //alignment: Alignment.center,
-            color: Colors.green,
+            //color: Colors.green,
             child:
             Row
             (
@@ -113,14 +122,84 @@ Widget mainWidget(BuildContext context)=>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:
                   [
-                    Container
+                    GestureDetector
                     (
-                      width: 259,
-                      height: 463,
-                      color:Colors.grey,
-                      //child: ShortsPlayer(shortsUrl: contentUrl,),
+                      onTap: ()
+                      {
+                        setState(()
+                        {
+                          UserData.to.isOpenPopup.value = !UserData.to.isOpenPopup.value;
+                          if (UserData.to.isOpenPopup.value)
+                          {
+                            controlUIVisible = true;
+                            tweenController.forward(from: 0);
+                          }
+                          else
+                          {
+                            controlUIVisible = false;
+                            tweenController.reverse();
+                          }
+                          //ui띄우고.
+                        });
+                      },
+                      child:
+                      Stack
+                      (
+                        alignment: Alignment.center,
+                        children:
+                        [
+                          Container
+                          (
+                            width: 259,
+                            height: 463,
+                            //color:Colors.grey,
+                            alignment: Alignment.center,
+                            child:
+                            ClipRRect
+                            (
+                              borderRadius: BorderRadius.circular(7),
+                              child:
+                              dataList.length != 0 ?
+                              ShortsPlayer(shortsUrl: dataList[selectedIndex].contentUrl!,prevImage: dataList[selectedIndex].imagePath!)
+                                  : SizedBox(),
+                            )
+                          ),
+                          FadeTransition
+                          (
+                            opacity: tweenController,
+                            child:
+                            IgnorePointer
+                            (
+                              ignoring: controlUIVisible == false,
+                              child:
+                              Container
+                              (
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.only(left: 6),
+                                width: 75,
+                                height: 75,
+                                decoration: ShapeDecoration(
+                                  color: Colors.black.withOpacity(0.7),
+                                  shape: OvalBorder(
+                                    side: BorderSide(
+                                      width: 2,
+                                      strokeAlign: BorderSide.strokeAlignCenter,
+                                      color: Color(0xFF00FFBF),
+                                    ),
+                                  ),
+                                ),
+                                child:
+                                Icon
+                                (
+                                  CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 20),
                     contentInfo(),
                     SizedBox(height: 10),
                   ],
@@ -153,10 +232,11 @@ Widget mainWidget(BuildContext context)=>
     );
   }
 
-  Widget contentSelctItem(int _index)
+  Widget contentSelctItem(int _index, ContentData _data)
   {
-    var month = '7월'; //20003
-    var day = '9일';
+    var date = DateTime.parse(_data.releaseAt!);
+    var month = SetTableStringArgument(200003, ['${date.month}',]);
+    var day = SetTableStringArgument(200003, ['${date.day}',]);
 
     return
     Column
@@ -188,6 +268,10 @@ Widget mainWidget(BuildContext context)=>
         (
           onTap: ()
           {
+            if (selectedIndex == _index) {
+              return;
+            }
+
             tweenTime = 300;
             setState(()
             {
@@ -211,7 +295,7 @@ Widget mainWidget(BuildContext context)=>
               (
                 selectedIndex == _index,
                 Container
-                  (
+                (
                   width: 73.50,
                   height: 112,
                   decoration: ShapeDecoration(
@@ -225,7 +309,7 @@ Widget mainWidget(BuildContext context)=>
                       borderRadius: BorderRadius.circular(7),
                     ),
                   ),
-                  //child: Text('afdafs'),
+                  child: Image.network(_data.thumbNail!),
                 ),
               ),
             ],
@@ -243,7 +327,7 @@ Widget mainWidget(BuildContext context)=>
     (
       height: double.infinity,
       width: 95,
-      color: Colors.blue,
+      //color: Colors.blue,
       child:
       ListView
       (
@@ -251,8 +335,8 @@ Widget mainWidget(BuildContext context)=>
         children:
         [
           SizedBox(height: 50,),
-          for(var item in contentList)
-            contentSelctItem(item)
+          for(int i = 0 ; i < dataList.length; ++i)
+            contentSelctItem(i, dataList[i]),
         ],
       ),
     );
@@ -260,12 +344,18 @@ Widget mainWidget(BuildContext context)=>
 
   Widget contentInfo()
   {
-    var title = '제목은 몇글자까지임?';
-    var date = '24.09.09';
-    var totalEpisode = '총999화';
-    var genre = '시대물';
-    var rank = 'TOP10';
-    var content = 'asdklflkasjfdklajfkldjkalfjdlkajfkldajflkjalkfasffadsffs';
+    if(dataList.length <= selectedIndex) {
+      return SizedBox();
+    }
+
+    var data = dataList[selectedIndex];
+
+    var title = data.title!;
+    var date = data.GetReleaseDate();
+    var totalEpisode = SetTableStringArgument(100022, ['999']);
+    var genre = ConvertCodeToString(data.genre!);
+    var rank = data.rank ? StringTable().Table![500015]! : ''; // data.rank ? 'TOP10' : '';
+    var content = data.description!;
 
     return
     Container
@@ -296,81 +386,94 @@ Widget mainWidget(BuildContext context)=>
               (
                 title,
                 style:
-                TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 5,),
             Row
             (
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:
               [
-                Container
-                (
-                  height: 15,
-                  //color: Colors.blue,
-                  child:
-                  Text
+                  Container
                   (
-                    date,
-                    style:
-                    TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    width: 38,
+                    height: 15,
+                    //color: Colors.blue,
+                    child:
+                    Text
+                    (
+                      date,
+                      style:
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
                   ),
-                ),
-                Container
-                (
-                  height: 15,
-                  //color: Colors.blue,
-                  alignment: Alignment.center,
-                  child:
-                  Text
+                  Container
                   (
-                    textAlign: TextAlign.center,
-                    totalEpisode,
-                    style:
-                    TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    width: 50,
+                    height: 15,
+                    //color: Colors.blue,
+                    child:
+                    Text
+                    (
+                      //textAlign: TextAlign.center,
+                      totalEpisode,
+                      style:
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
                   ),
-                ),
-                Container
+                Visibility
                 (
-                  height: 15,
-                  //color: Colors.blue,
+                  visible: data.rank,
                   child:
-                  Text
+                  Container
                   (
-                    genre,
-                    style:
-                    TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                Container
-                (
-                  height: 15,
-                  //color: Colors.blue,
-                  child:
-                  Visibility
-                  (
-                    visible: rank != '',
-                    child: Text
+                    width: 42,
+                    height: 15,
+                    //color: Colors.blue,
+                    child:
+                    Text
                     (
                       rank,
                       style:
-                      TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                ),
+
+                Expanded
+                (
+                  flex: 2,
+                  child:
+                  Container
+                  (
+                    height: 15,
+                    //color: Colors.blue,
+                    //alignment: Alignment.center,
+                    child:
+                    Text
+                    (
+                      genre,
+                      style:
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),
                   ),
                 ),
               ],
             ),
+            SizedBox(height: 2,),
             Container
             (
               alignment: Alignment.centerLeft,
-              height: 40,
+              height: 54,
               child:
               Text
               (
                 content,
                 style:
-                TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                const TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             SizedBox(height: 10,),

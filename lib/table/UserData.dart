@@ -116,9 +116,9 @@ class ContentData
 {
   String? id;
   String? title;
+  String? themeTitle;
   String? imagePath;
   String? thumbNail;
-  bool isNew = false;
   bool isWatching = false;
   int? watchingEpisode;
   bool rank = false;
@@ -130,6 +130,7 @@ class ContentData
   String? releaseAt;
   String? landScapeImageUrl;
   String? description;
+  String? genre;
 
   ContentData
   (
@@ -144,6 +145,22 @@ class ContentData
     }
   );
 
+  bool get isNew
+  {
+    if (releaseAt!.isEmpty)
+    {
+      return false;
+    }
+
+    var result = '';
+    var release = DateTime.parse(releaseAt!);
+    var current = DateTime.now();
+
+    int differenceInDays = current.difference(release).inDays;
+
+    return differenceInDays <= 14;
+  }
+
   String GetReleaseDate()
   {
     if (releaseAt == null) {
@@ -155,8 +172,9 @@ class ContentData
     }
 
     var date = DateTime.parse(releaseAt!);
-
-    var result = '${date.year}.${date.month}';
+    var year = date.year.toString().substring(2);
+    var month = date.month.toString().padLeft(2, '0');
+    var result = '$year.$month';
     return result;
   }
 }

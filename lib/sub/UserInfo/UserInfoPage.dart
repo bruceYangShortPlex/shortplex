@@ -973,7 +973,7 @@ class UserInfoMainListView extends GetxController
                       child:
                       Text
                       (
-                        'NEW',
+                        StringTable().Table![500014]!,
                         style:
                         const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),

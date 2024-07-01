@@ -892,7 +892,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         }
 
                         Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
-                        print('다음회차 보기 누름');
+                        if (kDebugMode) {
+                          print('다음회차 보기 누름');
+                        }
                       },
                       icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
                     ),

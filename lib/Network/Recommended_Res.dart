@@ -76,7 +76,7 @@ class RecommendedContentData {
     _episodeMaxpage = json['episode_maxpage'] ?? 0;
     if (json['episode'] != null)
     {
-      _episode =Episode.fromJson(json['episode']);
+      _episode = Episode.fromJson(json['episode']);
     }
   }
   String? _id;

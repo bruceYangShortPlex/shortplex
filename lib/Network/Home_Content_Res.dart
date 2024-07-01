@@ -189,12 +189,12 @@ class ContentItems {
     _title = json['title'];
     _subtitle = json['subtitle'];
     _slug = json['slug'];
-    _description = json['description'];
+    _description = json['description'] ?? '';
     _teaser = json['teaser'];
-    _releaseAt = json['release_at'];
+    _releaseAt = json['release_at'] ?? '';
     _restrainAt = json['restrain_at'];
     _previewYn = json['preview_yn'] ?? false;
-    _previewStartAt = json['preview_start_at'];
+    _previewStartAt = json['preview_start_at'] ?? '';
     _genre = json['genre_cd'];
     _tag = json['tag'];
     _shareLink = json['share_link'];
@@ -207,7 +207,7 @@ class ContentItems {
     _featured = json['featured'] ?? false;
     _topten = json['topten'] ?? false;
     _createdAt = json['created_at'];
-    _theme_title = json['theme_title'];
+    _theme_title = json['theme_title'] ?? '';
     content_id = json['content_id'];
     no = json['no'] ?? 0;
   }

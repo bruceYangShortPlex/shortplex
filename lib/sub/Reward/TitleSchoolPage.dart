@@ -514,7 +514,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     child:
                                     Text
                                       (
-                                      StringTable().Table![300037]!,
+                                      StringTable().Table![500015]!,
                                       style:
                                       TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                     ),

@@ -52,7 +52,6 @@ class _FeaturedPageState extends State<FeaturedPage>
               landScapeImageUrl: item.posterLandscapeImgUrl,
               rank: item.topten,
             );
-            data.isNew = false;
             data.contentTitle = item.subtitle ?? '';
             data.description = item.description;
             data.contentUrl = item.episode != null ? item.episode!.episodeHd : '';

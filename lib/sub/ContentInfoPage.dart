@@ -62,6 +62,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       HttpProtocolManager.to.Get_ContentData(contentData!.id!).then((value)
       {
         contentRes = value;
+        contentData!.title = contentRes!.data!.title;
         mapEpisodeData[0] = contentRes!.data!.episode!;
         contentEpisodes.addAll(contentRes!.data!.episode!);
         int totalEpisodeCount = contentRes!.data!.episodeTotal;
@@ -240,6 +241,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     });
 
     contentData = Get.arguments;
+    contentData!.title = '';
     GetContentData();
     GetFavorite();
     //GetCommentsData();
@@ -392,54 +394,52 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         child:
         Row
         (
+          mainAxisAlignment: MainAxisAlignment.start,
           children:
           [
+            Text
+            (
+              '${contentData?.GetReleaseDate()}',
+              style:
+              const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+            ),
+            SizedBox(width: 12,),
+            Text
+            (
+              contentRes != null ?  SetTableStringArgument(100022, ['${contentRes!.data!.episodeTotal}']) : '',
+              style:
+              const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+            ),
+            SizedBox(width: 12,),
             Visibility
             (
-              visible: contentData?.GetReleaseDate() != '',
-              child:
-              Expanded
-              (
-                child:
-                Text
-                (
-                  '${contentData?.GetReleaseDate()}',
-                  style:
-                  const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                ),
-              ),
-            ),
-            Expanded
-            (
+              visible: contentData!.isNew,
               child:
               Text
               (
-                contentRes != null ?  SetTableStringArgument(100022, ['${contentRes?.data?.episode?.length}']) : '',
+                contentData!.isNew ? StringTable().Table![500014]! : '',
                 style:
                 const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
-            Expanded
+            Visibility(visible: contentData!.isNew, child: SizedBox(width: 12,)),
+            Visibility
             (
-              flex: 1,
+              visible: contentData!.rank,
               child:
               Text
               (
-                contentData!.rank ? StringTable().Table![300037]! : '',
+                contentData!.rank ? StringTable().Table![500015]! : '',
                 style:
                 const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
-            Expanded
+            Visibility(visible: contentData!.rank, child: SizedBox(width: 12,)),
+            Text
             (
-              flex: 2,
-              child:
-              Text
-              (
-                contentRes != null ? ConvertCodeToString(contentRes!.data!.genre!) : '',
-                style:
-                const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-              ),
+              contentRes != null ? ConvertCodeToString(contentRes!.data!.genre!) : '',
+              style:
+              const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ],
         )

@@ -392,71 +392,92 @@ Widget mainWidget(BuildContext context)=>
             SizedBox(height: 5,),
             Row
             (
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:
               [
-                  Container
-                  (
-                    width: 38,
-                    height: 15,
-                    //color: Colors.blue,
-                    child:
-                    Text
-                    (
-                      date,
-                      style:
-                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                    ),
-                  ),
-                  Container
-                  (
-                    width: 50,
-                    height: 15,
-                    //color: Colors.blue,
-                    child:
-                    Text
-                    (
-                      //textAlign: TextAlign.center,
-                      totalEpisode,
-                      style:
-                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                    ),
-                  ),
-                Visibility
+                // Visibility
+                // (
+                //   visible: data.isNew,
+                //   child:
+                //   Container
+                //   (
+                //       width: 42,
+                //       height: 15,
+                //       //color: Colors.blue,
+                //       child:
+                //       Row
+                //       (
+                //         children:
+                //         [
+                //           SvgPicture.asset
+                //           (
+                //             'assets/images/home/main_new.svg',
+                //           ),
+                //           SizedBox(width: 11,),
+                //         ],
+                //       )
+                //   ),
+                // ),
+                // Visibility
+                // (
+                //   visible: data.rank,
+                //   child:
+                //   Container
+                //   (
+                //     width: 42,
+                //     height: 15,
+                //     //color: Colors.blue,
+                //     child:
+                //     Row
+                //     (
+                //       children:
+                //       [
+                //         SvgPicture.asset
+                //         (
+                //           'assets/images/home/main_top10.svg',
+                //         ),
+                //         SizedBox(width: 11,),
+                //       ],
+                //     )
+                //   ),
+                // ),
+                Container
                 (
-                  visible: data.rank,
+                  height: 15,
+                  //color: Colors.blue,
                   child:
-                  Container
+                  Text
                   (
-                    width: 42,
-                    height: 15,
-                    //color: Colors.blue,
-                    child:
-                    Text
-                    (
-                      rank,
-                      style:
-                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                    ),
+                    date,
+                    style:
+                    TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
-
-                Expanded
+                SizedBox(width: 11,),
+                Container
                 (
-                  flex: 2,
+                  height: 15,
+                  //color: Colors.blue,
                   child:
-                  Container
+                  Text
                   (
-                    height: 15,
-                    //color: Colors.blue,
-                    //alignment: Alignment.center,
-                    child:
-                    Text
-                    (
-                      genre,
-                      style:
-                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                    ),
+                    //textAlign: TextAlign.center,
+                    totalEpisode,
+                    style:
+                    TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                  ),
+                ),
+                SizedBox(width: 11,),
+                Container
+                (
+                  height: 15,
+                  //color: Colors.blue,
+                  //alignment: Alignment.center,
+                  child:
+                  Text
+                  (
+                    genre,
+                    style:
+                    TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
               ],

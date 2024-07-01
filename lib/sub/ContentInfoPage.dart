@@ -397,6 +397,26 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           mainAxisAlignment: MainAxisAlignment.start,
           children:
           [
+            Visibility
+            (
+              visible: contentData!.isNew,
+              child:
+              SvgPicture.asset
+              (
+                'assets/images/main/main_new.svg',
+              ),
+            ),
+            Visibility(visible: contentData!.isNew, child: SizedBox(width: 12,)),
+            Visibility
+            (
+              visible: contentData!.rank,
+              child:
+              SvgPicture.asset
+              (
+                'assets/images/main/main_top10.svg',
+              ),
+            ),
+            Visibility(visible: contentData!.rank, child: SizedBox(width: 12,)),
             Text
             (
               '${contentData?.GetReleaseDate()}',
@@ -411,30 +431,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
             SizedBox(width: 12,),
-            Visibility
-            (
-              visible: contentData!.isNew,
-              child:
-              Text
-              (
-                contentData!.isNew ? StringTable().Table![500014]! : '',
-                style:
-                const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-              ),
-            ),
-            Visibility(visible: contentData!.isNew, child: SizedBox(width: 12,)),
-            Visibility
-            (
-              visible: contentData!.rank,
-              child:
-              Text
-              (
-                contentData!.rank ? StringTable().Table![500015]! : '',
-                style:
-                const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-              ),
-            ),
-            Visibility(visible: contentData!.rank, child: SizedBox(width: 12,)),
             Text
             (
               contentRes != null ? ConvertCodeToString(contentRes!.data!.genre!) : '',

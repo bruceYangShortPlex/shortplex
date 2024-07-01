@@ -582,7 +582,8 @@ class _HomePageState extends State<HomePage>
                             Padding
                             (
                               padding: const EdgeInsets.only(left: 75),
-                              child: SvgPicture.asset
+                              child:
+                              SvgPicture.asset
                               (
                                 'assets/images/home/home_frame_bg.svg',
                                 width: 180,
@@ -730,23 +731,11 @@ class _HomePageState extends State<HomePage>
                   child:
                   Container
                   (
-                    width: 29,
-                    height: 14,
                     alignment: Alignment.center,
-                    decoration: ShapeDecoration
-                    (
-                      color: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(width: 0.80, color: Color(0xFF00FFBF)),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
                     child:
-                    Text
+                    SvgPicture.asset
                     (
-                      StringTable().Table![500014]!,
-                      style:
-                      const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      'assets/images/main/main_new.svg',
                     ),
                   ),
                 ),
@@ -762,7 +751,8 @@ class _HomePageState extends State<HomePage>
                     (
                       //alignment: Alignment.center,
                       //width: 42,height: 42, color: Colors.red,
-                      child: SvgPicture.asset('assets/images/home/home_frame.svg', fit: BoxFit.contain,),
+                      child:
+                      SvgPicture.asset('assets/images/home/home_frame.svg', fit: BoxFit.contain,),
                     )
                   ),
                 ),
@@ -800,8 +790,7 @@ class _HomePageState extends State<HomePage>
                     iconSize: 16,
                     onPressed: ()
                     {
-                      print('go to info page');
-                      //print(_data.id);
+                      Get.to(()=> ContentInfoPage(), arguments: _data);
                     },
                     icon: Icon(CupertinoIcons.info), color: Colors.white,)
                 ],

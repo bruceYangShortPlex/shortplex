@@ -271,7 +271,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     {
       if (totalCommentCount > commentList.length)
       {
-        print('Start GetCommentsData 222');
+        //print('Start GetCommentsData 222');
         GetCommentsData();
       }
     }

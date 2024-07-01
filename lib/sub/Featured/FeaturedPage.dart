@@ -19,7 +19,7 @@ class FeaturedPage extends StatefulWidget
 
 class _FeaturedPageState extends State<FeaturedPage>
 {
-  List<Widget> pageList = <Widget>[];
+  //List<Widget> pageList = <Widget>[];
   List<ContentData> dataList = <ContentData>[];
   var currentIndex = 0;
 
@@ -57,7 +57,7 @@ class _FeaturedPageState extends State<FeaturedPage>
             data.contentUrl = item.episode != null ? item.episode!.episodeHd : '';
             data.thumbNail = item.thumbnailImgUrl;
 
-            pageList.add(ShortsPlayer(shortsUrl: data.contentUrl!,prevImage: data.imagePath!));
+            //pageList.add(ShortsPlayer(shortsUrl: data.contentUrl!,prevImage: data.imagePath!));
 
             dataList.add(data);
         }
@@ -76,8 +76,6 @@ class _FeaturedPageState extends State<FeaturedPage>
   @override
   void dispose()
   {
-    pageList.clear();
-    dataList.clear();
     super.dispose();
   }
 
@@ -107,7 +105,7 @@ class _FeaturedPageState extends State<FeaturedPage>
               alignment: Alignment.center,
               children:
               [
-                CarouselSlider
+                CarouselSlider.builder
                 (
                   options:
                   CarouselOptions
@@ -126,7 +124,12 @@ class _FeaturedPageState extends State<FeaturedPage>
                     //height: MediaQuery.of(context).size.height,
                     //autoPlay: true,
                   ),
-                  items: pageList,
+                  //items: pageList,
+                  itemCount: dataList.length,
+                  itemBuilder: (context, index, realIndex)
+                  {
+                    return ShortsPlayer(shortsUrl: dataList[currentIndex].contentUrl!, prevImage: dataList[currentIndex].imagePath!,);
+                  },
                 ),
                 Align
                 (

@@ -494,7 +494,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
                     buttonEnabled = false;
                     int value = UserData.to.isFavoriteCheck.value ? -1 : 1;
-                    HttpProtocolManager.to.Send_Stat(contentData!.id!, value, Stat_Type.favorite).then((value)
+                    HttpProtocolManager.to.Send_Stat(contentData!.id!, value, Comment_CD_Type.content, Stat_Type.favorite).then((value)
                     {
                       GetFavorite();
                       buttonEnabled = true;
@@ -1105,7 +1105,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     if (kDebugMode) {
                       print('Content Info Page like check value : $value');
                     }
-                    HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
+                    HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                         .then((value)
                     {
                       for(var item in value!.data!)

@@ -428,7 +428,7 @@ SafeArea
                       if (kDebugMode) {
                         print('Content Info Page like check value : $value');
                       }
-                      HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
+                      HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                           .then((value)
                       {
                         CommentUpdate();
@@ -458,7 +458,7 @@ SafeArea
                       var item = replyList.firstWhere((element) => element.ID == id);
                       var value = item.isLikeCheck! ? -1 : 1;
                       print('comment like check value : $value');
-                      HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
+                      HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                           .then((value)
                       {
                         for(var item in value!.data!)

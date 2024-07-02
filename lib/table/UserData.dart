@@ -131,6 +131,7 @@ class ContentData
   String? landScapeImageUrl;
   String? description;
   String? genre;
+  bool isNotiCheck = false;
 
   ContentData
   (

@@ -747,7 +747,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
 
                     connecting = true;
                     var value = UserData.to.isFavoriteCheck.value ? -1 : 1;
-                    HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, value, Stat_Type.favorite).then((value)
+                    HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, value, Comment_CD_Type.content, Stat_Type.favorite).then((value)
                     {
                       GetFavorite();
                       connecting = false;
@@ -1410,7 +1410,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                                   connecting = true;
                                   var item = episodeCommentList.firstWhere((element) => element.ID == id);
                                   var value = item.isLikeCheck! ? -1 : 1;
-                                  HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
+                                  HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                                       .then((value)
                                   {
                                     for(var item in value!.data!)
@@ -1527,7 +1527,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     //댓글 좋아요.
                     var item = episodeCommentList.firstWhere((element) => element.ID == id);
                     var value = item.isLikeCheck! ? -1 : 1;
-                    HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
+                    HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                         .then((value)
                     {
                       for(var item in value!.data!)
@@ -1586,7 +1586,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       print('reply like check value : $value');
                     }
 
-                    HttpProtocolManager.to.Send_Stat(id, value, Stat_Type.like)
+                    HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                         .then((value)
                     {
                       for(var item in value!.data!)

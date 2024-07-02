@@ -8,6 +8,7 @@ import 'package:shortplex/Network/Home_Content_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
+import 'package:shortplex/Network/Watch_Req.dart';
 
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
@@ -20,6 +21,7 @@ enum Stat_Type
 {
   like,
   favorite,
+  release_at,
 }
 
 enum Comment_CD_Type
@@ -690,15 +692,15 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return '';
   }
 
-  Future<StatRes?> Send_Stat(String _contentID, int _active, Stat_Type _type ) async
+  Future<StatRes?> Send_Stat(String _contentID, int _active, Comment_CD_Type _type_cd,  Stat_Type _type ) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/action/stat/$_contentID';
-      var type_cd = Comment_CD_Type.content.name;
+      var type_cd = _type_cd.name;
       var stat =  StatReq(action: _type.name, value: _active, typeCd: type_cd);
-      print('stat : ${stat.value}');
+      //print('stat : ${stat.value}');
       var bodys = jsonEncode(stat.toJson());
       print('send_Stat heads : ${heads} / send bodys : ${bodys}');
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
@@ -843,5 +845,40 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return null;
+  }
+
+  Future<void> Send_WatchData(String _episodeID, String _start_date, String _endDate, double _duration) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/watching';
+
+      var data =  WatchedData(startTime: _start_date, endTime: _endDate, duration: _duration.toString());
+      var req = WatchReq(episodeID: _episodeID, data: data);
+      //print('stat : ${stat.value}');
+      var bodys = jsonEncode(req.toJson());
+      print('Send_WatchData heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_WatchData res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        //var data =  StatRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        //print('send_Comment data = $data');
+        return;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('Send_WatchData FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_WatchData error : $e');
+    }
+
+    return;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
@@ -276,7 +277,9 @@ Widget mainWidget(BuildContext context)=>
             setState(()
             {
               selectedIndex = _index;
-              print('selectedIndex : $selectedIndex');
+              if (kDebugMode) {
+                print('selectedIndex : $selectedIndex');
+              }
             });
           },
           child:
@@ -342,6 +345,8 @@ Widget mainWidget(BuildContext context)=>
     );
   }
 
+  bool buttonDisable = false;
+
   Widget contentInfo()
   {
     if(dataList.length <= selectedIndex) {
@@ -354,7 +359,7 @@ Widget mainWidget(BuildContext context)=>
     var date = data.GetReleaseDate();
     var totalEpisode = SetTableStringArgument(100022, ['999']);
     var genre = ConvertCodeToString(data.genre!);
-    var rank = data.rank ? StringTable().Table![500015]! : ''; // data.rank ? 'TOP10' : '';
+    //var rank = data.rank ? StringTable().Table![500015]! : ''; // data.rank ? 'TOP10' : '';
     var content = data.description!;
 
     return
@@ -510,7 +515,34 @@ Widget mainWidget(BuildContext context)=>
                   (
                     onTap: ()
                     {
-                      print('tap');
+                      print('click content ID : ${data.id}');
+                      if (buttonDisable) {
+                        return;
+                      }
+
+                      var value = data.isNotiCheck ? -1 : 1;
+                      //print('data.isNotiCheck : ${data.isNotiCheck} / value : $value');
+                      buttonDisable = true;
+                      HttpProtocolManager.to.Send_Stat(data.id!, value, Comment_CD_Type.content, Stat_Type.release_at).then((value)
+                      {
+                        if (value == null)
+                        {
+                          buttonDisable = false;
+                          return;
+                        }
+                        for(var item in value.data!)
+                        {
+                          if (item.key == data.id && item.action == Stat_Type.release_at.name)
+                          {
+                            setState(() {
+                              data.isNotiCheck = item.amt > 0;
+                            });
+                            break;
+                          }
+                        }
+
+                        buttonDisable = false;
+                      },);
                     },
                     child: Opacity(
                       opacity: 0.70,
@@ -537,7 +569,12 @@ Widget mainWidget(BuildContext context)=>
                             Padding
                             (
                               padding: const EdgeInsets.only(bottom: 14),
-                              child: Icon(CupertinoIcons.bell, size: 22, color:Colors.white),
+                              child:
+                              Icon
+                              (
+                                data.isNotiCheck ? CupertinoIcons.bell_fill : CupertinoIcons.bell,
+                                size: 22, color:Colors.white
+                              ),
                             ),
                             Padding
                             (
@@ -556,7 +593,7 @@ Widget mainWidget(BuildContext context)=>
                   ),
                   SizedBox(width: 10,),
                   GestureDetector
-                    (
+                  (
                     onTap: ()
                     {
                       print('tap');
@@ -579,7 +616,7 @@ Widget mainWidget(BuildContext context)=>
                         ),
                         child:
                         Stack
-                          (
+                        (
                           alignment: Alignment.center,
                           children:
                           [

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -925,6 +926,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               (
                 onTap: ()
                 {
+                  if (videoController == null) {
+                    return;
+                  }
+
                   if (showCheck() == false)
                   {
                     return;
@@ -947,7 +952,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 Container
                 (
                   alignment: Alignment.center,
-                  padding: isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
+                  padding: videoController != null && isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
                   width: 75,
                   height: 75,
                   decoration: ShapeDecoration(
@@ -963,7 +968,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   child:
                   Icon
                   (
-                    isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? CupertinoIcons.pause_solid :
+                    videoController != null && isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? CupertinoIcons.pause_solid :
                     CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                   ),
                 ),
@@ -982,7 +987,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             (
               width: MediaQuery.of(context).size.width,
               child:
-              isShowContent && videoController!.value.isInitialized ?
+              videoController != null && isShowContent && videoController!.value.isInitialized ?
               CupertinoSlider
               (
                 value: currentTime,
@@ -1011,10 +1016,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             child:
             Text
             (
-              isShowContent && videoController!.value.isInitialized ?
+              videoController != null &&isShowContent && videoController!.value.isInitialized ?
               '${formatDuration(videoController!.value.position).$2}:${formatDuration(videoController!.value.position).$3} / ${formatDuration(videoController!.value.duration).$2}:${formatDuration(videoController!.value.duration).$3}' : '00:00 / 00:00',
               style:
-              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              const TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
           ),
         ],
@@ -1084,7 +1089,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                             Center
                             (
                               child:
-                              Image.network(episodeData!.episodeHd!),
+                              Image.network(episodeData!.altImgUrlHd!),
                               //CircularProgressIndicator()
                             ),
                           ),
@@ -1118,6 +1123,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         alignment: Alignment.center,
         children:
         [
+          AspectRatio
+          (
+            aspectRatio: 9/16,
+            child:
+            Image.network(episodeData!.altImgUrlHd!)
+          ),
           CircularProgressIndicator(),
           Container
           (
@@ -1172,9 +1183,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     height: 70,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        begin: Alignment(0, -1),
-                        end: Alignment(0, 1),
-                        colors: [Colors.transparent, Colors.black],
+                        begin: Alignment(0, 0),
+                        end: Alignment(0, -1),
+                        colors: [Colors.black, Colors.transparent],
                       ),
                       //border: Border.all(width: 1),
                     ),

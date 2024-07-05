@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -28,7 +29,7 @@ class NextContentPlayer extends StatefulWidget
 
 class _NextContentPlayerState extends State<NextContentPlayer> with TickerProviderStateMixin
 {
-  late VideoPlayerController videoController;
+  VideoPlayerController? videoController;
   // Add a variable to handle the time of video playback
   int commentCount = 0;
   int selectedEpisodeNo = 0;
@@ -66,14 +67,14 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
           {
             setState(()
             {
-              videoController.setVolume(1);
-              videoController.play();
+              videoController!.setVolume(1);
+              videoController!.play();
             });
 
-            videoController.addListener(()
+            videoController!.addListener(()
             {
-              if (videoController.value.position >=
-                  videoController.value.duration) {
+              if (videoController!.value.position >=
+                  videoController!.value.duration) {
                 // 동영상 재생이 끝났을 때 실행할 로직
                 print("동영상 재생이 끝났습니다.");
                 if (selectedEpisodeNo < episodeList.length) {
@@ -85,7 +86,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
 
               setState(()
               {
-                currentTime = videoController.value.position.inSeconds.toDouble();
+                currentTime = videoController!.value.position.inSeconds.toDouble();
               });
             });
           }
@@ -315,6 +316,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
 
     GetFavorite();
     initEpisodeGroup();
+    GetCommentsData();
 
     super.initState();
   }
@@ -328,7 +330,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
     ticker.dispose();
     replyScrollController.dispose();
     if (isShowContent) {
-      videoController.dispose();
+      videoController!.dispose();
     }
     tweenController.dispose();
     scrollController.dispose();
@@ -436,9 +438,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
 
               if (item.id == commentData!.ID)
               {
-                commentData!.replyCount = item.replies;
                 setState(() {
-
+                  commentData!.replyCount = item.replies;
                 });
                 break;
               }
@@ -562,9 +563,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
 
       });
     }
-    commentCount = episodeCommentList.length;
     setState(() {
-
+      commentCount = _data.data!.total;
     });
   }
 
@@ -582,8 +582,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
             if (episodeCommentList[i].ID == item.id)
             {
               episodeCommentList.removeAt(i);
-              commentCount = episodeCommentList.length;
-              print('delete complete id : ${item.id}');
+              commentCount = value.data!.total;
+              //print('delete complete id : ${item.id}');
               setState(() {
 
               });
@@ -746,10 +746,24 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     }
 
                     connecting = true;
-                    var value = UserData.to.isFavoriteCheck.value ? -1 : 1;
-                    HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, value, Comment_CD_Type.content, Stat_Type.favorite).then((value)
+                    var actionValue = UserData.to.isFavoriteCheck.value ? -1 : 1;
+                    HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, actionValue, Comment_CD_Type.content, Stat_Type.favorite).then((value)
                     {
-                      GetFavorite();
+                      if (value == null) {
+                        connecting = false;
+                        return;
+                      }
+                      //GetFavorite();
+
+                      for(var item in value.data!)
+                      {
+                        if (item.key == episodeData!.contentId && item.action == Stat_Type.favorite.name)
+                        {
+                          UserData.to.isFavoriteCheck.value = item.amt > 0;
+                          break;
+                        }
+                      }
+
                       connecting = false;
                     });
                   }
@@ -814,9 +828,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   {
     if (isShowContent == false)
     {
-      bottomOffset = 0;
       setState(() {
-
+        bottomOffset = 0;
       });
     }
 
@@ -876,7 +889,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                           }
 
                           Get.off(ContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
-                          print('다음회차 보기 누름');
+                          if (kDebugMode) {
+                            print('다음회차 보기 누름');
+                          }
                         },
                         icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
                       ),
@@ -895,6 +910,10 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                   (
                   onTap: ()
                   {
+                    if (videoController == null) {
+                      return;
+                    }
+
                     if (showCheck() == false)
                     {
                       return;
@@ -903,13 +922,13 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     ticker.stop();
                     ticker.start();
 
-                    if (videoController.value.isInitialized)
+                    if (videoController!.value.isInitialized)
                     {
-                      if (videoController.value.isPlaying) {
-                        videoController.pause();
+                      if (videoController!.value.isPlaying) {
+                        videoController!.pause();
                       }
                       else {
-                        videoController.play();
+                        videoController!.play();
                       }
                     }
                   },
@@ -917,7 +936,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                   Container
                     (
                     alignment: Alignment.center,
-                    padding: isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
+                    padding: videoController != null && isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
                     width: 75,
                     height: 75,
                     decoration: ShapeDecoration(
@@ -933,7 +952,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     child:
                     Icon
                       (
-                      isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? CupertinoIcons.pause_solid :
+                      videoController != null && isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? CupertinoIcons.pause_solid :
                       CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                     ),
                   ),
@@ -952,12 +971,12 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                 (
                 width: MediaQuery.of(context).size.width,
                 child:
-                isShowContent && videoController.value.isInitialized ?
+                videoController != null && isShowContent && videoController!.value.isInitialized ?
                 CupertinoSlider
                   (
                   value: currentTime,
                   min: 0.0,
-                  max: videoController.value.duration.inSeconds.toDouble(),
+                  max: videoController!.value.duration.inSeconds.toDouble(),
                   onChanged: (value)
                   {
                     ticker.stop();
@@ -965,7 +984,7 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                     setState(()
                     {
                       currentTime = value;
-                      videoController.seekTo(Duration(seconds: value.toInt()));
+                      videoController!.seekTo(Duration(seconds: value.toInt()));
                     });
                   },
                 ) : Container(),
@@ -981,10 +1000,10 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
               child:
               Text
                 (
-                isShowContent && videoController.value.isInitialized ?
-                '${formatDuration(videoController.value.position).$2}:${formatDuration(videoController.value.position).$3} / ${formatDuration(videoController.value.duration).$2}:${formatDuration(videoController.value.duration).$3}' : '00:00 / 00:00',
+                videoController != null &&isShowContent && videoController!.value.isInitialized ?
+                '${formatDuration(videoController!.value.position).$2}:${formatDuration(videoController!.value.position).$3} / ${formatDuration(videoController!.value.duration).$2}:${formatDuration(videoController!.value.duration).$3}' : '00:00 / 00:00',
                 style:
-                TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                const TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
           ],
@@ -995,7 +1014,8 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
   @override
   Widget build(BuildContext context)
   {
-    try {
+    try
+    {
       return
         SafeArea
           (
@@ -1048,12 +1068,13 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                               (
                               aspectRatio: 9/16,
                               child:
-                              isShowContent == true && videoController.value.isInitialized == true ?
-                              VideoPlayer(videoController) :
+                              videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
+                              VideoPlayer(videoController!) :
                               Center
                                 (
-                                  child:
-                                  CircularProgressIndicator()
+                                child:
+                                Image.network(episodeData!.altImgUrlHd!),
+                                //CircularProgressIndicator()
                               ),
                             ),
                           ),
@@ -1079,20 +1100,38 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
     }
     catch(e)
     {
-      print(e);
+      print('content player Error $e');
       return
-        Container
+        Stack
           (
-          child:
-          CupertinoNavigationBarBackButton
-            (
-            color: Colors.white,
-            onPressed: ()
-            {
-              Get.back();
-            },
-          ),
+          alignment: Alignment.center,
+          children:
+          [
+            AspectRatio
+              (
+                aspectRatio: 9/16,
+                child:
+                Image.network(episodeData!.altImgUrlHd!)
+            ),
+            CircularProgressIndicator(),
+            Container
+              (
+              width: 390.w,
+              height: 840.h,
+              alignment: Alignment.topLeft,
+              child:
+              CupertinoNavigationBarBackButton
+                (
+                color: Colors.white,
+                onPressed: ()
+                {
+                  Get.back();
+                },
+              ),
+            ),
+          ],
         );
+
     }
   }
 
@@ -1128,9 +1167,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                       height: 70,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment(0, -1),
-                          end: Alignment(0, 1),
-                          colors: [Colors.transparent, Colors.black],
+                          begin: Alignment(0, 0),
+                          end: Alignment(0, -1),
+                          colors: [Colors.black, Colors.transparent],
                         ),
                         //border: Border.all(width: 1),
                       ),
@@ -1217,10 +1256,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                         }
 
                         textFocusNode.unfocus();
-                        bottomOffset = -840.h;
                         setState(()
                         {
-
+                          bottomOffset = -840.h;
                         });
                       }
                     },
@@ -1408,37 +1446,33 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                                     return;
                                   }
                                   connecting = true;
-                                  var item = episodeCommentList.firstWhere((element) => element.ID == id);
-                                  var value = item.isLikeCheck! ? -1 : 1;
+                                  //var item = episodeCommentList.firstWhere((element) => element.ID == id);
+                                  var value = episodeCommentList[i].isLikeCheck! ? -1 : 1;
                                   HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                                       .then((value)
                                   {
                                     for(var item in value!.data!)
                                     {
-                                      for(int i = 0 ; i < episodeCommentList.length; ++i)
+                                      if (episodeCommentList[i].ID == item.key)
                                       {
-                                        if (episodeCommentList[i].ID == item.key)
+                                        HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
                                         {
-                                          HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
+                                          if (value1 == null)
                                           {
-                                            if (value1 == null)
-                                            {
-                                              connecting = false;
-                                              return;
-                                            }
-                                            var resData = value1.data!.items!.firstWhere((element) => element.id == id);
-                                            if (UserData.to.userId == resData.whoami)
-                                            {
+                                            connecting = false;
+                                            return;
+                                          }
+                                          var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                                          if (UserData.to.userId == resData.whoami)
+                                          {
+                                            setState(() {
                                               episodeCommentList[i].likeCount = resData.likes;
                                               episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
-                                              setState(() {
-
-                                              });
-                                            }
-                                            connecting = false;
-                                          },);
-                                          break;
-                                        }
+                                            });
+                                          }
+                                          connecting = false;
+                                        },);
+                                        break;
                                       }
                                     }
                                   });
@@ -1546,11 +1580,10 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                               var resData = value1.data!.items!.firstWhere((element) => element.id == id);
                               if (UserData.to.userId == resData.whoami)
                               {
-                                episodeCommentList[i].likeCount = resData.likes;
-                                episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
-                                commentData = episodeCommentList[i];
                                 setState(() {
-
+                                  episodeCommentList[i].likeCount = resData.likes;
+                                  episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                  commentData = episodeCommentList[i];
                                 });
                               }
                               connecting = false;
@@ -1605,10 +1638,9 @@ class _NextContentPlayerState extends State<NextContentPlayer> with TickerProvid
                               var resData = value1.data!.items!.firstWhere((element) => element.id == id);
                               if (UserData.to.userId == resData.whoami)
                               {
-                                replyList[i].likeCount = resData.likes;
-                                replyList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
                                 setState(() {
-
+                                  replyList[i].likeCount = resData.likes;
+                                  replyList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
                                 });
                               }
                               connecting = false;

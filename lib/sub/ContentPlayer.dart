@@ -44,7 +44,7 @@ class ContentPlayer extends StatefulWidget
 
 class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateMixin
 {
-  late VideoPlayerController videoController;
+  VideoPlayerController? videoController;
   // Add a variable to handle the time of video playback
   int commentCount = 0;
   int selectedEpisodeNo = 0;
@@ -82,14 +82,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         {
           setState(()
           {
-            videoController.setVolume(1);
-            videoController.play();
+            videoController!.setVolume(1);
+            videoController!.play();
           });
 
-          videoController.addListener(()
+          videoController!.addListener(()
           {
-            if (videoController.value.position >=
-                videoController.value.duration) {
+            if (videoController!.value.position >=
+                videoController!.value.duration) {
               // 동영상 재생이 끝났을 때 실행할 로직
               print("동영상 재생이 끝났습니다.");
               if (selectedEpisodeNo < episodeList.length) {
@@ -101,7 +101,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
             setState(()
             {
-              currentTime = videoController.value.position.inSeconds.toDouble();
+              currentTime = videoController!.value.position.inSeconds.toDouble();
             });
           });
         }
@@ -345,7 +345,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     ticker.dispose();
     replyScrollController.dispose();
     if (isShowContent) {
-      videoController.dispose();
+      videoController!.dispose();
     }
     tweenController.dispose();
     scrollController.dispose();
@@ -933,13 +933,13 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   ticker.stop();
                   ticker.start();
 
-                  if (videoController.value.isInitialized)
+                  if (videoController!.value.isInitialized)
                   {
-                    if (videoController.value.isPlaying) {
-                      videoController.pause();
+                    if (videoController!.value.isPlaying) {
+                      videoController!.pause();
                     }
                     else {
-                      videoController.play();
+                      videoController!.play();
                     }
                   }
                 },
@@ -947,7 +947,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                 Container
                 (
                   alignment: Alignment.center,
-                  padding: isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
+                  padding: isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 5,),
                   width: 75,
                   height: 75,
                   decoration: ShapeDecoration(
@@ -963,7 +963,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   child:
                   Icon
                   (
-                    isShowContent && videoController.value.isInitialized && videoController.value.isPlaying ? CupertinoIcons.pause_solid :
+                    isShowContent && videoController!.value.isInitialized && videoController!.value.isPlaying ? CupertinoIcons.pause_solid :
                     CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                   ),
                 ),
@@ -982,12 +982,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             (
               width: MediaQuery.of(context).size.width,
               child:
-              isShowContent && videoController.value.isInitialized ?
+              isShowContent && videoController!.value.isInitialized ?
               CupertinoSlider
               (
                 value: currentTime,
                 min: 0.0,
-                max: videoController.value.duration.inSeconds.toDouble(),
+                max: videoController!.value.duration.inSeconds.toDouble(),
                 onChanged: (value)
                 {
                   ticker.stop();
@@ -995,7 +995,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   setState(()
                   {
                     currentTime = value;
-                    videoController.seekTo(Duration(seconds: value.toInt()));
+                    videoController!.seekTo(Duration(seconds: value.toInt()));
                   });
                 },
               ) : Container(),
@@ -1011,8 +1011,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             child:
             Text
             (
-              isShowContent && videoController.value.isInitialized ?
-              '${formatDuration(videoController.value.position).$2}:${formatDuration(videoController.value.position).$3} / ${formatDuration(videoController.value.duration).$2}:${formatDuration(videoController.value.duration).$3}' : '00:00 / 00:00',
+              isShowContent && videoController!.value.isInitialized ?
+              '${formatDuration(videoController!.value.position).$2}:${formatDuration(videoController!.value.position).$3} / ${formatDuration(videoController!.value.duration).$2}:${formatDuration(videoController!.value.duration).$3}' : '00:00 / 00:00',
               style:
               TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
@@ -1025,7 +1025,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   @override
   Widget build(BuildContext context)
   {
-  try {
+  try
+  {
     return
       SafeArea
       (
@@ -1078,12 +1079,13 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                           (
                             aspectRatio: 9/16,
                             child:
-                            isShowContent == true && videoController.value.isInitialized == true ?
-                            VideoPlayer(videoController) :
+                            videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
+                            VideoPlayer(videoController!) :
                             Center
                             (
                               child:
-                              CircularProgressIndicator()
+                              Image.network(episodeData!.episodeHd!),
+                              //CircularProgressIndicator()
                             ),
                           ),
                         ),
@@ -1109,20 +1111,32 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     }
     catch(e)
     {
-      print(e);
+      print('content player Error $e');
       return
-      Container
+      Stack
       (
-        child:
-        CupertinoNavigationBarBackButton
-        (
-          color: Colors.white,
-          onPressed: ()
-          {
-            Get.back();
-          },
-        ),
+        alignment: Alignment.center,
+        children:
+        [
+          CircularProgressIndicator(),
+          Container
+          (
+            width: 390.w,
+            height: 840.h,
+            alignment: Alignment.topLeft,
+            child:
+            CupertinoNavigationBarBackButton
+            (
+              color: Colors.white,
+              onPressed: ()
+              {
+                Get.back();
+              },
+            ),
+          ),
+        ],
       );
+
     }
   }
 

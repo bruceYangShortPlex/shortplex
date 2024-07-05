@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:share/share.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
@@ -138,7 +139,7 @@ Widget mainWidget(BuildContext context)=>
             child:
             Row
             (
-              crossAxisAlignment: CrossAxisAlignment.start,
+              //crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children:
               [
@@ -175,8 +176,8 @@ Widget mainWidget(BuildContext context)=>
                         [
                           Container
                           (
-                            width: 259,
-                            height: 463,
+                            width: 259.w,
+                            height: 463.h,
                             //color:Colors.grey,
                             alignment: Alignment.center,
                             child:
@@ -185,8 +186,13 @@ Widget mainWidget(BuildContext context)=>
                               borderRadius: BorderRadius.circular(7),
                               child:
                               dataList.length != 0 ?
-                              ShortsPlayer(shortsUrl: dataList[selectedIndex].contentUrl!,prevImage: dataList[selectedIndex].imagePath!)
-                                  : SizedBox(),
+                              AspectRatio
+                              (
+                                aspectRatio: 9/16,
+                                child:
+                                ShortsPlayer(shortsUrl: dataList[selectedIndex].contentUrl!,prevImage: dataList[selectedIndex].imagePath!)
+                              )
+                              : SizedBox(),
                             )
                           ),
                           FadeTransition
@@ -224,9 +230,9 @@ Widget mainWidget(BuildContext context)=>
                         ],
                       )
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     contentInfo(),
-                    SizedBox(height: 10),
+                    //SizedBox(height: 10),
                   ],
                 ),
                 SizedBox(width: 20,),
@@ -389,7 +395,7 @@ Widget mainWidget(BuildContext context)=>
     return
     Container
     (
-      width: 259,
+      width: 259.w,
       height: 175,
       decoration: ShapeDecoration(
         color: Color(0xFF1E1E1E),

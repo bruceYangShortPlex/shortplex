@@ -843,9 +843,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     if (isShowContent == false)
     {
-      bottomOffset = 0;
       setState(() {
-
+        bottomOffset = 0;
       });
     }
 
@@ -1248,10 +1247,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         }
 
                         textFocusNode.unfocus();
-                        bottomOffset = -840.h;
                         setState(()
                         {
-
+                          bottomOffset = -840.h;
                         });
                       }
                     },
@@ -1458,10 +1456,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                       var resData = value1.data!.items!.firstWhere((element) => element.id == id);
                                       if (UserData.to.userId == resData.whoami)
                                       {
-                                        episodeCommentList[i].likeCount = resData.likes;
-                                        episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
                                         setState(() {
-
+                                          episodeCommentList[i].likeCount = resData.likes;
+                                          episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
                                         });
                                       }
                                       connecting = false;
@@ -1574,11 +1571,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         var resData = value1.data!.items!.firstWhere((element) => element.id == id);
                         if (UserData.to.userId == resData.whoami)
                         {
-                          episodeCommentList[i].likeCount = resData.likes;
-                          episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
-                          commentData = episodeCommentList[i];
                           setState(() {
-
+                            episodeCommentList[i].likeCount = resData.likes;
+                            episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                            commentData = episodeCommentList[i];
                           });
                         }
                         connecting = false;
@@ -1633,10 +1629,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         var resData = value1.data!.items!.firstWhere((element) => element.id == id);
                         if (UserData.to.userId == resData.whoami)
                         {
-                          replyList[i].likeCount = resData.likes;
-                          replyList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
                           setState(() {
-
+                            replyList[i].likeCount = resData.likes;
+                            replyList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
                           });
                         }
                         connecting = false;

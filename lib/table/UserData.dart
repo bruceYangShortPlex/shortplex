@@ -132,6 +132,7 @@ class ContentData
   String? description;
   String? genre;
   bool isNotiCheck = false;
+  String? shareUrl = '';
 
   ContentData
   (

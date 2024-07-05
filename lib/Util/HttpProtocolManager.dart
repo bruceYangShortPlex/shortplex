@@ -671,7 +671,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/vod/stream/direct/$_fileName';
       var res = await http.get(Uri.parse(url), headers: heads);
-      print('get_streamUrl res.body ${res.body}');
+      //print('get_streamUrl res.body ${res.body}');
 
       if (res.statusCode == 200)
       {

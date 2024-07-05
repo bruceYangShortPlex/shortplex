@@ -1,12 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:share/share.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
-import '../../Util/ExpandableText.dart';
 import '../../Util/HttpProtocolManager.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
@@ -19,7 +16,7 @@ class ReleasedContentsPage extends StatefulWidget {
   State<ReleasedContentsPage> createState() => _ReleasedContentsPageState();
 }
 
-class _ReleasedContentsPageState extends State<ReleasedContentsPage> with TickerProviderStateMixin
+class _ReleasedContentsPageState extends State<ReleasedContentsPage> with TickerProviderStateMixin, WidgetsBindingObserver
 {
   var contentUrl = '';
   int selectedIndex = 0;
@@ -54,6 +51,24 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
           data.contentUrl = item.episode != null ? item.episode!.episodeHd : '';
           data.thumbNail = item.thumbnailImgUrl;
           data.genre = item.genre;
+          data.shareUrl = item.shareLink;
+
+          for(var info in item.stat!)
+          {
+            if (kDebugMode) {
+              print('preview stat : ${item.stat!.length}');
+            }
+
+            if (kDebugMode) {
+              print('preview stat info : ${info.amt} /  ${info.action}');
+            }
+
+            if (info.amt > 0 && info.action == Stat_Type.release_at.name)
+            {
+              data.isNotiCheck = true;
+              break;
+            }
+          }
 
           dataList.add(data);
         }
@@ -75,7 +90,7 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
   {
     get_Datas();
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     tweenController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -85,7 +100,16 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
   @override
   void dispose() {
     tweenController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed)
+    {
+      buttonDisable = false;
+    }
   }
 
   @override
@@ -530,18 +554,25 @@ Widget mainWidget(BuildContext context)=>
                           buttonDisable = false;
                           return;
                         }
-                        for(var item in value.data!)
+                        HttpProtocolManager.to.Get_Stat(data.id!).then((value1)
                         {
-                          if (item.key == data.id && item.action == Stat_Type.release_at.name)
+                          if (value1 == null)
                           {
-                            setState(() {
-                              data.isNotiCheck = item.amt > 0;
-                            });
-                            break;
+                            buttonDisable = false;
+                            return;
                           }
-                        }
-
-                        buttonDisable = false;
+                          for(var item in value1.data!)
+                          {
+                            if (item.key == data.id && item.action == Stat_Type.release_at.name)
+                            {
+                              setState(() {
+                                data.isNotiCheck = item.amt > 0;
+                              });
+                              break;
+                            }
+                          }
+                          buttonDisable = false;
+                        });
                       },);
                     },
                     child: Opacity(
@@ -596,7 +627,19 @@ Widget mainWidget(BuildContext context)=>
                   (
                     onTap: ()
                     {
-                      print('tap');
+                      if(buttonDisable) {
+                        return;
+                      }
+
+                      if (data.shareUrl!.isEmpty) {
+                        return;
+                      }
+
+                      buttonDisable = true;
+                      Share.share(data.shareUrl!);
+                      if (kDebugMode) {
+                        print('tap share');
+                      }
                     },
                     child: Opacity(
                       opacity: 0.70,

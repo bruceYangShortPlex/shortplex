@@ -62,7 +62,7 @@ class RecommendedContentData {
     _previewStartAt = json['preview_start_at'];
     _genre = json['genre_cd'];
     _tag = json['tag'];
-    _shareLink = json['share_link'];
+    _shareLink = json['share_link'] ?? '';
     _coverImgUrl = json['cover_img_url'];
     _thumbnailImgUrl = json['thumbnail_img_url'] ?? '';
     _posterLandscapeImgUrl = json['poster_landscape_img_url'];
@@ -74,6 +74,12 @@ class RecommendedContentData {
     _createdAt = json['created_at'];
     _episodeTotal = json['episode_total'] ?? 0;
     _episodeMaxpage = json['episode_maxpage'] ?? 0;
+    if (json['stat'] != null) {
+      _stat = [];
+      json['stat'].forEach((v) {
+        _stat?.add(Stat.fromJson(v));
+      });
+    }
     if (json['episode'] != null)
     {
       _episode = Episode.fromJson(json['episode']);
@@ -103,6 +109,7 @@ class RecommendedContentData {
   String? _createdAt;
   int _episodeTotal = 0;
   int _episodeMaxpage = 0;
+  List<Stat>? _stat;
   Episode? _episode;
 
   String? get id => _id;
@@ -129,5 +136,6 @@ class RecommendedContentData {
   String? get createdAt => _createdAt;
   int get episodeTotal => _episodeTotal;
   int get episodeMaxpage => _episodeMaxpage;
+  List<Stat>? get stat => _stat;
   Episode? get episode => _episode;
 }

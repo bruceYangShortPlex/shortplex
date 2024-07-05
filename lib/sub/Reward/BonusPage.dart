@@ -20,14 +20,14 @@ enum PopcornAnimationState
   END,
 }
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  Get.lazyPut(() => UserData());
-  await Event2table().InitTable();
-  await StringTable().InitTable();
-  runApp(const BonusPage());
-}
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   Get.lazyPut(() => UserData());
+//   await Event2table().InitTable();
+//   await StringTable().InitTable();
+//   runApp(const BonusPage());
+// }
 
 class BonusPage extends StatefulWidget
 {
@@ -61,9 +61,9 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     difference = endTime!.difference(DateTime.now());
     eventTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer)
     {
-
-      if (endTime == null)
+      if (endTime == null) {
         return;
+      }
 
       if (mounted)
       {
@@ -335,46 +335,60 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     super.dispose();
   }
 
-  Widget mainWidget(BuildContext context)=>
+  Widget mainWidget(BuildContext context)
+  {
+    print('height : ${MediaQuery.of(context).size.height}');
+    var screen_height = MediaQuery.of(context).size.height;
+    var scaleRatio = screen_height / 840;
+    if (scaleRatio > 1)
+    {
+      scaleRatio = 1;
+    }
+    return
     SafeArea
     (
       child:
       CupertinoApp
-      (
+        (
         home:
         CupertinoPageScaffold
-        (
+          (
           backgroundColor: Colors.black,
           navigationBar:
           CupertinoNavigationBar
-          (
+            (
             backgroundColor: Colors.transparent,
             leading:
             Row
-            (
+              (
               mainAxisAlignment: MainAxisAlignment.start,
               children:
               [
                 Container
-                (
-                  width: MediaQuery.of(context).size.width * 0.3,
+                  (
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.3,
                   height: 50,
                   //color: Colors.blue,
                   padding: EdgeInsets.zero,
                   alignment: Alignment.centerLeft,
                   child:
                   CupertinoNavigationBarBackButton
-                  (
+                    (
                     color: Colors.white,
-                    onPressed: ()
-                    {
+                    onPressed: () {
                       Get.back();
                     },
                   ),
                 ),
                 Container
-                (
-                  width: MediaQuery.of(context).size.width * 0.3,
+                  (
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.3,
                   height: 50,
                   //color: Colors.green,
                   alignment: Alignment.center,
@@ -383,37 +397,55 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                     (
                     StringTable().Table![800006]!,
                     style:
-                    const TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    const TextStyle(
+                      fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
-                Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
+                Container(width: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.3, height: 50,)
               ],
             ),
           ),
           child:
           Container
-          (
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            (
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height,
             //color: Colors.blue,
             child:
-            Stack
+            Transform.scale
             (
-              children:
-              [
-                popcornAnimation(),
-                bounusInfoPageView(),
-                bonusResultPopup(),
-                infoPopup(),
-              ],
+              scale: scaleRatio,
+              child:
+              Stack
+              (
+                //alignment: Alignment.center,
+                children:
+                [
+                  popcornAnimation(),
+                  bounusInfoPageView(),
+                  bonusResultPopup(),
+                  infoPopup(),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
-  
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     return mainWidget(context);
   }
 

@@ -267,7 +267,7 @@ Widget mainWidget(BuildContext context)=>
   {
     var date = DateTime.parse(_data.releaseAt!);
     var month = SetTableStringArgument(200003, ['${date.month}',]);
-    var day = SetTableStringArgument(200003, ['${date.day}',]);
+    var day = SetTableStringArgument(200004, ['${date.day}',]);
 
     return
     Column
@@ -276,7 +276,7 @@ Widget mainWidget(BuildContext context)=>
       [
         Row
         (
-          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children:
           [
             Text
@@ -367,7 +367,7 @@ Widget mainWidget(BuildContext context)=>
         scrollDirection: Axis.vertical,
         children:
         [
-          SizedBox(height: 50,),
+          //SizedBox(height: 10,),
           for(int i = 0 ; i < dataList.length; ++i)
             contentSelctItem(i, dataList[i]),
         ],
@@ -390,13 +390,13 @@ Widget mainWidget(BuildContext context)=>
     var totalEpisode = SetTableStringArgument(100022, ['999']);
     var genre = ConvertCodeToString(data.genre!);
     //var rank = data.rank ? StringTable().Table![500015]! : ''; // data.rank ? 'TOP10' : '';
-    var content = data.description!;
+    var description = data.description!;
 
     return
     Container
     (
       width: 259.w,
-      height: 175,
+      height: 190,
       decoration: ShapeDecoration(
         color: Color(0xFF1E1E1E),
         shape: RoundedRectangleBorder(
@@ -517,66 +517,68 @@ Widget mainWidget(BuildContext context)=>
                 ),
               ],
             ),
-            SizedBox(height: 2,),
+            SizedBox(height: 4,),
             Container
             (
               alignment: Alignment.centerLeft,
-              height: 54,
+              height: 56,
               child:
-              Text
+              SingleChildScrollView
               (
-                content,
-                style:
-                const TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
+                child:
+                Text
+                (
+                  description,
+                  style:
+                  const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
+                  // maxLines: 3,
+                  // overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             SizedBox(height: 10,),
-            Expanded
+            Row
             (
-              child:
-              Row
-              (
-                mainAxisAlignment: MainAxisAlignment.end,
-                children:
-                [
-                  GestureDetector
-                  (
-                    onTap: ()
+              mainAxisAlignment: MainAxisAlignment.end,
+              children:
+              [
+                GestureDetector
+                (
+                  onTap: ()
+                  {
+                    //print('click content ID : ${data.id}');
+                    if (buttonDisable) {
+                      return;
+                    }
+
+                    var value = data.isNotiCheck ? -1 : 1;
+                    //print('data.isNotiCheck : ${data.isNotiCheck} / value : $value');
+                    buttonDisable = true;
+                    HttpProtocolManager.to.Send_Stat(data.id!, value, Comment_CD_Type.content, Stat_Type.release_at).then((value)
                     {
-                      //print('click content ID : ${data.id}');
-                      if (buttonDisable) {
+                      if (value == null)
+                      {
+                        buttonDisable = false;
                         return;
                       }
 
-                      var value = data.isNotiCheck ? -1 : 1;
-                      //print('data.isNotiCheck : ${data.isNotiCheck} / value : $value');
-                      buttonDisable = true;
-                      HttpProtocolManager.to.Send_Stat(data.id!, value, Comment_CD_Type.content, Stat_Type.release_at).then((value)
+                      for(var item in value.data!)
                       {
-                        if (value == null)
+                        if (item.action == Stat_Type.release_at.name)
                         {
-                          buttonDisable = false;
-                          return;
+                          setState(() {
+                            data.isNotiCheck = item.amt > 0;
+                          });
+                          break;
                         }
+                      }
+                      buttonDisable = false;
+                    },);
+                  },
+                  child:
 
-                        for(var item in value.data!)
-                        {
-                          if (item.action == Stat_Type.release_at.name)
-                          {
-                            setState(() {
-                              data.isNotiCheck = item.amt > 0;
-                            });
-                            break;
-                          }
-                        }
-                        buttonDisable = false;
-                      },);
-                    },
-                    child: Opacity(
-                      opacity: 0.70,
-                      child: Container(
+                      Container
+                      (
                         width: 56,
                         height: 45,
                         decoration: ShapeDecoration(
@@ -620,29 +622,30 @@ Widget mainWidget(BuildContext context)=>
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 10,),
-                  GestureDetector
-                  (
-                    onTap: ()
-                    {
-                      if(buttonDisable) {
-                        return;
-                      }
+                SizedBox(width: 10,),
+                GestureDetector
+                (
+                  onTap: ()
+                  {
+                    if(buttonDisable) {
+                      return;
+                    }
 
-                      if (data.shareUrl!.isEmpty) {
-                        return;
-                      }
+                    if (data.shareUrl!.isEmpty) {
+                      return;
+                    }
 
-                      buttonDisable = true;
-                      Share.share(data.shareUrl!);
-                      if (kDebugMode) {
-                        print('tap share');
-                      }
-                    },
-                    child: Opacity(
-                      opacity: 0.70,
-                      child: Container(
+                    buttonDisable = true;
+                    Share.share(data.shareUrl!);
+                    if (kDebugMode) {
+                      print('tap share');
+                    }
+                  },
+                  child:
+
+                      Container
+                      (
+                        //color: Colors.blue,
                         width: 56,
                         height: 45,
                         decoration: ShapeDecoration(
@@ -681,10 +684,8 @@ Widget mainWidget(BuildContext context)=>
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
-            )
+              ],
+            ),
           ],
         ),
       ),

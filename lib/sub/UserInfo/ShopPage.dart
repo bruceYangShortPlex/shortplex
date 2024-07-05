@@ -109,7 +109,7 @@ class _ShopPageState extends State<ShopPage> {
                 (
                   padding: EdgeInsets.only(top: 60),
                   child:
-                  ShopGoods()
+                  SingleChildScrollView(child: ShopGoods())
                 ),
               ),
             ),

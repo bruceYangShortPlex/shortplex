@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
@@ -359,19 +361,25 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     crossAxisAlignment: CrossAxisAlignment.center,
     children:
     [
-      Container
+      AspectRatio
       (
-        width: 390,
-        height: 220,
-        //color: Colors.blueGrey,
+        aspectRatio: 16/9,
         child:
-        ClipRRect
+        Container
         (
-          borderRadius: BorderRadius.circular(7),
+          //color: Colors.blueGrey,
           child:
-          contentData!.landScapeImageUrl == null || contentData!.landScapeImageUrl!.isEmpty ?
-          SizedBox() : Image.network(contentData!.landScapeImageUrl!, fit: BoxFit.cover
-            ,),
+          Stack
+          (
+            alignment: Alignment.bottomCenter,
+            children:
+            [
+              contentData!.landScapeImageUrl == null || contentData!.landScapeImageUrl!.isEmpty ?
+              SizedBox() :
+              Image.network(contentData!.landScapeImageUrl!, fit: BoxFit.contain,),
+            ],
+          )
+
         ),
       ),
       SizedBox(height: 20,),

@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shortplex/Util/ShortsPlayer.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
@@ -141,7 +142,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                         .of(context)
                         .size
                         .width,
-                    height: 134.h,
+                    height: 134,
                     // decoration: BoxDecoration(
                     //   gradient: LinearGradient(
                     //     begin: Alignment(0, -1),
@@ -169,17 +170,12 @@ class _FeaturedPageState extends State<FeaturedPage>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children:
                         [
-                          Expanded
-                          (
-                            flex: 2,
-                            child:
-
+                          SizedBox(width: 5.w,),
                             Container
                             (
                               height: 130.h,
                               alignment: Alignment.center,
                               //color: Colors.white,
-                              padding: EdgeInsets.only(bottom: 26),
                               child:
                               dataList.length >= currentIndex
                               ?
@@ -197,23 +193,20 @@ class _FeaturedPageState extends State<FeaturedPage>
                               :
                               SizedBox(),
                             ),
-                          ),
-                          Expanded
-                            (
-                              flex: 5,
-                              child:
+                            SizedBox(width: 10.w,),
                               Container
                               (
                                 height: 130.h,
                                 //color: Colors.grey,
                                 child:
                                 Column
-                                  (
+                                (
                                   mainAxisAlignment: MainAxisAlignment
                                       .spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children:
                                   [
+                                    SizedBox(height: 6.h,),
                                     Text
                                       (
                                       dataList.length >= currentIndex
@@ -225,15 +218,17 @@ class _FeaturedPageState extends State<FeaturedPage>
                                         fontFamily: 'NotoSans',
                                         fontWeight: FontWeight.bold,),
                                     ),
-                                    SizedBox(height: 3,),
-                                    Expanded(
-                                      child: Container
-                                        (
+                                    SizedBox(height: 4,),
+                                    Expanded
+                                    (
+                                      child:
+                                      Container
+                                      (
                                         //color: Colors.grey,
                                         width: 270.w,
                                         child:
                                         Text
-                                          (
+                                        (
                                           dataList.length >= currentIndex
                                               ? dataList[currentIndex]
                                               .description!
@@ -243,19 +238,20 @@ class _FeaturedPageState extends State<FeaturedPage>
                                             color: Colors.white,
                                             fontFamily: 'NotoSans',
                                             fontWeight: FontWeight.w500,),
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ),
-                                    Align
+                                    Container
                                     (
+                                      width:  270.w,
+                                      //color: Colors.green,
                                         alignment: Alignment.bottomRight,
+                                        padding: EdgeInsets.only(bottom: 4.h, right: 6),
                                         child:
-                                        Padding
-                                        (
-                                          padding: const EdgeInsets.only(
-                                              bottom: 10, right: 20),
-                                          child: Container
-                                            (
+                                          Container
+                                          (
                                             alignment: Alignment.center,
                                             width: 73,
                                             height: 20,
@@ -284,12 +280,11 @@ class _FeaturedPageState extends State<FeaturedPage>
                                                 fontWeight: FontWeight.bold,),
                                             ),
                                           ),
-                                        )
                                     ),
                                   ],
                                 ),
                               )
-                          )
+
                         ],
                       ),
                     ),

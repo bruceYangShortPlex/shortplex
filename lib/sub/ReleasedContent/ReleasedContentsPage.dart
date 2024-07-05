@@ -539,7 +539,7 @@ Widget mainWidget(BuildContext context)=>
                   (
                     onTap: ()
                     {
-                      print('click content ID : ${data.id}');
+                      //print('click content ID : ${data.id}');
                       if (buttonDisable) {
                         return;
                       }
@@ -554,25 +554,18 @@ Widget mainWidget(BuildContext context)=>
                           buttonDisable = false;
                           return;
                         }
-                        HttpProtocolManager.to.Get_Stat(data.id!).then((value1)
+
+                        for(var item in value.data!)
                         {
-                          if (value1 == null)
+                          if (item.action == Stat_Type.release_at.name)
                           {
-                            buttonDisable = false;
-                            return;
+                            setState(() {
+                              data.isNotiCheck = item.amt > 0;
+                            });
+                            break;
                           }
-                          for(var item in value1.data!)
-                          {
-                            if (item.key == data.id && item.action == Stat_Type.release_at.name)
-                            {
-                              setState(() {
-                                data.isNotiCheck = item.amt > 0;
-                              });
-                              break;
-                            }
-                          }
-                          buttonDisable = false;
-                        });
+                        }
+                        buttonDisable = false;
                       },);
                     },
                     child: Opacity(

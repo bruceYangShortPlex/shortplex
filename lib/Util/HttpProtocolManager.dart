@@ -409,7 +409,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID?page=$_page&itemsPerPage=20&sortkey=$_sortKey&sortorder=desc';
-      //print('send url : $url');
+      print('get_EpisodeComments send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
       print('get_EpisodeComments res.body ${res.body}');
 
@@ -697,7 +697,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/action/stat/$_contentID';
+      var url = 'https://www.quadra-system.com/api/v1/action/personal/stat/$_contentID';
       var type_cd = _type_cd.name;
       var stat =  StatReq(action: _type.name, value: _active, typeCd: type_cd);
       //print('stat : ${stat.value}');
@@ -715,12 +715,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       else
       {
         //TODO:에러때 팝업 어떻게 할것인지.
-        print('send_Comment FAILD : ${res.statusCode}');
+        print('Send_Stat FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('send_Comment error : $e');
+      print('Send_Stat error : $e');
     }
 
     return null;

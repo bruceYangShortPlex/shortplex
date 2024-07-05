@@ -331,6 +331,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
     GetFavorite();
     initEpisodeGroup();
+    GetCommentsData();
 
     super.initState();
   }
@@ -452,9 +453,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
               if (item.id == commentData!.ID)
               {
-                commentData!.replyCount = item.replies;
                 setState(() {
-
+                  commentData!.replyCount = item.replies;
                 });
                 break;
               }
@@ -578,9 +578,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
       });
     }
-    commentCount = episodeCommentList.length;
     setState(() {
-
+      commentCount = _data.data!.total;
     });
   }
 
@@ -598,8 +597,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             if (episodeCommentList[i].ID == item.id)
             {
               episodeCommentList.removeAt(i);
-              commentCount = episodeCommentList.length;
-              print('delete complete id : ${item.id}');
+              commentCount = value.data!.total;
+              //print('delete complete id : ${item.id}');
               setState(() {
 
               });
@@ -762,10 +761,24 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   }
 
                   connecting = true;
-                  var value = UserData.to.isFavoriteCheck.value ? -1 : 1;
-                  HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, value, Comment_CD_Type.content, Stat_Type.favorite).then((value)
+                  var actionValue = UserData.to.isFavoriteCheck.value ? -1 : 1;
+                  HttpProtocolManager.to.Send_Stat(episodeData!.contentId!, actionValue, Comment_CD_Type.content, Stat_Type.favorite).then((value)
                   {
-                    GetFavorite();
+                    if (value == null) {
+                      connecting = false;
+                      return;
+                    }
+                    //GetFavorite();
+
+                    for(var item in value.data!)
+                    {
+                      if (item.key == episodeData!.contentId && item.action == Stat_Type.favorite.name)
+                      {
+                        UserData.to.isFavoriteCheck.value = item.amt > 0;
+                        break;
+                      }
+                    }
+
                     connecting = false;
                   });
                 }
@@ -1426,37 +1439,34 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                                 return;
                               }
                               connecting = true;
-                              var item = episodeCommentList.firstWhere((element) => element.ID == id);
-                              var value = item.isLikeCheck! ? -1 : 1;
+                              //var item = episodeCommentList.firstWhere((element) => element.ID == id);
+                              var value = episodeCommentList[i].isLikeCheck! ? -1 : 1;
                               HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
                                   .then((value)
                               {
                                 for(var item in value!.data!)
                                 {
-                                  for(int i = 0 ; i < episodeCommentList.length; ++i)
+                                  if (episodeCommentList[i].ID == item.key)
                                   {
-                                    if (episodeCommentList[i].ID == item.key)
+                                    HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
                                     {
-                                      HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
+                                      if (value1 == null)
                                       {
-                                        if (value1 == null)
-                                        {
-                                          connecting = false;
-                                          return;
-                                        }
-                                        var resData = value1.data!.items!.firstWhere((element) => element.id == id);
-                                        if (UserData.to.userId == resData.whoami)
-                                        {
-                                          episodeCommentList[i].likeCount = resData.likes;
-                                          episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
-                                          setState(() {
-
-                                          });
-                                        }
                                         connecting = false;
-                                      },);
-                                      break;
-                                    }
+                                        return;
+                                      }
+                                      var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                                      if (UserData.to.userId == resData.whoami)
+                                      {
+                                        episodeCommentList[i].likeCount = resData.likes;
+                                        episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                        setState(() {
+
+                                        });
+                                      }
+                                      connecting = false;
+                                    },);
+                                    break;
                                   }
                                 }
                               });

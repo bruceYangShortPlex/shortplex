@@ -209,7 +209,6 @@ class _ContentInfoPageState extends State<ContentInfoPage>
       if (value == null || value.data == null || value.data!.isEmpty )
       {
         UserData.to.isFavoriteCheck.value = false;
-
         return;
       }
 
@@ -220,7 +219,9 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           var amt = item.amt;
           UserData.to.isFavoriteCheck.value = amt > 0;
 
-          print('item.amt ${item.amt} / check  : ${UserData.to.isFavoriteCheck.value}');
+          if (kDebugMode) {
+            print('item.amt ${item.amt} / check  : ${UserData.to.isFavoriteCheck.value}');
+          }
           return;
         }
       }
@@ -496,7 +497,19 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     int value = UserData.to.isFavoriteCheck.value ? -1 : 1;
                     HttpProtocolManager.to.Send_Stat(contentData!.id!, value, Comment_CD_Type.content, Stat_Type.favorite).then((value)
                     {
-                      GetFavorite();
+                      if (value == null) {
+                        buttonEnabled = true;
+                        return;
+                      }
+
+                      for(var item in value.data!)
+                      {
+                        if (item.key == contentData!.id! && item.action == Stat_Type.favorite.name)
+                        {
+                          UserData.to.isFavoriteCheck.value = item.amt > 0;
+                          break;
+                        }
+                      }
                       buttonEnabled = true;
                     });
                   } : null,

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -18,7 +17,6 @@ import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
 import 'CupertinoMain.dart';
-import 'NextContentPlayer.dart';
 import 'ReplyPage.dart';
 
 enum ContentUI_ButtonType
@@ -71,8 +69,16 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   late Map<int, List<Episode>> mapEpisodeData = {};
   var episodeGroupScrollController = ScrollController();
 
-  void VideoControllerInit()
+  void initVideoController()
   {
+    currentTime = 0;
+
+    if (videoController != null)
+    {
+      videoController!.removeListener(eventListener);
+      videoController!.dispose();
+    }
+
     HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd!).then((value)
     {
       //print('Play Url : $value');
@@ -87,27 +93,132 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             videoController!.play();
           });
 
-          videoController!.addListener(()
-          {
-            if (videoController!.value.position >=
-                videoController!.value.duration) {
-              // 동영상 재생이 끝났을 때 실행할 로직
-              print("동영상 재생이 끝났습니다.");
-              if (selectedEpisodeNo < episodeList.length) {
-                Get.off(NextContentPlayer(),
-                    arguments: [selectedEpisodeNo + 1, episodeList]);
-                return;
-              }
-            }
+          videoController!.addListener(eventListener);
 
-            setState(()
-            {
-              currentTime = videoController!.value.position.inSeconds.toDouble();
-            });
-          });
+          // videoController!.addListener(()
+          // {
+          //   if (videoController!.value.position >=
+          //       videoController!.value.duration)
+          //   {
+          //     // 동영상 재생이 끝났을 때 실행할 로직
+          //     print("동영상 재생이 끝났습니다.");
+          //     if (selectedEpisodeNo < episodeList.length)
+          //     {
+          //       selectedEpisodeNo = selectedEpisodeNo + 1;
+          //       initContent();
+          //       // Get.off(NextContentPlayer(),
+          //       //     arguments: [selectedEpisodeNo + 1, episodeList]);
+          //       return;
+          //     }
+          //   }
+          //
+          //   setState(()
+          //   {
+          //     currentTime = videoController!.value.position.inSeconds.toDouble();
+          //   });
+          // });
         }
       });
     },);
+  }
+
+  void eventListener()
+  {
+    if (videoController!.value.position >=
+        videoController!.value.duration)
+    {
+      // 동영상 재생이 끝났을 때 실행할 로직
+      print('play complete');
+      if (selectedEpisodeNo < episodeList.length)
+      {
+        selectedEpisodeNo = selectedEpisodeNo + 1;
+        initContent();
+        // Get.off(NextContentPlayer(),
+        //     arguments: [selectedEpisodeNo + 1, episodeList]);
+        return;
+      }
+    }
+
+    setState(()
+    {
+      currentTime = videoController!.value.position.inSeconds.toDouble();
+    });
+  }
+
+  void initContent()
+  {
+    try
+    {
+      episodeData = episodeList.firstWhere((item) => item.no == selectedEpisodeNo);
+    }
+    catch(e)
+    {
+      print(e);
+    }
+
+    //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
+    //이번회차의 가격을 알아온다.
+    if (episodeData!.cost != 0 && episodeData!.isLock)
+    {
+      //구독중이면 그냥 다음진행.
+      if (UserData.to.isSubscription == false)
+      {
+        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData!.cost)
+        {
+          isShowContent = false;
+          bottomOffset = 0;
+          tweenTime = 300;
+          setState(()
+          {
+
+          });
+        }
+        else
+        {
+          //팝콘은 충분한데 자동결제가 아닌사람.
+          if (UserData.to.autoPlay == false)
+          {
+            WidgetsBinding.instance.addPostFrameCallback((_)
+            {
+              // 이곳에 빌드 후에 실행할 코드를 작성하세요.
+              showDialogTwoButton(StringTable().Table![100038]!, StringTable().Table![100039]!, ()
+              {
+                //서버에 통신하고 처리되면 거시기한다.
+                isShowContent = true;
+                initVideoController();
+                setState(() {
+
+                });
+              },
+                    () {
+                  Get.back();
+                },);
+            });
+
+            isShowContent = false;
+          }
+          else
+          {
+            isShowContent = true;
+          }
+        }
+      }
+      else
+      {
+        isShowContent = true;
+      }
+    }
+    else
+    {
+      isShowContent = true;
+    }
+
+    //print('check cost isShowContent : $isShowContent');
+
+    if (isShowContent == true)
+    {
+      initVideoController();
+    }
   }
 
   void initEpisodeGroup()
@@ -154,7 +265,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     });
   }
 
-  void GetFavorite()
+  void getFavorite()
   {
     if (UserData.to.isLogin.value == false)
     {
@@ -194,78 +305,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     selectedEpisodeNo = Get.arguments[0];
     episodeList = Get.arguments[1];
 
-    try
-    {
-      episodeData = episodeList.firstWhere((item) => item.no == selectedEpisodeNo);
-    }
-    catch(e)
-    {
-      print(e);
-    }
-
-    //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
-    //이번회차의 가격을 알아온다.
-    if (episodeData!.cost != 0 && episodeData!.isLock)
-    {
-      //구독중이면 그냥 다음진행.
-      if (UserData.to.isSubscription == false)
-      {
-        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData!.cost)
-        {
-          isShowContent = false;
-          bottomOffset = 0;
-          tweenTime = 300;
-          setState(()
-          {
-
-          });
-        }
-        else
-        {
-          //팝콘은 충분한데 자동결제가 아닌사람.
-          if (UserData.to.autoPlay == false)
-          {
-            WidgetsBinding.instance.addPostFrameCallback((_)
-            {
-              // 이곳에 빌드 후에 실행할 코드를 작성하세요.
-              showDialogTwoButton(StringTable().Table![100038]!, StringTable().Table![100039]!, ()
-              {
-                //서버에 통신하고 처리되면 거시기한다.
-                isShowContent = true;
-                VideoControllerInit();
-                setState(() {
-
-                });
-              },
-              () {
-                Get.back();
-              },);
-            });
-
-            isShowContent = false;
-          }
-          else
-          {
-            isShowContent = true;
-          }
-        }
-      }
-      else
-      {
-        isShowContent = true;
-      }
-    }
-    else
-    {
-      isShowContent = true;
-    }
-
-    //print('check cost isShowContent : $isShowContent');
-
-    if (isShowContent == true)
-    {
-      VideoControllerInit();
-    }
+    initContent();
 
     tweenController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -330,7 +370,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       }
     });
 
-    GetFavorite();
+    getFavorite();
     initEpisodeGroup();
     GetCommentsData();
 
@@ -345,7 +385,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     textEditingController.dispose();
     ticker.dispose();
     replyScrollController.dispose();
-    if (isShowContent) {
+    if (isShowContent)
+    {
+      videoController!.removeListener(eventListener);
       videoController!.dispose();
     }
     tweenController.dispose();
@@ -904,7 +946,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                           return;
                         }
 
-                        Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
+                        selectedEpisodeNo = selectedEpisodeNo + 1;
+                        initContent();
+
+                        //Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
                         if (kDebugMode) {
                           print('다음회차 보기 누름');
                         }
@@ -2045,18 +2090,19 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                         children:
                         [
                           GestureDetector
-                            (
+                          (
                             onTap: ()
                             {
                               if (list[i].isLock)
                               {
                                 //TODO:구매안한 컨텐츠임둥.
                                 print('is lock');
-        
                                 return;
                               }
-        
-                              Get.off(() => NextContentPlayer(), arguments: [list[i].no, episodeList]);
+
+                              selectedEpisodeNo = list[i].no;
+                              initContent();
+                              //Get.off(() => NextContentPlayer(), arguments: [list[i].no, episodeList]);
                             },
                             child:
                             Stack

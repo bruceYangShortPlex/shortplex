@@ -230,7 +230,7 @@ Widget mainWidget(BuildContext context)=>
                         ],
                       )
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 14.h),
                     contentInfo(),
                     //SizedBox(height: 10),
                   ],
@@ -393,300 +393,303 @@ Widget mainWidget(BuildContext context)=>
     var description = data.description!;
 
     return
-    Container
+    Expanded
     (
-      width: 259.w,
-      height: 190,
-      decoration: ShapeDecoration(
-        color: Color(0xFF1E1E1E),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-      ),
-      child:
-      Padding
+      flex: 1,
+      child: Container
       (
-        padding: const EdgeInsets.all(16),
+        width: 259.w,
+        height: 190,
+        decoration: ShapeDecoration(
+          color: Color(0xFF1E1E1E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
         child:
-        Column
+        Padding
         (
-          mainAxisAlignment: MainAxisAlignment.start,
-          children:
-          [
-            Container
-            (
-              alignment: Alignment.centerLeft,
-              child:
-              Text
+          padding: const EdgeInsets.all(16),
+          child:
+          Column
+          (
+            mainAxisAlignment: MainAxisAlignment.start,
+            children:
+            [
+              Container
               (
-                title,
-                style:
-                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-              ),
-            ),
-            SizedBox(height: 5,),
-            Row
-            (
-              children:
-              [
-                // Visibility
-                // (
-                //   visible: data.isNew,
-                //   child:
-                //   Container
-                //   (
-                //       width: 42,
-                //       height: 15,
-                //       //color: Colors.blue,
-                //       child:
-                //       Row
-                //       (
-                //         children:
-                //         [
-                //           SvgPicture.asset
-                //           (
-                //             'assets/images/home/main_new.svg',
-                //           ),
-                //           SizedBox(width: 11,),
-                //         ],
-                //       )
-                //   ),
-                // ),
-                // Visibility
-                // (
-                //   visible: data.rank,
-                //   child:
-                //   Container
-                //   (
-                //     width: 42,
-                //     height: 15,
-                //     //color: Colors.blue,
-                //     child:
-                //     Row
-                //     (
-                //       children:
-                //       [
-                //         SvgPicture.asset
-                //         (
-                //           'assets/images/home/main_top10.svg',
-                //         ),
-                //         SizedBox(width: 11,),
-                //       ],
-                //     )
-                //   ),
-                // ),
-                Container
-                (
-                  height: 15,
-                  //color: Colors.blue,
-                  child:
-                  Text
-                  (
-                    date,
-                    style:
-                    TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                SizedBox(width: 11,),
-                Container
-                (
-                  height: 15,
-                  //color: Colors.blue,
-                  child:
-                  Text
-                  (
-                    //textAlign: TextAlign.center,
-                    totalEpisode,
-                    style:
-                    TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                SizedBox(width: 11,),
-                Container
-                (
-                  height: 15,
-                  //color: Colors.blue,
-                  //alignment: Alignment.center,
-                  child:
-                  Text
-                  (
-                    genre,
-                    style:
-                    TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 4,),
-            Container
-            (
-              alignment: Alignment.centerLeft,
-              height: 56,
-              child:
-              SingleChildScrollView
-              (
+                alignment: Alignment.centerLeft,
                 child:
                 Text
                 (
-                  description,
+                  title,
                   style:
-                  const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
-                  // maxLines: 3,
-                  // overflow: TextOverflow.ellipsis,
+                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ),
-            ),
-            SizedBox(height: 10,),
-            Row
-            (
-              mainAxisAlignment: MainAxisAlignment.end,
-              children:
-              [
-                GestureDetector
+              SizedBox(height: 5,),
+              Row
+              (
+                children:
+                [
+                  // Visibility
+                  // (
+                  //   visible: data.isNew,
+                  //   child:
+                  //   Container
+                  //   (
+                  //       width: 42,
+                  //       height: 15,
+                  //       //color: Colors.blue,
+                  //       child:
+                  //       Row
+                  //       (
+                  //         children:
+                  //         [
+                  //           SvgPicture.asset
+                  //           (
+                  //             'assets/images/home/main_new.svg',
+                  //           ),
+                  //           SizedBox(width: 11,),
+                  //         ],
+                  //       )
+                  //   ),
+                  // ),
+                  // Visibility
+                  // (
+                  //   visible: data.rank,
+                  //   child:
+                  //   Container
+                  //   (
+                  //     width: 42,
+                  //     height: 15,
+                  //     //color: Colors.blue,
+                  //     child:
+                  //     Row
+                  //     (
+                  //       children:
+                  //       [
+                  //         SvgPicture.asset
+                  //         (
+                  //           'assets/images/home/main_top10.svg',
+                  //         ),
+                  //         SizedBox(width: 11,),
+                  //       ],
+                  //     )
+                  //   ),
+                  // ),
+                  Container
+                  (
+                    height: 15,
+                    //color: Colors.blue,
+                    child:
+                    Text
+                    (
+                      date,
+                      style:
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                  SizedBox(width: 11,),
+                  Container
+                  (
+                    height: 15,
+                    //color: Colors.blue,
+                    child:
+                    Text
+                    (
+                      //textAlign: TextAlign.center,
+                      totalEpisode,
+                      style:
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                  SizedBox(width: 11,),
+                  Container
+                  (
+                    height: 15,
+                    //color: Colors.blue,
+                    //alignment: Alignment.center,
+                    child:
+                    Text
+                    (
+                      genre,
+                      style:
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4,),
+              Container
+              (
+                alignment: Alignment.centerLeft,
+                height: 56,
+                child:
+                SingleChildScrollView
                 (
-                  onTap: ()
-                  {
-                    //print('click content ID : ${data.id}');
-                    if (buttonDisable) {
-                      return;
-                    }
-
-                    var value = data.isNotiCheck ? -1 : 1;
-                    //print('data.isNotiCheck : ${data.isNotiCheck} / value : $value');
-                    buttonDisable = true;
-                    HttpProtocolManager.to.Send_Stat(data.id!, value, Comment_CD_Type.content, Stat_Type.release_at).then((value)
+                  child:
+                  Text
+                  (
+                    description,
+                    style:
+                    const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
+                    // maxLines: 3,
+                    // overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10,),
+              Row
+              (
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children:
+                [
+                  GestureDetector
+                  (
+                    onTap: ()
                     {
-                      if (value == null)
-                      {
-                        buttonDisable = false;
+                      //print('click content ID : ${data.id}');
+                      if (buttonDisable) {
                         return;
                       }
 
-                      for(var item in value.data!)
+                      var value = data.isNotiCheck ? -1 : 1;
+                      //print('data.isNotiCheck : ${data.isNotiCheck} / value : $value');
+                      buttonDisable = true;
+                      HttpProtocolManager.to.Send_Stat(data.id!, value, Comment_CD_Type.content, Stat_Type.release_at).then((value)
                       {
-                        if (item.action == Stat_Type.release_at.name)
+                        if (value == null)
                         {
-                          setState(() {
-                            data.isNotiCheck = item.amt > 0;
-                          });
-                          break;
+                          buttonDisable = false;
+                          return;
                         }
+
+                        for(var item in value.data!)
+                        {
+                          if (item.action == Stat_Type.release_at.name)
+                          {
+                            setState(() {
+                              data.isNotiCheck = item.amt > 0;
+                            });
+                            break;
+                          }
+                        }
+                        buttonDisable = false;
+                      },);
+                    },
+                    child:
+                    Container
+                    (
+                      width: 56,
+                      height: 45,
+                      decoration: ShapeDecoration(
+                        color: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            width: 1.50,
+                            strokeAlign: BorderSide.strokeAlignOutside,
+                            color: Color(0xFF3B3B3B),
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child:
+                      Stack
+                      (
+                        alignment: Alignment.center,
+                        children:
+                        [
+                          Padding
+                          (
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child:
+                            Icon
+                            (
+                              data.isNotiCheck ? CupertinoIcons.bell_fill : CupertinoIcons.bell,
+                              size: 22, color:Colors.white
+                            ),
+                          ),
+                          Padding
+                          (
+                            padding: const EdgeInsets.only(top: 18),
+                            child: Text
+                            (
+                              StringTable().Table![200002]!,
+                              style:
+                              TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  GestureDetector
+                  (
+                    onTap: ()
+                    {
+                      if(buttonDisable) {
+                        return;
                       }
-                      buttonDisable = false;
-                    },);
-                  },
-                  child:
 
-                      Container
-                      (
-                        width: 56,
-                        height: 45,
-                        decoration: ShapeDecoration(
-                          color: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              width: 1.50,
-                              strokeAlign: BorderSide.strokeAlignOutside,
-                              color: Color(0xFF3B3B3B),
-                            ),
-                            borderRadius: BorderRadius.circular(20),
+                      if (data.shareUrl!.isEmpty) {
+                        return;
+                      }
+
+                      buttonDisable = true;
+                      Share.share(data.shareUrl!);
+                      if (kDebugMode) {
+                        print('tap share');
+                      }
+                    },
+                    child:
+                    Container
+                    (
+                      //color: Colors.blue,
+                      width: 56,
+                      height: 45,
+                      decoration: ShapeDecoration(
+                        color: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            width: 1.50,
+                            strokeAlign: BorderSide.strokeAlignOutside,
+                            color: Color(0xFF3B3B3B),
                           ),
-                        ),
-                        child:
-                        Stack
-                        (
-                          alignment: Alignment.center,
-                          children:
-                          [
-                            Padding
-                            (
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child:
-                              Icon
-                              (
-                                data.isNotiCheck ? CupertinoIcons.bell_fill : CupertinoIcons.bell,
-                                size: 22, color:Colors.white
-                              ),
-                            ),
-                            Padding
-                            (
-                              padding: const EdgeInsets.only(top: 18),
-                              child: Text
-                              (
-                                StringTable().Table![200002]!,
-                                style:
-                                TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                              ),
-                            ),
-                          ],
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                    ),
-                SizedBox(width: 10,),
-                GestureDetector
-                (
-                  onTap: ()
-                  {
-                    if(buttonDisable) {
-                      return;
-                    }
-
-                    if (data.shareUrl!.isEmpty) {
-                      return;
-                    }
-
-                    buttonDisable = true;
-                    Share.share(data.shareUrl!);
-                    if (kDebugMode) {
-                      print('tap share');
-                    }
-                  },
-                  child:
-
-                      Container
+                      child:
+                      Stack
                       (
-                        //color: Colors.blue,
-                        width: 56,
-                        height: 45,
-                        decoration: ShapeDecoration(
-                          color: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              width: 1.50,
-                              strokeAlign: BorderSide.strokeAlignOutside,
-                              color: Color(0xFF3B3B3B),
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child:
-                        Stack
-                        (
-                          alignment: Alignment.center,
-                          children:
-                          [
-                            Padding
-                              (
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child: Icon(CupertinoIcons.share, size: 21, color:Colors.white),
-                            ),
-                            Padding
+                        alignment: Alignment.center,
+                        children:
+                        [
+                          Padding
                             (
-                              padding: const EdgeInsets.only(top: 18),
-                              child: Text
-                              (
-                                StringTable().Table![100024]!,
-                                style:
-                                TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                              ),
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: Icon(CupertinoIcons.share, size: 21, color:Colors.white),
+                          ),
+                          Padding
+                          (
+                            padding: const EdgeInsets.only(top: 18),
+                            child: Text
+                            (
+                              StringTable().Table![100024]!,
+                              style:
+                              TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-              ],
-            ),
-          ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

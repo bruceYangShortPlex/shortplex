@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,6 +44,7 @@ class ContentPlayer extends StatefulWidget
 
 class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateMixin
 {
+  final CarouselController pagecontroller = CarouselController();
   VideoPlayerController? videoController;
   // Add a variable to handle the time of video playback
   int commentCount = 0;
@@ -54,6 +56,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   bool isShowContent = false;
   bool isEdit = false;
   bool prevLogin = false;
+  bool initialized = false;
 
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
@@ -71,6 +74,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   void initVideoController()
   {
+    initialized = false;
     currentTime = 0;
 
     if (videoController != null)
@@ -89,10 +93,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         {
           setState(()
           {
+            initialized = true;
             videoController!.setVolume(1);
             videoController!.play();
           });
-
           videoController!.addListener(eventListener);
 
           // videoController!.addListener(()
@@ -128,14 +132,17 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         videoController!.value.duration)
     {
       // 동영상 재생이 끝났을 때 실행할 로직
-      print('play complete');
       if (selectedEpisodeNo < episodeList.length)
       {
-        selectedEpisodeNo = selectedEpisodeNo + 1;
-        initContent();
+        pagecontroller.nextPage();
+        //pagecontroller.jumpToPage(selectedEpisodeNo);
         // Get.off(NextContentPlayer(),
         //     arguments: [selectedEpisodeNo + 1, episodeList]);
         return;
+      }
+      else
+      {
+        Get.back();
       }
     }
 
@@ -303,6 +310,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     prevLogin = UserData.to.isLogin.value;
     selectedEpisodeNo = Get.arguments[0];
+    print('selectedEpisodeNo : $selectedEpisodeNo');
     episodeList = Get.arguments[1];
 
     initContent();
@@ -933,30 +941,29 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       Get.back();
                     },
                   ),
-                  Visibility
-                  (
-                    visible: selectedEpisodeNo < episodeList.length,
-                    child:
-                    IconButton
-                    (
-                      onPressed: ()
-                      {
-                        if (showCheck() == false)
-                        {
-                          return;
-                        }
-
-                        selectedEpisodeNo = selectedEpisodeNo + 1;
-                        initContent();
-
-                        //Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
-                        if (kDebugMode) {
-                          print('다음회차 보기 누름');
-                        }
-                      },
-                      icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
-                    ),
-                  )
+                  // Visibility
+                  // (
+                  //   visible: selectedEpisodeNo < episodeList.length,
+                  //   child:
+                  //   IconButton
+                  //   (
+                  //     onPressed: ()
+                  //     {
+                  //       if (showCheck() == false)
+                  //       {
+                  //         return;
+                  //       }
+                  //
+                  //       pagecontroller.nextPage();
+                  //
+                  //       //Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
+                  //       if (kDebugMode) {
+                  //         print('다음회차 보기 누름');
+                  //       }
+                  //     },
+                  //     icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
+                  //   ),
+                  // )
                 ],
               ),
             ),
@@ -1072,91 +1079,125 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     );
   }
 
+Widget contentPlayMain()
+  {
+    return
+      GestureDetector
+        (
+        onTap:
+            ()
+        {
+          if (isShowContent == false || bottomOffset == 0) {
+            return;
+          }
+
+          if (tweenController.status == AnimationStatus.completed) {
+            tweenController.reverse();
+            ticker.stop();
+            setState(() {
+              controlUIVisible = false;
+            });
+          }
+          else
+          {
+            tweenController.forward();
+            ticker.stop();
+            ticker.start();
+            setState(()
+            {
+              controlUIVisible = true;
+            });
+          }
+        },
+        child:
+        Stack
+        (
+          //mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>
+          [
+            Center
+            (
+              child:
+              videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
+              VideoPlayer(videoController!) :
+              Center
+              (
+                child:
+                Image.network(episodeData!.altImgUrlHd!),
+                //CircularProgressIndicator()
+              ),
+            ),
+            FadeTransition
+            (
+              opacity: tweenController,
+              child:
+              IgnorePointer
+                (
+                ignoring: controlUIVisible == false,
+                child:
+                controlUI(context),
+              ),
+            ),
+            bottomCanvas(),
+            //contentComment(),
+          ],
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context)
   {
   try
   {
     return
-      SafeArea
-      (
-          child:
-          CupertinoApp
+    SafeArea
+    (
+        child:
+        CupertinoApp
+        (
+          home:
+          CupertinoPageScaffold
           (
-              home:
-              CupertinoPageScaffold
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Colors.black,
+            child:
+            Center
+            (
+              child:
+              CarouselSlider.builder
               (
-                  resizeToAvoidBottomInset: false,
-                  backgroundColor: Colors.black,
-                  child:
-                  GestureDetector
-                  (
-                    onTap:
-                    ()
+                carouselController: pagecontroller,
+                options:
+                CarouselOptions
+                (
+                  initialPage: selectedEpisodeNo - 1,
+                  onPageChanged: (index, reason)
+                  {
+                    print('on changed index : $index');
+                    setState(()
                     {
-                      if (isShowContent == false || bottomOffset == 0) {
-                        return;
-                      }
-
-                      if (tweenController.status == AnimationStatus.completed) {
-                        tweenController.reverse();
-                        ticker.stop();
-                        setState(() {
-                          controlUIVisible = false;
-                        });
-                      }
-                      else
-                      {
-                        tweenController.forward();
-                        ticker.stop();
-                        ticker.start();
-                        setState(()
-                        {
-                          controlUIVisible = true;
-                        });
-                      }
-                    },
-                    child:
-                    Stack
-                    (
-                      //mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>
-                      [
-                        Center
-                        (
-                          child:
-                          AspectRatio
-                          (
-                            aspectRatio: 9/16,
-                            child:
-                            videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
-                            VideoPlayer(videoController!) :
-                            Center
-                            (
-                              child:
-                              Image.network(episodeData!.altImgUrlHd!),
-                              //CircularProgressIndicator()
-                            ),
-                          ),
-                        ),
-                        FadeTransition
-                        (
-                          opacity: tweenController,
-                          child:
-                          IgnorePointer
-                          (
-                            ignoring: controlUIVisible == false,
-                            child:
-                            controlUI(context),
-                          ),
-                        ),
-                        bottomCanvas(),
-                        //contentComment(),
-                      ],
-                    ),
-                  )
-              )
-          )
+                      selectedEpisodeNo = index + 1;
+                      initContent();
+                    });
+                  },
+                  aspectRatio: 9 / 16,
+                  viewportFraction: 1,
+                  //enlargeCenterPage: true,
+                  scrollDirection: Axis.vertical,
+                  //height: MediaQuery.of(context).size.height,
+                  //autoPlay: true,
+                ),
+                //items: pageList,
+                itemCount: episodeList.length,
+                itemBuilder: (context, index, realIndex)
+                {
+                  return selectedEpisodeNo == index + 1 && initialized ? contentPlayMain() : Image.network(episodeList[index].altImgUrlHd!);
+                },
+              ),
+            )
+          ),
+        )
       );
     }
     catch(e)

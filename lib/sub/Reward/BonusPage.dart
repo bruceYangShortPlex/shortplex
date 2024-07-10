@@ -163,7 +163,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
           (
-            '+${tableData.chance1}',
+            '${tableData.chance1}',
             style:
             TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
@@ -185,7 +185,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
             (
-            '+${tableData.chance2}',
+            '${tableData.chance2}',
             style:
             TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
@@ -207,7 +207,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
           (
-            '+${tableData.chance3}',
+            '${tableData.chance3}',
             style:
             const TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
@@ -229,7 +229,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
             (
-            '+${tableData.chance4}',
+            '${tableData.chance4}',
             style:
             const TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
@@ -251,7 +251,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
             (
-            '+${tableData.chance5}',
+            '${tableData.chance5}',
             style:
             TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
@@ -273,7 +273,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
             (
-            '+${tableData.chance6}',
+            '${tableData.chance6}',
             style:
             const TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
@@ -295,7 +295,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
             (
-            '+${tableData.chance7}',
+            '${tableData.chance7}',
             style:
             const TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),
@@ -317,7 +317,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           child:
           Text
           (
-            '+${tableData.chance8}',
+            '${tableData.chance8}',
             style:
             TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
           ),

@@ -1082,67 +1082,67 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 Widget contentPlayMain()
   {
     return
-      GestureDetector
-        (
-        onTap:
-            ()
-        {
-          if (isShowContent == false || bottomOffset == 0) {
-            return;
-          }
+    GestureDetector
+    (
+      onTap:
+          ()
+      {
+        if (isShowContent == false || bottomOffset == 0) {
+          return;
+        }
 
-          if (tweenController.status == AnimationStatus.completed) {
-            tweenController.reverse();
-            ticker.stop();
-            setState(() {
-              controlUIVisible = false;
-            });
-          }
-          else
+        if (tweenController.status == AnimationStatus.completed) {
+          tweenController.reverse();
+          ticker.stop();
+          setState(() {
+            controlUIVisible = false;
+          });
+        }
+        else
+        {
+          tweenController.forward();
+          ticker.stop();
+          ticker.start();
+          setState(()
           {
-            tweenController.forward();
-            ticker.stop();
-            ticker.start();
-            setState(()
-            {
-              controlUIVisible = true;
-            });
-          }
-        },
-        child:
-        Stack
-        (
-          //mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>
-          [
+            controlUIVisible = true;
+          });
+        }
+      },
+      child:
+      Stack
+      (
+        //mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>
+        [
+          Center
+          (
+            child:
+            videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
+            VideoPlayer(videoController!) :
             Center
             (
               child:
-              videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
-              VideoPlayer(videoController!) :
-              Center
-              (
-                child:
-                Image.network(episodeData!.altImgUrlHd!),
-                //CircularProgressIndicator()
-              ),
+              Image.network(episodeData!.altImgUrlHd!),
+              //CircularProgressIndicator()
             ),
-            FadeTransition
+          ),
+          FadeTransition
+          (
+            opacity: tweenController,
+            child:
+            IgnorePointer
             (
-              opacity: tweenController,
+              ignoring: controlUIVisible == false,
               child:
-              IgnorePointer
-                (
-                ignoring: controlUIVisible == false,
-                child:
-                controlUI(context),
-              ),
+              controlUI(context),
             ),
-            bottomCanvas(),
-            //contentComment(),
-          ],
-        ),
-      );
+          ),
+          bottomCanvas(),
+          //contentComment(),
+        ],
+      ),
+    );
   }
 
   @override
@@ -1175,6 +1175,7 @@ Widget contentPlayMain()
                   onPageChanged: (index, reason)
                   {
                     print('on changed index : $index');
+                    tweenTime = 0;
                     setState(()
                     {
                       selectedEpisodeNo = index + 1;
@@ -1187,6 +1188,7 @@ Widget contentPlayMain()
                   scrollDirection: Axis.vertical,
                   //height: MediaQuery.of(context).size.height,
                   //autoPlay: true,
+                  scrollPhysics: bottomOffset == 0 ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
                 ),
                 //items: pageList,
                 itemCount: episodeList.length,
@@ -1256,124 +1258,125 @@ Widget contentPlayMain()
           left: 0,
           right: 0,
           child:
-            Stack
-            (
-              children:
-              [
-                Padding
-                (
-                  padding: EdgeInsets.only(top: 275.h),
-                  child:
-                  Container
-                  (
-                    height: 70,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(0, 0),
-                        end: Alignment(0, -1),
-                        colors: [Colors.black, Colors.transparent],
-                      ),
-                      //border: Border.all(width: 1),
-                    ),
-                  ),
-                ),
+          Stack
+          (
+            children:
+            [
+              Padding
+              (
+                padding: EdgeInsets.only(top: 275.h),
+                child:
                 Container
                 (
-                  width: MediaQuery.of(context).size.width,
-                  height: 840.h,
-                  //color: Colors.transparent,
-                  alignment: Alignment.bottomCenter,
-                  child:
-                  Container
-                  (
-                    width: 390.w,
-                    height: 500.h,
-                    color: Colors.black,
-                    child:
-                    isShowContent == false ?
-                    showShop() :
-                    Stack
-                    (
-                      children:
-                      [
-                        if (bottomUItype == Bottom_UI_Type.COMMENT)
-                          contentComment(),
-                        if (bottomUItype == Bottom_UI_Type.REPLY)
-                          commentReply(),
-                        if (bottomUItype == Bottom_UI_Type.EPISODE)
-                          episodeInfo(),
-                        Visibility
-                        (
-                          visible: bottomUItype == Bottom_UI_Type.COMMENT || bottomUItype == Bottom_UI_Type.REPLY,
-                          child: IgnorePointer
-                          (
-                            ignoring: connecting,
-                            child:
-                            Obx(()
-                            {
-                              return
-                              VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
-                                !UserData.to.isLogin.value, MediaQuery.of(context).viewInsets.bottom,
-                              ()
-                              {
-                                print('comment complete ${textEditingController.text}');
-
-                                if (textEditingController.text.isEmpty)
-                                {
-                                  return;
-                                }
-
-                                if (commentData != null && textEditingController.text == commentData!.comment)
-                                {
-                                  return;
-                                }
-
-                                if (bottomUItype == Bottom_UI_Type.REPLY)
-                                {
-                                  SendReply();
-                                }
-                                else
-                                {
-                                  SendComment();
-                                }
-                              },);
-                            }),
-                          ),
-                        )
-                      ],
-                    )
+                  height: 70,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment(0, 0),
+                      end: Alignment(0, -1),
+                      colors: [Colors.black, Colors.transparent],
+                    ),
+                    //border: Border.all(width: 1),
                   ),
                 ),
-                GestureDetector
+              ),
+              Container
+              (
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                //color: Colors.transparent,
+                alignment: Alignment.bottomCenter,
+                child:
+                Container
                 (
-                    onTap: ()
-                    {
-                      if (bottomOffset == 0)
-                      {
-                        if (isShowContent == false)
-                        {
-                          tweenController.forward();
-                          ticker.stop();
-                          controlUIVisible = true;
-                        }
-
-                        textFocusNode.unfocus();
-                        setState(()
-                        {
-                          bottomOffset = -840.h;
-                        });
-                      }
-                    },
+                  width: 390.w,
+                  height: MediaQuery.of(context).size.height - 332.h,
+                  color: Colors.black,
                   child:
-                  Container
+                  isShowContent == false ?
+                  showShop() :
+                  Stack
                   (
-                    height: 320.h,
-                    color: Colors.transparent,
-                    //color: Colors.blue,
-                  ),
+                    children:
+                    [
+                      if (bottomUItype == Bottom_UI_Type.COMMENT)
+                        contentComment(),
+                      if (bottomUItype == Bottom_UI_Type.REPLY)
+                        commentReply(),
+                      if (bottomUItype == Bottom_UI_Type.EPISODE)
+                        episodeInfo(),
+                      Visibility
+                      (
+                        visible: bottomUItype == Bottom_UI_Type.COMMENT || bottomUItype == Bottom_UI_Type.REPLY,
+                        child:
+                        IgnorePointer
+                        (
+                          ignoring: connecting,
+                          child:
+                          Obx(()
+                          {
+                            return
+                            VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
+                              !UserData.to.isLogin.value, MediaQuery.of(context).viewInsets.bottom,
+                            ()
+                            {
+                              print('comment complete ${textEditingController.text}');
+
+                              if (textEditingController.text.isEmpty)
+                              {
+                                return;
+                              }
+
+                              if (commentData != null && textEditingController.text == commentData!.comment)
+                              {
+                                return;
+                              }
+
+                              if (bottomUItype == Bottom_UI_Type.REPLY)
+                              {
+                                SendReply();
+                              }
+                              else
+                              {
+                                SendComment();
+                              }
+                            },);
+                          }),
+                        ),
+                      )
+                    ],
+                  )
                 ),
-              ],
-            ),
+              ),
+              GestureDetector
+              (
+                  onTap: ()
+                  {
+                    if (bottomOffset == 0)
+                    {
+                      if (isShowContent == false)
+                      {
+                        tweenController.forward();
+                        ticker.stop();
+                        controlUIVisible = true;
+                      }
+
+                      textFocusNode.unfocus();
+                      setState(()
+                      {
+                        bottomOffset = -840.h;
+                      });
+                    }
+                  },
+                child:
+                Container
+                (
+                  height: 320.h,
+                  color: Colors.transparent,
+                  //color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

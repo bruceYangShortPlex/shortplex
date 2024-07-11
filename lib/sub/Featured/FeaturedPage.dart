@@ -59,7 +59,7 @@ class _FeaturedPageState extends State<FeaturedPage>
             data.thumbNail = item.thumbnailImgUrl;
 
             //pageList.add(ShortsPlayer(shortsUrl: data.contentUrl!,prevImage: data.imagePath!));
-
+            //precacheImage(NetworkImage(data.imagePath!), context);
             dataList.add(data);
         }
 
@@ -129,7 +129,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                   itemCount: dataList.length,
                   itemBuilder: (context, index, realIndex)
                   {
-                    return ShortsPlayer(shortsUrl: dataList[index].contentUrl!, prevImage: dataList[index].imagePath!,);
+                    return currentIndex == index ? ShortsPlayer(shortsUrl: dataList[index].contentUrl!, prevImage: dataList[index].imagePath!,) : Image.network(dataList[index].imagePath!);;
                   },
                 ),
                 Align

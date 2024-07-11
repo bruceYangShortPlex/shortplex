@@ -1174,7 +1174,7 @@ Widget contentPlayMain()
                   initialPage: selectedEpisodeNo - 1,
                   onPageChanged: (index, reason)
                   {
-                    print('on changed index : $index');
+                    //print('on changed index : $index');
                     tweenTime = 0;
                     setState(()
                     {

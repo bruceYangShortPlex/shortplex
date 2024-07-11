@@ -129,7 +129,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                   itemCount: dataList.length,
                   itemBuilder: (context, index, realIndex)
                   {
-                    return ShortsPlayer(shortsUrl: dataList[currentIndex].contentUrl!, prevImage: dataList[currentIndex].imagePath!,);
+                    return ShortsPlayer(shortsUrl: dataList[index].contentUrl!, prevImage: dataList[index].imagePath!,);
                   },
                 ),
                 Align

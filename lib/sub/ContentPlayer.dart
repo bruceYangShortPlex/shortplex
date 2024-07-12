@@ -380,7 +380,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
     getFavorite();
     initEpisodeGroup();
-    GetCommentsData();
+    getCommentsData();
 
     super.initState();
   }
@@ -524,7 +524,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   int downCompletePage = 0;
   int maxPage = 0;
 
-  void GetCommentsData([bool _refresh = false])
+  void getCommentsData([bool _refresh = false])
   {
     if (_refresh)
     {
@@ -779,7 +779,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
                 downCompletePage = 0;
                 episodeCommentList.clear();
-                GetCommentsData();
+                getCommentsData();
               }
               break;
               case ContentUI_ButtonType.CONTENT_INFO:
@@ -1180,6 +1180,10 @@ Widget contentPlayMain()
                     {
                       selectedEpisodeNo = index + 1;
                       initContent();
+                      downCompletePage = 0;
+                      episodeCommentList.clear();
+                      commentSortType = CommentSortType.created_at;
+                      getCommentsData();
                     });
                   },
                   aspectRatio: 9 / 16,
@@ -1289,7 +1293,7 @@ Widget contentPlayMain()
                 Container
                 (
                   width: 390.w,
-                  height: MediaQuery.of(context).size.height - 332.h,
+                  height: 500.h,
                   color: Colors.black,
                   child:
                   isShowContent == false ?
@@ -1393,9 +1397,10 @@ Widget contentPlayMain()
   Widget contentComment()
   {
     return
-    Padding
+    Container
     (
       padding: const EdgeInsets.only(top: 10),
+      //color: Colors.pink,
       child:
         Column
         (
@@ -1437,7 +1442,7 @@ Widget contentPlayMain()
                         commentSortType = CommentSortType.likes;
                         downCompletePage = 0;
                         episodeCommentList.clear();
-                        GetCommentsData();
+                        getCommentsData();
                       });
                     },
                     child: Container
@@ -1476,7 +1481,7 @@ Widget contentPlayMain()
                         commentSortType = CommentSortType.created_at;
                         downCompletePage = 0;
                         episodeCommentList.clear();
-                        GetCommentsData();
+                        getCommentsData();
                       });
                     },
                     child:
@@ -1506,110 +1511,114 @@ Widget contentPlayMain()
                 ],
               ),
             ),
-            SizedBox(height: 10,),
-            Container
+            SizedBox(height: 16,),
+            Expanded
             (
-              height: 455.h,
-              //color: Colors.green,
               child:
-              SingleChildScrollView
+              Container
               (
-                controller: scrollController,
+                height: 455.h,
+                //color: Colors.green,
                 child:
-                  Obx(()
-                  {
-                    if (prevLogin == false && UserData.to.isLogin.value == true)
+                SingleChildScrollView
+                (
+                  controller: scrollController,
+                  child:
+                    Obx(()
                     {
-                      GetCommentsData(true);
-                    }
-                    prevLogin = UserData.to.isLogin.value;
-                    return
-                    Column
-                    (
-                      children:
-                      [
-                        for(int i = 0; i < episodeCommentList.length; ++i)
-                          CommentWidget
-                          (
-                            episodeCommentList[i],
-                            false,
-                            (id)
-                            {
-                              //댓글 좋아요 버튼.
-                              if (connecting)
+                      if (prevLogin == false && UserData.to.isLogin.value == true)
+                      {
+                        getCommentsData(true);
+                      }
+                      prevLogin = UserData.to.isLogin.value;
+                      return
+                      Column
+                      (
+                        children:
+                        [
+                          for(int i = 0; i < episodeCommentList.length; ++i)
+                            CommentWidget
+                            (
+                              episodeCommentList[i],
+                              false,
+                              (id)
                               {
-                                return;
-                              }
-
-                              if (UserData.to.isLogin.value == false)
-                              {
-                                showDialogTwoButton(StringTable().Table![600018]!, '',
-                                ()
+                                //댓글 좋아요 버튼.
+                                if (connecting)
                                 {
-                                  Get.to(() => LoginPage());
-                                });
-                                return;
-                              }
-                              connecting = true;
-                              //var item = episodeCommentList.firstWhere((element) => element.ID == id);
-                              var value = episodeCommentList[i].isLikeCheck! ? -1 : 1;
-                              HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
-                                  .then((value)
-                              {
-                                for(var item in value!.data!)
-                                {
-                                  if (episodeCommentList[i].ID == item.key)
-                                  {
-                                    HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
-                                    {
-                                      if (value1 == null)
-                                      {
-                                        connecting = false;
-                                        return;
-                                      }
-                                      var resData = value1.data!.items!.firstWhere((element) => element.id == id);
-                                      if (UserData.to.userId == resData.whoami)
-                                      {
-                                        setState(() {
-                                          episodeCommentList[i].likeCount = resData.likes;
-                                          episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
-                                        });
-                                      }
-                                      connecting = false;
-                                    },);
-                                    break;
-                                  }
+                                  return;
                                 }
-                              });
-                            },
-                            (id)
-                            {
-                              //댓글 답글 보기.
-                              commentData = episodeCommentList[i];
-                              bottomUItype = Bottom_UI_Type.REPLY;
-                              //commentScrollOffset = scrollController.offset;
-                              downReplyPage = 0;
-                              replyList.clear();
-                              GetRepliesData();
-                            },
-                            (id)
-                            {
-                              //댓글 수정.
-                              commentData = episodeCommentList[i];
-                              textEditingController.text = commentData!.comment!;
-                              FocusScope.of(context).requestFocus(textFocusNode);
-                              isEdit = true;
-                            },
-                            (id)
-                            {
-                              //댓글 삭제.
-                              DeleteComment(id);
-                            },
-                          ),
-                        SizedBox(height:  50),
-                      ]
-                    );
-                  },)
+              
+                                if (UserData.to.isLogin.value == false)
+                                {
+                                  showDialogTwoButton(StringTable().Table![600018]!, '',
+                                  ()
+                                  {
+                                    Get.to(() => LoginPage());
+                                  });
+                                  return;
+                                }
+                                connecting = true;
+                                //var item = episodeCommentList.firstWhere((element) => element.ID == id);
+                                var value = episodeCommentList[i].isLikeCheck! ? -1 : 1;
+                                HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.content, Stat_Type.like)
+                                    .then((value)
+                                {
+                                  for(var item in value!.data!)
+                                  {
+                                    if (episodeCommentList[i].ID == item.key)
+                                    {
+                                      HttpProtocolManager.to.Get_Comment(episodeCommentList[i].parentID!, id).then((value1)
+                                      {
+                                        if (value1 == null)
+                                        {
+                                          connecting = false;
+                                          return;
+                                        }
+                                        var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                                        if (UserData.to.userId == resData.whoami)
+                                        {
+                                          setState(() {
+                                            episodeCommentList[i].likeCount = resData.likes;
+                                            episodeCommentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                          });
+                                        }
+                                        connecting = false;
+                                      },);
+                                      break;
+                                    }
+                                  }
+                                });
+                              },
+                              (id)
+                              {
+                                //댓글 답글 보기.
+                                commentData = episodeCommentList[i];
+                                bottomUItype = Bottom_UI_Type.REPLY;
+                                //commentScrollOffset = scrollController.offset;
+                                downReplyPage = 0;
+                                replyList.clear();
+                                GetRepliesData();
+                              },
+                              (id)
+                              {
+                                //댓글 수정.
+                                commentData = episodeCommentList[i];
+                                textEditingController.text = commentData!.comment!;
+                                FocusScope.of(context).requestFocus(textFocusNode);
+                                isEdit = true;
+                              },
+                              (id)
+                              {
+                                //댓글 삭제.
+                                DeleteComment(id);
+                              },
+                            ),
+                          SizedBox(height:  50),
+                        ]
+                      );
+                    },)
+                ),
               ),
             )
           ],
@@ -1645,7 +1654,9 @@ Widget contentPlayMain()
               onPressed: ()
               {
                 bottomUItype = Bottom_UI_Type.COMMENT;
-                print('on tap reply off');
+                if (kDebugMode) {
+                  print('on tap reply off');
+                }
                 setState(()
                 {
                    //setScrollPosition(commentScrollOffset);
@@ -1791,7 +1802,7 @@ Widget contentPlayMain()
       {
         if (totalCommentCount > episodeCommentList.length)
         {
-          GetCommentsData();
+          getCommentsData();
         }
       }
     }
@@ -2093,7 +2104,7 @@ Widget contentPlayMain()
 
     //어떤회차 그룹을 선택했는지 인덱스를 찾아온다. 1~20화 를 눌렀다면 0번이 true이므로 0번을 찾는다.
     var data = episodeGroupSelections.asMap().entries.firstWhere((element) => element.value);
-    print(data.key);
+    //print(data.key);
     var index = data.key;
 
     if (!mapEpisodeData.containsKey(data.key))

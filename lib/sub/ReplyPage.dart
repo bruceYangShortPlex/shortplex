@@ -548,14 +548,15 @@ Widget ReplyPopup(ScrollController _scrollController,
   Padding
   (
     padding: EdgeInsets.only(top: _padding),
-    child: Column
+    child:
+    Column
     (
       crossAxisAlignment: CrossAxisAlignment.start,
       children:
       [
         Padding
         (
-          padding: const EdgeInsets.only(left: 30),
+          padding: EdgeInsets.only(left: 14),
           child:
           Container
           (
@@ -598,7 +599,7 @@ Widget ReplyPopup(ScrollController _scrollController,
                 SizedBox(height:  10,),
                 for (int i = 0; i < _replyList.length; ++i)
                   Padding(
-                    padding: const EdgeInsets.only(left: 80),
+                    padding: EdgeInsets.only(left: 50),
                     child: Container(
                       child: CommentWidget
                         (

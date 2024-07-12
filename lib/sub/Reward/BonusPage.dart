@@ -337,13 +337,13 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   Widget mainWidget(BuildContext context)
   {
-    print('height : ${MediaQuery.of(context).size.height}');
-    var screen_height = MediaQuery.of(context).size.height;
-    var scaleRatio = screen_height / 840;
-    if (scaleRatio > 1)
-    {
-      scaleRatio = 1;
-    }
+    // print('height : ${MediaQuery.of(context).size.height}');
+    // var screen_height = MediaQuery.of(context).size.height;
+    // var scaleRatio = screen_height / 840;
+    // if (scaleRatio > 1)
+    // {
+    //   scaleRatio = 1;
+    // }
     return
     SafeArea
     (
@@ -421,10 +421,10 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                 .height,
             //color: Colors.blue,
             child:
-            Transform.scale
-            (
-              scale: scaleRatio,
-              child:
+            // Transform.scale
+            // (
+            //   scale: scaleRatio,
+            //   child:
               Stack
               (
                 //alignment: Alignment.center,
@@ -436,7 +436,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   infoPopup(),
                 ],
               ),
-            ),
+            //),
           ),
         ),
       ),
@@ -506,8 +506,9 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       child:
       Padding
       (
-        padding: EdgeInsets.only(left: 2, bottom: 504),
-        child: Container
+        padding: const EdgeInsets.only(left: 2, bottom: 504),
+        child:
+        Container
         (
           width: 314,
           height: 60,
@@ -644,7 +645,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   ),
                   Container
                   (
-                    padding: EdgeInsets.only(top: 6),
+                    padding: const EdgeInsets.only(top: 6),
                     width: 58,
                     height: 60,
                     //color: Colors.yellow,

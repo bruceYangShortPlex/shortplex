@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gif/gif.dart';
@@ -337,13 +338,24 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   Widget mainWidget(BuildContext context)
   {
-    // print('height : ${MediaQuery.of(context).size.height}');
-    // var screen_height = MediaQuery.of(context).size.height;
-    // var scaleRatio = screen_height / 840;
-    // if (scaleRatio > 1)
-    // {
-    //   scaleRatio = 1;
-    // }
+    var screen_height = MediaQuery.of(context).size.height;
+    //print('screen_height : $screen_height');
+    var destHeigh = 700 / 840 * screen_height;
+    var scaleRatio = destHeigh / 622;
+    //print('scaleRatio : $scaleRatio');
+    var remainSpace = screen_height - 700; //650 + 50 을 뺀다.
+    //print('remainSpace : $remainSpace');
+    double bottomOffset = 0;
+    if (remainSpace >= 0)
+    {
+      scaleRatio = 1;
+      bottomOffset = remainSpace > 0 ? remainSpace * 0.5 : 0;
+    }
+    else
+    {
+      scaleRatio = 0.94;
+    }
+
     return
     SafeArea
     (
@@ -360,7 +372,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
             backgroundColor: Colors.transparent,
             leading:
             Row
-              (
+            (
               mainAxisAlignment: MainAxisAlignment.start,
               children:
               [
@@ -376,7 +388,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   alignment: Alignment.centerLeft,
                   child:
                   CupertinoNavigationBarBackButton
-                    (
+                  (
                     color: Colors.white,
                     onPressed: () {
                       Get.back();
@@ -384,7 +396,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   ),
                 ),
                 Container
-                  (
+                (
                   width: MediaQuery
                       .of(context)
                       .size
@@ -394,7 +406,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   alignment: Alignment.center,
                   child:
                   Text
-                    (
+                  (
                     StringTable().Table![800006]!,
                     style:
                     const TextStyle(
@@ -410,7 +422,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           ),
           child:
           Container
-            (
+          (
             width: MediaQuery
                 .of(context)
                 .size
@@ -420,23 +432,26 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                 .size
                 .height,
             //color: Colors.blue,
+            padding: EdgeInsets.only(bottom: bottomOffset),
             child:
-            // Transform.scale
-            // (
-            //   scale: scaleRatio,
-            //   child:
+            Transform.scale
+            (
+              alignment: Alignment.bottomCenter,
+              scale: scaleRatio,
+              child:
               Stack
               (
-                //alignment: Alignment.center,
+                alignment: Alignment.bottomCenter,
                 children:
                 [
+                  remainTimer(),
                   popcornAnimation(),
                   bounusInfoPageView(),
                   bonusResultPopup(),
                   infoPopup(),
                 ],
               ),
-            //),
+            ),
           ),
         ),
       ),
@@ -452,99 +467,105 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   Widget remainTimer()
   {
     return
-    Container
+    Row
     (
-      width: 310, height: 684,
-      alignment: Alignment.topRight,
-      child:
-      Padding
-      (
-        padding: const EdgeInsets.only(right: 0),
-        child:
+      mainAxisAlignment: MainAxisAlignment.center,
+      children:
+      [
         Container
         (
-          width: 130,
-          height: 55,
-          decoration: ShapeDecoration(
-            gradient: LinearGradient(
-              begin: Alignment(0.98, -0.18),
-              end: Alignment(-0.98, 0.18),
-              colors: [Color(0xFF033C32), Color(0xFF0A293E)],
-            ),
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                strokeAlign: BorderSide.strokeAlignOutside,
-                color: Color(0xFF0A2022),
-              ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
+          //color: Colors.white,
+          width: 310,
+          height: 649,
+          alignment: Alignment.topRight,
           child:
           Padding
           (
-            padding: EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 32),
+            padding: const EdgeInsets.only(right: 0),
             child:
-            Text
+            Container
             (
-              textAlign: TextAlign.center,
-              endTime != null ? SetTableStringArgument(800007, [formatDuration(difference!).$1,formatDuration(difference!).$2]) : '',
-              style:
-              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              width: 130,
+              height: 54,
+              decoration: ShapeDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(0.98, -0.18),
+                  end: Alignment(-0.98, 0.18),
+                  colors: [Color(0xFF033C32), Color(0xFF0A293E)],
+                ),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    width: 1,
+                    strokeAlign: BorderSide.strokeAlignOutside,
+                    color: Color(0xFF0A2022),
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              child:
+              Padding
+                (
+                padding: EdgeInsets.only(top: 4.h, left: 8, right: 8, bottom: 32.h),
+                child:
+                Text
+                  (
+                  textAlign: TextAlign.center,
+                  endTime != null ? SetTableStringArgument(800007, [formatDuration(difference!).$1,formatDuration(difference!).$2]) : '',
+                  style:
+                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                ),
+              ),
             ),
           ),
         ),
-      ),
+      ],
+
+
     );
   }
 
   Widget bounusInfoPageView()
   {
     return
-    Center
+    Container
     (
+      width: 314,
+      height: 622,
+      //color: Colors.red,
+      alignment: Alignment.topCenter,
+      padding: const EdgeInsets.only(top: 34),
+      //alignment: ,
       child:
-      Padding
+      CarouselSlider
       (
-        padding: const EdgeInsets.only(left: 2, bottom: 504),
-        child:
-        Container
+        items: pageList,
+        // itemCount: pageList.length,
+        // itemBuilder: (context, index, realIndex)
+        // {
+        //   var widget = pageList.length != 0 && index < pageList.length ? topPageItem(pageList[index]) : Container();
+        //   return widget;
+        // },
+        options:
+        CarouselOptions
         (
-          width: 314,
-          height: 60,
-          //color: Colors.red,
-          child:
-          CarouselSlider
-          (
-            items: pageList,
-            // itemCount: pageList.length,
-            // itemBuilder: (context, index, realIndex)
-            // {
-            //   var widget = pageList.length != 0 && index < pageList.length ? topPageItem(pageList[index]) : Container();
-            //   return widget;
-            // },
-            options:
-            CarouselOptions
-            (
-              autoPlayInterval: Duration(milliseconds: 1000),
-              autoPlayAnimationDuration : Duration(milliseconds: 1010),
-              autoPlayCurve: Curves.linear,
-              enlargeFactor: 1,
-              enlargeCenterPage: false,
-              viewportFraction: 0.2,
-              height: 50,
-              autoPlay: true,
-              //aspectRatio: 1.0,
-              initialPage: 0,
-              onPageChanged: (index, reason)
-              {
-              },
-            ),
-            //items: pageList,
-          ),
+          autoPlayInterval: Duration(milliseconds: 1000),
+          autoPlayAnimationDuration : Duration(milliseconds: 1010),
+          autoPlayCurve: Curves.linear,
+          enlargeFactor: 1,
+          enlargeCenterPage: false,
+          viewportFraction: 0.2,
+          height: 50,
+          autoPlay: true,
+          //aspectRatio: 1.0,
+          initialPage: 0,
+          onPageChanged: (index, reason)
+          {
+          },
         ),
+        //items: pageList,
       ),
-    );
+
+);
   }
 
   Widget popcornAnimation()
@@ -554,14 +575,13 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     return
     Container
     (
-      alignment: Alignment.center,
+      alignment: Alignment.bottomCenter,
       child:
       Stack
       (
         alignment: Alignment.center,
         children:
         [
-          remainTimer(),
           Image.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_bg.png', width: 350, height: 622,),
           Visibility
           (
@@ -803,7 +823,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         (
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          color: Colors.black45,
+          color: Colors.black54,
           alignment: Alignment.center,
           child:
           Container

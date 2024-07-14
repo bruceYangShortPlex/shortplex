@@ -393,10 +393,11 @@ Widget mainWidget(BuildContext context)=>
     var description = data.description!;
 
     return
-    Expanded
-    (
-      flex: 1,
-      child: Container
+    // Expanded
+    // (
+    //   flex: 1,
+    //   child:
+      Container
       (
         width: 259.w,
         height: 190,
@@ -691,7 +692,7 @@ Widget mainWidget(BuildContext context)=>
             ],
           ),
         ),
-      ),
+      //),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -337,11 +338,17 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     super.dispose();
   }
 
+  var trans = false;
+  double scaleRatio = 0;
+  double destHeigh = 0;
   Widget mainWidget(BuildContext context)
   {
-    var screen_height = MediaQuery.of(context).size.height;
-    var destHeigh = 700 / 840 * screen_height;
-    var scaleRatio = destHeigh / 650;
+    double screenHSize = MediaQuery.of(context).size.height; // 사용 가능한 화면 높이
+    double statusBarHeight = MediaQuery.of(context).padding.top; // 상태 표시줄 높이
+    double navigationBarHeight = MediaQuery.of(context).padding.bottom; // 내비게이션 바 높이
+    var screen_height = screenHSize + statusBarHeight + navigationBarHeight; // 전체 화면 높이
+    destHeigh = 700 / 844 * screen_height;
+    scaleRatio = destHeigh / 650;
     var remainSpace = screen_height - (700 * scaleRatio); //650 + 50 을 뺀다.
 
     if (kDebugMode) {
@@ -354,10 +361,9 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     double bottomOffset = 0;
     if (remainSpace >= 0)
     {
-      bottomOffset = remainSpace > 0 ? remainSpace * 0.5 : 0;
+      bottomOffset = remainSpace > 0 ? remainSpace * 0.25 : 0;
     }
 
-    var trans = false;
     if (screen_height < 700)
     {
       trans = true;
@@ -439,8 +445,56 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                 .size
                 .height,
             //color: Colors.blue,
-            padding: EdgeInsets.only(bottom: bottomOffset),
+            padding: trans ? EdgeInsets.zero : EdgeInsets.only(bottom: bottomOffset),
             child:
+            trans ?
+            SingleChildScrollView
+            (
+              physics: NeverScrollableScrollPhysics(),
+              child:
+              Container
+              (
+                padding: EdgeInsets.only(bottom: 10),
+                //color: Colors.red,
+                child:
+                Column
+                (
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:
+                  [
+                    Transform.scale
+                    (
+                      //alignment: Alignment.bottomCenter,
+                      scale: scaleRatio,
+                      child:
+                      Stack
+                      (
+                        //alignment: Alignment.bottomCenter,
+                        children:
+                        [
+                          remainTimer(),
+                          Padding
+                          (
+                            padding : EdgeInsets.only(top: 26),
+                            child:
+                            popcornAnimation()),
+
+                          Padding
+                          (
+                            padding: EdgeInsets.only(left: 24, top: 26),
+                              child: bounusInfoPageView()
+                          ),
+                          bonusResultPopup(),
+                          infoPopup(),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              
+              ),
+            )
+            :
             Transform.scale
             (
               alignment: Alignment.bottomCenter,
@@ -483,44 +537,39 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         (
           //color: Colors.white,
           width: 310,
-          height: 650,
+          height: trans ? destHeigh / scaleRatio :  650,
           alignment: Alignment.topRight,
           child:
-          Padding
+          Container
           (
-            padding: const EdgeInsets.only(right: 0),
-            child:
-            Container
-            (
-              width: 130,
-              height: 60,
-              decoration: ShapeDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(0.98, -0.18),
-                  end: Alignment(-0.98, 0.18),
-                  colors: [Color(0xFF033C32), Color(0xFF0A293E)],
-                ),
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    width: 1,
-                    strokeAlign: BorderSide.strokeAlignOutside,
-                    color: Color(0xFF0A2022),
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                ),
+            width: 130,
+            height: 60,
+            decoration: ShapeDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(0.98, -0.18),
+                end: Alignment(-0.98, 0.18),
+                colors: [Color(0xFF033C32), Color(0xFF0A293E)],
               ),
-              child:
-              Padding
-                (
-                padding: EdgeInsets.only(top: 4.h, left: 8, right: 8, bottom: 32.h),
-                child:
-                Text
-                  (
-                  textAlign: TextAlign.center,
-                  endTime != null ? SetTableStringArgument(800007, [formatDuration(difference!).$1,formatDuration(difference!).$2]) : '',
-                  style:
-                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  width: 1,
+                  strokeAlign: BorderSide.strokeAlignOutside,
+                  color: Color(0xFF0A2022),
                 ),
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child:
+            Padding
+              (
+              padding: EdgeInsets.only(top: 4.h, left: 8, right: 8, bottom: 32.h),
+              child:
+              Text
+                (
+                textAlign: TextAlign.center,
+                endTime != null ? SetTableStringArgument(800007, [formatDuration(difference!).$1,formatDuration(difference!).$2]) : '',
+                style:
+                TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
             ),
           ),

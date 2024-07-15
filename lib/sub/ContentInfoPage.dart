@@ -836,7 +836,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         Container
         (
           height: 137,
-          width: 390 / 4,
+          width: 390.w / 4,
           //color: Colors.grey,
           child:
           Column

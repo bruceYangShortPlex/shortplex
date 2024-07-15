@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -95,7 +96,7 @@ class MyAnimatedWidget extends StatefulWidget {
 }
 
 class _MyAnimatedWidgetState extends State<MyAnimatedWidget> {
-  double _bottomOffset = -840;
+  double _bottomOffset = -844;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +111,7 @@ class _MyAnimatedWidgetState extends State<MyAnimatedWidget> {
             child: ElevatedButton(
               onPressed: () {
                 setState(() {
-                  _bottomOffset = _bottomOffset == -840 ? 0 : -840;
+                  _bottomOffset = _bottomOffset == -844 ? 0 : -844;
                 });
               },
               child: Text('Animate'),
@@ -133,14 +134,14 @@ class _MyAnimatedWidgetState extends State<MyAnimatedWidget> {
                     if (_bottomOffset == 0)
                     {
                       setState(() {
-                        _bottomOffset = -840;
+                        _bottomOffset = -844;
                       });
                     }
                   },
                   child: Container
                   (
                     width: MediaQuery.of(context).size.width,
-                    height: 840,
+                    height: 844.h,
                     color: Colors.transparent,
                     alignment: Alignment.bottomCenter,
                     child:

@@ -1225,7 +1225,7 @@ Widget contentPlayMain()
           Container
           (
             width: 390.w,
-            height: 840.h,
+            height: 844.h,
             alignment: Alignment.topLeft,
             child:
             CupertinoNavigationBarBackButton
@@ -1244,7 +1244,7 @@ Widget contentPlayMain()
   }
 
   bool connecting = false;
-  double bottomOffset = -840.h;
+  double bottomOffset = -844.h;
   int tweenTime = 0;
   Widget bottomCanvas()
   {
@@ -1367,7 +1367,7 @@ Widget contentPlayMain()
                       textFocusNode.unfocus();
                       setState(()
                       {
-                        bottomOffset = -840.h;
+                        bottomOffset = -844.h;
                       });
                     }
                   },

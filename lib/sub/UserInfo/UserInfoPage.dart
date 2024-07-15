@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,13 @@ class UserInfoPage extends StatefulWidget {
 class _UserInfoPageState extends State<UserInfoPage>
 {
   @override
+  void initState()
+  {
+
+    super.initState();
+  }
+
+  @override
   void didUpdateWidget(covariant UserInfoPage oldWidget)
   {
     super.didUpdateWidget(oldWidget);
@@ -74,7 +82,6 @@ class _UserInfoPageState extends State<UserInfoPage>
   @override
   Widget build(BuildContext context)
   {
-    Get.put(UserInfoMainListView());
     return CupertinoApp
     (
       home:
@@ -94,7 +101,7 @@ class _UserInfoPageState extends State<UserInfoPage>
             (
             children:
             [
-              _UserAccountInfo(),
+              userAccountInfo(),
               _subscription(),
               SizedBox(height: 10,),
               _walletInfo(),
@@ -109,7 +116,7 @@ class _UserInfoPageState extends State<UserInfoPage>
     );
   }
 
-  Widget _UserAccountInfo() =>
+  Widget userAccountInfo() =>
   Column
   (
     children:
@@ -277,7 +284,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                   children:
                   [
                     SizedBox
-                      (
+                    (
                       height: 40,
                       width: 290.w,
                       child:
@@ -367,7 +374,8 @@ class _UserInfoPageState extends State<UserInfoPage>
     ],
   );
 
-  Widget _walletInfo() => Stack
+  Widget _walletInfo() =>
+  Stack
   (
     children:
     [
@@ -391,7 +399,7 @@ class _UserInfoPageState extends State<UserInfoPage>
         (
           children:
           [
-            SizedBox
+            Container
             (
               //color: Colors.green,
               width: 356.w,
@@ -431,7 +439,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                         Container
                         (
                           //color: Colors.cyan,
-                          width: 235,
+                          width: 235.w,
                           height: 92 * 0.5,
                           alignment: Alignment.centerLeft,
                           child:
@@ -475,12 +483,17 @@ class _UserInfoPageState extends State<UserInfoPage>
                                 child:
                                 Container
                                 (
-                                  width: 110,
+                                  width: 110.w,
                                   height: 92 * 0.5,
                                   padding: EdgeInsets.only(left: 5),
                                   //color: Colors.red,
                                   alignment: Alignment.centerLeft,
-                                  child: Text(Get.find<UserData>().GetPopupcornCount().$1, style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),),
+                                  child:
+                                  Text
+                                  (
+                                    Get.find<UserData>().GetPopupcornCount().$1,
+                                    style: const TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ],
@@ -489,7 +502,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                         Container
                         (
                           //color: Colors.green,
-                          width: 235,
+                          width: 235.w,
                           height: 92 * 0.5,
                           child:
                           Row
@@ -532,7 +545,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                 child:
                                 Container
                                   (
-                                  width: 110,
+                                  width: 110.w,
                                   height: 92 * 0.5,
                                   padding: EdgeInsets.only(left: 5),
                                   //color: Colors.red,
@@ -548,14 +561,14 @@ class _UserInfoPageState extends State<UserInfoPage>
                   ),
                   Container
                   (
-                    width: 118.w,
+                    width: 117.w,
                     height: 92,
                     //color: Colors.blue,
                     alignment: Alignment.center,
                     child:
                     Container
                     (
-                      width: 80,
+                      width: 80.w,
                       height: 26,
                       alignment: Alignment.center,
                       decoration: ShapeDecoration(
@@ -602,220 +615,219 @@ class _UserInfoPageState extends State<UserInfoPage>
     ],
   );
 
-  Widget _mainListView() =>
-  Expanded
-  (
-    child:
-  Container
-  (
-    width: 390.w,
-    //height: 443.h,
-    //color: Colors.green,
-    alignment: Alignment.center,
-    child:
-    Obx
-    (() =>
-      ListView.builder
-      (
-        //physics: ClampingScrollPhysics(),
-        itemCount: UserInfoMainListView.to.list.length,
-        itemBuilder: (context, index)
-        {
-          return UserInfoMainListView.to.list[index];
-          //return Text(str);
-        },
-      ),
-    ),
-  ),
-  );
-}
-
-class UserInfoMainListView extends GetxController
-{
-
-  static UserInfoMainListView get to => Get.find();
-  RxList<Widget> list = <Widget>[].obs;
-
-  @override
-  void onInit()
+  Widget _mainListView()
   {
-    super.onInit();
-    Get.put(UserInfoPage());
-    list.add(defaultInfo(400010, 400097, 400098,CupertinoIcons.bell));
-    list.add(defaultInfo(400011,400099,400100, CupertinoIcons.heart));
-    list.add(_option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO));
-    list.add(_option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING));
+    return
+    Expanded
+    (
+      child:
+      Container
+      (
+        width: 390.w,
+        //height: 443.h,
+        //color: Colors.green,
+        alignment: Alignment.center,
+        child:
+        SingleChildScrollView
+        (
+          child:
+          Column
+          (
+            children:
+            [
+              defaultInfo(400010, 400097, 400098,CupertinoIcons.bell),
+              defaultInfo(400011,400099,400100, CupertinoIcons.heart),
+              option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO),
+              option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING),
+            ],
+          ),
+        )
+        // Obx
+        //   (() =>
+        //     ListView.builder
+        //     (
+        //       //physics: ClampingScrollPhysics(),
+        //       itemCount: UserInfoMainListView.to.list.length,
+        //       itemBuilder: (context, index) {
+        //         return UserInfoMainListView.to.list[index];
+        //         //return Text(str);
+        //       },
+        //     ),
+        // ),
+      ),
+    );
   }
 
-  Widget _option(int _titleID, IconData _icon, UserInfoSubPageType _type) =>
-  Align
-  (
-    alignment: Alignment.topCenter,
-    child:
-    Column
-    (
-      mainAxisAlignment: MainAxisAlignment.start,
-      children:
-      [
-        Row
-        (
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children:
-          [
-            Padding
-              (
-              padding:EdgeInsets.only(left: 20),
-              child:
-              Icon(_icon, color: Colors.white,),
-            ),
-            Padding
-              (
-              padding:EdgeInsets.only(left: 10),
-              child:
-              Container
-                (
-                height: 30,
-                width: 280,
-                //color: Colors.yellow,
-                alignment: Alignment.centerLeft,
-                child:
-                Text(StringTable().Table![_titleID]!,
-                  style:
-                  TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-              ),
-            ),
-            Padding
-              (
-              padding:EdgeInsets.only(right: 20),
-              child: Get.find<UserInfoPage>()._moveButton(_type),
-            ),
-          ],
-        ),
-        Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
-      ],
-    ),
-  );
+  Widget option(int _titleID, IconData _icon, UserInfoSubPageType _type)
+  {
+    return
+      Container
+      (
+        width: 390.w,
+        alignment: Alignment.topCenter,
+        child:
 
-  Widget defaultInfo(int _titleID, int _contents1id, int _contents2id, IconData _icon ) =>
-  Container
-  (
-    width: 390.w,
-    height: 190,
-    //color: Colors.white,
-    child:
-    Column
-    (
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children:
-      [
-        Row
-        (
-          mainAxisAlignment: MainAxisAlignment.start,
-          children:
-          [
-            Padding
-            (
-              padding: const EdgeInsets.only(left: 15, top: 10),
-              child:
+          Column
+          (
+            mainAxisAlignment: MainAxisAlignment.start,
+            children:
+            [
               Container
               (
-                width: 20,
-                height: 20,
-                //color: Colors.red,
+                width: 360.w,
                 child:
-                Icon
+                Row
                 (
-                  _icon, size: 20,
-                  color: Colors.white,
-                )
-              ),
-            ),
-            Padding
-            (
-              padding: const EdgeInsets.only(left: 10.0, top: 10),
-              child: Container
-              (
-                alignment: Alignment.centerLeft,
-                width: 300,
-                height: 22,
-                //color: Colors.red,
-                child:
-                Text
-                (
-                  StringTable().Table![_titleID]!,
-                  style:
-                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-              ),
-            ),
-          ],
-        ),
-        Padding
-        (
-          padding: const EdgeInsets.only(top: 10, left: 50),
-          child:
-          Container
-          (
-            //color: Colors.red,
-            height: 40,
-            width: 200.w,
-            child: Text(StringTable().Table![_contents1id]!,
-              style:
-              TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
-          ),
-        ),
-        Padding
-        (
-          padding: const EdgeInsets.only(top: 8.0, left: 50),
-          child:
-          Container
-          (
-            //color: Colors.blue,
-            height: 40,
-            width: 200.w,
-            child: Text(StringTable().Table![_contents2id]!,
-              style:
-              TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
-          ),
-        ),
-        Padding
-        (
-            padding: const EdgeInsets.only(top: 10.0, left: 50),
-            child:
-            Container
-            (
-              padding: EdgeInsets.only(bottom: 1),
-              alignment: Alignment.center,
-              width: 90,
-              height: 26,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
-                  borderRadius: BorderRadius.circular(5),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:
+                  [
+                    Icon(_icon, color: Colors.white,),
+                    Container
+                    (
+                      height: 30,
+                      width: 280.w,
+                      //color: Colors.yellow,
+                      alignment: Alignment.centerLeft,
+                      child:
+                      Text(StringTable().Table![_titleID]!,
+                        style:
+                        const TextStyle(
+                          fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                    ),
+                    widget._moveButton(_type),
+                  ],
                 ),
               ),
-              child:
-              GestureDetector
-              (
-                child:
-                Text(StringTable().Table![400101]!,
-                  style:
-                  TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-                onTap: ()
-                {
-                  print('todo~ work');
-                },
-              ),
-            )
-        ),
-        Padding
+              Divider(height: 10,
+                color: Colors.white,
+                indent: 10,
+                endIndent: 10,
+                thickness: 1,),
+            ],
+          ),
+      );
+  }
+
+  Widget defaultInfo(int _titleID, int _contents1id, int _contents2id, IconData _icon ) =>
+      Container
+      (
+        width: 390.w,
+        height: 190,
+        //color: Colors.white,
+        child:
+        Column
         (
-          padding: const EdgeInsets.only(top: 20.0),
-          child: Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:
+          [
+            Row
+              (
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:
+              [
+                Padding
+                  (
+                  padding: const EdgeInsets.only(left: 15, top: 10),
+                  child:
+                  Container
+                  (
+                      width: 20,
+                      height: 20,
+                      //color: Colors.red,
+                      child:
+                      Icon
+                        (
+                        _icon, size: 20,
+                        color: Colors.white,
+                      )
+                  ),
+                ),
+                Padding
+                  (
+                  padding: const EdgeInsets.only(left: 10.0, top: 10),
+                  child: Container
+                    (
+                    alignment: Alignment.centerLeft,
+                    width: 300,
+                    height: 22,
+                    //color: Colors.red,
+                    child:
+                    Text
+                      (
+                      StringTable().Table![_titleID]!,
+                      style:
+                      const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                  ),
+                ),
+              ],
+            ),
+            Padding
+              (
+              padding: const EdgeInsets.only(top: 10, left: 50),
+              child:
+              Container
+                (
+                //color: Colors.red,
+                height: 40,
+                width: 200.w,
+                child: Text(StringTable().Table![_contents1id]!,
+                  style:
+                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
+              ),
+            ),
+            Padding
+              (
+              padding: const EdgeInsets.only(top: 8.0, left: 50),
+              child:
+              Container
+                (
+                //color: Colors.blue,
+                height: 40,
+                width: 200.w,
+                child: Text(StringTable().Table![_contents2id]!,
+                  style:
+                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
+              ),
+            ),
+            Padding
+              (
+                padding: const EdgeInsets.only(top: 10.0, left: 50),
+                child:
+                Container
+                  (
+                  padding: EdgeInsets.only(bottom: 1),
+                  alignment: Alignment.center,
+                  width: 90,
+                  height: 26,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  child:
+                  GestureDetector
+                    (
+                    child:
+                    Text(StringTable().Table![400101]!,
+                      style:
+                      TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                    onTap: ()
+                    {
+                      print('todo~ work');
+                    },
+                  ),
+                )
+            ),
+            Padding
+              (
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 
   Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
   {
@@ -825,7 +837,8 @@ class UserInfoMainListView extends GetxController
     return
       Container
         (
-        width: 390,
+        width: 390.w,
+        //color: Colors.red,
         child:
         Column
           (
@@ -903,7 +916,7 @@ class UserInfoMainListView extends GetxController
               (
               onTap: ()
               {
-                if (_data.isWatching!)
+                if (_data.isWatching)
                 {
                   print(_data.id);
                   print('go to content player');
@@ -917,7 +930,7 @@ class UserInfoMainListView extends GetxController
               child:
               Stack
                 (
-                alignment: _data.isWatching! ? Alignment.center : Alignment.topRight,
+                alignment: _data.isWatching ? Alignment.center : Alignment.topRight,
                 children:
                 [
                   Container
@@ -932,7 +945,7 @@ class UserInfoMainListView extends GetxController
                   ),
                   Visibility
                     (
-                    visible: _data.isWatching!,
+                    visible: _data.isWatching,
                     child:
                     Container
                       (
@@ -955,7 +968,7 @@ class UserInfoMainListView extends GetxController
                   ),
                   Visibility
                     (
-                    visible: _data.isNew!,
+                    visible: _data.isNew,
                     child:
                     Container
                       (
@@ -972,7 +985,7 @@ class UserInfoMainListView extends GetxController
                       ),
                       child:
                       Text
-                      (
+                        (
                         StringTable().Table![500014]!,
                         style:
                         const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
@@ -1012,10 +1025,10 @@ class UserInfoMainListView extends GetxController
                   children:
                   [
                     Padding
-                    (
+                      (
                       padding: const EdgeInsets.only(left: 6, bottom: 2.1),
                       child: Text
-                      (
+                        (
                         '${_data.watchingEpisode}',
                         style:
                         const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),

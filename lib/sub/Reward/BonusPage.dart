@@ -238,7 +238,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       ],
     )));
     pageList.add(SizedBox(width: 50, height: 50, child: Stack
-      (
+    (
       children:
       [
         SvgPicture.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_icon_frame.svg',width: 50,height: 50,),
@@ -339,7 +339,10 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   Widget mainWidget(BuildContext context)
   {
     var screen_height = MediaQuery.of(context).size.height;
+
     print('screen_height : $screen_height');
+    print('screen_width : ${MediaQuery.of(context).size.width}');
+
     var destHeigh = 700 / 840 * screen_height;
     var scaleRatio = destHeigh / 650;
     print('scaleRatio : $scaleRatio');

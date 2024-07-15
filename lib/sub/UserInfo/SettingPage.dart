@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
@@ -156,7 +157,7 @@ class _SettingPageState extends State<SettingPage>
             Container
             (
               height: 30,
-              width: 280,
+              width: _isToggle ? 260.w : 280.w,
               //color: Colors.yellow,
               alignment: Alignment.centerLeft,
               child:

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
@@ -285,9 +286,10 @@ class _HomePageState extends State<HomePage>
             leading:
             Center
             (
-              child: Container
+              child:
+              Container
               (
-                width: 390,
+                width: 390.w,
                 height: 50,
                 //color: Colors.blue,
                 child:
@@ -321,7 +323,7 @@ class _HomePageState extends State<HomePage>
           child:
           Padding
           (
-            padding: EdgeInsets.only(top: 80),
+            padding: const EdgeInsets.only(top: 80),
             child: Center
             (
               child:

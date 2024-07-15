@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:share/share.dart';
@@ -24,6 +25,7 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
   List<ContentData> dataList = <ContentData>[];
   late AnimationController tweenController;
   bool controlUIVisible = false;
+  double screentHeight = 0;
 
   void get_Datas()
   {
@@ -119,49 +121,82 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
     return mainWidget(context);
   }
 
-Widget mainWidget(BuildContext context)=>
-    SafeArea
+  Widget shortsPlay()
+  {
+    var height = (16/9)*261.w;
+    var remainHeight = screentHeight - (height + 384);
+    //print('height 1 = $height');
+    return
+    Container
     (
+      width: 261.w,
+      height: remainHeight >= 0 ? height : MediaQuery.of(context).size.height - 384,
+      //color:Colors.grey,
+      alignment: Alignment.center,
       child:
-      CupertinoApp
+      ClipRRect
       (
-        home:
-        CupertinoPageScaffold
+        borderRadius: BorderRadius.circular(7),
+        child:
+        dataList.length != 0 ?
+        AspectRatio
         (
-          backgroundColor: Colors.black,
-          child:
-          Container
-          (
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            //alignment: Alignment.center,
-            //color: Colors.green,
+            aspectRatio: 9/16,
             child:
-            Row
+            ShortsPlayer(shortsUrl: dataList[selectedIndex].contentUrl!,prevImage: dataList[selectedIndex].imagePath!)
+        ) : SizedBox(),
+      )
+    );
+  }
+
+Widget mainWidget(BuildContext context)
+{
+  screentHeight = MediaQuery.of(context).size.height;
+  return
+  SafeArea
+    (
+    child:
+    CupertinoApp
+      (
+      home:
+      CupertinoPageScaffold
+        (
+        backgroundColor: Colors.black,
+        child:
+        Container
+          (
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height,
+          //alignment: Alignment.center,
+          //color: Colors.green,
+          child:
+          Row
             (
-              //crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:
-              [
-                Column
+            //crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:
+            [
+              Column
                 (
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children:
-                  [
-                    GestureDetector
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                [
+                  GestureDetector
                     (
-                      onTap: ()
-                      {
-                        setState(()
-                        {
+                      onTap: () {
+                        setState(() {
                           UserData.to.isOpenPopup.value = !UserData.to.isOpenPopup.value;
-                          if (UserData.to.isOpenPopup.value)
-                          {
+                          if (UserData.to.isOpenPopup.value) {
                             controlUIVisible = true;
                             tweenController.forward(from: 0);
                           }
-                          else
-                          {
+                          else {
                             controlUIVisible = false;
                             tweenController.reverse();
                           }
@@ -170,41 +205,21 @@ Widget mainWidget(BuildContext context)=>
                       },
                       child:
                       Stack
-                      (
+                        (
                         alignment: Alignment.center,
                         children:
                         [
-                          Container
-                          (
-                            width: 259.w,
-                            height: 463.h,
-                            //color:Colors.grey,
-                            alignment: Alignment.center,
-                            child:
-                            ClipRRect
-                            (
-                              borderRadius: BorderRadius.circular(7),
-                              child:
-                              dataList.length != 0 ?
-                              AspectRatio
-                              (
-                                aspectRatio: 9/16,
-                                child:
-                                ShortsPlayer(shortsUrl: dataList[selectedIndex].contentUrl!,prevImage: dataList[selectedIndex].imagePath!)
-                              )
-                              : SizedBox(),
-                            )
-                          ),
+                          shortsPlay(),
                           FadeTransition
-                          (
+                            (
                             opacity: tweenController,
                             child:
                             IgnorePointer
-                            (
+                              (
                               ignoring: controlUIVisible == false,
                               child:
                               Container
-                              (
+                                (
                                 alignment: Alignment.center,
                                 padding: EdgeInsets.only(left: 6),
                                 width: 75,
@@ -221,7 +236,7 @@ Widget mainWidget(BuildContext context)=>
                                 ),
                                 child:
                                 Icon
-                                (
+                                  (
                                   CupertinoIcons.play_arrow_solid, size: 40, color: Colors.white,
                                 ),
                               ),
@@ -229,20 +244,21 @@ Widget mainWidget(BuildContext context)=>
                           ),
                         ],
                       )
-                    ),
-                    SizedBox(height: 14.h),
-                    contentInfo(),
-                    //SizedBox(height: 10),
-                  ],
-                ),
-                SizedBox(width: 20,),
-                contentSelector(),
-              ],
-            ),
+                  ),
+                  SizedBox(height: 14),
+                  contentInfo(),
+                  //SizedBox(height: 10),
+                ],
+              ),
+              SizedBox(width: 20,),
+              contentSelector(),
+            ],
           ),
         ),
       ),
-    );
+    ),
+  );
+}
 
   int tweenTime = 0;
   Widget tweenAnimation(bool _play, Widget _widget)
@@ -358,19 +374,25 @@ Widget mainWidget(BuildContext context)=>
     return
     Container
     (
-      height: double.infinity,
+      height: screentHeight,
       width: 95,
       //color: Colors.blue,
+      alignment:  Alignment.bottomCenter,
       child:
-      ListView
+      Container
       (
-        scrollDirection: Axis.vertical,
-        children:
-        [
-          //SizedBox(height: 10,),
-          for(int i = 0 ; i < dataList.length; ++i)
-            contentSelctItem(i, dataList[i]),
-        ],
+        height: screentHeight - 150.h,
+        //color: Colors.red,
+        child: ListView
+        (
+          scrollDirection: Axis.vertical,
+          children:
+          [
+            //SizedBox(height: 10,),
+            for(int i = 0 ; i < dataList.length; ++i)
+              contentSelctItem(i, dataList[i]),
+          ],
+        ),
       ),
     );
   }
@@ -399,7 +421,7 @@ Widget mainWidget(BuildContext context)=>
     //   child:
       Container
       (
-        width: 259.w,
+        width: 261.w,
         height: 190,
         decoration: ShapeDecoration(
           color: Color(0xFF1E1E1E),

@@ -339,21 +339,17 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   Widget mainWidget(BuildContext context)
   {
     var screen_height = MediaQuery.of(context).size.height;
-    //print('screen_height : $screen_height');
+    print('screen_height : $screen_height');
     var destHeigh = 700 / 840 * screen_height;
-    var scaleRatio = destHeigh / 622;
-    //print('scaleRatio : $scaleRatio');
-    var remainSpace = screen_height - 700; //650 + 50 을 뺀다.
-    //print('remainSpace : $remainSpace');
+    var scaleRatio = destHeigh / 650;
+    print('scaleRatio : $scaleRatio');
+    var remainSpace = screen_height - (700 * scaleRatio); //650 + 50 을 뺀다.
+    print('remainSpace : $remainSpace');
     double bottomOffset = 0;
     if (remainSpace >= 0)
     {
-      scaleRatio = 1;
+      //scaleRatio = 1;
       bottomOffset = remainSpace > 0 ? remainSpace * 0.5 : 0;
-    }
-    else
-    {
-      scaleRatio = 0.94;
     }
 
     return
@@ -476,7 +472,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         (
           //color: Colors.white,
           width: 310,
-          height: 649,
+          height: 650,
           alignment: Alignment.topRight,
           child:
           Padding
@@ -486,7 +482,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
             Container
             (
               width: 130,
-              height: 54,
+              height: 60,
               decoration: ShapeDecoration(
                 gradient: LinearGradient(
                   begin: Alignment(0.98, -0.18),

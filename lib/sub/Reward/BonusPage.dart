@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -339,20 +340,27 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   Widget mainWidget(BuildContext context)
   {
     var screen_height = MediaQuery.of(context).size.height;
-
-    print('screen_height : $screen_height');
-    print('screen_width : ${MediaQuery.of(context).size.width}');
-
     var destHeigh = 700 / 840 * screen_height;
     var scaleRatio = destHeigh / 650;
-    print('scaleRatio : $scaleRatio');
     var remainSpace = screen_height - (700 * scaleRatio); //650 + 50 을 뺀다.
-    print('remainSpace : $remainSpace');
+
+    if (kDebugMode) {
+      print('screen_height : $screen_height');
+      print('screen_width : ${MediaQuery.of(context).size.width}');
+      print('scaleRatio : $scaleRatio');
+      print('remainSpace : $remainSpace');
+    }
+
     double bottomOffset = 0;
     if (remainSpace >= 0)
     {
-      //scaleRatio = 1;
       bottomOffset = remainSpace > 0 ? remainSpace * 0.5 : 0;
+    }
+
+    var trans = false;
+    if (screen_height < 700)
+    {
+      trans = true;
     }
 
     return

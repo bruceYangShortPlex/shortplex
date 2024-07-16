@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -457,12 +458,14 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                                 {
                                   if (year < 1900 || year >= DateTime.now().year)
                                   {
-                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP);
+                                    snackbarComplete = false;
+                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP, ()
+                                    {
+                                      snackbarComplete = true;
+                                    });
                                     textEditingController1.text = '';
                                     year = 0;
                                   }
-
-                                  print('year onEditingComplete');
                                   FocusScope.of(context).unfocus();
                                 },
                                 onChanged: (value)
@@ -498,11 +501,14 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                                 {
                                   if (month < 1 || month > 12)
                                   {
-                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP);
+                                    snackbarComplete = false;
+                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP, ()
+                                    {
+                                      snackbarComplete = true;
+                                    });
                                     textEditingController2.text = '';
                                     month = 0;
                                   }
-                                  print('year onEditingComplete');
                                   FocusScope.of(context).unfocus();
                                 },
                                 onChanged: (value)
@@ -538,11 +544,15 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                                 {
                                   if (day < 1 || day > 31)
                                   {
-                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP);
+                                    snackbarComplete = false;
+                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                                    ()
+                                    {
+                                      snackbarComplete = true;
+                                    });
                                     textEditingController3.text = '';
                                     day = 0;
                                   }
-                                  print('year onEditingComplete');
                                   FocusScope.of(context).unfocus();
                                 },
                                 onChanged: (value)
@@ -566,10 +576,30 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           return;
                         }
 
-                        try {
+                        if (year == 0 || day == 0 || month == 0)
+                        {
+                          snackbarComplete = false;
+                          ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                          ()
+                          {
+                            snackbarComplete = true;
+                          });
+                          return;
+                        }
+
+                        try
+                        {
                           birtyDay = DateTime(year, month, day);
-                        } catch (e) {
-                          print('유효하지 않은 날짜입니다.');
+                        }
+                        catch (e)
+                        {
+                          //print('유효하지 않은 날짜입니다.');
+                          snackbarComplete = false;
+                          ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                          ()
+                          {
+                            snackbarComplete = true;
+                          });
                           return;
                         }
 
@@ -580,6 +610,9 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                         }
                         else
                         {
+                          if (kDebugMode) {
+                            print(birtyDay);
+                          }
                           snackbarComplete = false;
                           ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
                           ()

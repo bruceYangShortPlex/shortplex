@@ -151,29 +151,41 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     dropdownValue = codeList[0];
   }
 
-  Widget numberInputField() => Align
-  (
-    alignment: Alignment.topCenter,
-    child:
-    Padding
+  Widget numberInputField()
+  {
+    return
+    Stack
     (
-      padding:
-      EdgeInsets.only(top: 10, right: 20),
-      child:
-      Container
-      (
-        child: Row
-        (
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:
-          [
-              codePicker(),
-              numberInput(),
-          ],
-        ),
-      ),
-    ),
-  );
+      alignment: Alignment.centerLeft,
+      children:
+      [
+        //codePicker(),
+        numberInput(),
+        // GestureDetector
+        // (
+        //   onTap: ()
+        //   {
+        //     print('click');
+        //   },
+        //   child:
+        //   Container
+        //   (
+        //     width: 60,
+        //     height: 40,5tert
+        //     //color: Colors.white,
+        //     alignment: Alignment.center,
+        //     child:
+        //     Text
+        //     (
+        //       '+82',
+        //       style:
+        //       TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+        //     ),
+        //   )
+        // ),
+      ],
+    );
+  }
 
   Widget codePicker() =>
       Container
@@ -225,7 +237,8 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         alignment: Alignment.center,
         height: 80,
-        width: 280.w,
+        width: 280,
+        //padding: EdgeInsets.only(left: 60),
         child:
         CupertinoTextField
         (
@@ -237,12 +250,12 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           (
             borderRadius: BorderRadius.circular(8),
             color: Colors.grey.withOpacity(0.2),
-            border:
-            Border.all
-            (
-              color: Colors.white,
-              width: 0.5,
-            ),
+            // border:
+            // Border.all
+            // (
+            //   color: Colors.white,
+            //   width: 0.5,
+            // ),
           ),
           onChanged: (value)
           {

@@ -42,7 +42,7 @@ dependencies:
   firebase_auth: ^5.1.0
   firebase_analytics: ^11.0.0
   video_player: ^2.8.6
-  kakao_flutter_sdk: ^1.9.3
+  kakao_flutter_sdk: ^1.9.4
   google_sign_in: ^6.2.1
   flutter_screenutil:
   flutter_facebook_auth: ^7.0.1
@@ -54,6 +54,7 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   google_mobile_ads: ^5.1.0
   gif: ^2.3.0
+  intl_phone_number_field: ^0.2.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +90,7 @@ flutter:
     - assets/images/Reward/
     - assets/images/Reward/reward_event_popcorn/
     - assets/json/
+    - assets/countries/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

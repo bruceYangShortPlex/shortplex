@@ -115,21 +115,31 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
           (
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            child: Column
+            child:
+            SingleChildScrollView
             (
-              children:
-              [
-                SizedBox(height: 60,),
-                DateSelect(),
-                Container
+              child:
+              Container
+              (
+                height: 900,
+                child:
+                Column
                 (
-                  width: 390,
-                  height: 260,
-                  color: Colors.grey,
+                  children:
+                  [
+                    SizedBox(height: 60,),
+                    DateSelect(),
+                    Container
+                    (
+                      width: 390,
+                      height: 260,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 20,),
+                    titleSchoolRecord()
+                  ],
                 ),
-                SizedBox(height: 20,),
-                titleSchoolRecord(),
-              ],
+              ),
             ),
 
           ),
@@ -175,16 +185,19 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
           icon: const Icon(CupertinoIcons.calendar, color: Colors.white,),
           onPressed: () async
           {
-            pickedDate = await showDatePicker(
+            var selectDate = await showDatePicker(
               context: context,
               initialDate: DateTime.now(),
               firstDate: DateTime(2024),
               lastDate: DateTime.now(),
             );
 
-            setState(() {
-
-            });
+            if (selectDate != null)
+            {
+              setState(() {
+                pickedDate = selectDate;
+              });
+            }
           },
         ),
         SizedBox(width: 10,),
@@ -216,10 +229,11 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
     return
       Expanded
       (
-        child: Container
+        child:
+        Container
         (
             width: 390,
-            //color: Colors.blue,
+            color: Colors.blue,
             //alignment: Alignment.topCenter,
             child:
             Stack

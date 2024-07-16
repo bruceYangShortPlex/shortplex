@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                           Text(StringTable().Table![400062]!,style: TextStyle(color: Colors.white, fontSize: 16),),
                           Text(StringTable().Table![400063]!,style: TextStyle(color: Colors.white, fontSize: 16),),
                           SizedBox(height: 50,),
-                          _LoginButtons(),
+                          loginButtons(),
                         ],
                       ),
                     ),
@@ -135,18 +135,15 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: buttonEnabled
                   ? () async {
                       buttonEnabled = false;
-                      var result = await loginManager.LogIn(_type);
-                      if (result) {
-                        //var token = Get.find<Kakao_Login>().token;
-                        //서버에 주고 로그인.
-                      }
-                      buttonEnabled = true;
+                      loginManager.LogIn(_type).then((value) {
+                        buttonEnabled = true;
+                      },);
                     }
                   : null),
         ),
       );
 
-  Widget _LoginButtons() =>
+  Widget loginButtons() =>
       Obx(() => UserData.to.isLogin.value == true
           ? IconButton(
               onPressed: buttonEnabled

@@ -39,6 +39,12 @@ class _SettingPageState extends State<SettingPage>
   //final VoidCallback _callback = () {};
 
   @override
+  void initState() {
+    _isChecked = UserData.to.Alarmallow;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context)
   {
     return
@@ -70,7 +76,7 @@ class _SettingPageState extends State<SettingPage>
                   alignment: Alignment.centerLeft,
                   child:
                   CupertinoNavigationBarBackButton
-                    (
+                  (
                     color: Colors.white,
                     onPressed: ()
                     {
@@ -227,23 +233,34 @@ class _SettingPageState extends State<SettingPage>
     );
   }
 
-  Widget _toggleButton() =>
-  Transform.scale
-  (
-    scale: 0.7,
-    child:
-    CupertinoSwitch
-    (
-      value: _isChecked,
-      activeColor: Color(0xFF00FFBF),
-      onChanged: (bool? value)
+  Widget _toggleButton()
+  {
+    return
+    Obx(()
+    {
+      if (UserData.to.isLogin.value)
       {
-        //TODO : 서버에 알리기
-        setState(()
-        {
-          _isChecked = value ?? false;
-        });
-      },
-    ),
-  );
+        _isChecked = UserData.to.Alarmallow;
+      }
+      return
+      Transform.scale
+      (
+        scale: 0.7,
+        child:
+        CupertinoSwitch
+        (
+          value: _isChecked,
+          activeColor: Color(0xFF00FFBF),
+          onChanged: (bool? value)
+          {
+            //TODO : 서버에 알리기
+            setState(()
+            {
+              _isChecked = value ?? false;
+            });
+          },
+        ),
+      );
+    },);
+  }
 }

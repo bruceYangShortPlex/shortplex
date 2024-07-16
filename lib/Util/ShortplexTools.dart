@@ -602,13 +602,15 @@ SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position)
     '',
     padding: EdgeInsets.only(bottom: 30),
     messageText:
-    Center(
+    Center
+    (
       child:
       Text
-        (
+      (
         _content,
         style:
-        TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+        TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+      ),
     ),
     //colorText: Colors.blue,
     backgroundColor: Colors.white,
@@ -658,4 +660,17 @@ String ConvertCodeToString(String _genre)
   }
 
   return resultString;
+}
+
+extension InputValidate on String {
+  //이메일 포맷 검증
+  bool isValidEmailFormat() {
+    return RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(this);
+  }
+  //대쉬를 포함하는 010 휴대폰 번호 포맷 검증 (010-1234-5678)
+  bool isValidPhoneNumberFormat() {
+    return RegExp(r'^010-?([0-9]{4})-?([0-9]{4})$').hasMatch(this);
+  }
 }

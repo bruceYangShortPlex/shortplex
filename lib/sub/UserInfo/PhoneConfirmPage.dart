@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 
@@ -36,6 +36,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
         home:
         CupertinoPageScaffold
         (
+          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.black,
           navigationBar:
           CupertinoNavigationBar
@@ -66,14 +67,15 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
 
                 ),
                 Container
-                  (
+                (
                   width: MediaQuery.of(context).size.width * 0.3,
                   height: 50,
                   //color: Colors.green,
                   alignment: Alignment.center,
                   child:
                   Text
-                  (StringTable().Table![400052]!,
+                  (
+                    StringTable().Table![400052]!,
                     style:
                     TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
@@ -120,13 +122,15 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     child:
     Padding
     (
-      padding: const EdgeInsets.only(right: 320, top: 40),
+      padding: EdgeInsets.only(right: 280.w, top: 40),
       child: SizedBox
       (
       width: 89,
       height: 17,
       child:
-      Text(StringTable().Table![400052]!,
+      Text
+      (
+        StringTable().Table![400052]!,
         style:
         TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
 
@@ -184,7 +188,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
         // ),
         child:
         CupertinoPicker.builder
-          (
+        (
             //backgroundColor: Colors.white,
             scrollController: controller,
             itemExtent: 44,
@@ -194,19 +198,24 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
               setState(()
               {
                 dropdownValue = codeList[index];
-                print(dropdownValue);
+                if (kDebugMode) {
+                  print(dropdownValue);
+                }
               });
             },
             itemBuilder: (context, index)
             {
               return
-                Center(
-                  child:
-                  Text(
-                    codeList[index],
-                    style:
-                    TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-                );
+              Center
+              (
+                child:
+                Text
+                (
+                  codeList[index],
+                  style:
+                  TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                ),
+              );
             }
         ),
       );
@@ -216,7 +225,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         alignment: Alignment.center,
         height: 80,
-        width: 340,
+        width: 280.w,
         child:
         CupertinoTextField
         (
@@ -237,6 +246,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           ),
           onChanged: (value)
           {
+            print('input value : $value');
             phoneNumber = value;
             // 여기서 value는 사용자가 입력한 전화번호입니다.
             //print('전화번호: $phoneNumber');
@@ -250,7 +260,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     child:
     Padding
     (
-      padding: const EdgeInsets.only(left: 240,),
+      padding: const EdgeInsets.only(left: 210,),
       child:
       Container
       (
@@ -270,7 +280,29 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
           onTap: ()
           {
-              print('Send Number : ${dropdownValue} ${phoneNumber}');
+            if (phoneNumber.isEmpty)
+            {
+              ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.BOTTOM);
+              return;
+            }
+
+            var numberCheck = phoneNumber.isValidPhoneNumberFormat();
+            if (numberCheck == false)
+            {
+              print('wrong number');
+              return;
+            }
+
+            phoneNumber = phoneNumber.replaceAll('-', '');
+            if (phoneNumber.length > 12)
+            {
+              print('error');
+              return;
+            }
+
+            dropdownValue = dropdownValue.replaceAll('+', '');
+
+            print('Send Number : ${dropdownValue} ${phoneNumber}');
           },
         ),
       ),
@@ -279,7 +311,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
 
   Widget setCertificationNumber() =>
       Padding(
-        padding: const EdgeInsets.only(right: 180),
+        padding: const EdgeInsets.only(right: 140),
         child: Container
         (
           alignment: Alignment.center,
@@ -311,33 +343,51 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
         ),
       );
 
-  Widget checkNumber()=>
-  Container
-  (
-    alignment: Alignment.center,
-    width: 100,
-    height: 40,
-    decoration: ShapeDecoration(
-    shape: RoundedRectangleBorder(
-    side: BorderSide(
-    width: 1.50,
-    strokeAlign: BorderSide.strokeAlignCenter,
-    color: Color(0xFF494A4A),
-    ),
-    borderRadius: BorderRadius.circular(5),
-    ),
-    ),
-    child:
-    GestureDetector
+  Widget checkNumber()
+  {
+    return
+    Container
     (
+      alignment: Alignment.center,
+      width: 100,
+      height: 40,
+      decoration: ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 1.50,
+            strokeAlign: BorderSide.strokeAlignCenter,
+            color: Color(0xFF494A4A),
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+      ),
       child:
-      Text(StringTable().Table![400085]!,
-        style:
-        TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-      onTap: ()
-      {
-        ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.BOTTOM);
-      },
-    ),
-  );
+      GestureDetector
+      (
+        child:
+        Text(StringTable().Table![400085]!,
+          style:
+          TextStyle(fontSize: 16,
+            color: Colors.white,
+            fontFamily: 'NotoSans',
+            fontWeight: FontWeight.bold,),),
+        onTap: ()
+        {
+          if (certificationNumber.isEmpty && phoneNumber.isNotEmpty)
+          {
+            ShowCustomSnackbar(StringTable().Table![400089]!, SnackPosition.BOTTOM);
+            return;
+          }
+
+          if (certificationNumber.isEmpty || phoneNumber.isEmpty)
+          {
+            ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.BOTTOM);
+            return;
+          }
+
+          ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.BOTTOM);
+        },
+      ),
+    );
+  }
 }

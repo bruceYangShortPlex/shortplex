@@ -620,8 +620,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         ),
         //items: pageList,
       ),
-
-);
+    );
   }
 
   Widget popcornAnimation()

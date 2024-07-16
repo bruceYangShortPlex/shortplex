@@ -37,6 +37,12 @@ class UserData extends GetxController
   String userId = ''; //server id
   SelectResolutionType selectResolution = SelectResolutionType.HD;
 
+  String BirthDay = '';
+  String Gender = '';
+  String HP_Number = '';
+  String HP_CountryCode = '';
+  String Country = '';
+  bool Alarmallow = true;
 
   InitValue()
   {

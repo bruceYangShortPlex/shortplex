@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,7 @@ import 'package:shortplex/Network/Home_Content_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
+import 'package:shortplex/Network/UserInfo_Res.dart';
 import 'package:shortplex/Network/Watch_Req.dart';
 
 import '../Network/Comment_Req.dart';
@@ -15,6 +17,7 @@ import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
 import '../Network/OAuth_Res.dart';
 import '../Network/Recommended_Res.dart';
+import '../Network/UserInfo_Req.dart';
 import '../table/UserData.dart';
 
 enum Stat_Type
@@ -880,5 +883,118 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return;
+  }
+
+  Future<UserInfoRes?> Get_UserInfo() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/settings/userinfo';
+      print('Get_UserInfo send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_UserInfo res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  UserInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        //print('Get_Preview data = $data');
+        return data;
+      }
+      else
+      {
+        print('Get_Preview FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Preview error : $e');
+    }
+
+    return null;
+  }
+
+  Future<UserInfoRes?> Patch_UserInfo() async
+  {
+    try {
+      var heads = {
+        'apikey': ApiKey,
+        'Authorization': 'Bearer ${UserData.to.id}',
+        'Content-Type': 'application/json'
+      };
+      var url = 'https://www.quadra-system.com/api/v1/profile/settings/userinfo';
+      var reqBody = UserInfoReq
+      (
+        alarmallow: UserData.to.Alarmallow,
+        displayname: UserData.to.name.value,
+        birthDt: UserData.to.BirthDay,
+        email: UserData.to.email,
+        gender: UserData.to.Gender,
+        hpCountryCode: UserData.to.Country,
+        hpDestinationCode: '',
+        hpNumber: UserData.to.HP_Number,
+        photourl: UserData.to.photoUrl.value,
+      );
+      var bodys = jsonEncode(reqBody.toJson());
+
+      if (kDebugMode) {
+        print(
+            'Patch_UserInfo url : ${url} / heads : ${heads} / bodys : ${bodys}');
+      }
+
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
+
+      if (kDebugMode) {
+        print('Patch_UserInfo res.body ${res.body}');
+      }
+
+      if (res.statusCode == 200) {
+        var data = UserInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        if (kDebugMode) {
+          print('Patch_UserInfo data = ${data}');
+        }
+        return data;
+      }
+      else {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('Patch_UserInfo FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e) {
+      print('Patch_UserInfo error : $e');
+    }
+
+    print('send_edit_comment return null!!!');
+    return null;
+  }
+
+  Future<bool> Send_DeleteAccount() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/settings/userinfo';
+
+      print('Send_DeleteAccount url : ${url} / heads : ${heads}');
+      var res = await http.delete(Uri.parse(url), headers: heads);
+      print('Send_DeleteAccount res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        return true;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('Send_DeleteAccount FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_DeleteAccount error : $e');
+    }
+
+    print('Send_DeleteAccount return false!!!');
+    return false;
   }
 }

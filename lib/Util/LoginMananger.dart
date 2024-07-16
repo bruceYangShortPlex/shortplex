@@ -200,7 +200,6 @@ class LoginMananger
       provideruserid: userData.providerUid,
     );
 
-    userData.isLogin.value = isLogin;
     var result = await manager.Send_OAuthLogin(oauthLogin);
     if (result != null)
     {
@@ -209,10 +208,16 @@ class LoginMananger
       print('Login Sucess! ${userData}');
     }
 
-    // var jsonstring = await manager.send_GetUserData();
-    // var jsonData = jsonDecode(jsonstring);
-    // var providerid = jsonData['providerid'];
-    // print('providerid');
+    await manager.Get_UserInfo().then((value)
+    {
+      //TODO : 유저인포(userinfo) 처리해야한다. //리스트인게 이상함.문의해야.
+      if(value != null)
+      {
+
+      }
+    },);
+
+    userData.isLogin.value = isLogin;
   }
 
   UserData SetUserData(LoginType _loginType)

@@ -312,7 +312,8 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
   Widget setCertificationNumber() =>
       Padding(
         padding: const EdgeInsets.only(right: 140),
-        child: Container
+        child:
+        Container
         (
           alignment: Alignment.center,
           height: 80,
@@ -325,12 +326,12 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             style: TextStyle(fontFamily: 'NotoSans', fontSize: 18, color: Colors.white),
             decoration:
             BoxDecoration
-              (
+            (
               borderRadius: BorderRadius.circular(8),
               color:Colors.grey.withOpacity(0.2),
               border:
               Border.all
-                (
+              (
                 color: Colors.white,
                 width: 0.5,
               ),

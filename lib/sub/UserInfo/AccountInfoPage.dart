@@ -1,20 +1,35 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_number_field/models/country_code_model.dart';
+import 'package:intl_phone_number_field/models/dialog_config.dart';
+import 'package:intl_phone_number_field/util/country_list.dart';
+import 'package:intl_phone_number_field/view/country_code_bottom_sheet.dart';
 import 'package:shortplex/sub/UserInfo/PhoneConfirmPage.dart';
+import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 
 enum AccountInfoSubPageType
 {
   NONE,
-  SEX,
+  GENDER,
   BIRTH_DAY,
   COUNTRY,
   PHONENUMBER_INPUT,
+}
+
+enum GenderType
+{
+  NONE,
+  F,
+  M,
 }
 
 class AccountInfoPage extends StatefulWidget {
@@ -28,18 +43,28 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
 {
   var _infoCount = 0;
   var pagelist = ['2001','2002','2003','2004','2005','2006'];
-  late AnimationController tweenController;
+  //late AnimationController tweenController;
 
   @override
-  void initState() {
+  void initState()
+  {
+    selected = CountryCodeModel
+    (
+        name: "Korea, Republic of South Korea", dial_code: "+82", code: "KR"
+    );
+    loadFromJson().then((value)
+    {
+      loadCountryData(value);
+    },);
 
     super.initState();
     accountInfoCountCheck();
 
-    tweenController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
+    // tweenController = AnimationController
+    // (
+    //   duration: const Duration(milliseconds: 300),
+    //   vsync: this,
+    // );
   }
 
   void accountInfoCountCheck()
@@ -52,7 +77,10 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
 
   @override
   void dispose() {
-    tweenController.dispose();
+   // tweenController.dispose();
+    textEditingController1.dispose();
+    textEditingController2.dispose();
+    textEditingController3.dispose();
     super.dispose();
   }
 
@@ -68,6 +96,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
         home:
         CupertinoPageScaffold
         (
+          resizeToAvoidBottomInset: false,
           backgroundColor: Colors.black,
           navigationBar:
           CupertinoNavigationBar
@@ -122,73 +151,66 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
             width: MediaQuery.of(context).size.width,
             //color: Colors.yellow,
             child:
-            Stack
+            Padding
             (
-              children:
-              [
-                Padding
-                (
-                  padding: const EdgeInsets.only(top: 80),
-                  child:
-                  Column
+              padding: const EdgeInsets.only(top: 80),
+              child:
+              Column
+              (
+                children:
+                [
+                  _option(400049, AccountInfoSubPageType.GENDER),
+                  _option(400050, AccountInfoSubPageType.BIRTH_DAY),
+                  _option(400051, AccountInfoSubPageType.COUNTRY),
+                  _option(400052, AccountInfoSubPageType.PHONENUMBER_INPUT),
+                  Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+                  Padding
                   (
-                    children:
-                    [
-                      _option(400049, AccountInfoSubPageType.SEX),
-                      _option(400050, AccountInfoSubPageType.BIRTH_DAY),
-                      _option(400051, AccountInfoSubPageType.COUNTRY),
-                      _option(400052, AccountInfoSubPageType.PHONENUMBER_INPUT),
-                      Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
-                      Padding
-                      (
-                        padding: EdgeInsets.all(20),
-                        child:
-                        Text(StringTable().Table![400055]!,
-                          style:
-                          TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-                      ),
-                      Padding
-                      (
-                          padding: EdgeInsets.only(top: 20.0),
-                          child:
-                          Container
-                          (
-                            width: 356.w,
-                            height: 100,
-                            decoration: ShapeDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment(-1.00, 0.5),
-                                end: Alignment(1, 0.5),
-                                colors: [Color(0x330006A5).withOpacity(0.22), Color(0xFF00FFBF).withOpacity(0.22),],
-                              ),
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child:
-                            Column
-                              (
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children:
-                              [
-                                Text(StringTable().Table![400056]!,
-                                  style:
-                                  TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-                                SizedBox(height: 10,),
-                                Text('${_infoCount} / 4',
-                                  style:
-                                  TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-                              ],
-                            ),
-                          )
-                      ),
-                    ],
+                    padding: EdgeInsets.all(20),
+                    child:
+                    Text(StringTable().Table![400055]!,
+                      style:
+                      TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                   ),
-                ),
-                menuSelectPopup(),
-              ],
-            )
+                  Padding
+                  (
+                    padding: EdgeInsets.only(top: 20.0),
+                    child:
+                    Container
+                    (
+                      width: 356.w,
+                      height: 100,
+                      decoration: ShapeDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment(-1.00, 0.5),
+                          end: Alignment(1, 0.5),
+                          colors: [Color(0x330006A5).withOpacity(0.22), Color(0xFF00FFBF).withOpacity(0.22),],
+                        ),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child:
+                      Column
+                      (
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children:
+                        [
+                          Text(StringTable().Table![400056]!,
+                            style:
+                            TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                          SizedBox(height: 10,),
+                          Text('${_infoCount} / 4',
+                            style:
+                            TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                        ],
+                      ),
+                    )
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -256,7 +278,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
 
                       switch (_type)
                       {
-                        case AccountInfoSubPageType.SEX:
+                        case AccountInfoSubPageType.GENDER:
                           text = UserData.to.Gender;
                           break;
                         case AccountInfoSubPageType.PHONENUMBER_INPUT:
@@ -276,7 +298,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                     return
                       text.isNotEmpty ?
                       Text
-                        (
+                      (
                         textAlign: TextAlign.end,
                         text,
                         style:
@@ -300,31 +322,16 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                             case AccountInfoSubPageType.PHONENUMBER_INPUT:
                               Get.to(() => PhoneConfirmPage());
                               return;
-                            case AccountInfoSubPageType.SEX:
-                              setState(() {
-                                visibleUI = AccountInfoSubPageType.SEX;
-                              });
+                            case AccountInfoSubPageType.GENDER:
                               break;
                             case AccountInfoSubPageType.BIRTH_DAY:
-                              setState(() {
-                                visibleUI = AccountInfoSubPageType.BIRTH_DAY;
-                              });
                               break;
                             case AccountInfoSubPageType.COUNTRY:
-                              setState(() {
-                                visibleUI = AccountInfoSubPageType.COUNTRY;
-                              });
                             default:
                               print('Not found page type : ${_type}');
                               break;
                           }
-
-                          print('click type : $_type');
-
-                          setState(() {
-                            isPopupOpen = true;
-                            tweenController.forward(from: 0);
-                          });
+                          menuSelectPopup(_type);
                         },
                       );
                   },),
@@ -336,308 +343,463 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
       ],
     );
   }
-  bool isPopupOpen = false;
-  Widget menuSelectPopup()
+
+  List<CountryCodeModel>? countries;
+  late CountryCodeModel selected;
+  var dialogConfig = DialogConfig();
+  Future menuSelectPopup(AccountInfoSubPageType _type)
   {
+    gender = GenderType.NONE;
     return
-    IgnorePointer
+    showModalBottomSheet
     (
-      ignoring: isPopupOpen == false,
-      child:
-      FadeTransition
+      shape:
+      const RoundedRectangleBorder
       (
-        opacity: tweenController,
-        child:
-        GestureDetector
+        borderRadius:
+        BorderRadius.vertical
         (
-          onTap: ()
-          {
-            setState(() {
-              isPopupOpen = false;
-              tweenController.reverse();
-            });
-          },
-          child:
-          Container
-          (
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            color: Colors.black54,
-            alignment: Alignment.center,
-          ),
+          top: Radius.circular(30)
         )
       ),
+      barrierColor: Colors.black54,
+      isScrollControlled: true,
+      backgroundColor:
+      const Color(0xFF1B1B1B),
+      context: context,
+      builder: (context)
+      {
+        return
+        _type == AccountInfoSubPageType.COUNTRY ? countrySelect()
+            :
+        _type == AccountInfoSubPageType.GENDER ? genderSelect ()
+            :
+        _type == AccountInfoSubPageType.BIRTH_DAY ? inputBirthDay()
+            :
+        SizedBox();
+      }
     );
   }
 
-  Widget selectGender(AccountInfoSubPageType _type)
+  int year = 0;
+  int month = 0;
+  int day = 0;
+  DateTime? birtyDay;
+  TextEditingController textEditingController1 = TextEditingController();
+  TextEditingController textEditingController2 = TextEditingController();
+  TextEditingController textEditingController3 = TextEditingController();
+  var snackbarComplete = true;
+  Widget inputBirthDay()
   {
     return
-      Visibility
+      StatefulBuilder
       (
-        visible: _type ==  AccountInfoSubPageType.SEX && visibleUI == AccountInfoSubPageType.SEX,
-        child:
-        Container
-          (
-          padding: EdgeInsets.only(top: 8),
-          height: 40,
-          //width: 200,
-          child:
-          Row
-            (
-            //crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children:
-            [
-              GestureDetector
-                (
-                child: Container
-                  (
-                  alignment: Alignment.center,
-                  width: 75,
-                  height: 50,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF2E2E2E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
-                  child:
-                  Text
-                    (
-                    StringTable().Table![400058]!,
-                    style:
-                    const TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                onTap: ()
-                {
-                  print('gender select M');
-                  //gender 전달.
-                },
-              ),
-              SizedBox(width: 20,),
-              GestureDetector
-                (
+          builder: (BuildContext context, StateSetter setState)
+          {
+            return
+              Container
+              (
+                padding: EdgeInsets.only(top: 50),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.8,
+                //color: Colors.transparent,
                 child:
-                Container
-                  (
-                  alignment: Alignment.center,
-                  width: 75,
-                  height: 50,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF2E2E2E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
-                  child:
-                  Text
+                Column
+                (
+                  children:
+                  [
+                    Container
                     (
-                    StringTable().Table![400059]!,
-                    style:
-                    const TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
+                      width:MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.only(left: 36.w),
+                      //color: Colors.white,
+                      height: 40,
+                      child:
+                      Text
+                      (
+                        StringTable().Table![400049]!,
+                        style:
+                        TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      ),
+                    ),
+                    //SizedBox(height: 10,),
+                    Container
+                    (
+                        width: 310.w,//MediaQuery.of(context).size.width,
+                        height: 45,
+                        child:
+                        Row
+                        (
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children:
+                          [
+                            Container
+                            (
+                              alignment: Alignment.center,
+                              height : 45,
+                              width : 120,
+                              child:
+                              CupertinoTextField
+                              (
+                                controller: textEditingController1,
+                                placeholder: 'YYYY',
+                                textAlign: TextAlign.center,
+                                cursorColor: Colors.white,
+                                keyboardType: TextInputType.number,
+                                style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
+                                decoration:
+                                BoxDecoration
+                                (
+                                  borderRadius: BorderRadius.circular(8),
+                                  color:Color(0xFF2E2E2E),
+                                ),
+                                onEditingComplete: ()
+                                {
+                                  if (year < 1900 || year >= DateTime.now().year)
+                                  {
+                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP);
+                                    textEditingController1.text = '';
+                                    year = 0;
+                                  }
+
+                                  print('year onEditingComplete');
+                                  FocusScope.of(context).unfocus();
+                                },
+                                onChanged: (value)
+                                {
+                                  if (int.tryParse(value) != null)
+                                  {
+                                    year = int.parse(value);
+                                  }
+                                },
+                              ),
+                            ),
+                            Container
+                            (
+                              alignment: Alignment.center,
+                              height : 45,
+                              width : 80,
+                              child:
+                              CupertinoTextField
+                              (
+                                controller: textEditingController2,
+                                placeholder: 'MM',
+                                textAlign: TextAlign.center,
+                                cursorColor: Colors.white,
+                                keyboardType: TextInputType.number,
+                                style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
+                                decoration:
+                                BoxDecoration
+                                (
+                                  borderRadius: BorderRadius.circular(8),
+                                  color:Color(0xFF2E2E2E),
+                                ),
+                                onEditingComplete: ()
+                                {
+                                  if (month < 1 || month > 12)
+                                  {
+                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP);
+                                    textEditingController2.text = '';
+                                    month = 0;
+                                  }
+                                  print('year onEditingComplete');
+                                  FocusScope.of(context).unfocus();
+                                },
+                                onChanged: (value)
+                                {
+                                  if (int.tryParse(value) != null)
+                                  {
+                                    month = int.parse(value);
+                                  }
+                                },
+                              ),
+                            ),
+                            Container
+                            (
+                              alignment: Alignment.center,
+                              height : 45,
+                              width : 80,
+                              child:
+                              CupertinoTextField
+                              (
+                                controller: textEditingController3,
+                                placeholder: 'DD',
+                                textAlign: TextAlign.center,
+                                cursorColor: Colors.white,
+                                keyboardType: TextInputType.number,
+                                style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
+                                decoration:
+                                BoxDecoration
+                                  (
+                                  borderRadius: BorderRadius.circular(8),
+                                  color:Color(0xFF2E2E2E),
+                                ),
+                                onEditingComplete: ()
+                                {
+                                  if (day < 1 || day > 31)
+                                  {
+                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP);
+                                    textEditingController3.text = '';
+                                    day = 0;
+                                  }
+                                  print('year onEditingComplete');
+                                  FocusScope.of(context).unfocus();
+                                },
+                                onChanged: (value)
+                                {
+                                  if (int.tryParse(value) != null)
+                                  {
+                                    day = int.parse(value);
+                                  }
+                                },
+                              ),
+                            )
+                          ],
+                        )
+                    ),
+                    SizedBox(height: 30,),
+                    GestureDetector
+                    (
+                      onTap: ()
+                      {
+                        if (snackbarComplete == false) {
+                          return;
+                        }
+
+                        try {
+                          birtyDay = DateTime(year, month, day);
+                        } catch (e) {
+                          print('유효하지 않은 날짜입니다.');
+                          return;
+                        }
+
+                        if (birtyDay!.year == year && birtyDay!.month == month && birtyDay!.day == day)
+                        {
+                          //서버에 보내고 확인.
+                          Navigator.pop(context);
+                        }
+                        else
+                        {
+                          snackbarComplete = false;
+                          ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                          ()
+                          {
+                            snackbarComplete = true;
+                          });
+                        }
+                      },
+                      child:
+                      Container
+                      (
+                        alignment: Alignment.center,
+                        height: 45,
+                        width: 310.w,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF00FFBF),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child:
+                        Text
+                          (
+                          StringTable().Table![800017]!,
+                          style:
+                          TextStyle(fontSize: 19,  color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                onTap: ()
-                {
-                  print('gender select F');
-                  //gender 전달.
-                },
-              ),
-              SizedBox(width: 20,),
-            ],
-          ) ,
-          //color: Colors.yellow,
-        ),
+              );
+          }
       );
   }
 
-  Widget selectBirthDay(AccountInfoSubPageType _type)
+  var gender = GenderType.NONE;
+  Widget genderSelect()
   {
     return
-      Visibility
-      (
-        visible: _type ==  AccountInfoSubPageType.BIRTH_DAY && visibleUI == AccountInfoSubPageType.BIRTH_DAY,
-        child:
+    StatefulBuilder
+    (
+      builder: (BuildContext context, StateSetter setState)
+      {
+        return
         Container
-          (
-          padding: EdgeInsets.only(top: 8),
-          height: 40,
-          //width: 200,
+        (
+          padding: EdgeInsets.only(top: 50),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.8,
+          //color: Colors.transparent,
           child:
-          Row
+          Column
           (
-            //crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
             children:
             [
-              // GestureDetector
-              // (
-              //   child:
-                Container
-                (
-                  alignment: Alignment.center,
-                  width: 75,
-                  height: 50,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF2E2E2E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
-                  child:
-                  DropButton(),
-                  // Text
-                  //   (
-                  //   StringTable().Table![400058]!,
-                  //   style:
-                  //   const TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  // ),
+              Container
+              (
+                width:MediaQuery.of(context).size.width,
+                padding: EdgeInsets.only(left: 36.w),
+                //color: Colors.white,
+                height: 40,
+                child:
+                Text
+                  (
+                  StringTable().Table![400049]!,
+                  style:
+                  TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
-              //   onTap: ()
-              //   {
-              //     print('gender select M');
-              //     //gender 전달.
-              //   },
-              // ),
-              SizedBox(width: 20,),
+              ),
+              //SizedBox(height: 10,),
+              Container
+              (
+                  width: 310.w,//MediaQuery.of(context).size.width,
+                  height: 45,
+                  child:
+                  Row
+                  (
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children:
+                    [
+                      GestureDetector
+                      (
+                        onTap : ()
+                        {
+                          setState(() {
+                            gender = GenderType.F;
+                          });
+                        },
+                        child:
+                        Container
+                        (
+                          alignment: Alignment.center,
+                          height: 45,
+                          width: 140,
+                          decoration: BoxDecoration(
+                            color: gender == GenderType.F ? Color(0xFF00FFBF) : Color(0xFF2E2E2E),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child:
+                          Text
+                            (
+                            StringTable().Table![400058]!,
+                            style:
+                            TextStyle(fontSize: 20,  color: gender == GenderType.F ? Colors.black : Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          ),
+                        ),
+                      ),
+                      //SizedBox(width: 20,),
+                      GestureDetector
+                      (
+                        onTap: ()
+                        {
+                          setState(() {
+                            gender = GenderType.M;
+                          });
+                        },
+                        child: Container
+                        (
+                          alignment: Alignment.center,
+                          height: 45,
+                          width: 140,
+                          decoration: BoxDecoration(
+                            color: gender == GenderType.M ? Color(0xFF00FFBF) : Color(0xFF2E2E2E),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child:
+                          Text
+                            (
+                            StringTable().Table![400059]!,
+                            style:
+                            TextStyle(fontSize: 20, color: gender == GenderType.M ? Colors.black : Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+              ),
+              SizedBox(height: 30,),
               GestureDetector
               (
+                onTap: ()
+                {
+                  Navigator.pop(context);
+                  //서버에 보내고 확인.
+                },
                 child:
                 Container
-                  (
-                  alignment: Alignment.center,
-                  width: 75,
-                  height: 50,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF2E2E2E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
-                  child:
-                  Text
-                    (
-                    StringTable().Table![400059]!,
-                    style:
-                    const TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                onTap: ()
-                {
-                  print('gender select F');
-                  //gender 전달.
-                },
-              ),
-              SizedBox(width: 20,),
-              GestureDetector
-                (
-                child: Container
-                  (
-                  alignment: Alignment.center,
-                  width: 75,
-                  height: 50,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF2E2E2E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
-                  child:
-                  Text
-                    (
-                    StringTable().Table![400058]!,
-                    style:
-                    const TextStyle(fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                onTap: ()
-                {
-                  print('gender select M');
-                  //gender 전달.
-                },
-              ),
-              SizedBox(width: 20,),
-              GestureDetector
-              (
-                child: Container
                 (
                   alignment: Alignment.center,
-                  width: 75,
-                  height: 50,
-                  decoration: ShapeDecoration(
-                    color: Color(0xFF00FFBF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
+                  height: 45,
+                  width: 310.w,
+                  decoration: BoxDecoration(
+                    color: gender != GenderType.NONE ? Color(0xFF00FFBF) : Color(0xFF2E2E2E),
+                    borderRadius: BorderRadius.circular(7),
                   ),
                   child:
                   Text
                   (
                     StringTable().Table![800017]!,
                     style:
-                    const TextStyle(fontSize: 15, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    TextStyle(fontSize: 19,  color: gender != GenderType.NONE ? Colors.black : Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
-                onTap: ()
-                {
-                  print('gender select M');
-                  //gender 전달.
-                },
               ),
-              SizedBox(width: 30,),
             ],
-          ) ,
-          //color: Colors.yellow,
-        ),
-      );
+          ),
+        );
+      }
+    );
   }
 
-  Widget DropButton()
+  Widget countrySelect()
   {
     return
-    Container
+    countries != null ?
+    SingleChildScrollView
     (
-      width: 300.w,
-      height: 300.h,
-      alignment: Alignment.center,
       child:
-      CarouselSlider.builder
+      CountryCodeBottomSheet
       (
-        itemCount: pagelist.length,
-        itemBuilder: (context, index, realIndex)
+        countries: countries!,
+        selected: selected,
+        onSelected: (countryCodeModel)
         {
-          return
-          Text
-          (
-            pagelist[index],
-            style:
-            TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-          );
-        },
-        //items: pagelist,
-        options:
-        CarouselOptions
-        (
-          // autoPlayInterval: Duration(milliseconds: 1000),
-          // autoPlayAnimationDuration : Duration(milliseconds: 1010),
-          // autoPlayCurve: Curves.linear,
-          enlargeFactor: 1,
-          enlargeCenterPage: false,
-          viewportFraction:1,
-          height: 50,
-          //: true,
-          //aspectRatio: 1.0,
-          scrollDirection: Axis.vertical,
-          enableInfiniteScroll: false,
-          initialPage: 0,
-          onPageChanged: (index, reason)
+          setState(()
           {
-
-          },
-        ),
+            selected = countryCodeModel;
+          });
+        },
+        dialogConfig: dialogConfig,
       ),
-    );
+    )
+    : const SizedBox();
+  }
+
+  Future<String> loadFromJson() async
+  {
+    return await rootBundle.loadString('assets/countries/country_list_en.json');
+  }
+
+  void loadCountryData(String data)
+  {
+    print('loadCountryData');
+    Iterable jsonResult = json.decode(data);
+    countries = List<CountryCodeModel>.from(jsonResult.map((model) {
+      try
+      {
+        return CountryCodeModel.fromJson(model);
+      }
+      catch (e, stackTrace)
+      {
+        print(e);
+        print(stackTrace);
+      }
+    }));
+    setState(() {});
+  }
+
+  Widget selectGender(AccountInfoSubPageType _type)
+  {
+    return
+    Container();
   }
 }

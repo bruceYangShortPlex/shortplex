@@ -593,7 +593,7 @@ void activeBottomSheet(Widget _widget)
   );
 }
 
-SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position)
+SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position, [Function? _callback])
 {
   return
   Get.snackbar
@@ -615,7 +615,16 @@ SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position)
     //colorText: Colors.blue,
     backgroundColor: Colors.white,
     snackPosition: _position,
-    duration: Duration(seconds: 3),
+    duration: Duration(seconds: 2),
+    snackbarStatus: (status)
+    {
+      if (status == SnackbarStatus.CLOSED)
+      {
+        if (_callback != null) {
+          _callback();
+        }
+      }
+    },
   );
 }
 

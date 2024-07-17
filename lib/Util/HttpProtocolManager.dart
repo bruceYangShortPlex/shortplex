@@ -103,7 +103,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<String> Send_GetUserData() async
+  Future<String> Get_UserData() async
   {
     var uri = 'https://www.quadra-system.com/api/v1/account/user';
     var userData = UserData.to;

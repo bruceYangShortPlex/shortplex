@@ -210,10 +210,9 @@ class LoginMananger
 
     await manager.Get_UserInfo().then((value)
     {
-      //TODO : 유저인포(userinfo) 처리해야한다. //리스트인게 이상함.문의해야.
       if(value != null)
       {
-
+        userData.SetInfo(value);
       }
     },);
 

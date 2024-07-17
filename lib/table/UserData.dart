@@ -1,9 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shortplex/Network/UserInfo_Res.dart';
 
 enum SelectResolutionType
 {
@@ -115,6 +117,32 @@ class UserData extends GetxController
     }
 
     return IconPath;
+  }
+
+  SetInfo(UserInfoRes? _data)
+  {
+    if (_data == null)
+    {
+      if (kDebugMode)
+      {
+        print('User Info Res is Null');
+      }
+      return;
+    }
+
+    for(var item in _data.data!.items!)
+    {
+      if (item.userId == userId)
+      {
+        BirthDay = item.birthDt;
+        Gender = item.gender;
+        HP_Number = item.hpNumber;
+        HP_CountryCode = item.hpCountryCode;
+        Country = item.hpCountryCode;
+        Alarmallow = item.alarmallow;
+        break;
+      }
+    }
   }
 }
 

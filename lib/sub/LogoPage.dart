@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:gif/gif.dart';
 import 'CupertinoMain.dart';
 
 class LogoPage extends StatefulWidget {
@@ -9,11 +11,14 @@ class LogoPage extends StatefulWidget {
   _LogoPageState createState() => _LogoPageState();
 }
 
-class _LogoPageState extends State<LogoPage> {
+class _LogoPageState extends State<LogoPage> with TickerProviderStateMixin
+{
   // String text = '';
   // final String fullText = 'SHORTPLEX';
 
   //Completer<void> completer = Completer<void>();
+
+  late final GifController gifController;
 
   Future<void> waitUntilCondition() async
   {
@@ -34,17 +39,31 @@ class _LogoPageState extends State<LogoPage> {
   @override
   void initState()
   {
+    gifController = GifController(vsync: this);
     super.initState();
     //Future.delayed(Duration(seconds: 1)).then((value) => completer.complete());
+
+    gifController.addListener(()
+    {
+      if (gifController.status == AnimationStatus.completed )
+      {
+        if (kDebugMode)
+        {
+          print('logo play complete');
+        }
+
+        Get.off(() => CupertinoMain(), transition: Transition.noTransition,);
+      }
+    },);
   }
 
-  @override
-  void didChangeDependencies() async
-  {
-    super.didChangeDependencies();
-
-    await waitUntilCondition();
-  }
+  // @override
+  // void didChangeDependencies() async
+  // {
+  //   super.didChangeDependencies();
+  //
+  //   await waitUntilCondition();
+  // }
 
   @override
   Widget build(BuildContext context)
@@ -52,16 +71,54 @@ class _LogoPageState extends State<LogoPage> {
     return Scaffold
     (
       backgroundColor: Colors.black,
-      body: Align
+      body:
+      Container
       (
-        alignment: Alignment.center,
-        child: Column
+        padding: const EdgeInsets.all(10),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Colors.transparent,
+        child:
+        Column
         (
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [LogoImage(),],
-        ),
-      ),
+          children:
+          [
+            Gif
+            (
+              fit: BoxFit.contain,
+              //fps: 30,
+              duration: const Duration(seconds: 1),
+              controller: gifController,
+              autostart: Autostart.once,
+              //repeat: ImageRepeat.repeat,
+              placeholder: (context) =>
+              const Center(child: SizedBox()),
+              image: const AssetImage('assets/images/main/logo_ani.gif'),
+            ),
+            // ElevatedButton
+            // (
+            //   onPressed: ()
+            //   {
+            //     gifController.forward(from: 0);
+            //   },
+            //   child: Text('Click')
+            // ),
+          ],
+        )
+
+      )
+      // Align
+      // (
+      //   alignment: Alignment.center,
+      //   child:
+      //   Column
+      //   (
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     crossAxisAlignment: CrossAxisAlignment.center,
+      //     children: [LogoImage(),],
+      //   ),
+      // ),
     );
   }
 

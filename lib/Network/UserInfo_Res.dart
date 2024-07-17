@@ -25,7 +25,6 @@ class UserInfoRes
     }
     return map;
   }
-
 }
 
 /// count : 1

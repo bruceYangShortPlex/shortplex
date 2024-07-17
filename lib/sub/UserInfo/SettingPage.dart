@@ -253,11 +253,17 @@ class _SettingPageState extends State<SettingPage>
           activeColor: Color(0xFF00FFBF),
           onChanged: (bool? value)
           {
-            //TODO : 서버에 알리기
-            setState(()
+            UserData.to.Alarmallow = value ?? false;
+
+            HttpProtocolManager.to.Patch_UserInfo().then((value)
             {
-              _isChecked = value ?? false;
-            });
+              UserData.to.SetInfo(value);
+
+              setState(()
+              {
+                _isChecked = UserData.to.Alarmallow;
+              });
+            },);
           },
         ),
       );

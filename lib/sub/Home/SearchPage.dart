@@ -308,7 +308,7 @@ Widget mainWidget(BuildContext context)=>
         (
           pagingController: _pagingController,
           gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount
+          const SliverGridDelegateWithFixedCrossAxisCount
           (
             mainAxisSpacing: 15,
             crossAxisSpacing: 15,

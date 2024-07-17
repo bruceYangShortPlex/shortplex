@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_number_field/models/country_code_model.dart';
 import 'package:intl_phone_number_field/models/dialog_config.dart';
-import 'package:intl_phone_number_field/util/country_list.dart';
 import 'package:intl_phone_number_field/view/country_code_bottom_sheet.dart';
 import 'package:shortplex/sub/UserInfo/PhoneConfirmPage.dart';
 import '../../Util/ShortplexTools.dart';
@@ -321,7 +319,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           switch (_type)
                           {
                             case AccountInfoSubPageType.PHONENUMBER_INPUT:
-                              Get.to(() => PhoneConfirmPage());
+                              Get.to(() => const PhoneConfirmPage(), arguments: countries);
                               return;
                             case AccountInfoSubPageType.GENDER:
                               break;

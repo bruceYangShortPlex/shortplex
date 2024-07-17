@@ -3,6 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_number_field/models/country_code_model.dart';
+import 'package:intl_phone_number_field/models/dialog_config.dart';
+import 'package:intl_phone_number_field/view/country_code_bottom_sheet.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 
@@ -24,6 +27,30 @@ class PhoneConfirmPage extends StatefulWidget {
 
 class _PhoneConfirmPageState extends State<PhoneConfirmPage>
 {
+  String phoneNumber = ''; // 사용자가 입력한 전화번호를 저장할 변수
+  String dropdownValue = '';
+  String certificationNumber = '';
+
+  TextEditingController textEditingController1 = TextEditingController();
+  TextEditingController textEditingController2 = TextEditingController();
+
+  @override
+  void initState()
+  {
+    countries = Get.arguments;
+    selected = CountryCodeModel
+    (
+        name: "Korea, Republic of South Korea", dial_code: "+82", code: "KR"
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    textEditingController1.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context)
   {
@@ -103,8 +130,11 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
                 [
                   Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
                   numberConfirmTitle(),
-                  numberInputField(),
+                  SizedBox(height: 20,),
+                  numberInput(),
+                  SizedBox(height: 20,),
                   getCertificationNumber(),
+                  certificationTitle(),
                   setCertificationNumber(),
                   checkNumber(),
                 ],
@@ -122,7 +152,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     child:
     Padding
     (
-      padding: EdgeInsets.only(right: 280.w, top: 40),
+      padding: EdgeInsets.only(right: 210.w, top: 40),
       child: SizedBox
       (
       width: 89,
@@ -138,134 +168,130 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     ),
   );
 
-  final FixedExtentScrollController controller = FixedExtentScrollController(initialItem: 0);
-  List<String> codeList = ['+82', '+1', '+44', '+61', '+81'];
-  String phoneNumber = ''; // 사용자가 입력한 전화번호를 저장할 변수
-  String dropdownValue = '';
-  String certificationNumber = '';
-
-  @override
-  void initState()
-  {
-    super.initState();
-    dropdownValue = codeList[0];
-  }
-
-  Widget numberInputField()
+  bool snackbarComplete = true;
+  Widget numberInput()
   {
     return
-    Stack
+    Container
     (
-      alignment: Alignment.centerLeft,
-      children:
-      [
-        //codePicker(),
-        numberInput(),
-        // GestureDetector
-        // (
-        //   onTap: ()
-        //   {
-        //     print('click');
-        //   },
-        //   child:
-        //   Container
-        //   (
-        //     width: 60,
-        //     height: 40,5tert
-        //     //color: Colors.white,
-        //     alignment: Alignment.center,
-        //     child:
-        //     Text
-        //     (
-        //       '+82',
-        //       style:
-        //       TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-        //     ),
-        //   )
-        // ),
-      ],
+      height: 40,
+      width: 320,
+      decoration:
+      ShapeDecoration
+      (
+        color: Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      ),
+      child:
+      Row
+      (
+        mainAxisAlignment: MainAxisAlignment.center,
+         children:
+         [
+           GestureDetector
+           (
+             onTap: ()
+             {
+               countrySelectPopup();
+             },
+             child:
+             Container
+             (
+               width: 70,
+               height: 40,
+               //color: Colors.red,
+               alignment: Alignment.center,
+               child:
+               Text
+               (
+                 selected.dial_code,
+                 style:
+                 TextStyle(fontSize: 18, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
+               ),
+             ),
+           ),
+           Container
+           (
+             alignment: Alignment.center,
+             height: 60,
+             width: 240,
+             padding: EdgeInsets.zero,
+             child:
+             CupertinoTextField
+             (
+               maxLength: 12,
+               controller: textEditingController1,
+               cursorColor: Colors.white,
+               keyboardType: TextInputType.number,
+               style: TextStyle(
+                   fontFamily: 'NotoSans', fontSize: 18, color: Colors.white),
+               decoration:
+               BoxDecoration
+               (
+                 borderRadius: BorderRadius.circular(8),
+                 color: Colors.transparent,
+                 // border:
+                 // Border.all
+                 // (
+                 //   color: Colors.white,
+                 //   width: 0.5,
+                 // ),
+               ),
+               onEditingComplete: ()
+               {
+                 phoneNumber = textEditingController1.text;
+
+                 if (phoneNumber.length > 12)
+                 {
+                   if (snackbarComplete) {
+                     snackbarComplete = false;
+                     ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP, () {
+                       snackbarComplete = true;
+                     });
+                   }
+                   return;
+                 }
+
+                 FocusScope.of(context).unfocus();
+               },
+               onChanged: (value)
+               {
+                 if (int.tryParse(value) == null || value[value.length -1] == ' ')
+                 {
+                   textEditingController1.text = textEditingController1.text.replaceAll(value[value.length -1], '');
+                 }
+                 // 여기서 value는 사용자가 입력한 전화번호입니다.
+                 //print('전화번호: $phoneNumber');
+               },
+             ),
+           ),
+         ],
+      )
+
     );
   }
 
-  Widget codePicker() =>
-      Container
+  Widget certificationTitle() => Align
+  (
+    alignment: Alignment.center,
+    child:
+    Padding
       (
-        //alignment: Alignment.center,
-        //height: 50,
-        width: 80,
-        // decoration: BoxDecoration
-        // (
-        //     borderRadius: BorderRadius.circular(12),
-        //     color: Colors.deepPurple
-        // ),
-        child:
-        CupertinoPicker.builder
-        (
-            //backgroundColor: Colors.white,
-            scrollController: controller,
-            itemExtent: 44,
-            childCount: codeList.length,
-            onSelectedItemChanged: (index)
-            {
-              setState(()
-              {
-                dropdownValue = codeList[index];
-                if (kDebugMode) {
-                  print(dropdownValue);
-                }
-              });
-            },
-            itemBuilder: (context, index)
-            {
-              return
-              Center
-              (
-                child:
-                Text
-                (
-                  codeList[index],
-                  style:
-                  TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                ),
-              );
-            }
-        ),
-      );
-
-  Widget numberInput() =>
-      Container
+      padding: EdgeInsets.only(right: 210.w, top: 10),
+      child: SizedBox
       (
-        alignment: Alignment.center,
-        height: 80,
-        width: 280,
-        //padding: EdgeInsets.only(left: 60),
+        width: 89,
+        height: 17,
         child:
-        CupertinoTextField
-        (
-          cursorColor: Colors.white,
-          keyboardType: TextInputType.phone,
-          style: TextStyle(fontFamily: 'NotoSans', fontSize: 18, color: Colors.white),
-          decoration:
-          BoxDecoration
+        Text
           (
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.grey.withOpacity(0.2),
-            // border:
-            // Border.all
-            // (
-            //   color: Colors.white,
-            //   width: 0.5,
-            // ),
-          ),
-          onChanged: (value)
-          {
-            print('input value : $value');
-            phoneNumber = value;
-            // 여기서 value는 사용자가 입력한 전화번호입니다.
-            //print('전화번호: $phoneNumber');
-          },
-        ),
-      );
+          StringTable().Table![400083]!,
+          style:
+          TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+
+      ),
+    ),
+  );
 
   Widget getCertificationNumber() => Align
   (
@@ -273,50 +299,62 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     child:
     Padding
     (
-      padding: const EdgeInsets.only(left: 210,),
+      padding: EdgeInsets.only(left: 170.w,),
       child:
-      Container
+      GestureDetector
       (
-        alignment: Alignment.center,
-        width: 142,
-        height: 35,
-        decoration: ShapeDecoration
-        (
-          color: Color(0xFF1E1E1E),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-        ),
-        child:
-        GestureDetector
-        (
-          child: Text(StringTable().Table![400084]!,
-            style:
-            TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-          onTap: ()
+        onTap: ()
+        {
+          if (phoneNumber.isEmpty)
           {
-            if (phoneNumber.isEmpty)
+            if (snackbarComplete)
             {
-              ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.BOTTOM);
-              return;
+              snackbarComplete = false;
+              ShowCustomSnackbar(
+                  StringTable().Table![400088]!, SnackPosition.TOP, ()
+              {
+                snackbarComplete = true;
+              });
             }
+            return;
+          }
 
-            var numberCheck = phoneNumber.isValidPhoneNumberFormat();
-            if (numberCheck == false)
-            {
-              print('wrong number');
-              return;
-            }
+          var numberCheck = phoneNumber.isValidPhoneNumberFormat();
+          if (numberCheck == false)
+          {
+            print('wrong number');
+            return;
+          }
 
-            phoneNumber = phoneNumber.replaceAll('-', '');
-            if (phoneNumber.length > 12)
-            {
-              print('error');
-              return;
-            }
+          phoneNumber = phoneNumber.replaceAll('-', '');
+          if (phoneNumber.length > 12)
+          {
+            print('error');
+            return;
+          }
 
-            dropdownValue = dropdownValue.replaceAll('+', '');
+          dropdownValue = dropdownValue.replaceAll('+', '');
 
-            print('Send Number : ${dropdownValue} ${phoneNumber}');
-          },
+          print('Send Number : ${dropdownValue} ${phoneNumber}');
+        },
+        child:
+        Container
+        (
+          alignment: Alignment.center,
+          width: 142,
+          height: 35,
+          decoration: ShapeDecoration
+          (
+            color: Color(0xFF1E1E1E),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+          ),
+          child:
+          Text
+          (
+            StringTable().Table![400084]!,
+            style:
+            TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+          ),
         ),
       ),
     ),
@@ -324,16 +362,19 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
 
   Widget setCertificationNumber() =>
       Padding(
-        padding: const EdgeInsets.only(right: 140),
+        padding: EdgeInsets.only(right: 0),
         child:
         Container
         (
           alignment: Alignment.center,
           height: 80,
-          width: 240,
+          width: 320,
           child:
           CupertinoTextField
           (
+            maxLength: 6,
+            controller: textEditingController2,
+            textAlign: TextAlign.center,
             cursorColor: Colors.white,
             keyboardType: TextInputType.number,
             style: TextStyle(fontFamily: 'NotoSans', fontSize: 18, color: Colors.white),
@@ -341,17 +382,16 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             BoxDecoration
             (
               borderRadius: BorderRadius.circular(8),
-              color:Colors.grey.withOpacity(0.2),
-              border:
-              Border.all
-              (
-                color: Colors.white,
-                width: 0.5,
-              ),
+              color:Color(0xFF1E1E1E),
             ),
             onChanged: (value)
             {
-              certificationNumber = value;
+              if (int.tryParse(value) == null || value[value.length -1] == ' ')
+              {
+                textEditingController2.text = textEditingController2.text.replaceAll(value[value.length -1], '');
+              }
+
+              certificationNumber = textEditingController2.text;
             },
           ),
         ),
@@ -360,48 +400,105 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
   Widget checkNumber()
   {
     return
-    Container
+    Padding
     (
-      alignment: Alignment.center,
-      width: 100,
-      height: 40,
-      decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1.50,
-            strokeAlign: BorderSide.strokeAlignCenter,
-            color: Color(0xFF494A4A),
-          ),
-          borderRadius: BorderRadius.circular(5),
-        ),
-      ),
+      padding: EdgeInsets.only(left: 170.w),
       child:
       GestureDetector
       (
-        child:
-        Text(StringTable().Table![400085]!,
-          style:
-          TextStyle(fontSize: 16,
-            color: Colors.white,
-            fontFamily: 'NotoSans',
-            fontWeight: FontWeight.bold,),),
         onTap: ()
         {
           if (certificationNumber.isEmpty && phoneNumber.isNotEmpty)
           {
-            ShowCustomSnackbar(StringTable().Table![400089]!, SnackPosition.BOTTOM);
+            ShowCustomSnackbar(StringTable().Table![400089]!, SnackPosition.TOP);
             return;
           }
 
           if (certificationNumber.isEmpty || phoneNumber.isEmpty)
           {
-            ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.BOTTOM);
+            ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP);
             return;
           }
 
-          ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.BOTTOM);
+          ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.TOP);
         },
+        child:
+        Container
+        (
+          alignment: Alignment.center,
+          width: 142,
+          height: 35,
+          decoration: ShapeDecoration
+          (
+            color: Color(0xFF1E1E1E),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+          ),
+          child:
+          Text
+          (
+            StringTable().Table![400085]!,
+            style:
+            TextStyle(fontSize: 14,
+              color: Colors.white,
+              fontFamily: 'NotoSans',
+              fontWeight: FontWeight.bold,),
+          ),
+        ),
       ),
     );
+  }
+
+  List<CountryCodeModel>? countries;
+  late CountryCodeModel selected;
+  var dialogConfig = DialogConfig();
+  Future countrySelectPopup()
+  {
+    return
+      showModalBottomSheet
+        (
+          shape:
+          const RoundedRectangleBorder
+            (
+              borderRadius:
+              BorderRadius.vertical
+                (
+                  top: Radius.circular(30)
+              )
+          ),
+          barrierColor: Colors.black54,
+          isScrollControlled: true,
+          backgroundColor:
+          const Color(0xFF1B1B1B),
+          context: context,
+          builder: (context)
+          {
+            return
+            countrySelect();
+          }
+      );
+  }
+
+  Widget countrySelect()
+  {
+    return
+      countries != null ?
+      SingleChildScrollView
+      (
+        child:
+        CountryCodeBottomSheet
+          (
+          countries: countries!,
+          selected: selected,
+          onSelected: (countryCodeModel)
+          {
+            setState(()
+            {
+              selected = countryCodeModel;
+            });
+          },
+          dialogConfig: dialogConfig,
+        ),
+      )
+          : const SizedBox();
   }
 }

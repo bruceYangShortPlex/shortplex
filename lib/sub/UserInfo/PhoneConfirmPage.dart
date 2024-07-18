@@ -438,7 +438,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           HttpProtocolManager.to.Send_CertificationNumber(certificationNumber).then((value)
           {
             if (value) {
-              ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.TOP);
+              ShowCustomSnackbar(StringTable().Table![400091]!, SnackPosition.TOP);
             }
             buttonDisable = false;
           },);

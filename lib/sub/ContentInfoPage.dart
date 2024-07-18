@@ -829,6 +829,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     return
     Wrap
     (
+      spacing: 8,
     direction: Axis.horizontal,  // 가로 방향으로 배치
     children: <Widget>
     [
@@ -836,7 +837,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
         Container
         (
           height: 137,
-          width: 390.w / 4,
+          width: MediaQuery.of(context).size.width / 5,
           //color: Colors.grey,
           child:
           Column

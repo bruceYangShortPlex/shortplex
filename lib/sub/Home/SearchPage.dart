@@ -299,7 +299,8 @@ Widget mainWidget(BuildContext context)=>
     return
     Expanded
     (
-      child: Container
+      child:
+      Container
       (
         width: 390,
         height: MediaQuery.of(context).size.height - 160,

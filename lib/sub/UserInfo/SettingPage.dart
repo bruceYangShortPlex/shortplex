@@ -11,6 +11,7 @@ import 'package:shortplex/table/UserData.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import 'AccountInfoPage.dart';
+import 'LoginPage.dart';
 
 enum SettingSubPageType
 {
@@ -123,7 +124,10 @@ class _SettingPageState extends State<SettingPage>
                   _option(400043, SettingSubPageType.SERVICE_POLICY),
                   _option(400044, SettingSubPageType.PRIVATE_POLICY),
                   _option(400045, SettingSubPageType.LEGAL_NOTICE),
-                  _option(400046, SettingSubPageType.ACCOUNT_DELETE),
+                  Obx(() {
+                    return
+                    Visibility(visible: UserData.to.isLogin.value, child:_option(400046, SettingSubPageType.ACCOUNT_DELETE),);
+                  },),
                   Obx(() {
                     return
                     Visibility(visible: UserData.to.isLogin.value, child:_option(400047, SettingSubPageType.LOG_OUT),);
@@ -196,9 +200,22 @@ class _SettingPageState extends State<SettingPage>
       icon: const Icon(Icons.arrow_forward_ios),
       onPressed: buttonEnabled ? ()
       {
-        switch (_type) {
+        switch (_type)
+        {
           case SettingSubPageType.ACCOUNT_INFO:
-            Get.to(() => AccountInfoPage());
+            {
+              if (UserData.to.isLogin.value == false)
+              {
+                showDialogTwoButton(StringTable().Table![600018]!, '',
+                ()
+                {
+                  Get.to(() => const LoginPage());
+                });
+                return;
+              }
+
+              Get.to(() => const AccountInfoPage());
+            }
             break;
           case SettingSubPageType.ACCOUNT_DELETE:
             {
@@ -263,7 +280,7 @@ class _SettingPageState extends State<SettingPage>
           {
             UserData.to.Alarmallow = value ?? false;
 
-            HttpProtocolManager.to.Patch_UserInfo().then((value)
+            HttpProtocolManager.to.Send_UserInfo().then((value)
             {
               UserData.to.UpdateInfo(value);
 

@@ -249,11 +249,14 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
       mainAxisAlignment: MainAxisAlignment.center,
       children:
       [
-        Divider(height: 10,
+        const Divider
+        (
+          height: 10,
           color: Colors.white38,
           indent: 10,
           endIndent: 10,
-          thickness: 1,),
+          thickness: 1,
+        ),
         Stack
         (
           children:
@@ -265,7 +268,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
               [
                 Padding
                 (
-                  padding: EdgeInsets.only(left: 30),
+                  padding: const EdgeInsets.only(left: 30),
                   child:
                   Container
                   (
@@ -278,7 +281,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                     (
                       StringTable().Table![_titleID]!,
                       style:
-                      TextStyle
+                      const TextStyle
                       (
                         fontSize: 15,
                         color: Colors.white,
@@ -336,7 +339,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                       (
                         alignment: Alignment.centerRight,
                         //color: Colors.yellow,
-                        width: 200,
+                        width: 240.w,
                         height: 48,
                         padding: EdgeInsets.only(right: 20),
                         child:
@@ -345,7 +348,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           textAlign: TextAlign.end,
                           text,
                           style:
-                          TextStyle
+                          const TextStyle
                           (
                             fontSize: 15,
                             color: Color(0xFF00FFBF),
@@ -654,7 +657,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                       {
                         buttonDisable = true;
                         UserData.to.BirthDay = ConvertDateToString(birthday!).replaceAll('.', '-');
-                        HttpProtocolManager.to.Patch_UserInfo().then((value)
+                        HttpProtocolManager.to.Send_UserInfo().then((value)
                         {
                           if (value == null)
                           {
@@ -829,7 +832,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                   //서버에 보내고 확인.
                   UserData.to.Gender = gender.name;
 
-                  HttpProtocolManager.to.Patch_UserInfo().then((value)
+                  HttpProtocolManager.to.Send_UserInfo().then((value)
                   {
                     if (value == null)
                     {
@@ -883,7 +886,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
         {
           UserData.to.Country = countryCodeModel.code.replaceAll('+', '');
           buttonDisable = true;
-          HttpProtocolManager.to.Patch_UserInfo().then((value)
+          HttpProtocolManager.to.Send_UserInfo().then((value)
           {
             if (value == null)
             {

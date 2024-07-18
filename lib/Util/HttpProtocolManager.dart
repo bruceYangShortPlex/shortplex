@@ -15,6 +15,7 @@ import 'package:shortplex/Network/Watch_Req.dart';
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
+import '../Network/MobileCertification_Req.dart';
 import '../Network/OAuth_Res.dart';
 import '../Network/Recommended_Res.dart';
 import '../Network/UserInfo_Req.dart';
@@ -861,9 +862,13 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var req = WatchReq(episodeID: _episodeID, data: data);
       //print('stat : ${stat.value}');
       var bodys = jsonEncode(req.toJson());
-      print('Send_WatchData heads : ${heads} / send bodys : ${bodys}');
+      if (kDebugMode) {
+        print('Send_WatchData heads : ${heads} / send bodys : ${bodys}');
+      }
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
-      print('Send_WatchData res.body ${res.body}');
+      if (kDebugMode) {
+        print('Send_WatchData res.body ${res.body}');
+      }
 
       if (res.statusCode == 200)
       {
@@ -891,14 +896,17 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/profile/settings/userinfo';
-      print('Get_UserInfo send url : $url');
+      if (kDebugMode) {
+        print('Get_UserInfo send url : $url');
+      }
       var res = await http.get(Uri.parse(url), headers: heads);
-      print('Get_UserInfo res.body ${res.body}');
+      if (kDebugMode) {
+        print('Get_UserInfo res.body ${res.body}');
+      }
 
       if (res.statusCode == 200)
       {
         var data =  UserInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        //print('Get_Preview data = $data');
         return data;
       }
       else
@@ -914,7 +922,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<UserInfoRes?> Patch_UserInfo() async
+  Future<UserInfoRes?> Send_UserInfo() async
   {
     try {
       var heads = {
@@ -952,9 +960,6 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       if (res.statusCode == 200) {
         var data = UserInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        if (kDebugMode) {
-          print('Patch_UserInfo data = ${data}');
-        }
         return data;
       }
       else {
@@ -997,6 +1002,68 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     print('Send_DeleteAccount return false!!!');
+    return false;
+  }
+
+  Future<UserInfoRes?> Send_GetCertificationMessage(String _countryCode, String _phoneNumber) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/settings/sms/sendcode';
+
+      var req = MobileCertificationReq(hpDestinationCode: '', hpCountryCode: _countryCode, hpNumber: _phoneNumber);
+      var bodys = jsonEncode(req.toJson());
+      print('Send_GetCertificationMessage heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_GetCertificationMessage res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  UserInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Send_GetCertificationMessage FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_WatchData error : $e');
+    }
+
+    return null;
+  }
+
+  Future<bool> Send_CertificationNumber(String _number) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/settings/sms/sendcode';
+
+      final map = <String, dynamic>{};
+      map['verification_code'] = _number;
+      var bodys = jsonEncode(map);
+      print('Send_CertificationNumber send heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_CertificationNumber res.body ${res.body}');
+      if (res.statusCode == 200)
+      {
+        //var data =  UserInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return true;
+      }
+      else
+      {
+        print('Send_GetCertificationMessage FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_WatchData error : $e');
+    }
+
     return false;
   }
 }

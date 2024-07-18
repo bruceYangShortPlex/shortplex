@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl_phone_number_field/models/country_code_model.dart';
 import 'package:intl_phone_number_field/models/dialog_config.dart';
 import 'package:intl_phone_number_field/view/country_code_bottom_sheet.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/table/UserData.dart';
 import '../../table/StringTable.dart';
@@ -294,6 +295,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     ),
   );
 
+  bool buttonDisable = false;
   Widget getCertificationNumber() => Align
   (
     alignment: Alignment.center,
@@ -304,7 +306,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       child:
       GestureDetector
       (
-        onTap: ()
+        onTap: buttonDisable == false ? null : ()
         {
           if (phoneNumber.isEmpty)
           {
@@ -336,10 +338,18 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
 
           hpCountryCode = selected.dial_code.replaceAll('+', '');
 
-          print('Send Number : ${hpCountryCode} ${phoneNumber}');
-
+          if (kDebugMode) {
+            print('Send Number : ${hpCountryCode} ${phoneNumber}');
+          }
+          buttonDisable = true;
           //인증번호 받기 누름.
-
+          HttpProtocolManager.to.Send_GetCertificationMessage(hpCountryCode, phoneNumber).then((value)
+          {
+            // if (value != null) {
+            //   ShowCustomSnackbar(StringTable().Table![400086]!, SnackPosition.TOP);
+            // }
+            buttonDisable = false;
+          },);
         },
         child:
         Container
@@ -410,7 +420,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       child:
       GestureDetector
       (
-        onTap: ()
+        onTap: buttonDisable ? null : ()
         {
           if (certificationNumber.isEmpty && phoneNumber.isNotEmpty)
           {
@@ -424,7 +434,14 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             return;
           }
 
-          ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.TOP);
+          buttonDisable = true;
+          HttpProtocolManager.to.Send_CertificationNumber(certificationNumber).then((value)
+          {
+            if (value) {
+              ShowCustomSnackbar(StringTable().Table![400085]!, SnackPosition.TOP);
+            }
+            buttonDisable = false;
+          },);
         },
         child:
         Container

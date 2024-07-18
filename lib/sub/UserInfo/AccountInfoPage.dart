@@ -7,9 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:intl_phone_number_field/models/country_code_model.dart';
 import 'package:intl_phone_number_field/models/dialog_config.dart';
 import 'package:intl_phone_number_field/view/country_code_bottom_sheet.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/UserInfo/PhoneConfirmPage.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
@@ -19,7 +21,7 @@ enum AccountInfoSubPageType
 {
   NONE,
   GENDER,
-  BIRTH_DAY,
+  BIRTHDAY,
   COUNTRY,
   PHONENUMBER_INPUT,
 }
@@ -41,19 +43,30 @@ class AccountInfoPage extends StatefulWidget {
 class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderStateMixin
 {
   var _infoCount = 0;
-  var pagelist = ['2001','2002','2003','2004','2005','2006'];
-  //late AnimationController tweenController;
 
   @override
   void initState()
   {
-    selected = CountryCodeModel
+    countrySelected = CountryCodeModel
     (
         name: "Korea, Republic of South Korea", dial_code: "+82", code: "KR"
     );
+
     loadFromJson().then((value)
     {
       loadCountryData(value);
+
+      if (UserData.to.Country.isNotEmpty)
+      {
+        for (var item in countries!)
+        {
+          if (item.code == '+${UserData.to.Country}')
+          {
+            countrySelected = item;
+            break;
+          }
+        }
+      }
     },);
 
     super.initState();
@@ -68,6 +81,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
 
   void accountInfoCountCheck()
   {
+    _infoCount = 0;
     _infoCount = UserData.to.Gender.isNotEmpty ? ++_infoCount : _infoCount;
     _infoCount = UserData.to.BirthDay.isNotEmpty ? ++_infoCount : _infoCount;
     _infoCount = UserData.to.Country.isNotEmpty ? ++_infoCount : _infoCount;
@@ -159,7 +173,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                 children:
                 [
                   _option(400049, AccountInfoSubPageType.GENDER),
-                  _option(400050, AccountInfoSubPageType.BIRTH_DAY),
+                  _option(400050, AccountInfoSubPageType.BIRTHDAY),
                   _option(400051, AccountInfoSubPageType.COUNTRY),
                   _option(400052, AccountInfoSubPageType.PHONENUMBER_INPUT),
                   Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
@@ -200,9 +214,19 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                             style:
                             TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                           SizedBox(height: 10,),
-                          Text('${_infoCount} / 4',
-                            style:
-                            TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                          Obx(()
+                          {
+                            if (UserData.to.isLogin.value) {
+                              accountInfoCountCheck();
+                            }
+                            return
+                            Text
+                            (
+                              '${_infoCount} / 4',
+                              style:
+                              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                            );
+                          },)
                         ],
                       ),
                     )
@@ -273,21 +297,33 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                     var text = '';
                     if (UserData.to.isLogin.value)
                     {
-                      accountInfoCountCheck();
-
                       switch (_type)
                       {
                         case AccountInfoSubPageType.GENDER:
-                          text = UserData.to.Gender;
+                          text = ConvertGenderToString(UserData.to.Gender);
                           break;
                         case AccountInfoSubPageType.PHONENUMBER_INPUT:
-                          text = '+${UserData.to.HP_CountryCode} ${UserData.to.HP_Number}';  //UserData.to.CountryCode + UserData.to.HP_Number;
+                          {
+                            if (UserData.to.HP_CountryCode.isNotEmpty && UserData.to.HP_Number.isNotEmpty)
+                            {
+                              text = '+${UserData.to.HP_CountryCode} ${UserData.to.HP_Number}'; //UserData.to.CountryCode + UserData.to.HP_Number;
+                            }
+                          }
                           break;
-                        case AccountInfoSubPageType.BIRTH_DAY:
-                          text = UserData.to.BirthDay;
+                        case AccountInfoSubPageType.BIRTHDAY:
+                          {
+                            if (UserData.to.BirthDay.isNotEmpty) {
+                              text = UserData.to.BirthDay.replaceAll('-', '.');
+                            }
+                          }
                           break;
                         case AccountInfoSubPageType.COUNTRY:
-                          text = UserData.to.Country;
+                          {
+                            if (UserData.to.Country.isNotEmpty)
+                            {
+                              text = countrySelected.name;
+                            }
+                          }
                           break;
                         default:
                           print('Not found page type : ${_type}');
@@ -296,17 +332,26 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                     }
                     return
                       text.isNotEmpty ?
-                      Text
+                      Container
                       (
-                        textAlign: TextAlign.end,
-                        text,
-                        style:
-                        TextStyle
+                        alignment: Alignment.centerRight,
+                        //color: Colors.yellow,
+                        width: 200,
+                        height: 48,
+                        padding: EdgeInsets.only(right: 20),
+                        child:
+                        Text
+                        (
+                          textAlign: TextAlign.end,
+                          text,
+                          style:
+                          TextStyle
                           (
-                          fontSize: 15,
-                          color: Color(0xFF00FFBF),
-                          fontFamily: 'NotoSans',
-                          fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Color(0xFF00FFBF),
+                            fontFamily: 'NotoSans',
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       )
                       :
@@ -314,7 +359,8 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                       (
                         icon: Icon(Icons.add),
                         color: Colors.white,
-                        onPressed: ()
+                        onPressed: buttonDisable? null :
+                        ()
                         {
                           switch (_type)
                           {
@@ -323,7 +369,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                               return;
                             case AccountInfoSubPageType.GENDER:
                               break;
-                            case AccountInfoSubPageType.BIRTH_DAY:
+                            case AccountInfoSubPageType.BIRTHDAY:
                               break;
                             case AccountInfoSubPageType.COUNTRY:
                             default:
@@ -344,7 +390,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
   }
 
   List<CountryCodeModel>? countries;
-  late CountryCodeModel selected;
+  late CountryCodeModel countrySelected;
   var dialogConfig = DialogConfig();
   Future menuSelectPopup(AccountInfoSubPageType _type)
   {
@@ -373,7 +419,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
             :
         _type == AccountInfoSubPageType.GENDER ? genderSelect ()
             :
-        _type == AccountInfoSubPageType.BIRTH_DAY ? inputBirthDay()
+        _type == AccountInfoSubPageType.BIRTHDAY ? inputBirthDay()
             :
         SizedBox();
       }
@@ -383,7 +429,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
   int year = 0;
   int month = 0;
   int day = 0;
-  DateTime? birtyDay;
+  DateTime? birthday;
   TextEditingController textEditingController1 = TextEditingController();
   TextEditingController textEditingController2 = TextEditingController();
   TextEditingController textEditingController3 = TextEditingController();
@@ -396,255 +442,270 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
           builder: (BuildContext context, StateSetter setState)
           {
             return
-              Container
+            Container
+            (
+              padding: EdgeInsets.only(top: 50),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.8,
+              //color: Colors.transparent,
+              child:
+              Column
               (
-                padding: EdgeInsets.only(top: 50),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.8,
-                //color: Colors.transparent,
-                child:
-                Column
-                (
-                  children:
-                  [
+                children:
+                [
+                  Container
+                  (
+                    width:MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.only(left: 36.w),
+                    //color: Colors.white,
+                    height: 40,
+                    child:
+                    Text
+                    (
+                      StringTable().Table![400049]!,
+                      style:
+                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                  //SizedBox(height: 10,),
+                  Container
+                  (
+                    width: 310.w,//MediaQuery.of(context).size.width,
+                    height: 45,
+                    child:
+                    Row
+                    (
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:
+                      [
+                        Container
+                        (
+                          alignment: Alignment.center,
+                          height : 45,
+                          width : 120,
+                          child:
+                          CupertinoTextField
+                          (
+                            enabled: buttonDisable == false,
+                            controller: textEditingController1,
+                            placeholder: 'YYYY',
+                            textAlign: TextAlign.center,
+                            cursorColor: Colors.white,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
+                            decoration:
+                            BoxDecoration
+                            (
+                              borderRadius: BorderRadius.circular(8),
+                              color:Color(0xFF2E2E2E),
+                            ),
+                            onEditingComplete: ()
+                            {
+                              if (year < 1900 || year >= DateTime.now().year)
+                              {
+                                snackbarComplete = false;
+                                ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP, ()
+                                {
+                                  snackbarComplete = true;
+                                });
+                                textEditingController1.text = '';
+                                year = 0;
+                              }
+                              FocusScope.of(context).unfocus();
+                            },
+                            onChanged: (value)
+                            {
+                              if (int.tryParse(value) != null)
+                              {
+                                year = int.parse(value);
+                              }
+                            },
+                          ),
+                        ),
+                        Container
+                        (
+                          alignment: Alignment.center,
+                          height : 45,
+                          width : 80,
+                          child:
+                          CupertinoTextField
+                          (
+                            enabled: buttonDisable == false,
+                            controller: textEditingController2,
+                            placeholder: 'MM',
+                            textAlign: TextAlign.center,
+                            cursorColor: Colors.white,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
+                            decoration:
+                            BoxDecoration
+                            (
+                              borderRadius: BorderRadius.circular(8),
+                              color:Color(0xFF2E2E2E),
+                            ),
+                            onEditingComplete: ()
+                            {
+                              if (month < 1 || month > 12)
+                              {
+                                snackbarComplete = false;
+                                ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP, ()
+                                {
+                                  snackbarComplete = true;
+                                });
+                                textEditingController2.text = '';
+                                month = 0;
+                              }
+                              FocusScope.of(context).unfocus();
+                            },
+                            onChanged: (value)
+                            {
+                              if (int.tryParse(value) != null)
+                              {
+                                month = int.parse(value);
+                              }
+                            },
+                          ),
+                        ),
+                        Container
+                        (
+                          alignment: Alignment.center,
+                          height : 45,
+                          width : 80,
+                          child:
+                          CupertinoTextField
+                          (
+                            enabled: buttonDisable == false,
+                            controller: textEditingController3,
+                            placeholder: 'DD',
+                            textAlign: TextAlign.center,
+                            cursorColor: Colors.white,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
+                            decoration:
+                            BoxDecoration
+                              (
+                              borderRadius: BorderRadius.circular(8),
+                              color:Color(0xFF2E2E2E),
+                            ),
+                            onEditingComplete: ()
+                            {
+                              if (day < 1 || day > 31)
+                              {
+                                snackbarComplete = false;
+                                ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                                ()
+                                {
+                                  snackbarComplete = true;
+                                });
+                                textEditingController3.text = '';
+                                day = 0;
+                              }
+                              FocusScope.of(context).unfocus();
+                            },
+                            onChanged: (value)
+                            {
+                              if (int.tryParse(value) != null)
+                              {
+                                day = int.parse(value);
+                              }
+                            },
+                          ),
+                        )
+                      ],
+                    )
+                  ),
+                  SizedBox(height: 30,),
+                  GestureDetector
+                  (
+                    onTap: ()
+                    {
+                      if (snackbarComplete == false || buttonDisable) {
+                        return;
+                      }
+
+                      if (year == 0 || day == 0 || month == 0)
+                      {
+                        snackbarComplete = false;
+                        ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                        ()
+                        {
+                          snackbarComplete = true;
+                        });
+                        return;
+                      }
+
+                      try
+                      {
+                        birthday = DateTime(year, month, day);
+                      }
+                      catch (e)
+                      {
+                        //print('유효하지 않은 날짜입니다.');
+                        snackbarComplete = false;
+                        ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                        ()
+                        {
+                          snackbarComplete = true;
+                        });
+                        return;
+                      }
+
+                      if (birthday!.year == year && birthday!.month == month && birthday!.day == day)
+                      {
+                        buttonDisable = true;
+                        UserData.to.BirthDay = ConvertDateToString(birthday!).replaceAll('.', '-');
+                        HttpProtocolManager.to.Patch_UserInfo().then((value)
+                        {
+                          if (value == null)
+                          {
+                            UserData.to.BirthDay = '';
+                          }
+
+                          UserData.to.UpdateInfo(value);
+                          Navigator.pop(context);
+                          buttonDisable = false;
+                        },);
+                      }
+                      else
+                      {
+                        if (kDebugMode) {
+                          print(birthday);
+                        }
+                        snackbarComplete = false;
+                        ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
+                        ()
+                        {
+                          snackbarComplete = true;
+                        });
+                      }
+                    },
+                    child:
                     Container
                     (
-                      width:MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.only(left: 36.w),
-                      //color: Colors.white,
-                      height: 40,
+                      alignment: Alignment.center,
+                      height: 45,
+                      width: 310.w,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF00FFBF),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
                       child:
                       Text
-                      (
-                        StringTable().Table![400049]!,
-                        style:
-                        TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                      ),
-                    ),
-                    //SizedBox(height: 10,),
-                    Container
-                    (
-                        width: 310.w,//MediaQuery.of(context).size.width,
-                        height: 45,
-                        child:
-                        Row
                         (
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children:
-                          [
-                            Container
-                            (
-                              alignment: Alignment.center,
-                              height : 45,
-                              width : 120,
-                              child:
-                              CupertinoTextField
-                              (
-                                controller: textEditingController1,
-                                placeholder: 'YYYY',
-                                textAlign: TextAlign.center,
-                                cursorColor: Colors.white,
-                                keyboardType: TextInputType.number,
-                                style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
-                                decoration:
-                                BoxDecoration
-                                (
-                                  borderRadius: BorderRadius.circular(8),
-                                  color:Color(0xFF2E2E2E),
-                                ),
-                                onEditingComplete: ()
-                                {
-                                  if (year < 1900 || year >= DateTime.now().year)
-                                  {
-                                    snackbarComplete = false;
-                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP, ()
-                                    {
-                                      snackbarComplete = true;
-                                    });
-                                    textEditingController1.text = '';
-                                    year = 0;
-                                  }
-                                  FocusScope.of(context).unfocus();
-                                },
-                                onChanged: (value)
-                                {
-                                  if (int.tryParse(value) != null)
-                                  {
-                                    year = int.parse(value);
-                                  }
-                                },
-                              ),
-                            ),
-                            Container
-                            (
-                              alignment: Alignment.center,
-                              height : 45,
-                              width : 80,
-                              child:
-                              CupertinoTextField
-                              (
-                                controller: textEditingController2,
-                                placeholder: 'MM',
-                                textAlign: TextAlign.center,
-                                cursorColor: Colors.white,
-                                keyboardType: TextInputType.number,
-                                style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
-                                decoration:
-                                BoxDecoration
-                                (
-                                  borderRadius: BorderRadius.circular(8),
-                                  color:Color(0xFF2E2E2E),
-                                ),
-                                onEditingComplete: ()
-                                {
-                                  if (month < 1 || month > 12)
-                                  {
-                                    snackbarComplete = false;
-                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP, ()
-                                    {
-                                      snackbarComplete = true;
-                                    });
-                                    textEditingController2.text = '';
-                                    month = 0;
-                                  }
-                                  FocusScope.of(context).unfocus();
-                                },
-                                onChanged: (value)
-                                {
-                                  if (int.tryParse(value) != null)
-                                  {
-                                    month = int.parse(value);
-                                  }
-                                },
-                              ),
-                            ),
-                            Container
-                            (
-                              alignment: Alignment.center,
-                              height : 45,
-                              width : 80,
-                              child:
-                              CupertinoTextField
-                              (
-                                controller: textEditingController3,
-                                placeholder: 'DD',
-                                textAlign: TextAlign.center,
-                                cursorColor: Colors.white,
-                                keyboardType: TextInputType.number,
-                                style: TextStyle(fontFamily: 'NotoSans', fontSize: 20, color: Colors.white),
-                                decoration:
-                                BoxDecoration
-                                  (
-                                  borderRadius: BorderRadius.circular(8),
-                                  color:Color(0xFF2E2E2E),
-                                ),
-                                onEditingComplete: ()
-                                {
-                                  if (day < 1 || day > 31)
-                                  {
-                                    snackbarComplete = false;
-                                    ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
-                                    ()
-                                    {
-                                      snackbarComplete = true;
-                                    });
-                                    textEditingController3.text = '';
-                                    day = 0;
-                                  }
-                                  FocusScope.of(context).unfocus();
-                                },
-                                onChanged: (value)
-                                {
-                                  if (int.tryParse(value) != null)
-                                  {
-                                    day = int.parse(value);
-                                  }
-                                },
-                              ),
-                            )
-                          ],
-                        )
-                    ),
-                    SizedBox(height: 30,),
-                    GestureDetector
-                    (
-                      onTap: ()
-                      {
-                        if (snackbarComplete == false) {
-                          return;
-                        }
-
-                        if (year == 0 || day == 0 || month == 0)
-                        {
-                          snackbarComplete = false;
-                          ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
-                          ()
-                          {
-                            snackbarComplete = true;
-                          });
-                          return;
-                        }
-
-                        try
-                        {
-                          birtyDay = DateTime(year, month, day);
-                        }
-                        catch (e)
-                        {
-                          //print('유효하지 않은 날짜입니다.');
-                          snackbarComplete = false;
-                          ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
-                          ()
-                          {
-                            snackbarComplete = true;
-                          });
-                          return;
-                        }
-
-                        if (birtyDay!.year == year && birtyDay!.month == month && birtyDay!.day == day)
-                        {
-                          //서버에 보내고 확인.
-                          Navigator.pop(context);
-                        }
-                        else
-                        {
-                          if (kDebugMode) {
-                            print(birtyDay);
-                          }
-                          snackbarComplete = false;
-                          ShowCustomSnackbar('잘못됫 입력(테이블아님)', SnackPosition.TOP,
-                          ()
-                          {
-                            snackbarComplete = true;
-                          });
-                        }
-                      },
-                      child:
-                      Container
-                      (
-                        alignment: Alignment.center,
-                        height: 45,
-                        width: 310.w,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF00FFBF),
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        child:
-                        Text
-                          (
-                          StringTable().Table![800017]!,
-                          style:
-                          TextStyle(fontSize: 19,  color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                        ),
+                        StringTable().Table![800017]!,
+                        style:
+                        TextStyle(fontSize: 19,  color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
-                  ],
-                ),
-              );
+                  ),
+                ],
+              ),
+            );
           }
       );
   }
 
+  var buttonDisable = false;
   var gender = GenderType.NONE;
   Widget genderSelect()
   {
@@ -673,7 +734,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                 height: 40,
                 child:
                 Text
-                  (
+                (
                   StringTable().Table![400049]!,
                   style:
                   TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
@@ -682,78 +743,104 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
               //SizedBox(height: 10,),
               Container
               (
-                  width: 310.w,//MediaQuery.of(context).size.width,
-                  height: 45,
-                  child:
-                  Row
-                  (
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children:
-                    [
-                      GestureDetector
+                width: 310.w,//MediaQuery.of(context).size.width,
+                height: 45,
+                child:
+                Row
+                (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:
+                  [
+                    GestureDetector
+                    (
+                      onTap : ()
+                      {
+                        if (buttonDisable) {
+                          return;
+                        }
+
+                        setState(() {
+                          gender = GenderType.F;
+                        });
+                      },
+                      child:
+                      Container
                       (
-                        onTap : ()
-                        {
-                          setState(() {
-                            gender = GenderType.F;
-                          });
-                        },
+                        alignment: Alignment.center,
+                        height: 45,
+                        width: 140,
+                        decoration: BoxDecoration(
+                          color: gender == GenderType.F ? Color(0xFF00FFBF) : Color(0xFF2E2E2E),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
                         child:
-                        Container
-                        (
-                          alignment: Alignment.center,
-                          height: 45,
-                          width: 140,
-                          decoration: BoxDecoration(
-                            color: gender == GenderType.F ? Color(0xFF00FFBF) : Color(0xFF2E2E2E),
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          child:
-                          Text
-                            (
-                            StringTable().Table![400058]!,
-                            style:
-                            TextStyle(fontSize: 20,  color: gender == GenderType.F ? Colors.black : Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                          ),
+                        Text
+                          (
+                          StringTable().Table![400058]!,
+                          style:
+                          TextStyle(fontSize: 20,  color: gender == GenderType.F ? Colors.black : Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
-                      //SizedBox(width: 20,),
-                      GestureDetector
+                    ),
+                    //SizedBox(width: 20,),
+                    GestureDetector
+                    (
+                      onTap: ()
+                      {
+                        if (buttonDisable) {
+                          return;
+                        }
+
+                        setState(() {
+                          gender = GenderType.M;
+                        });
+                      },
+                      child: Container
                       (
-                        onTap: ()
-                        {
-                          setState(() {
-                            gender = GenderType.M;
-                          });
-                        },
-                        child: Container
-                        (
-                          alignment: Alignment.center,
-                          height: 45,
-                          width: 140,
-                          decoration: BoxDecoration(
-                            color: gender == GenderType.M ? Color(0xFF00FFBF) : Color(0xFF2E2E2E),
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          child:
-                          Text
-                            (
-                            StringTable().Table![400059]!,
-                            style:
-                            TextStyle(fontSize: 20, color: gender == GenderType.M ? Colors.black : Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                          ),
+                        alignment: Alignment.center,
+                        height: 45,
+                        width: 140,
+                        decoration: BoxDecoration(
+                          color: gender == GenderType.M ? Color(0xFF00FFBF) : Color(0xFF2E2E2E),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child:
+                        Text
+                          (
+                          StringTable().Table![400059]!,
+                          style:
+                          TextStyle(fontSize: 20, color: gender == GenderType.M ? Colors.black : Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
-                    ],
-                  )
+                    ),
+                  ],
+                )
               ),
               SizedBox(height: 30,),
               GestureDetector
               (
                 onTap: ()
                 {
-                  Navigator.pop(context);
+                  if (buttonDisable || gender == GenderType.NONE) {
+                    return;
+                  }
+
+                  buttonDisable = true;
                   //서버에 보내고 확인.
+                  UserData.to.Gender = gender.name;
+
+                  HttpProtocolManager.to.Patch_UserInfo().then((value)
+                  {
+                    if (value == null)
+                    {
+                      gender = GenderType.NONE;
+                      UserData.to.Gender = '';
+                    }
+
+                    UserData.to.UpdateInfo(value);
+                    buttonDisable = false;
+                    Navigator.pop(context);
+                  },);
                 },
                 child:
                 Container
@@ -791,13 +878,25 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
       CountryCodeBottomSheet
       (
         countries: countries!,
-        selected: selected,
+        selected: countrySelected,
         onSelected: (countryCodeModel)
         {
-          setState(()
+          UserData.to.Country = countryCodeModel.code.replaceAll('+', '');
+          buttonDisable = true;
+          HttpProtocolManager.to.Patch_UserInfo().then((value)
           {
-            selected = countryCodeModel;
-          });
+            if (value == null)
+            {
+              UserData.to.Country = '';
+            }
+
+            buttonDisable = false;
+            UserData.to.UpdateInfo(value);
+            setState(()
+            {
+              countrySelected = countryCodeModel;
+            });
+          },);
         },
         dialogConfig: dialogConfig,
       ),
@@ -821,16 +920,11 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
       }
       catch (e, stackTrace)
       {
-        print(e);
-        print(stackTrace);
+        if (kDebugMode) {
+          print('country json load Error $e / stackTrace : $stackTrace');
+        }
       }
     }));
     setState(() {});
-  }
-
-  Widget selectGender(AccountInfoSubPageType _type)
-  {
-    return
-    Container();
   }
 }

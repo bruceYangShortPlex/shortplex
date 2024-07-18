@@ -145,16 +145,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget loginButtons() =>
       Obx(() => UserData.to.isLogin.value == true
-          ? IconButton(
-              onPressed: buttonEnabled
-                  ? () async {
-                      await loginManager.LogOut();
-                      buttonEnabled = true;
-                      print('Logout');
-                    }
-                  : null,
-              icon: Icon(Icons.cable_outlined),
-            )
+          ? SizedBox()
           : Column(
               children: [
                 loginButton(

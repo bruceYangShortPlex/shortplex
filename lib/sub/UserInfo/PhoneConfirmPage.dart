@@ -7,6 +7,7 @@ import 'package:intl_phone_number_field/models/country_code_model.dart';
 import 'package:intl_phone_number_field/models/dialog_config.dart';
 import 'package:intl_phone_number_field/view/country_code_bottom_sheet.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
+import 'package:shortplex/table/UserData.dart';
 import '../../table/StringTable.dart';
 
 // void main() async
@@ -28,7 +29,7 @@ class PhoneConfirmPage extends StatefulWidget {
 class _PhoneConfirmPageState extends State<PhoneConfirmPage>
 {
   String phoneNumber = ''; // 사용자가 입력한 전화번호를 저장할 변수
-  String dropdownValue = '';
+  String hpCountryCode = '';
   String certificationNumber = '';
 
   TextEditingController textEditingController1 = TextEditingController();
@@ -333,9 +334,12 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             return;
           }
 
-          dropdownValue = dropdownValue.replaceAll('+', '');
+          hpCountryCode = selected.dial_code.replaceAll('+', '');
 
-          print('Send Number : ${dropdownValue} ${phoneNumber}');
+          print('Send Number : ${hpCountryCode} ${phoneNumber}');
+
+          //인증번호 받기 누름.
+
         },
         child:
         Container

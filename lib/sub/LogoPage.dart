@@ -74,7 +74,7 @@ class _LogoPageState extends State<LogoPage> with TickerProviderStateMixin
       body:
       Container
       (
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(39),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         color: Colors.transparent,

@@ -18,6 +18,7 @@ class UserData extends GetxController
 {
   static UserData get to => Get.find();
 
+  var count = 0.obs;
   RxString name = 'Guest'.obs;
   RxString photoUrl = ''.obs;
   RxBool isLogin = false.obs;
@@ -41,9 +42,9 @@ class UserData extends GetxController
 
   String BirthDay = '';
   String Gender = '';
+  String Country = '';
   String HP_Number = '';
   String HP_CountryCode = '';
-  String Country = '';
   bool Alarmallow = true;
 
   InitValue()
@@ -58,6 +59,12 @@ class UserData extends GetxController
     isSubscription.value = false;
     popcornCount.value = 0;
     bonusCornCount = 0;
+    BirthDay = '';
+    Gender = '';
+    HP_Number = '';
+    HP_CountryCode = '';
+    Country = '';
+    Alarmallow = true;
   }
 
   Future SaveResoluton(int _index) async
@@ -119,7 +126,7 @@ class UserData extends GetxController
     return IconPath;
   }
 
-  SetInfo(UserInfoRes? _data)
+  UpdateInfo(UserInfoRes? _data)
   {
     if (_data == null)
     {
@@ -138,11 +145,13 @@ class UserData extends GetxController
         Gender = item.gender;
         HP_Number = item.hpNumber;
         HP_CountryCode = item.hpCountryCode;
-        Country = item.hpCountryCode;
+        Country = item.countryCode;
         Alarmallow = item.alarmallow;
         break;
       }
     }
+
+    count++;
   }
 }
 

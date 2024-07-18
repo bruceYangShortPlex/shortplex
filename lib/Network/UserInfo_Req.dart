@@ -22,6 +22,8 @@ class UserInfoReq
     required String hpDestinationCode,
     required String hpNumber,
     required bool alarmallow,
+    required String updatedBy,
+    required String countryCode,
    }){
     _email = email;
     _displayname = displayname;
@@ -32,6 +34,8 @@ class UserInfoReq
     _hpDestinationCode = hpDestinationCode;
     _hpNumber = hpNumber;
     _alarmallow = alarmallow;
+    _updatedBy = updatedBy;
+    _countryCode = countryCode;
   }
 
   UserInfoReq.fromJson(dynamic json)
@@ -47,6 +51,7 @@ class UserInfoReq
     _hpverified = json['hpverified'] ?? false;
     _alarmallow = json['alarmallow'] ?? false;
     _updatedBy = json['updated_by'] ?? '';
+    _countryCode = json['country_code'] ?? '';
   }
 
   String _email = '';
@@ -60,6 +65,7 @@ class UserInfoReq
   bool _hpverified = false;
   bool _alarmallow = false;
   String _updatedBy = '';
+  String _countryCode = '';
 
   String get email => _email;
   String get displayname => _displayname;
@@ -72,22 +78,24 @@ class UserInfoReq
   bool get hpverified => _hpverified;
   bool get alarmallow => _alarmallow;
   String get updatedBy => _updatedBy;
+  String get countryCode => _countryCode;
 
-  Map<String, dynamic> toJson()
-  {
+  Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['email'] = _email;
     map['displayname'] = _displayname;
     map['photourl'] = _photourl;
     map['gender'] = _gender;
-    map['birth_dt'] = _birthDt;
+    if (_birthDt.isNotEmpty) {
+      map['birth_dt'] = _birthDt;
+    }
     map['hp_country_code'] = _hpCountryCode;
     map['hp_destination_code'] = _hpDestinationCode;
     map['hp_number'] = _hpNumber;
     map['hpverified'] = _hpverified;
     map['alarmallow'] = _alarmallow;
     map['updated_by'] = _updatedBy;
+    map['country_code'] = _countryCode;
     return map;
   }
-
 }

@@ -930,10 +930,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
         birthDt: UserData.to.BirthDay,
         email: UserData.to.email,
         gender: UserData.to.Gender,
-        hpCountryCode: UserData.to.Country,
+        hpCountryCode: UserData.to.HP_CountryCode,
         hpDestinationCode: '',
         hpNumber: UserData.to.HP_Number,
         photourl: UserData.to.photoUrl.value,
+        updatedBy: UserData.to.userId,
+        countryCode: UserData.to.Country,
       );
       var bodys = jsonEncode(reqBody.toJson());
 

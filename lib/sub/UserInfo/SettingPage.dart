@@ -203,10 +203,18 @@ class _SettingPageState extends State<SettingPage>
           case SettingSubPageType.ACCOUNT_DELETE:
             {
               showDialogTwoButton(StringTable().Table![600014]!, StringTable().Table![600015]!,
-                      () {
-                    print('Account Delete ok Clikc');
+              ()
+              {
+                HttpProtocolManager.to.Send_DeleteAccount().then((value)
+                {
+                  Get.find<LoginMananger>().LogOut(true).then((value)
+                  {
                     buttonEnabled = true;
-                  });
+                  },);
+                },);
+                print('Account Delete ok Clikc');
+
+              });
             }
             break;
           case SettingSubPageType.LOG_OUT:
@@ -257,7 +265,7 @@ class _SettingPageState extends State<SettingPage>
 
             HttpProtocolManager.to.Patch_UserInfo().then((value)
             {
-              UserData.to.SetInfo(value);
+              UserData.to.UpdateInfo(value);
 
               setState(()
               {

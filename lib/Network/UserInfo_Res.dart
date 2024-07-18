@@ -188,6 +188,7 @@ class UserInfoItems
     _deletedAt = json['deleted_at'] ?? '';
     _deletedBy = json['deleted_by'] ?? '';
     _remark = json['remark'] ?? '';
+    countryCode = json['country_code'] ?? '';
   }
   String _seq = '';
   String _id = '';
@@ -197,6 +198,7 @@ class UserInfoItems
   String _photourl = '';
   String _gender = '';
   String _birthDt = '';
+  String countryCode = '';
   String _hpCountryCode = '';
   String _hpDestinationCode = '';
   String _hpNumber = '';
@@ -217,21 +219,21 @@ class UserInfoItems
   String get email => _email;
   String get displayname => _displayname;
   String get photourl => _photourl;
-  dynamic get gender => _gender;
-  dynamic get birthDt => _birthDt;
-  dynamic get hpCountryCode => _hpCountryCode;
-  dynamic get hpDestinationCode => _hpDestinationCode;
-  dynamic get hpNumber => _hpNumber;
-  dynamic get hpFull => _hpFull;
+  String get gender => _gender;
+  String get birthDt => _birthDt;
+  String get hpCountryCode => _hpCountryCode;
+  String get hpDestinationCode => _hpDestinationCode;
+  String get hpNumber => _hpNumber;
+  String get hpFull => _hpFull;
   bool get hpverified => _hpverified;
   bool get alarmallow => _alarmallow;
   String get createdAt => _createdAt;
   String get createdBy => _createdBy;
-  dynamic get updatedAt => _updatedAt;
-  dynamic get updatedBy => _updatedBy;
-  dynamic get deletedAt => _deletedAt;
-  dynamic get deletedBy => _deletedBy;
-  dynamic get remark => _remark;
+  String get updatedAt => _updatedAt;
+  String get updatedBy => _updatedBy;
+  String get deletedAt => _deletedAt;
+  String get deletedBy => _deletedBy;
+  String get remark => _remark;
 
   Map<String, dynamic> toJson()
   {

@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
+import 'package:shortplex/sub/UserInfo/AccountInfoPage.dart';
 import 'dart:io';
 import '../table/StringTable.dart';
 import '../table/UserData.dart';
@@ -636,9 +638,14 @@ String ConvertCommentDate(String _date)
 
   var result = DateTime.parse(_date);
 
-  var year = result.year.toString().padLeft(2, '0');
-  var month = result.month.toString().padLeft(2, '0');
-  var day = result.day.toString().padLeft(2, '0');
+  return ConvertDateToString(result);
+}
+
+String ConvertDateToString(DateTime _date)
+{
+  var year = _date.year.toString().padLeft(2, '0');
+  var month = _date.month.toString().padLeft(2, '0');
+  var day = _date.day.toString().padLeft(2, '0');
 
   return '$year.$month.$day';
 }
@@ -682,4 +689,24 @@ extension InputValidate on String {
   bool isValidPhoneNumberFormat() {
     return RegExp(r'^010-?([0-9]{4})-?([0-9]{4})$').hasMatch(this);
   }
+}
+
+String ConvertGenderToString(String _genderType)
+{
+  var stringID = 0;
+  if (_genderType == GenderType.F.name)
+  {
+    stringID = 400058;
+  }
+  else if (_genderType == GenderType.M.name)
+  {
+    stringID = 400059;
+  }
+
+  if (stringID == 0)
+  {
+    return '';
+  }
+
+  return StringTable().Table![stringID]!;
 }

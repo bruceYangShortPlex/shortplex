@@ -78,7 +78,7 @@ class LoginMananger
     return isLogin;
   }
 
-  Future<bool> LogOut() async
+  Future<bool> LogOut([bool _isDelete = false]) async
   {
     if (!UserData.to.isLogin.value)
     {
@@ -107,14 +107,24 @@ class LoginMananger
       print('Log Out Fail ${e}');
     }
 
-    print('Logout result : ${isLogin}');
+    print('isLogin is : ${isLogin}');
 
-    if (!isLogin)
+    if (!_isDelete)
     {
-      Get.lazyPut(()=>HttpProtocolManager());
-      var logout = await HttpProtocolManager.to.Send_Logout();
-      if (logout)
+      if (!isLogin)
       {
+        Get.lazyPut(() => HttpProtocolManager());
+        var logout = await HttpProtocolManager.to.Send_Logout();
+        if (logout) {
+          UserData.to.InitValue();
+        }
+      }
+    }
+    else
+    {
+      if (!isLogin)
+      {
+        print('logout complete');
         UserData.to.InitValue();
       }
     }
@@ -212,7 +222,7 @@ class LoginMananger
     {
       if(value != null)
       {
-        userData.SetInfo(value);
+        userData.UpdateInfo(value);
       }
     },);
 

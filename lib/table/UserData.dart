@@ -18,7 +18,7 @@ class UserData extends GetxController
 {
   static UserData get to => Get.find();
 
-  var count = 0.obs;
+  var refreshCount = 0.obs;
   RxString name = 'Guest'.obs;
   RxString photoUrl = ''.obs;
   RxBool isLogin = false.obs;
@@ -151,7 +151,11 @@ class UserData extends GetxController
       }
     }
 
-    count++;
+    refreshCount++;
+    if (refreshCount.value == 0)
+    {
+      refreshCount++;
+    }
   }
 }
 

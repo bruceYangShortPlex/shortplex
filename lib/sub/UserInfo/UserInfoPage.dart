@@ -1,11 +1,10 @@
-import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/CupertinoMain.dart';
 import 'package:shortplex/sub/UserInfo/SettingPage.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import '../../Util/HttpProtocolManager.dart';
@@ -22,7 +21,8 @@ enum UserInfoSubPageType
   SETTING,
 }
 
-class UserInfoPage extends StatefulWidget {
+class UserInfoPage extends StatefulWidget
+{
   const UserInfoPage({super.key});
 
   @override
@@ -54,29 +54,35 @@ class UserInfoPage extends StatefulWidget {
 
 class _UserInfoPageState extends State<UserInfoPage>
 {
-  @override
-  void initState()
-  {
 
-    super.initState();
+  getWalletInfo()
+  {
+    HttpProtocolManager.to.Get_WalletBalance().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        if (item.userId == UserData.to.userId)
+        {
+          setState(() {
+            UserData.to.popcornCount.value = double.parse(item.popcorns).toInt();
+            UserData.to.bonusCornCount = double.parse(item.bonus).toInt();
+          });
+          break;
+        }
+      }
+
+    },);
   }
 
   @override
-  void didUpdateWidget(covariant UserInfoPage oldWidget)
+  void initState()
   {
-    super.didUpdateWidget(oldWidget);
-
-    var manager = HttpProtocolManager.to;
-    manager.Get_UserData().then((value)
-    {
-      print('send GetUserData value ${value}');
-      if (value != '') {
-        //유저정보 불러와서 비동기로 데이터 체우기.
-        var jsonData = jsonDecode(value);
-        var providerid = jsonData['providerid'];
-        print('Get User Data providerid');
-      }
-    });
+    getWalletInfo();
+    super.initState();
   }
 
   @override
@@ -536,7 +542,13 @@ class _UserInfoPageState extends State<UserInfoPage>
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child:  Text(StringTable().Table![400007]!, style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 12),),
+                                child:
+                                Text
+                                (
+                                  StringTable().Table![400007]!,
+                                  style:
+                                  const TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 12),
+                                ),
                               ),
                               //),
                               Padding
@@ -544,13 +556,19 @@ class _UserInfoPageState extends State<UserInfoPage>
                                 padding: const EdgeInsets.only(right: 20.0),
                                 child:
                                 Container
-                                  (
+                                (
                                   width: 110.w,
                                   height: 92 * 0.5,
                                   padding: EdgeInsets.only(left: 5),
                                   //color: Colors.red,
                                   alignment: Alignment.centerLeft,
-                                  child: Text(UserData.to.GetPopupcornCount().$2, style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),),
+                                  child:
+                                  Text
+                                  (
+                                    UserData.to.GetPopupcornCount().$2,
+                                    style:
+                                    const TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ],
@@ -635,8 +653,8 @@ class _UserInfoPageState extends State<UserInfoPage>
           (
             children:
             [
-              defaultInfo(400010, 400097, 400098,CupertinoIcons.bell),
-              defaultInfo(400011,400099,400100, CupertinoIcons.heart),
+              defaultInfo(400010, 400097, 400098, CupertinoIcons.bell),
+              defaultInfo(400011,400099, 400100, CupertinoIcons.heart),
               option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO),
               option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING),
             ],
@@ -722,12 +740,12 @@ class _UserInfoPageState extends State<UserInfoPage>
           children:
           [
             Row
-              (
+            (
               mainAxisAlignment: MainAxisAlignment.start,
               children:
               [
                 Padding
-                  (
+                (
                   padding: const EdgeInsets.only(left: 15, top: 10),
                   child:
                   Container
@@ -744,7 +762,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                   ),
                 ),
                 Padding
-                  (
+                (
                   padding: const EdgeInsets.only(left: 10.0, top: 10),
                   child: Container
                     (
@@ -754,80 +772,94 @@ class _UserInfoPageState extends State<UserInfoPage>
                     //color: Colors.red,
                     child:
                     Text
-                      (
+                    (
                       StringTable().Table![_titleID]!,
                       style:
-                      const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                      const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
                   ),
                 ),
               ],
             ),
+            contetntAnnounce(_contents1id,_contents2id,_icon == CupertinoIcons.bell),
             Padding
-              (
-              padding: const EdgeInsets.only(top: 10, left: 50),
-              child:
-              Container
-                (
-                //color: Colors.red,
-                height: 40,
-                width: 200.w,
-                child: Text(StringTable().Table![_contents1id]!,
-                  style:
-                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
-              ),
-            ),
-            Padding
-              (
-              padding: const EdgeInsets.only(top: 8.0, left: 50),
-              child:
-              Container
-                (
-                //color: Colors.blue,
-                height: 40,
-                width: 200.w,
-                child: Text(StringTable().Table![_contents2id]!,
-                  style:
-                  TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
-              ),
-            ),
-            Padding
-              (
-                padding: const EdgeInsets.only(top: 10.0, left: 50),
-                child:
-                Container
-                  (
-                  padding: EdgeInsets.only(bottom: 1),
-                  alignment: Alignment.center,
-                  width: 90,
-                  height: 26,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child:
-                  GestureDetector
-                    (
-                    child:
-                    Text(StringTable().Table![400101]!,
-                      style:
-                      TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-                    onTap: ()
-                    {
-                      print('todo~ work');
-                    },
-                  ),
-                )
-            ),
-            Padding
-              (
+            (
               padding: const EdgeInsets.only(top: 20.0),
               child: Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
             ),
           ],
         ),
       );
+
+  Widget contetntAnnounce(int _contents1id, int _contents2id, bool _isAlarm)
+  {
+    return
+    Padding(
+      padding: const EdgeInsets.only(left: 44, top: 10),
+      child: Column
+      (
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:
+        [
+            Container
+            (
+              //color: Colors.red,
+              height: 40,
+              //width: 200.w,
+              child: Text(StringTable().Table![_contents1id]!,
+                style:
+                const TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
+            ),
+            Container
+            (
+              //color: Colors.blue,
+              height: 40,
+              //width: 200.w,
+              child: Text(StringTable().Table![_contents2id]!,
+                style:
+                TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),),
+            ),
+            GestureDetector
+            (
+              onTap: ()
+              {
+                var moveindex = 1;
+                if (_isAlarm)
+                {
+                  moveindex = 2;
+                }
+                MainBottomNavgationBarController.to.selectedIndex.value = moveindex;
+              },
+              child:
+              Container
+              (
+                padding: EdgeInsets.only(bottom: 1),
+                alignment: Alignment.center,
+                width: 90,
+                height: 26,
+                decoration:
+                ShapeDecoration
+                (
+                  shape:
+                  RoundedRectangleBorder
+                    (
+                    side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                child:
+                Text
+                (
+                  StringTable().Table![400101]!,
+                  style:
+                  const TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                ),
+              ),
+            )
+        ],
+      ),
+    );
+  }
 
   Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
   {

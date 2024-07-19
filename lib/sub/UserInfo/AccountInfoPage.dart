@@ -216,7 +216,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           SizedBox(height: 10,),
                           Obx(()
                           {
-                            if (UserData.to.isLogin.value) {
+                            if (UserData.to.refreshCount.value != 0) {
                               accountInfoCountCheck();
                             }
                             return
@@ -298,7 +298,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                   Obx(()
                   {
                     var text = '';
-                    if (UserData.to.isLogin.value)
+                    if (UserData.to.refreshCount.value > 0)
                     {
                       switch (_type)
                       {
@@ -315,8 +315,10 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           break;
                         case AccountInfoSubPageType.BIRTHDAY:
                           {
+                            print('UserData.to.BirthDay : ${UserData.to.BirthDay}');
+
                             if (UserData.to.BirthDay.isNotEmpty) {
-                              text = UserData.to.BirthDay.replaceAll('-', '.');
+                              text = ConvertCommentDate(UserData.to.BirthDay);
                             }
                           }
                           break;
@@ -841,6 +843,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                     }
 
                     UserData.to.UpdateInfo(value);
+
                     buttonDisable = false;
                     Navigator.pop(context);
                   },);

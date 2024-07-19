@@ -10,6 +10,7 @@ import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
+import 'package:shortplex/Network/Wallet_Res.dart';
 import 'package:shortplex/Network/Watch_Req.dart';
 
 import '../Network/Comment_Req.dart';
@@ -41,50 +42,48 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
   static String ApiKey = 'cbj1PqcA1NKlJEzQa0BGKwJulkfBqQcb';
 
-  static bool waiting = false;
+  // getData() async
+  // {
+  //   //var heads = {'apikey' : ApiKey};
+  //   //var heads = {'Authorization' : 'KakaoAK 7223322857794c79fd6f7467272f8f9c'};
+  //   try
+  //   {
+  //     var uri = 'https://quadra-server.web.app/api/v1/oping';
+  //     //var uri = 'www.google.com';
+  //     //var uri = 'https://dapi.kakao.com/v3/search/book?target=title&query=doit';
+  //
+  //     var res = await http.get(Uri.parse(uri));
+  //     print('resutl : ${res.body}');
+  //   }
+  //   catch (e)
+  //   {
+  //     print('get error ${e}');
+  //   }
+  // }
 
-  getData() async
-  {
-    //var heads = {'apikey' : ApiKey};
-    //var heads = {'Authorization' : 'KakaoAK 7223322857794c79fd6f7467272f8f9c'};
-    try
-    {
-      var uri = 'https://quadra-server.web.app/api/v1/oping';
-      //var uri = 'www.google.com';
-      //var uri = 'https://dapi.kakao.com/v3/search/book?target=title&query=doit';
-
-      var res = await http.get(Uri.parse(uri));
-      print('resutl : ${res.body}');
-    }
-    catch (e)
-    {
-      print('get error ${e}');
-    }
-  }
-
-  postData() async
-  {
-    try
-    {
-      var uri = 'https://quadra-server.web.app/api/v1/status';
-      var heads = {'apikey':ApiKey, 'Content-Type':'application/json'};
-      var response = await http.post(Uri.parse(uri), headers: heads, body: null);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-    }
-    catch (e)
-    {
-      print('post error ${e}');
-    }
-   // print(await http.read(Uri.https('https://quadra-server.web.app/api/v1/status', 'foobar.txt')));
-  }
+  // postData() async
+  // {
+  //   try
+  //   {
+  //     var uri = 'https://quadra-server.web.app/api/v1/status';
+  //     var heads = {'apikey':ApiKey, 'Content-Type':'application/json'};
+  //     var response = await http.post(Uri.parse(uri), headers: heads, body: null);
+  //     print('Response status: ${response.statusCode}');
+  //     print('Response body: ${response.body}');
+  //   }
+  //   catch (e)
+  //   {
+  //     print('post error ${e}');
+  //   }
+  //  // print(await http.read(Uri.https('https://quadra-server.web.app/api/v1/status', 'foobar.txt')));
+  // }
 
   Future<OAuthRes?> Send_OAuthLogin(OAuthLogin _oauthLogin) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Content-Type':'application/json'};
-      var url = Uri.parse('https://quadra-server.web.app/api/v1/account/oauth_login');
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/account/oauth_login');
       var bodys = jsonEncode(_oauthLogin.toJson());
       print('send bodys : ${bodys}');
       var res = await http.post(url, headers: heads, body: bodys);
@@ -1065,5 +1064,34 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return false;
+  }
+
+
+  Future<WalletRes?> Get_WalletBalance() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/wallet/balance';
+      print('Get_Preview send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_Preview res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  WalletRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_Preview FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Preview error : $e');
+    }
+
+    return null;
   }
 }

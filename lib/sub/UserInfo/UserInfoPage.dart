@@ -734,7 +734,6 @@ class _UserInfoPageState extends State<UserInfoPage>
           {
             if (UserData.to.refreshCount.value != prevUpdateCount)
             {
-              print('upate start');
               prevUpdateCount = UserData.to.refreshCount.value;
               getContentList();
             }

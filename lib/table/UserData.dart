@@ -30,8 +30,8 @@ class UserData extends GetxController
   String privacypolicies = 'true';
   String providerUid = '';
   RxBool isSubscription = false.obs;
-  RxInt popcornCount = 0.obs;
-  int bonusCornCount = 0;
+  var popcornCount = 0.obs;
+  var bonusCornCount = 0.obs;
   bool autoPlay = true;
   int usedPopcorn = 0;
   int usedBonusCorn = 0;
@@ -58,7 +58,7 @@ class UserData extends GetxController
     privacypolicies = 'true';
     isSubscription.value = false;
     popcornCount.value = 0;
-    bonusCornCount = 0;
+    bonusCornCount.value = 0;
     BirthDay = '';
     Gender = '';
     HP_Number = '';
@@ -95,7 +95,7 @@ class UserData extends GetxController
   {
     var formatter = NumberFormat('#,###');
     var popcornCount = formatter.format(this.popcornCount.value);
-    var cornCount = formatter.format(this.bonusCornCount);
+    var cornCount = formatter.format(this.bonusCornCount.value);
     return (popcornCount, cornCount);
   }
 

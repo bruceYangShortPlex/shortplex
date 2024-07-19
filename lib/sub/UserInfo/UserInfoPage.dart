@@ -89,11 +89,10 @@ class _UserInfoPageState extends State<UserInfoPage>
         );
 
         data.contentTitle = item.title ?? '';
-        alarmList.add(data);
+        setState(() {
+          alarmList.add(data);
+        });
       }
-      setState(() {
-
-      });
     },);
 
     HttpProtocolManager.to.Get_UserInfoContentList(true).then((value)
@@ -117,12 +116,10 @@ class _UserInfoPageState extends State<UserInfoPage>
         );
 
         data.contentTitle = item.title ?? '';
-        favoritesList.add(data);
-        //favoritesList.add(data);
+        setState(() {
+          favoritesList.add(data);
+        });
       }
-      setState(() {
-
-      });
     },);
   }
 
@@ -143,10 +140,8 @@ class _UserInfoPageState extends State<UserInfoPage>
       {
         if (item.userId == UserData.to.userId)
         {
-          setState(() {
-            UserData.to.popcornCount.value = double.parse(item.popcorns).toInt();
-            UserData.to.bonusCornCount = double.parse(item.bonus).toInt();
-          });
+          UserData.to.popcornCount.value = double.parse(item.popcorns).toInt();
+          UserData.to.bonusCornCount.value = double.parse(item.bonus).toInt();
           break;
         }
       }
@@ -371,12 +366,12 @@ class _UserInfoPageState extends State<UserInfoPage>
                       width: 290.w,
                       child:
                       Column
-                        (
+                      (
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children:
                         [
                           Padding
-                            (
+                          (
                             padding: EdgeInsets.only(left: 20,top: 2),
                             child:
                             Text
@@ -574,11 +569,15 @@ class _UserInfoPageState extends State<UserInfoPage>
                                   //color: Colors.red,
                                   alignment: Alignment.centerLeft,
                                   child:
-                                  Text
-                                  (
-                                    Get.find<UserData>().GetPopupcornCount().$1,
-                                    style: const TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),
-                                  ),
+                                  Obx(()
+                                  {
+                                    return
+                                    Text
+                                    (
+                                      Get.find<UserData>().GetPopupcornCount().$1,
+                                      style: const TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),
+                                    );
+                                  },),
                                 ),
                               ),
                             ],
@@ -642,12 +641,15 @@ class _UserInfoPageState extends State<UserInfoPage>
                                   //color: Colors.red,
                                   alignment: Alignment.centerLeft,
                                   child:
-                                  Text
-                                  (
-                                    UserData.to.GetPopupcornCount().$2,
-                                    style:
-                                    const TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),
-                                  ),
+                                  Obx(()
+                                  {
+                                    return
+                                    Text
+                                    (
+                                      UserData.to.GetPopupcornCount().$2,
+                                      style: const TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 16),
+                                    );
+                                  },),
                                 ),
                               ),
                             ],
@@ -732,6 +734,7 @@ class _UserInfoPageState extends State<UserInfoPage>
           {
             if (UserData.to.refreshCount.value != prevUpdateCount)
             {
+              print('upate start');
               prevUpdateCount = UserData.to.refreshCount.value;
               getContentList();
             }

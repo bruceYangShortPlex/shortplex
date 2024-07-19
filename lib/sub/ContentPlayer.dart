@@ -170,7 +170,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       //구독중이면 그냥 다음진행.
       if (UserData.to.isSubscription == false)
       {
-        if (UserData.to.popcornCount + UserData.to.bonusCornCount < episodeData!.cost)
+        if (UserData.to.popcornCount.value + UserData.to.bonusCornCount.value < episodeData!.cost)
         {
           isShowContent = false;
           bottomOffset = 0;
@@ -1864,7 +1864,7 @@ Widget contentPlayMain()
                                 SizedBox(height: 8,),
                                 Text
                                 (
-                                  SetTableStringArgument(400025, ['${episodeData!.cost}', '${UserData.to.popcornCount + UserData.to.bonusCornCount}'])
+                                  SetTableStringArgument(400025, ['${episodeData!.cost}', '${UserData.to.popcornCount.value + UserData.to.bonusCornCount.value}'])
                                   ,
                                   style: TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),

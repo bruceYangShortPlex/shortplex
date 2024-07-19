@@ -163,7 +163,7 @@ Widget ShopGoods([bool _visibleTap = true])
         ),
         SizedBox(height: 20,),
         Row
-          (
+        (
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children:
           [

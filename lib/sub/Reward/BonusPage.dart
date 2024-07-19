@@ -665,7 +665,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                     autostart: Autostart.no,
                     //repeat: ImageRepeat.repeat,
                     placeholder: (context) =>
-                    const Center(child: CircularProgressIndicator()),
+                    const Center(child: SizedBox()),
                     image: const AssetImage('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_play.gif'),
                   ),
                   Visibility

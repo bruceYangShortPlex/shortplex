@@ -192,22 +192,26 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                     Padding
                                     (
                                       padding: const EdgeInsets.only(top: 5),
-                                      child: Container
+                                      child:
+                                      GestureDetector
                                       (
-                                        alignment: Alignment.center,
-                                        width: 152,
-                                        height: 26,
-                                        decoration: ShapeDecoration(
-                                          color: Color(0xFF1E1E1E),
-                                          shape: RoundedRectangleBorder(
-                                            side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                        ),
+                                        onTap: ()
+                                        {
+                                          Get.to(() => ShopPage());
+                                        },
                                         child:
-
-                                        GestureDetector
+                                        Container
                                         (
+                                          alignment: Alignment.center,
+                                          width: 152,
+                                          height: 26,
+                                          decoration: ShapeDecoration(
+                                            color: Color(0xFF1E1E1E),
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                          ),
                                           child:
                                           Padding
                                           (
@@ -216,10 +220,6 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                               style:
                                               TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                                           ),
-                                          onTap: ()
-                                          {
-                                            Get.to(() => ShopPage());
-                                          },
                                         ),
                                       ),
                                     ),

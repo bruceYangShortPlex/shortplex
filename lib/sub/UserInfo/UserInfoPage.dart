@@ -566,20 +566,37 @@ class _UserInfoPageState extends State<UserInfoPage>
                     //color: Colors.blue,
                     alignment: Alignment.center,
                     child:
-                    Container
+                    GestureDetector
                     (
-                      width: 80.w,
-                      height: 26,
-                      alignment: Alignment.center,
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+                      onTap: ()
+                      {
+                        // if (Get.find<UserData>().isLogin.value)
+                        // {
+                        //   Get.to(() => ShopPage());
+                        // }
+                        // else
+                        // {
+                        //   showDialogTwoButton(400003, 400003,
+                        //   () =>
+                        //   {
+                        //       Get.to(() => LoginPage(), transition: Transition.noTransition),
+                        //   });
+                        // }
+
+                        Get.to(() => ShopPage());
+                      },
                       child:
-                      GestureDetector
+                      Container
                       (
+                        width: 80.w,
+                        height: 26,
+                        alignment: Alignment.center,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                         child:
                         Container
                         (
@@ -587,23 +604,6 @@ class _UserInfoPageState extends State<UserInfoPage>
                           child:
                           Text(StringTable().Table![400009]!, style: TextStyle(fontSize: 14, color: Colors.white,fontFamily: 'NotoSans',),),
                         ),
-                        onTap: ()
-                        {
-                          // if (Get.find<UserData>().isLogin.value)
-                          // {
-                          //   Get.to(() => ShopPage());
-                          // }
-                          // else
-                          // {
-                          //   showDialogTwoButton(400003, 400003,
-                          //   () =>
-                          //   {
-                          //       Get.to(() => LoginPage(), transition: Transition.noTransition),
-                          //   });
-                          // }
-
-                          Get.to(() => ShopPage());
-                        },
                       ),
                     ),
                   ),

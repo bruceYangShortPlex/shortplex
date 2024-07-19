@@ -567,7 +567,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
               Text
                 (
                 textAlign: TextAlign.center,
-                endTime != null ? SetTableStringArgument(800007, [formatDuration(difference!).$1,formatDuration(difference!).$2]) : '',
+                endTime != null ? SetTableStringArgument(800007, [SubstringDuration(difference!).$1,SubstringDuration(difference!).$2]) : '',
                 style:
                 TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),

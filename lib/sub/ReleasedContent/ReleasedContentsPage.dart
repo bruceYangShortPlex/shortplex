@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:share/share.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import '../../Util/HttpProtocolManager.dart';
@@ -62,13 +63,14 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
               print('preview stat : ${item.stat!.length}');
             }
 
-            if (kDebugMode) {
-              print('preview stat info : ${info.amt} /  ${info.action}');
+            if (kDebugMode)
+            {
+              print('preview stat info : ${info.amt} / action : ${info.action} / info.user_id  : ${info.user_id }');
             }
 
-            if (info.amt > 0 && info.action == Stat_Type.release_at.name)
+            if (info.user_id == UserData.to.userId && info.amt > 0 && info.action == Stat_Type.release_at.name)
             {
-              data.isNotiCheck = true;
+              data.isAlarmCheck = true;
               break;
             }
           }
@@ -398,6 +400,7 @@ Widget mainWidget(BuildContext context)
   }
 
   bool buttonDisable = false;
+  var prevRefreshCount= 0;
 
   Widget contentInfo()
   {
@@ -406,7 +409,6 @@ Widget mainWidget(BuildContext context)
     }
 
     var data = dataList[selectedIndex];
-
     var title = data.title!;
     var date = data.GetReleaseDate();
     var totalEpisode = SetTableStringArgument(100022, ['999']);
@@ -578,10 +580,10 @@ Widget mainWidget(BuildContext context)
                         return;
                       }
 
-                      var value = data.isNotiCheck ? -1 : 1;
+                      var value = data.isAlarmCheck ? -1 : 1;
                       //print('data.isNotiCheck : ${data.isNotiCheck} / value : $value');
                       buttonDisable = true;
-                      HttpProtocolManager.to.Send_Stat(data.id!, value, Comment_CD_Type.content, Stat_Type.release_at).then((value)
+                      HttpProtocolManager.to.Send_Stat(data.id!, value, Comment_CD_Type.alarm, Stat_Type.release_at).then((value)
                       {
                         if (value == null)
                         {
@@ -591,14 +593,15 @@ Widget mainWidget(BuildContext context)
 
                         for(var item in value.data!)
                         {
-                          if (item.action == Stat_Type.release_at.name)
+                          //print('item.user_id : ${item.user_id}');
+                          if (item.user_id == UserData.to.userId && item.action == Stat_Type.release_at.name)
                           {
-                            setState(() {
-                              data.isNotiCheck = item.amt > 0;
-                            });
+                            data.isAlarmCheck = item.amt > 0;
+                            UserData.to.refreshCount++;
                             break;
                           }
                         }
+
                         buttonDisable = false;
                       },);
                     },
@@ -628,11 +631,20 @@ Widget mainWidget(BuildContext context)
                           (
                             padding: const EdgeInsets.only(bottom: 14),
                             child:
-                            Icon
-                            (
-                              data.isNotiCheck ? CupertinoIcons.bell_fill : CupertinoIcons.bell,
-                              size: 22, color:Colors.white
-                            ),
+                            Obx(()
+                            {
+                              if (UserData.to.refreshCount != prevRefreshCount)
+                              {
+                                prevRefreshCount = UserData.to.refreshCount.value;
+                              }
+
+                              return
+                              Icon
+                              (
+                                  data.isAlarmCheck ? CupertinoIcons.bell_fill : CupertinoIcons.bell,
+                                  size: 22, color:Colors.white
+                              );
+                            },),
                           ),
                           Padding
                           (

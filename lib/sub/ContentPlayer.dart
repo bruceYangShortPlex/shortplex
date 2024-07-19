@@ -1069,7 +1069,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             Text
             (
               videoController != null &&isShowContent && videoController!.value.isInitialized ?
-              '${formatDuration(videoController!.value.position).$2}:${formatDuration(videoController!.value.position).$3} / ${formatDuration(videoController!.value.duration).$2}:${formatDuration(videoController!.value.duration).$3}' : '00:00 / 00:00',
+              '${SubstringDuration(videoController!.value.position).$2}:${SubstringDuration(videoController!.value.position).$3} / ${SubstringDuration(videoController!.value.duration).$2}:${SubstringDuration(videoController!.value.duration).$3}' : '00:00 / 00:00',
               style:
               const TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),

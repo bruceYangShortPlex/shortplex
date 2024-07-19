@@ -515,6 +515,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                         if (item.key == contentData!.id! && item.action == Stat_Type.favorite.name)
                         {
                           UserData.to.isFavoriteCheck.value = item.amt > 0;
+                          UserData.to.refreshCount++;
                           break;
                         }
                       }

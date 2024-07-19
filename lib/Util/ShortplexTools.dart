@@ -99,7 +99,7 @@ String SetStringArgument(String _source, List<String> list)
   return dest;
 }
 
-(String, String, String) formatDuration(Duration duration)
+(String, String, String) SubstringDuration(Duration duration)
 {
   int hours = duration.inHours;
   int minutes = duration.inMinutes.remainder(60);
@@ -110,6 +110,21 @@ String SetStringArgument(String _source, List<String> list)
 
   return (formattedHours, formattedMinutes, formattedSeconds);
 }
+
+(String, String, String) SubstringDate(String _date)
+{
+  if (_date.isEmpty) {
+    return ('','','');
+  }
+
+  var date = DateTime.parse(_date);
+  var year = date.year.toString();
+  var month = date.month.toString().padLeft(2, '0');
+  var day = date.day.toString().padLeft(2, '0');
+
+  return (year, month, day);
+}
+
 
 Widget profileRect(double _size, String _imageUrl)
 {

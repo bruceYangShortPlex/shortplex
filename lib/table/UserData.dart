@@ -178,7 +178,7 @@ class ContentData
   String? landScapeImageUrl;
   String? description;
   String? genre;
-  bool isNotiCheck = false;
+  bool isAlarmCheck = false;
   String? shareUrl = '';
 
   ContentData

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -661,8 +662,10 @@ class _HomePageState extends State<HomePage>
                 {
                   GetEpisodeData(_data.id!).then((value)
                   {
-                    print('_data.watchingEpisode : ${_data
+                    if (kDebugMode) {
+                      print('_data.watchingEpisode : ${_data
                         .watchingEpisode} / episode length : ${value?.length}');
+                    }
                     Get.to(() => ContentPlayer(),
                         arguments: [_data.watchingEpisode, value]);
                     buttonEnable = true;

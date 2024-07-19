@@ -325,7 +325,7 @@ Widget mainWidget(BuildContext context)=>
                         child:
                         Text
                         (
-                          _data.EndTime != null ? SetTableStringArgument(800007, [formatDuration(_data.difference!).$1,formatDuration(_data.difference!).$2]) : '',
+                          _data.EndTime != null ? SetTableStringArgument(800007, [SubstringDuration(_data.difference!).$1,SubstringDuration(_data.difference!).$2]) : '',
                           style:
                           TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),

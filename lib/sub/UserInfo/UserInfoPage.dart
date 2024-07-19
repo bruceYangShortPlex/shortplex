@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/Util/ShortplexTools.dart';
+import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/sub/CupertinoMain.dart';
 import 'package:shortplex/sub/UserInfo/SettingPage.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
@@ -54,9 +56,83 @@ class UserInfoPage extends StatefulWidget
 
 class _UserInfoPageState extends State<UserInfoPage>
 {
+  var alarmList = <ContentData>[];
+  var favoritesList = <ContentData>[];
+  int prevUpdateCount = 0;
+
+  getContentList()
+  {
+    prevUpdateCount = UserData.to.refreshCount.value;
+    if (UserData.to.isLogin.value == false)
+    {
+      return;
+    }
+
+    HttpProtocolManager.to.Get_UserInfoContentList(false).then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      alarmList.clear();
+      for (var item in value.data!.items!)
+      {
+        var data = ContentData
+        (
+          id: item.id,
+          title: item.title,
+          imagePath: item.posterPortraitImgUrl,
+          cost: 0,
+          releaseAt: item.releaseAt,
+          landScapeImageUrl: item.posterLandscapeImgUrl,
+          rank: item.topten,
+        );
+
+        data.contentTitle = item.title ?? '';
+        alarmList.add(data);
+      }
+      setState(() {
+
+      });
+    },);
+
+    HttpProtocolManager.to.Get_UserInfoContentList(true).then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      favoritesList.clear();
+      for (var item in value.data!.items!)
+      {
+        var data = ContentData
+        (
+          id: item.id,
+          title: item.title,
+          imagePath: item.posterPortraitImgUrl,
+          cost: 0,
+          releaseAt: item.releaseAt,
+          landScapeImageUrl: item.posterLandscapeImgUrl,
+          rank: item.topten,
+        );
+
+        data.contentTitle = item.title ?? '';
+        favoritesList.add(data);
+        //favoritesList.add(data);
+      }
+      setState(() {
+
+      });
+    },);
+  }
 
   getWalletInfo()
   {
+    if (UserData.to.isLogin.value ==false)
+    {
+      return;
+    }
+
     HttpProtocolManager.to.Get_WalletBalance().then((value)
     {
       if (value == null) {
@@ -74,13 +150,13 @@ class _UserInfoPageState extends State<UserInfoPage>
           break;
         }
       }
-
     },);
   }
 
   @override
   void initState()
   {
+    getContentList();
     getWalletInfo();
     super.initState();
   }
@@ -280,7 +356,7 @@ class _UserInfoPageState extends State<UserInfoPage>
             ),
             child:
             Column
-              (
+            (
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children:
               [
@@ -346,9 +422,12 @@ class _UserInfoPageState extends State<UserInfoPage>
                           Container
                           (
                             child:
-                            Text(StringTable().Table![400016]!,
+                            Text
+                            (
+                              StringTable().Table![400016]!,
                               style:
-                              TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                              TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                            ),
                           ),
                           onTap: ()
                           {
@@ -649,16 +728,27 @@ class _UserInfoPageState extends State<UserInfoPage>
         SingleChildScrollView
         (
           child:
-          Column
-          (
+          Obx(()
+          {
+            if (UserData.to.refreshCount.value != prevUpdateCount)
+            {
+              prevUpdateCount = UserData.to.refreshCount.value;
+              getContentList();
+            }
+
+            return
+            Column
+            (
             children:
             [
-              defaultInfo(400010, 400097, 400098, CupertinoIcons.bell),
-              defaultInfo(400011,400099, 400100, CupertinoIcons.heart),
+              defaultInfo(400010, 400097, 400098, CupertinoIcons.bell_fill, alarmList),
+              defaultInfo(400011,400099, 400100, CupertinoIcons.heart_solid, favoritesList),
               option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO),
               option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING),
             ],
-          ),
+          );
+          },),
+
         )
         // Obx
         //   (() =>
@@ -726,11 +816,11 @@ class _UserInfoPageState extends State<UserInfoPage>
       );
   }
 
-  Widget defaultInfo(int _titleID, int _contents1id, int _contents2id, IconData _icon ) =>
+  Widget defaultInfo(int _titleID, int _contents1id, int _contents2id, IconData _icon, List<ContentData> _list ) =>
       Container
       (
         width: 390.w,
-        height: 190,
+        //: 190,
         //color: Colors.white,
         child:
         Column
@@ -750,15 +840,15 @@ class _UserInfoPageState extends State<UserInfoPage>
                   child:
                   Container
                   (
-                      width: 20,
-                      height: 20,
-                      //color: Colors.red,
-                      child:
-                      Icon
-                        (
-                        _icon, size: 20,
-                        color: Colors.white,
-                      )
+                    width: 20,
+                    height: 20,
+                    //color: Colors.red,
+                    child:
+                    Icon
+                    (
+                      _icon, size: 20,
+                      color: Colors.white,
+                    )
                   ),
                 ),
                 Padding
@@ -781,7 +871,8 @@ class _UserInfoPageState extends State<UserInfoPage>
                 ),
               ],
             ),
-            contetntAnnounce(_contents1id,_contents2id,_icon == CupertinoIcons.bell),
+            _list.length == 0 ? contetntAnnounce(_contents1id,_contents2id,_icon == CupertinoIcons.bell_fill)
+            : contentsView(_list, _icon == CupertinoIcons.bell_fill),
             Padding
             (
               padding: const EdgeInsets.only(top: 20.0),
@@ -861,149 +952,94 @@ class _UserInfoPageState extends State<UserInfoPage>
     );
   }
 
-  Widget contentsView(List<ContentData> _list, [bool _buttonVisible = false])
+  Widget contentsView(List<ContentData> _list, [bool _isAlram = false])
   {
     if (_list.length == 0)
       return SizedBox();
 
     return
-      Container
+      Center(
+        child: Container
         (
-        width: 390.w,
-        //color: Colors.red,
-        child:
-        Column
+          width: MediaQuery.of(context).size.width,
+          //color: Colors.red,
+          child:
+          Column
           (
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children:
-          [
-            Row
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:
+            [
+              SizedBox(height: 10,),
+              SingleChildScrollView
               (
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children:
-              [
-                Text
-                  (
-                  _list[0].title!,
-                  style:
-                  const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                ),
-                SizedBox(height: 10,),
-                SizedBox
-                  (
-                  width: 40,
-                  child:
-                  Visibility
-                    (
-                    visible: _buttonVisible,
-                    child:
-                    IconButton
-                      (
-                        alignment: Alignment.center,
-                        color: Colors.white,
-                        iconSize: 20,
-                        icon: const Icon(Icons.arrow_forward_ios),
-                        onPressed: ()
-                        {
-                          print('Click Move All Contents');
-                        }
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10,),
-            SingleChildScrollView
-              (
-              scrollDirection: Axis.horizontal,
-              child:
-              Row
+                scrollDirection: Axis.horizontal,
+                child:
+                Row
                 (
-                mainAxisAlignment: MainAxisAlignment.start,
-                children:
-                [
-                  for(var item in _list)
-                    contentItem(item),
-                ],
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:
+                  [
+                    SizedBox(width: 10,),
+                    for(var item in _list)
+                      contentItem(item, _isAlram),
+                    SizedBox(width: 10,),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 30,),
-          ],
+              //SizedBox(height: 30,),
+            ],
+          ),
         ),
       );
   }
 
-  Widget contentItem(ContentData _data)
+  Widget contentItem(ContentData _data, bool _isAlram)
   {
     return
       Padding
-        (
+      (
         padding: const EdgeInsets.only(right: 10),
         child:
         Column
-          (
+        (
           children:
           [
             GestureDetector
-              (
+            (
               onTap: ()
               {
-                if (_data.isWatching)
-                {
-                  print(_data.id);
-                  print('go to content player');
-                }
-                else
-                {
-                  print('go to info page');
-                  print(_data.id);
-                }
+                Get.to(() => const ContentInfoPage(), arguments: _data);
               },
               child:
               Stack
-                (
+              (
                 alignment: _data.isWatching ? Alignment.center : Alignment.topRight,
                 children:
                 [
                   Container
-                    (
+                  (
                     width: 105,
                     height: 160,
-                    decoration: ShapeDecoration
-                      (
-                      color: Color(0xFFC4C4C4),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-                    ),
-                  ),
-                  Visibility
-                    (
-                    visible: _data.isWatching,
+                    // decoration: ShapeDecoration
+                    // (
+                    //   color: Color(0xFFC4C4C4),
+                    //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                    // ),
                     child:
-                    Container
-                      (
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.only(left: 3.5),
-                      width: 50,
-                      height: 50,
-                      decoration: ShapeDecoration(
-                        color: Colors.black.withOpacity(0.6),
-                        shape: OvalBorder(
-                          side: BorderSide(
-                            width: 1.50,
-                            strokeAlign: BorderSide.strokeAlignCenter,
-                            color: Color(0xFF00FFBF),
-                          ),
-                        ),
-                      ),
-                      child: Icon(CupertinoIcons.play_arrow_solid, size: 28, color: Colors.white,),
+                    ClipRRect
+                    (
+                      borderRadius: BorderRadius.circular(7),
+                      child:
+                      _data.imagePath != null ?
+                      Image.network(_data.imagePath!, fit: BoxFit.cover,) : Container(),
                     ),
                   ),
                   Visibility
-                    (
+                  (
                     visible: _data.isNew,
                     child:
                     Container
-                      (
+                    (
                       width: 29,
                       height: 14,
                       alignment: Alignment.center,
@@ -1017,7 +1053,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                       ),
                       child:
                       Text
-                        (
+                      (
                         StringTable().Table![500014]!,
                         style:
                         const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
@@ -1025,15 +1061,15 @@ class _UserInfoPageState extends State<UserInfoPage>
                     ),
                   ),
                   Padding
-                    (
+                  (
                     padding: const EdgeInsets.only(top: 160 - 42, right: 105 - 42),
                     child:
                     Visibility
-                      (
+                    (
                         visible: _data.rank,
                         child:
                         Container
-                          (
+                        (
                           //alignment: Alignment.center,
                           //width: 42,height: 42, color: Colors.red,
                           child: SvgPicture.asset('assets/images/home/home_frame.svg', fit: BoxFit.contain,),
@@ -1043,41 +1079,36 @@ class _UserInfoPageState extends State<UserInfoPage>
                 ],
               ),
             ),
-            Visibility
-              (
-              visible: _data.isWatching,
+            SizedBox(height: 2,),
+            Container
+            (
+              //color: Colors.red,
+              width: 105,
+              height: 14,
               child:
-              SizedBox
-                (
+              Text
+              (
+                _data.title!,
+                style:
+                TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              ),
+            ),
+            SizedBox(height: 4,),
+            Visibility
+            (
+              visible: _isAlram,
+              child:
+              Container
+              (
+                //color: Colors.red,
                 width: 105,
+                height: 14,
                 child:
-                Row
-                  (
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children:
-                  [
-                    Padding
-                      (
-                      padding: const EdgeInsets.only(left: 6, bottom: 2.1),
-                      child: Text
-                        (
-                        '${_data.watchingEpisode}',
-                        style:
-                        const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                      ),
-                    ),
-                    IconButton
-                      (
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.zero,
-                      iconSize: 16,
-                      onPressed: ()
-                      {
-                        print('go to info page');
-                        print(_data.id);
-                      },
-                      icon: Icon(CupertinoIcons.info), color: Colors.white,)
-                  ],
+                Text
+                (
+                  SetTableStringArgument(200001, [SubstringDate(_data.releaseAt!).$2, SubstringDate(_data.releaseAt!).$3]),
+                  style:
+                  TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                 ),
               ),
             ),

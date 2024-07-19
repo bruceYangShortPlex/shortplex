@@ -390,9 +390,9 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                             endTime != null
                                                 ? SetTableStringArgument(800007,
                                                 [
-                                                  formatDuration(
+                                                  SubstringDuration(
                                                       endTimeDifference!).$1,
-                                                  formatDuration(
+                                                  SubstringDuration(
                                                       endTimeDifference!).$2
                                                 ])
                                                 : '',

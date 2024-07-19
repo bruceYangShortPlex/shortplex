@@ -34,6 +34,7 @@ enum Comment_CD_Type
   episode,
   title_school,
   content,
+  alarm,
 }
 
 class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin
@@ -705,7 +706,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var stat =  StatReq(action: _type.name, value: _active, typeCd: type_cd);
       //print('stat : ${stat.value}');
       var bodys = jsonEncode(stat.toJson());
-      print('send_Stat heads : ${heads} / send bodys : ${bodys}');
+      print('send_Stat url : $url / heads : $heads / send bodys : $bodys');
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
       print('send_Stat res.body ${res.body}');
 
@@ -827,7 +828,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/preview';
-      print('Get_Preview send url : $url');
+      print('Get_Preview send url : $url / heads : $heads');
       var res = await http.get(Uri.parse(url), headers: heads);
       print('Get_Preview res.body ${res.body}');
 
@@ -1090,6 +1091,36 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('Get_Preview error : $e');
+    }
+
+    return null;
+  }
+
+  Future<HomeContentRes?> Get_UserInfoContentList(bool _isFavorites) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = _isFavorites ? 'https://www.quadra-system.com/api/v1/profile/favorites?sortkey=created_at&sortorder=desc'
+                :
+                'https://www.quadra-system.com/api/v1/profile/alarms?sortkey=created_at&sortorder=desc';
+      print('Get_Favorites send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_Favorites res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  HomeContentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_Favorites FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Favorites error : $e');
     }
 
     return null;

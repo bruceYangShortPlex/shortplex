@@ -247,7 +247,8 @@ class Stat {
     _action = json['action'];
     _cnt = json['cnt'];
     _amt = json['amt'] != null ? int.parse(json['amt']) : 0;
-    _users = json['users'];
+    _users = json['users'] ?? '';
+    user_id = json['user_id'] ?? '';
   }
   String? _platform;
   String? _typeCd;
@@ -260,6 +261,7 @@ class Stat {
   String? _cnt;
   int _amt = 0;
   String? _users;
+  String? user_id;
 
   String? get platform => _platform;
   String? get typeCd => _typeCd;
@@ -273,7 +275,8 @@ class Stat {
   int get amt => _amt;
   String? get users => _users;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson()
+  {
     final map = <String, dynamic>{};
     map['platform'] = _platform;
     map['type_cd'] = _typeCd;

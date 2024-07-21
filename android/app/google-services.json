@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "930447149134-fsqlgq6epd1ifrdm7pet9rkn4dp1bhqr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shortplex.shortplex",
+            "certificate_hash": "d148e33d7432f617fb655627ff1ab8225f8fbc44"
+          }
+        },
+        {
           "client_id": "930447149134-l4150n37npc5t5a71geofsve8ce2qkpd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -63,7 +71,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-6209332264163024~2074476217"
     }
   ],
   "configuration_version": "1"

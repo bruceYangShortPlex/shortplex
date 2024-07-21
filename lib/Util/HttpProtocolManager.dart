@@ -10,6 +10,7 @@ import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
+import 'package:shortplex/Network/WalletHistory_Res.dart';
 import 'package:shortplex/Network/Wallet_Res.dart';
 import 'package:shortplex/Network/Watch_Req.dart';
 
@@ -35,6 +36,13 @@ enum Comment_CD_Type
   title_school,
   content,
   alarm,
+}
+
+enum WalletHistoryType
+{
+  CHARGE,
+  SPEND,
+  BONUS,
 }
 
 class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin
@@ -1121,6 +1129,59 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('Get_Favorites error : $e');
+    }
+
+    return null;
+  }
+
+  Future<WalletHistoryRes?> Get_WalletHistory(WalletHistoryType _type) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = '';
+
+      switch(_type)
+      {
+        case WalletHistoryType.CHARGE:
+          {
+            url = 'https://www.quadra-system.com/api/v1/profile/wallet/popcorns?sortkey=created_at&sortorder=desc';
+          }
+          break;
+        case WalletHistoryType.SPEND:
+          {
+            url = 'https://www.quadra-system.com/api/v1/profile/wallet/debit';
+          }
+          break;
+        case WalletHistoryType.BONUS:
+          {
+            url = 'https://www.quadra-system.com/api/v1/profile/wallet/bonus?sortkey=created_at&sortorder=desc';
+          }
+          break;
+        default:
+          {
+            print('Not Found WalletHistoryType : $_type');
+          }
+          break;
+      }
+
+      print('Get_WalletHistory send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_WalletHistory res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  WalletHistoryRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_WalletHistory FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_WalletHistory error : $e');
     }
 
     return null;

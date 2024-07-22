@@ -37,7 +37,37 @@ class InAppPurchaseService extends GetxService
   RxList<PurchaseDetails> purchases = <PurchaseDetails>[].obs;
 
   // Function ▼ ============================================
+  Future<bool> getProducts() async
+  {
+    var result = false;
+    if (HomeData.to.productList.isNotEmpty)
+    {
+      if (kDebugMode) {
+        print('Already List');
+      }
 
+      return true;
+    }
+
+    await HttpProtocolManager.to.Get_Products().then((value)
+    {
+      if (value != null)
+      {
+        if (value.data!.items!.isEmpty)
+        {
+          print('Products list is Zero !!!!!!');
+        }
+        else
+        {
+          print('Get_Products result : ${value.data!.items!.length}');
+          HomeData.to.productList.value = value.data!.items!;
+          result = true;
+        }
+      }
+    },);
+
+    return result;
+  }
   /// 상품 목록 조회 방법
   ///
   /// Future<void>
@@ -76,38 +106,6 @@ class InAppPurchaseService extends GetxService
     products.assignAll(response.productDetails);
   }
 
-  Future<bool> getProducts() async
-  {
-    var result = false;
-    if (HomeData.to.productList.isNotEmpty)
-    {
-      if (kDebugMode) {
-        print('Already List');
-      }
-
-      return true;
-    }
-
-    await HttpProtocolManager.to.Get_Products().then((value)
-    {
-      if (value != null)
-      {
-        if (value.data!.items!.isEmpty)
-        {
-          print('Products list is Zero !!!!!!');
-        }
-        else
-        {
-          print('Get_Products result : ${value.data!.items!.length}');
-          HomeData.to.productList.value = value.data!.items!;
-          result = true;
-        }
-      }
-    },);
-
-    return result;
-  }
-
   /// 과거 구매 사용자를 검색하는 방법
   ///
   /// @return Future<void>
@@ -125,17 +123,25 @@ class InAppPurchaseService extends GetxService
   /// 상품을 이미 구매했는지 여부를 확인하는 방법입니다.
   ///
   /// @return void
-  void verifyPurchases() {
-    try {
-      PurchaseDetails purchase = purchases.firstWhere(
+  bool verifyPurchases()
+  {
+    try
+    {
+      PurchaseDetails purchase = purchases.firstWhere
+      (
             (purchase) => purchase.productID == productID.value,
       );
-      if (purchase.status == PurchaseStatus.purchased) {
+      if (purchase.status == PurchaseStatus.purchased)
+      {
         // 구매 완료
+        return true;
       }
-    } catch (e) {
+    } catch (e)
+    {
       // 구매 미완료
     }
+
+    return false;
   }
 
   /// 제품 구매 방법
@@ -144,10 +150,16 @@ class InAppPurchaseService extends GetxService
   ///
   /// @return 구매 성공 여부
   @required
-  void purchaseProduct(ProductDetails prod)
+  void purchaseProduct(ProductDetails prod) async
   {
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: prod);
-    iap.value.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
+    await iap.value.buyConsumable(purchaseParam: purchaseParam, autoConsume: false).then((value)
+    {
+      if (value)
+      {
+        productID.value = prod.id;
+      }
+    },);
   }
 
   /// 구매 세부 정보에 대한 업데이트 스트림을 수신하는 구독
@@ -171,7 +183,8 @@ class InAppPurchaseService extends GetxService
         // 상품을 이미 구매했는지 체크
         verifyPurchases();
         // 구매 세부 정보에 대한 업데이트 스트림을 수신하는 구독
-        subscription.value = iap.value.purchaseStream.listen((data) {
+        subscription.value = iap.value.purchaseStream.listen((data)
+        {
           // 구매 세부 정보를 업데이트
           purchases.addAll(data);
           // 상품을 이미 구매했는지 체크
@@ -200,11 +213,28 @@ class InAppPurchaseService extends GetxService
   }
 
   @override
-  void onClose() {
+  void onClose()
+  {
+    if (Platform.isIOS)
+    {
+      final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
+      iap.value.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+      iosPlatformAddition.setDelegate(null);
+    }
+
     // 구독 해제
     subscription.value?.cancel();
 
     super.onClose();
+  }
+
+  void BuyProduct(String _id)
+  {
+    if (products.any((element) => element.id == _id))
+    {
+      var details = products.firstWhere((element) => element.id == _id);
+      purchaseProduct(details);
+    }
   }
 }
 

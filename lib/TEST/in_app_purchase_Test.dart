@@ -83,7 +83,8 @@ class _MyAppState extends State<_MyApp> {
       return;
     }
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS)
+    {
       final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
       _inAppPurchase
           .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
@@ -314,8 +315,10 @@ class _MyAppState extends State<_MyApp> {
             children: <Widget>[productHeader, const Divider()] + productList));
   }
 
-  Card _buildConsumableBox() {
-    if (_loading) {
+  Card _buildConsumableBox()
+  {
+    if (_loading)
+    {
       return const Card(
           child: ListTile(
               leading: CircularProgressIndicator(),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../table/UserData.dart';
 import 'BuySubscriptionPage.dart';
+import 'LoginPage.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key});
@@ -21,32 +23,9 @@ class ShopPage extends StatefulWidget {
 
 class _ShopPageState extends State<ShopPage>
 {
-  void getProducts()
-  {
-    Get.lazyPut(() => HomeData());
-    if (HomeData.to.productList.isNotEmpty)
-    {
-      print('???');
-      return;
-    }
-
-    HttpProtocolManager.to.Get_Products().then((value)
-    {
-      if (value == null) {
-        return;
-      }
-
-      setState(()
-      {
-        HomeData.to.productList.value = value.data!.items!;
-      });
-    },);
-  }
-
   @override
   void initState()
   {
-    getProducts();
     super.initState();
   }
 
@@ -197,9 +176,17 @@ Widget ShopGoods([bool _visibleTap = true])
         Obx(()
         {
           var products = <ProductItem>[];
+          var icons = <String>[];
           if (HomeData.to.productList.length >= 3) {
             products = HomeData.to.productList.sublist(0, 3);
+            icons = HomeData.to.productIcons.sublist(0, 3);
           }
+
+          print(icons[0]);
+
+          print(icons[1]);
+
+          print(icons[2]);
 
           return
           Row
@@ -207,10 +194,10 @@ Widget ShopGoods([bool _visibleTap = true])
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children:
             [
-              for(var item in products)
-                Goods(item.name, item.bonus == 0 ? '' : item.description,
-                    'assets/images/User/my_popcon.png', '₩${item.price}}',
-                    item.bonusrate == '0' ? '' :SetTableStringArgument(400028, [item.bonusrate]), item.id),
+              for(int i = 0; i < products.length; ++i)
+                Goods(products[i].name, products[i].bonus == 0 ? '' : products[i].description,
+                    icons[i], HomeData.to.GetPrice(products[i].id),
+                    products[i].bonusrate == '0' ? '' :SetTableStringArgument(400028, [products[i].bonusrate]), products[i].id),
 
               // Goods( SetTableStringArgument(400060, ['20']), '',
               //     'assets/images/User/my_popcon.png', '₩1,900',''),
@@ -225,8 +212,10 @@ Widget ShopGoods([bool _visibleTap = true])
         Obx(()
         {
           var products = <ProductItem>[];
+          var icons = <String>[];
           if (HomeData.to.productList.length >= 6) {
             products = HomeData.to.productList.sublist(3, 6);
+            icons = HomeData.to.productIcons.sublist(3, 6);
           }
 
           return
@@ -235,29 +224,16 @@ Widget ShopGoods([bool _visibleTap = true])
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children:
               [
-                for(var item in products)
-                  Goods(item.name, item.bonus == 0 ? '' : item.description,
-                      'assets/images/User/my_popcon.png', '₩${item.price}}',
-                      item.bonusrate == '0' ? '' :SetTableStringArgument(400028, [item.bonusrate]), item.id),
+                for(int i = 0; i < products.length; ++i)
+                  Goods(products[i].name, products[i].bonus == 0 ? '' : products[i].description,
+                      icons[i], HomeData.to.GetPrice(products[i].id),
+                      products[i].bonusrate == '0' ? '' :SetTableStringArgument(400028, [products[i].bonusrate]), products[i].id),
               ],
             );
         },),
-        // Row
-        // (
-        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //   children:
-        //   [
-        //     Goods(SetTableStringArgument(400060, ['140']), SetTableStringArgument(400008, ['+21']),
-        //         'assets/images/Shop/my_popcon4.png', '₩13,900', SetTableStringArgument(400028, ['15'])),
-        //     Goods(SetTableStringArgument(400060, ['200']), SetTableStringArgument(400008, ['+40']),
-        //         'assets/images/Shop/my_popcon5.png', '₩19,900', SetTableStringArgument(400028, ['20'])),
-        //     Goods(SetTableStringArgument(400060, ['300']), SetTableStringArgument(400008, ['+90']),
-        //         'assets/images/Shop/my_popcon6.png', '₩29,900', SetTableStringArgument(400028, ['30'])),
-        //   ],
-        // ),
         SizedBox(height: 20,),
         Container
-          (
+        (
           width: 330.w,
           height: 50,
           //color: Colors.green,
@@ -353,6 +329,16 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
   (
     onTap: ()
     {
+      if (UserData.to.isLogin.value == false)
+      {
+        showDialogTwoButton(StringTable().Table![600018]!, '',
+        ()
+        {
+          Get.to(() => LoginPage());
+        });
+        return;
+      }
+
       //TODO:구글 결제를 먼저 해야한다.
       HttpProtocolManager.to.Send_BuyProduct('', _pid, '').then((value)
       {

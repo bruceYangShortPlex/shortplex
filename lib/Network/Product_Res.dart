@@ -8,14 +8,15 @@ class ProductRes
     _data = data;
 }
 
-  ProductRes.fromJson(dynamic json) {
+  ProductRes.fromJson(dynamic json)
+  {
     _data = json['data'] != null ? ProductData.fromJson(json['data']) : null;
   }
   ProductData? _data;
-
   ProductData? get data => _data;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson()
+  {
     final map = <String, dynamic>{};
     final _data = this._data;
     if (_data != null) {
@@ -35,11 +36,11 @@ class ProductRes
 
 class ProductData {
   ProductData({
-    required num count,
-    required num total,
-    required num itemsPerPage,
-    required num page,
-    required num maxPage,
+    required int count,
+    required int total,
+    required int itemsPerPage,
+    required int page,
+    required int maxPage,
     required List<ProductItem> items,}){
     _count = count;
     _total = total;
@@ -49,12 +50,13 @@ class ProductData {
     _items = items;
 }
 
-  ProductData.fromJson(dynamic json) {
-    _count = json['count'];
-    _total = json['total'];
-    _itemsPerPage = json['itemsPerPage'];
-    _page = json['page'];
-    _maxPage = json['max_page'];
+  ProductData.fromJson(dynamic json)
+  {
+    _count = json['count'] ?? 0;
+    _total = json['total'] ?? 0;
+    _itemsPerPage = json['itemsPerPage'] ?? 0;
+    _page = json['page'] ?? 0;
+    _maxPage = json['max_page'] ?? 0;
     if (json['items'] != null) {
       _items = [];
       json['items'].forEach((v) {
@@ -62,18 +64,18 @@ class ProductData {
       });
     }
   }
-  num _count = 0;
-  num _total = 0;
-  num _itemsPerPage = 0;
-  num _page = 0;
-  num _maxPage = 0;
+  int _count = 0;
+  int _total = 0;
+  int _itemsPerPage = 0;
+  int _page = 0;
+  int _maxPage = 0;
   List<ProductItem>? _items;
 
-  num get count => _count;
-  num get total => _total;
-  num get itemsPerPage => _itemsPerPage;
-  num get page => _page;
-  num get maxPage => _maxPage;
+  int get count => _count;
+  int get total => _total;
+  int get itemsPerPage => _itemsPerPage;
+  int get page => _page;
+  int get maxPage => _maxPage;
   List<ProductItem>? get items => _items;
 
   Map<String, dynamic> toJson() {
@@ -111,20 +113,21 @@ class ProductItem
 {
   ProductItem.fromJson(dynamic json)
   {
-    _seq = json['seq'];
-    _id = json['id'];
-    _name = json['name'];
-    _description = json['description'];
-    _categoryId = json['category_id'];
-    _categoryNm = json['category_nm'];
-    _productType = json['product_type'];
-    _price = json['price'];
-    _stock = json['stock'];
-    _popcorns = json['popcorns'];
-    _bonus = json['bonus'];
-    _bonusrate = json['bonusrate'];
-    _durationDays = json['duration_days'];
-    _createdAt = json['created_at'];
+    _seq = json['seq'] ?? '';
+    _id = json['id'] ?? '';
+    _name = json['name'] ?? '';
+    _description = json['description'] ?? '';
+    _categoryId = json['category_id'] ?? '';
+    _categoryNm = json['category_nm'] ?? '';
+    _productType = json['product_type'] ?? '';
+    _price = json['price'] ?? '';
+    _stock = json['stock'] ?? 0;
+    _popcorns = json['popcorns'] ?? 0;
+    _bonus = json['bonus'] ?? 0;
+    _bonusrate = json['bonusrate'] ?? '';
+    _durationDays = json['duration_days'] ?? 0;
+    _createdAt = json['created_at'] ?? '';
+    currency = json['currency'] ?? '';
   }
   String _seq = '';
   String _id = '';
@@ -134,12 +137,13 @@ class ProductItem
   String _categoryNm = '';
   String _productType = '';
   String _price = '';
-  num _stock = 0;
-  num _popcorns = 0;
-  num _bonus = 0;
+  int _stock = 0;
+  int _popcorns = 0;
+  int _bonus = 0;
   String _bonusrate = '';
-  String _durationDays  = '';
+  int _durationDays  = 0;
   String _createdAt  = '';
+  String currency = "KRW";
 
   String get seq => _seq;
   String get id => _id;
@@ -153,14 +157,14 @@ class ProductItem
     return
     _price.replaceAll('.00', '');
   }
-  num get stock => _stock;
-  num get popcorns => _popcorns;
-  num get bonus => _bonus;
+  int get stock => _stock;
+  int get popcorns => _popcorns;
+  int get bonus => _bonus;
   String get bonusrate
   {
     return _bonusrate.replaceAll('.00', '');
   }
-  String get durationDays => _durationDays;
+  int get durationDays => _durationDays;
   String get createdAt => _createdAt;
 
   Map<String, dynamic> toJson() {

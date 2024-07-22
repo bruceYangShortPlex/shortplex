@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
+import 'package:shortplex/Util/InAppPurchaseService.dart';
 import 'package:shortplex/Util/facebook_login.dart';
 import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/Util/kakao_login.dart';
@@ -75,6 +76,8 @@ class LoginMananger
     }
 
     Send_OAuthLogin(_loginType);
+    InAppPurchaseService.to.Initialize();
+
     return isLogin;
   }
 
@@ -184,7 +187,11 @@ class LoginMananger
     isCheckComplete = true;
 
     if (isLogin)
+    {
       Send_OAuthLogin(loginType);
+    }
+
+    InAppPurchaseService.to.Initialize();
 
     print('Login Manager Check Complete');
     return isLogin;

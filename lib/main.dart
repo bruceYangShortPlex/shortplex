@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/LoginMananger.dart';
+import 'package:shortplex/sub/Home/HomeData.dart';
 import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/table/Event2Table.dart';
 import 'package:shortplex/table/UserData.dart';
 import 'Util/AdsManager.dart';
+import 'Util/InAppPurchaseService.dart';
 import 'table/StringTable.dart';
 
 void main() async
@@ -21,7 +23,9 @@ void main() async
   StringTable().InitTable();
   Get.lazyPut(() => LoginMananger());
   Get.lazyPut(() => UserData());
+  Get.lazyPut(() => InAppPurchaseService());
   Get.find<LoginMananger>().Check();
+  Get.lazyPut(() => HomeData());
   runApp(const MyApp());
 }
 

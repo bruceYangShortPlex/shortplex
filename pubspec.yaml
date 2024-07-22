@@ -55,6 +55,7 @@ dependencies:
   google_mobile_ads: ^5.1.0
   gif: ^2.3.0
   intl_phone_number_field: ^0.2.0
+  in_app_purchase: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -84,7 +85,7 @@ flutter:
     - assets/images/main/
     - assets/images/home/
     - assets/images/Public/
-    - assets/images/Shop/
+    - assets/images/shop/
     - assets/images/User/
     - assets/images/pick/
     - assets/images/Reward/

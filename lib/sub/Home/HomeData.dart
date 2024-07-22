@@ -8,6 +8,16 @@ class HomeData extends GetxController
 {
   static HomeData get to => Get.find();
 
+  static var _productIcons = <String>
+  [
+    'assets/images/User/my_popcon.png',
+    'assets/images/shop/my_popcon2.png',
+    'assets/images/shop/my_popcon3.png',
+    'assets/images/shop/my_popcon4.png',
+    'assets/images/shop/my_popcon5.png',
+    'assets/images/shop/my_popcon6.png'
+  ];
+
   static var _pageList = <ContentData>[];
   static var _watchingContentsDataList = <ContentData>[];
   static var _rankContentsDataList = <ContentData>[];
@@ -20,6 +30,7 @@ class HomeData extends GetxController
   get rankContentsDataList => _rankContentsDataList;
   get themesList => _themesList;
   get recentList => _recentList;
+  get productIcons => _productIcons;
 
   void SetPageList(List<ContentData> _list)
   {
@@ -46,6 +57,26 @@ class HomeData extends GetxController
     _recentList = _list;
   }
 
+  String GetPrice(String _pid)
+  {
+    var formatter = NumberFormat('#,###');
+    if (productList.any((element) => element.id == _pid))
+    {
+      var item = productList.firstWhere((element) => element.id == _pid);
+      var price = double.parse(item.price).toInt();
+
+      var priceTag = '';
+      if (item.currency == 'KRW');
+      {
+        priceTag = '₩';
+      }
+
+      return '$priceTag${formatter.format(price)}';
+    }
+
+    return formatter.format(99999);
+  }
+
   String GetSubscriptionPrice()
   {
     var formatter = NumberFormat('#,###');
@@ -53,7 +84,12 @@ class HomeData extends GetxController
     {
       var item = productList.firstWhere((element) => element.productType == 'subscription');
       var price = double.parse(item.price).toInt();
-      return formatter.format(price);
+      var priceTag = '';
+      if (item.currency == 'KRW');
+      {
+        priceTag = '₩';
+      }
+      return '$priceTag${formatter.format(price)}';
     }
 
     return formatter.format(99999);

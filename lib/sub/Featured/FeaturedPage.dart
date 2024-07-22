@@ -173,7 +173,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                           SizedBox(width: 5.w,),
                             Container
                             (
-                              height: 130.h,
+                              height: 130,
                               alignment: Alignment.center,
                               //color: Colors.white,
                               child:
@@ -196,7 +196,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                             SizedBox(width: 10.w,),
                               Container
                               (
-                                height: 130.h,
+                                height: 130,
                                 //color: Colors.grey,
                                 child:
                                 Column

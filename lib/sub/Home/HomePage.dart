@@ -235,8 +235,6 @@ class _HomePageState extends State<HomePage>
 
     pageIndex = 0;
 
-    Get.lazyPut(()=> HomeData());
-
     GetHomeData();
   }
 

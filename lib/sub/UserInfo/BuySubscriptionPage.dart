@@ -180,14 +180,13 @@ class BuySubscriptionPage extends StatelessWidget
                         Text
                           (
                           textAlign: TextAlign.center,
-                          SetTableStringArgument(400035, ['₩$price']),
+                          SetTableStringArgument(400035, [price]),
                           style:
                           TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ),
                     ),
                   ),),
-
                   SizedBox(height: 50,),
                   Stack
                   (

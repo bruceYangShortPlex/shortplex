@@ -306,7 +306,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       child:
       GestureDetector
       (
-        onTap: buttonDisable == false ? null : ()
+        onTap: buttonDisable ? null : ()
         {
           if (phoneNumber.isEmpty)
           {
@@ -325,6 +325,11 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           var numberCheck = phoneNumber.isValidPhoneNumberFormat();
           if (numberCheck == false)
           {
+            buttonDisable = true;
+            ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP,()
+            {
+              buttonDisable = false;
+            });
             print('wrong number');
             return;
           }

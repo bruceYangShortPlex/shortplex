@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
+import '../../Network/Product_Res.dart';
 import '../../table/UserData.dart';
 
 class HomeData extends GetxController
@@ -11,6 +13,7 @@ class HomeData extends GetxController
   static var _rankContentsDataList = <ContentData>[];
   static Map<String, List<ContentData>> _themesList = {};
   static var _recentList = <ContentData>[];
+  var productList = <ProductItem>[].obs;
 
   get pageList => _pageList;
   get watchingContentsDataList => _watchingContentsDataList;
@@ -41,5 +44,18 @@ class HomeData extends GetxController
   void SetRecentList(List<ContentData> _list)
   {
     _recentList = _list;
+  }
+
+  String GetSubscriptionPrice()
+  {
+    var formatter = NumberFormat('#,###');
+    if (productList.any((element) => element.productType == 'subscription'))
+    {
+      var item = productList.firstWhere((element) => element.productType == 'subscription');
+      var price = double.parse(item.price).toInt();
+      return formatter.format(price);
+    }
+
+    return formatter.format(99999);
   }
 }

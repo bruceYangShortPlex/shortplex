@@ -19,6 +19,8 @@ import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
 import '../Network/MobileCertification_Req.dart';
 import '../Network/OAuth_Res.dart';
+import '../Network/Product_Req.dart';
+import '../Network/Product_Res.dart';
 import '../Network/Recommended_Res.dart';
 import '../Network/UserInfo_Req.dart';
 import '../table/UserData.dart';
@@ -1185,5 +1187,71 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return null;
+  }
+
+  Future<ProductRes?> Get_Products() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/store/products';
+
+      print('Get_Products send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_Products res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  ProductRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_Products FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Products error : $e');
+    }
+
+    return null;
+  }
+
+  Future<bool> Send_BuyProduct(String _paymentProvider, String _productID, String _receipt) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/store/order';
+
+      var data =  PaymentData(productId: _productID );
+      var req = ProductReq(paymentData: data, paymentProvider: _paymentProvider);
+      //print('stat : ${stat.value}');
+      var bodys = jsonEncode(req.toJson());
+      if (kDebugMode) {
+        print('Send_BuyProduct heads : ${heads} / send bodys : ${bodys}');
+      }
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      if (kDebugMode) {
+        print('Send_BuyProduct res.body ${res.body}');
+      }
+
+      if (res.statusCode == 200)
+      {
+        return true;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('Send_BuyProduct FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_BuyProduct error : $e');
+    }
+
+    return false;
   }
 }

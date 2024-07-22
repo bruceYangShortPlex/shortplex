@@ -131,7 +131,7 @@ class WalletHistoryItems
     _platformCurrency = json['platform_currency'] ?? '';
     _paymentProvider = json['payment_provider'] ?? '';
     _paymentTransactionId = json['payment_transaction_id'] ?? '';
-    _paymentData = json['payment_data'] != null ? PaymentData.fromJson(json['payment_data']) : null;
+    _paymentData = json['payment_data'] != null ? WalletPaymentData.fromJson(json['payment_data']) : null;
     _paymentCurrency = json['payment_currency'] ?? '';
     _paymentAmt = json['payment_amt'] ?? '';
     _debit = json['debit'] ?? '';
@@ -155,7 +155,7 @@ class WalletHistoryItems
   String? _platformCurrency;
   String? _paymentProvider;
   String? _paymentTransactionId;
-  PaymentData? _paymentData;
+  WalletPaymentData? _paymentData;
   String? _paymentCurrency;
   String? _paymentAmt;
   String? _debit;
@@ -179,7 +179,7 @@ class WalletHistoryItems
   String? get platformCurrency => _platformCurrency;
   String? get paymentProvider => _paymentProvider;
   String? get paymentTransactionId => _paymentTransactionId;
-  PaymentData? get paymentData => _paymentData;
+  WalletPaymentData? get paymentData => _paymentData;
   String? get paymentCurrency => _paymentCurrency;
   String? get paymentAmt => _paymentAmt;
   String? get debit => _debit;
@@ -227,13 +227,13 @@ class WalletHistoryItems
 }
 
 /// data : "구글 플레이 결제데이터"
-class PaymentData {
-  PaymentData({
+class WalletPaymentData {
+  WalletPaymentData({
     required String data,}){
     _data = data;
 }
 
-  PaymentData.fromJson(dynamic json) {
+  WalletPaymentData.fromJson(dynamic json) {
     _data = json['data'];
   }
   String? _data;

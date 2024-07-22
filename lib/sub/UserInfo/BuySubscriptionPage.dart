@@ -12,7 +12,7 @@ class BuySubscriptionPage extends StatelessWidget
 {
   BuySubscriptionPage({super.key});
 
-  //var data = Get.arguments;
+  var price = Get.arguments[0];
 
   Widget mainWidget(BuildContext context)
   {
@@ -128,14 +128,14 @@ class BuySubscriptionPage extends StatelessWidget
                               children:
                               [
                                 Text
-                                  (
+                                (
                                   textAlign: TextAlign.center,
                                   StringTable().Table![400014]!,
                                   style:
                                   TextStyle(fontSize: 16, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                                 Text
-                                  (
+                                (
                                   textAlign: TextAlign.center,
                                   SetTableStringArgument(400015, ['99.12.31']),
                                   style:
@@ -180,7 +180,7 @@ class BuySubscriptionPage extends StatelessWidget
                         Text
                           (
                           textAlign: TextAlign.center,
-                          SetTableStringArgument(400035, ['39,900']),
+                          SetTableStringArgument(400035, ['₩$price']),
                           style:
                           TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),

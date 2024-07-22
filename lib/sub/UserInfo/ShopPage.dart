@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shortplex/Network/Product_Res.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
+import 'package:shortplex/sub/Home/HomeData.dart';
 import '../../table/StringTable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../table/UserData.dart';
 import 'BuySubscriptionPage.dart';
 
 class ShopPage extends StatefulWidget {
@@ -15,8 +19,36 @@ class ShopPage extends StatefulWidget {
   State<ShopPage> createState() => _ShopPageState();
 }
 
-class _ShopPageState extends State<ShopPage> {
+class _ShopPageState extends State<ShopPage>
+{
+  void getProducts()
+  {
+    Get.lazyPut(() => HomeData());
+    if (HomeData.to.productList.isNotEmpty)
+    {
+      print('???');
+      return;
+    }
+
+    HttpProtocolManager.to.Get_Products().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      setState(()
+      {
+        HomeData.to.productList.value = value.data!.items!;
+      });
+    },);
+  }
+
   @override
+  void initState()
+  {
+    getProducts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context)
@@ -140,7 +172,7 @@ Widget ShopGoods([bool _visibleTap = true])
 {
   return
     Column
-      (
+    (
       mainAxisAlignment: MainAxisAlignment.start,
       children:
       [
@@ -162,33 +194,67 @@ Widget ShopGoods([bool _visibleTap = true])
           ),
         ),
         SizedBox(height: 20,),
-        Row
-        (
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children:
-          [
-            Goods( SetTableStringArgument(400060, ['20']), '',
-                'assets/images/User/my_popcon.png', '₩1,900',''),
-            Goods(SetTableStringArgument(400060, ['40']), SetTableStringArgument(400008, ['+2']),
-                'assets/images/Shop/my_popcon2.png', '₩3,900', SetTableStringArgument(400028, [' 5'])),
-            Goods(SetTableStringArgument(400060, ['80']), SetTableStringArgument(400008, ['+8']),
-                'assets/images/Shop/my_popcon3.png', '₩7,900', SetTableStringArgument(400028, ['10'])),
-          ],
-        ),
-        SizedBox(height: 20,),
-        Row
+        Obx(()
+        {
+          var products = <ProductItem>[];
+          if (HomeData.to.productList.length >= 3) {
+            products = HomeData.to.productList.sublist(0, 3);
+          }
+
+          return
+          Row
           (
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children:
-          [
-            Goods(SetTableStringArgument(400060, ['140']), SetTableStringArgument(400008, ['+21']),
-                'assets/images/Shop/my_popcon4.png', '₩13,900', SetTableStringArgument(400028, ['15'])),
-            Goods(SetTableStringArgument(400060, ['200']), SetTableStringArgument(400008, ['+40']),
-                'assets/images/Shop/my_popcon5.png', '₩19,900', SetTableStringArgument(400028, ['20'])),
-            Goods(SetTableStringArgument(400060, ['300']), SetTableStringArgument(400008, ['+90']),
-                'assets/images/Shop/my_popcon6.png', '₩29,900', SetTableStringArgument(400028, ['30'])),
-          ],
-        ),
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children:
+            [
+              for(var item in products)
+                Goods(item.name, item.bonus == 0 ? '' : item.description,
+                    'assets/images/User/my_popcon.png', '₩${item.price}}',
+                    item.bonusrate == '0' ? '' :SetTableStringArgument(400028, [item.bonusrate]), item.id),
+
+              // Goods( SetTableStringArgument(400060, ['20']), '',
+              //     'assets/images/User/my_popcon.png', '₩1,900',''),
+              // Goods(SetTableStringArgument(400060, ['40']), SetTableStringArgument(400008, ['+2']),
+              //     'assets/images/Shop/my_popcon2.png', '₩3,900', SetTableStringArgument(400028, [' 5'])),
+              // Goods(SetTableStringArgument(400060, ['80']), SetTableStringArgument(400008, ['+8']),
+              //     'assets/images/Shop/my_popcon3.png', '₩7,900', SetTableStringArgument(400028, ['10'])),
+            ],
+          );
+        },),
+        SizedBox(height: 20,),
+        Obx(()
+        {
+          var products = <ProductItem>[];
+          if (HomeData.to.productList.length >= 6) {
+            products = HomeData.to.productList.sublist(3, 6);
+          }
+
+          return
+            Row
+            (
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children:
+              [
+                for(var item in products)
+                  Goods(item.name, item.bonus == 0 ? '' : item.description,
+                      'assets/images/User/my_popcon.png', '₩${item.price}}',
+                      item.bonusrate == '0' ? '' :SetTableStringArgument(400028, [item.bonusrate]), item.id),
+              ],
+            );
+        },),
+        // Row
+        // (
+        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //   children:
+        //   [
+        //     Goods(SetTableStringArgument(400060, ['140']), SetTableStringArgument(400008, ['+21']),
+        //         'assets/images/Shop/my_popcon4.png', '₩13,900', SetTableStringArgument(400028, ['15'])),
+        //     Goods(SetTableStringArgument(400060, ['200']), SetTableStringArgument(400008, ['+40']),
+        //         'assets/images/Shop/my_popcon5.png', '₩19,900', SetTableStringArgument(400028, ['20'])),
+        //     Goods(SetTableStringArgument(400060, ['300']), SetTableStringArgument(400008, ['+90']),
+        //         'assets/images/Shop/my_popcon6.png', '₩29,900', SetTableStringArgument(400028, ['30'])),
+        //   ],
+        // ),
         SizedBox(height: 20,),
         Container
           (
@@ -199,19 +265,20 @@ Widget ShopGoods([bool _visibleTap = true])
         ),
         SizedBox(height: 15,),
         GestureDetector
-          (
-          onTap: () {
-            Get.to(() => BuySubscriptionPage(), arguments: ['₩39,900']);
+        (
+          onTap: ()
+          {
+            Get.to(() => BuySubscriptionPage(), arguments: [HomeData.to.GetSubscriptionPrice()]);
           },
           child:
           Container
-            (
+          (
             width: 330.w,
             height: 78,
             //color: Colors.grey,
             child:
             SvgPicture.asset
-              (
+            (
               'assets/images/Shop/my_shop_freepass.svg',
               width: 330,
               height: 78,
@@ -234,7 +301,7 @@ Widget ShopGoods([bool _visibleTap = true])
                 endIndent: 10,
                 thickness: 1,),
               Container
-                (
+              (
                 color: Colors.black,
                 padding: EdgeInsets.only(bottom: 3, left: 10, right: 10),
                 child:
@@ -279,121 +346,160 @@ Widget ShopGoods([bool _visibleTap = true])
   );
 }
 
-Widget Goods(String _title, String _bonus, String _iconPath, String _price, String _sale) =>
-    GestureDetector
+Widget Goods(String _title, String _bonus, String _iconPath, String _price, String _sale, String _pid)
+{
+  return
+  GestureDetector
+  (
+    onTap: ()
+    {
+      //TODO:구글 결제를 먼저 해야한다.
+      HttpProtocolManager.to.Send_BuyProduct('', _pid, '').then((value)
+      {
+        if (value == true)
+        {
+          HttpProtocolManager.to.Get_WalletBalance().then((value)
+          {
+            if (value == null) {
+              return;
+            }
+
+            for(var item in value.data!.items!)
+            {
+              if (item.userId == UserData.to.userId)
+              {
+                UserData.to.popcornCount.value = double.parse(item.popcorns).toInt();
+                UserData.to.bonusCornCount.value = double.parse(item.bonus).toInt();
+                break;
+              }
+            }
+          },);
+        }
+      },);
+    },
+    child: Stack
       (
-      onTap: () {
-        print('tap goods');
-      },
-      child: Stack
-        (
-        alignment: Alignment.center,
-        children:
-        [
-          SvgPicture.asset
+      alignment: Alignment.center,
+      children:
+      [
+        SvgPicture.asset
+          (
+          'assets/images/Shop/my_shop.svg',
+          width: 94,
+          height: 150,
+        ),
+        Container
+          (
+          width: 94,
+          height: 150,
+          alignment: Alignment.center,
+          child:
+          Column
             (
-            'assets/images/Shop/my_shop.svg',
-            width: 94,
-            height: 150,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children:
+            [
+              Padding
+                (
+                padding: const EdgeInsets.only(top: 14),
+                child:
+                Text
+                  (
+                  _title,
+                  style:
+                  TextStyle(fontSize: 13,
+                    color: Colors.white,
+                    fontFamily: 'NotoSans',
+                    fontWeight: FontWeight.bold,),
+                ),
+              ),
+              Padding
+                (
+                padding: const EdgeInsets.only(bottom: 5),
+                child:
+                Text
+                  (
+                  _bonus,
+                  style:
+                  TextStyle(fontSize: 9,
+                    color: Color(0xFF00FFBF),
+                    fontFamily: 'NotoSans',
+                    fontWeight: FontWeight.bold,),
+                ),
+              ),
+              Padding
+                (
+                padding: const EdgeInsets.only(bottom: 0),
+                child:
+                Container
+                  (
+                  height: 60,
+                  width: 60,
+                  //color: Colors.white,
+                  child:
+                  Image.asset
+                    (
+                    _iconPath,
+                  ),
+                ),
+              ),
+            ],
           ),
+        ),
+        Padding
+          (
+          padding: const EdgeInsets.only(top: 95.0),
+          child:
           Container
             (
-            width: 94,
-            height: 150,
             alignment: Alignment.center,
-            child:
-            Column
-              (
-              mainAxisAlignment: MainAxisAlignment.start,
-              children:
-              [
-                Padding
-                  (
-                  padding: const EdgeInsets.only(top: 14),
-                  child:
-                  Text
-                    (
-                    _title,
-                    style:
-                    TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                Padding
-                  (
-                  padding: const EdgeInsets.only(bottom: 5),
-                  child:
-                  Text
-                    (
-                    _bonus,
-                    style:
-                    TextStyle(fontSize: 9, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                Padding
-                  (
-                  padding: const EdgeInsets.only(bottom: 0),
-                  child:
-                  Container
-                    (
-                    height: 60,
-                    width: 60,
-                    //color: Colors.white,
-                    child:
-                    Image.asset
-                      (
-                      _iconPath,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding
-            (
-            padding: const EdgeInsets.only(top: 95.0),
-            child:
-            Container
-            (
-              alignment: Alignment.center,
-              width: 94,height: 25,
-              color: Color(0xFF00FFBF),
-              padding: EdgeInsets.only(bottom: 2),
-              child:
-              Text
-              (
-                _price,
-                style:
-                TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-              ),
-            ),
-          ),
-          Visibility
-          (
-            visible: _bonus != '',
-            child:
-            SvgPicture.asset
-              (
-              alignment: Alignment.center,
-              'assets/images/Shop/my_shop_1.svg',
-              width: 94,
-              height: 150,
-            ),
-          ),
-          Positioned
-            (
-            bottom: 138,
-            right: 8,
+            width: 94,
+            height: 25,
+            color: Color(0xFF00FFBF),
+            padding: EdgeInsets.only(bottom: 2),
             child:
             Text
               (
-              _sale,
+              _price,
               style:
-              TextStyle(fontSize: 10, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              TextStyle(fontSize: 13,
+                color: Colors.black,
+                fontFamily: 'NotoSans',
+                fontWeight: FontWeight.bold,),
             ),
           ),
-        ],
-      ),
-    );
+        ),
+        Visibility
+          (
+          visible: _bonus != '',
+          child:
+          SvgPicture.asset
+            (
+            alignment: Alignment.center,
+            'assets/images/Shop/my_shop_1.svg',
+            width: 94,
+            height: 150,
+          ),
+        ),
+        Positioned
+          (
+          bottom: 138,
+          right: 8,
+          child:
+          Text
+            (
+            _sale,
+            style:
+            TextStyle(fontSize: 10,
+              color: Colors.black,
+              fontFamily: 'NotoSans',
+              fontWeight: FontWeight.bold,),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
 Widget goods_subscriptionTitle() =>
     Row

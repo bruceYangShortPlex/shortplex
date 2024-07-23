@@ -95,6 +95,33 @@ class HomeData extends GetxController
     return formatter.format(99999);
   }
 
+  String GetShopIcon(String _popcornCount, bool _isSubscription)
+  {
+    var index = 0;
+    if (_popcornCount == '40.00')
+    {
+        index = 1;
+    }
+    if (_popcornCount == '80.00')
+    {
+      index = 2;
+    }
+    if (_popcornCount == '140.00')
+    {
+      index = 3;
+    }
+    if (_popcornCount == '200.00')
+    {
+      index = 4;
+    }
+    if (_popcornCount == '300.00')
+    {
+      index = 5;
+    }
+
+    return productIcons[index];
+  }
+
   String GetSubscriptionID()
   {
     if (productList.any((element) => element.productType == 'subscription'))

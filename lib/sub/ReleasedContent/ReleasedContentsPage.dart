@@ -594,7 +594,7 @@ Widget mainWidget(BuildContext context)
                         for(var item in value.data!)
                         {
                           //print('item.user_id : ${item.user_id}');
-                          if (item.user_id == UserData.to.userId && item.action == Stat_Type.release_at.name)
+                          if (item.typeCd == Comment_CD_Type.alarm.name && item.user_id == UserData.to.userId && item.action == Stat_Type.release_at.name)
                           {
                             data.isAlarmCheck = item.amt > 0;
                             UserData.to.refreshCount++;

@@ -151,7 +151,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
               {
                 commentList[i].name = item.displayname;
                 commentList[i].comment = item.content;
-                commentList[i].date = ConvertCommentDate(item.createdAt!);
+                commentList[i].date = GetReleaseTime(item.createdAt!);
                 commentList[i].episodeNumber = item.episode_no.toString();
                 commentList[i].iconUrl = item.photourl ?? '';
                 commentList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
@@ -172,7 +172,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
           (
             name: item.displayname,
             comment: item.content,
-            date: ConvertCommentDate(item.createdAt!),
+            date: GetReleaseTime(item.createdAt!),
             episodeNumber: item.episode_no.toString(),
             iconUrl: item.photourl ?? '',
             ID: item.id!,

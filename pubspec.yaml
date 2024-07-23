@@ -86,7 +86,7 @@ flutter:
     - assets/images/home/
     - assets/images/Public/
     - assets/images/shop/
-    - assets/images/User/
+    - assets/images/user/
     - assets/images/pick/
     - assets/images/Reward/
     - assets/images/Reward/reward_event_popcorn/

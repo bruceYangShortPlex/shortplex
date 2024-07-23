@@ -578,7 +578,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
           {
             selectList[i].name = item.displayname;
             selectList[i].comment = item.content;
-            selectList[i].date = ConvertCommentDate(item.createdAt!);
+            selectList[i].date = GetReleaseTime(item.createdAt!);
             selectList[i].episodeNumber = item.episode_no.toString();
             selectList[i].iconUrl = item.photourl;
             selectList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
@@ -611,7 +611,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       (
         name: displayname,
         comment: item.content ?? '',
-        date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '00.00.00',
+        date: item.createdAt != null ? GetReleaseTime(item.createdAt!) : '00.00.00',
         episodeNumber: '',
         iconUrl: item.photourl,
         ID: item.id!,

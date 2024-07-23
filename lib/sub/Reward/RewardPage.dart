@@ -183,7 +183,7 @@ Widget mainWidget(BuildContext context)=>
                   alignment: Alignment.center,
                   width: 32,
                   height: 32,
-                  'assets/images/User/my_bonus.png',
+                  'assets/images/user/my_bonus.png',
                   fit: BoxFit.fitHeight,
                 ),
                 Text
@@ -1142,7 +1142,7 @@ Widget mainWidget(BuildContext context)=>
                           alignment: Alignment.center,
                           width: 20,
                           height: 20,
-                          'assets/images/User/my_bonus.png',
+                          'assets/images/user/my_bonus.png',
                           fit: BoxFit.scaleDown,
                         ),
                         SizedBox(width: 5,),

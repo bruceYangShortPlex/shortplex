@@ -318,7 +318,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                             print('UserData.to.BirthDay : ${UserData.to.BirthDay}');
 
                             if (UserData.to.BirthDay.isNotEmpty) {
-                              text = ConvertCommentDate(UserData.to.BirthDay);
+                              text = ConvertDateString(UserData.to.BirthDay);
                             }
                           }
                           break;
@@ -658,7 +658,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                       if (birthday!.year == year && birthday!.month == month && birthday!.day == day)
                       {
                         buttonDisable = true;
-                        UserData.to.BirthDay = ConvertDateToString(birthday!).replaceAll('.', '-');
+                        UserData.to.BirthDay = DateToString(birthday!).replaceAll('.', '-');
                         HttpProtocolManager.to.Send_UserInfo().then((value)
                         {
                           if (value == null)

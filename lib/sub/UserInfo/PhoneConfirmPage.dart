@@ -322,22 +322,26 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             return;
           }
 
-          var numberCheck = phoneNumber.isValidPhoneNumberFormat();
-          if (numberCheck == false)
+          // var numberCheck = phoneNumber.isValidPhoneNumberFormat();
+          // if (numberCheck == false)
+          // {
+          //   buttonDisable = true;
+          //   ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP,()
+          //   {
+          //     buttonDisable = false;
+          //   });
+          //   print('wrong number');
+          //   return;
+          // }
+
+          phoneNumber = phoneNumber.replaceAll('-', '');
+          if (phoneNumber.length > 12)
           {
             buttonDisable = true;
             ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP,()
             {
               buttonDisable = false;
             });
-            print('wrong number');
-            return;
-          }
-
-          phoneNumber = phoneNumber.replaceAll('-', '');
-          if (phoneNumber.length > 12)
-          {
-            print('error');
             return;
           }
 

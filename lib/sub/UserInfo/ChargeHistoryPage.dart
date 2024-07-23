@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/UserInfo/HistoryPage.dart';
 
+import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
+import '../Home/HomeData.dart';
 
 // void main() async
 // {
@@ -26,35 +28,44 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
   @override
   void initState()
   {
-
     HttpProtocolManager.to.Get_WalletHistory(WalletHistoryType.CHARGE).then((value)
     {
       if (value == null)
       {
         return;
       }
+      Map<int,List<HistoryData>> mapData = {};
 
-      List<HistoryData> list2 = <HistoryData>[];
       for(var item in value.data!.items!)
       {
         var historyData = HistoryData();
-        historyData.content1 = '29,900';
-        historyData.content2 = '+10 팝콘';
-        historyData.time = '11시간전';
-        historyData.iconUrl = 'assets/images/shop/my_popcon2.png';
+        historyData.content1 = HomeData.to.GetPrice(item.productId!); //임시 과거의 값을 알수 없기때문에 서버에서 받아야한다.
+        historyData.content2 = item.description!;
+        historyData.time = GetReleaseTime(item.createdAt!);
+        historyData.iconUrl = HomeData.to.GetShopIcon(item.credit!, false);
         historyData.episode = 1;
-        historyData.date = '05. 2024';
-        list2.add(historyData);
+        historyData.date = '${GetDateString(item.createdAt!).$1} ${GetDateString(item.createdAt!).$2}'; // '5월 2024';
+
+        if (mapData.containsKey(historyData.GetKey()))
+        {
+          var value = mapData[historyData.GetKey()];
+          value?.add(historyData);
+        }
+        else
+        {
+          List<HistoryData> list = <HistoryData>[];
+          list.add(historyData);
+          mapData[historyData.GetKey()] = list;
+        }
       }
 
-      widget.mainlist.add(list2);
-      widget.mainlist.add(list2);
-
-      setState(()
+      for(var item in mapData.values)
       {
-        widget.mainlist.add(list2);
-        widget.mainlist.add(list2);
-      });
+        setState(()
+        {
+          widget.mainlist.add(item);
+        });
+      }
     },);
 
    super.initState();

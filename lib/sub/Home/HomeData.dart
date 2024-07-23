@@ -10,12 +10,13 @@ class HomeData extends GetxController
 
   static var _productIcons = <String>
   [
-    'assets/images/User/my_popcon.png',
+    'assets/images/user/my_popcon.png',
     'assets/images/shop/my_popcon2.png',
     'assets/images/shop/my_popcon3.png',
     'assets/images/shop/my_popcon4.png',
     'assets/images/shop/my_popcon5.png',
-    'assets/images/shop/my_popcon6.png'
+    'assets/images/shop/my_popcon6.png',
+    'assets/images/user/my_pass_icon.png',
   ];
 
   static var _pageList = <ContentData>[];
@@ -98,25 +99,34 @@ class HomeData extends GetxController
   String GetShopIcon(String _popcornCount, bool _isSubscription)
   {
     var index = 0;
-    if (_popcornCount == '40.00')
+    if (_isSubscription)
     {
+      index = 6;
+    }
+    else {
+      if (_popcornCount == '40.00') {
         index = 1;
+      }
+      else if (_popcornCount == '80.00') {
+        index = 2;
+      }
+      else if (_popcornCount == '140.00') {
+        index = 3;
+      }
+      else if (_popcornCount == '200.00') {
+        index = 4;
+      }
+      else if (_popcornCount == '300.00') {
+        index = 5;
+      }
+      else {
+        index = 6;
+      }
     }
-    if (_popcornCount == '80.00')
+
+    if (index >= productIcons.length)
     {
-      index = 2;
-    }
-    if (_popcornCount == '140.00')
-    {
-      index = 3;
-    }
-    if (_popcornCount == '200.00')
-    {
-      index = 4;
-    }
-    if (_popcornCount == '300.00')
-    {
-      index = 5;
+      index= 0;
     }
 
     return productIcons[index];

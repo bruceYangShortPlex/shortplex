@@ -148,7 +148,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                           Obx(()
                                           {
                                             return
-                                            _moneyInfo('assets/images/User/my_popcon.png', UserData.to.GetPopupcornCount().$1);
+                                            _moneyInfo('assets/images/user/my_popcon.png', UserData.to.GetPopupcornCount().$1);
                                           },)
                                         ),
                                         Expanded
@@ -194,7 +194,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                           Obx(()
                                           {
                                             return
-                                            _moneyInfo('assets/images/User/my_bonus.png', Get.find<UserData>().GetPopupcornCount().$2);
+                                            _moneyInfo('assets/images/user/my_bonus.png', Get.find<UserData>().GetPopupcornCount().$2);
                                           },)
                                         ),
                                       ],

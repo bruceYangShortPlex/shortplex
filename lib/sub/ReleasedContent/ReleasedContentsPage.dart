@@ -284,8 +284,8 @@ Widget mainWidget(BuildContext context)
   Widget contentSelctItem(int _index, ContentData _data)
   {
     var date = DateTime.parse(_data.releaseAt!);
-    var month = SetTableStringArgument(200003, ['${date.month}',]);
-    var day = SetTableStringArgument(200004, ['${date.day}',]);
+    var month = TranslateMonth(date.month);// SetTableStringArgument(200003, ['${date.month}',]);
+    var day = TranslateDay(date.day); // SetTableStringArgument(200004, ['${date.day}',]);
 
     return
     Column

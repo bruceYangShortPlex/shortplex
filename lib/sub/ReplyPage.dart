@@ -109,7 +109,7 @@ class _ReplyPageState extends State<ReplyPage>
         var refreshData = replyList.firstWhere((element) => element.ID == item.id);
         refreshData.name = item.displayname;
         refreshData.comment = item.content;
-        refreshData.date = ConvertCommentDate(item.createdAt!);
+        refreshData.date = GetReleaseTime(item.createdAt!);
         refreshData.episodeNumber = item.episode_no.toString();
         refreshData.iconUrl = item.photourl;
         refreshData.isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
@@ -127,7 +127,7 @@ class _ReplyPageState extends State<ReplyPage>
       (
         name: item.displayname,
         comment: item.content,
-        date: item.createdAt != null ? ConvertCommentDate(item.createdAt!) : '',
+        date: item.createdAt != null ? GetReleaseTime(item.createdAt!) : '',
         episodeNumber: '',
         iconUrl: item.photourl,
         ID: item.id!,

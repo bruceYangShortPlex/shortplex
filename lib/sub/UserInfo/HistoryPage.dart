@@ -483,11 +483,18 @@ class _HistoryPageState extends State<HistoryPage>
 
 class HistoryData
 {
-  String date = '';
-  String iconUrl = 'assets/images/User/my_bonus.png';
+  String date = '05월 2024';
+  String iconUrl = 'assets/images/user/my_bonus.png';
   String title = '황후마마';
   int episode = 0;
-  String time = '';
+  String time = '1분 전';
   String content1 = '';
   String content2 = '';
+
+  int GetKey()
+  {
+    var keyDate = DateTime.parse(date);
+    var key =  keyDate.year * 100 + keyDate.month;
+    return key;
+  }
 }

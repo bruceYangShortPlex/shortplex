@@ -158,7 +158,7 @@ Widget profileRect(double _size, String _imageUrl)
         Container
         (
           color: Colors.black,
-          child: _imageUrl.isEmpty ? Image.asset('assets/images/User/my_picture.png', fit: BoxFit.cover,) :
+          child: _imageUrl.isEmpty ? Image.asset('assets/images/user/my_picture.png', fit: BoxFit.cover,) :
           Image.network(_imageUrl, fit: BoxFit.cover),
         ),
       ),
@@ -317,7 +317,7 @@ Widget CommentWidget
                       Container
                       (
                         //color: Colors.black,
-                        child: Image.asset('assets/images/User/my_picture.png', fit: BoxFit.cover,),
+                        child: Image.asset('assets/images/user/my_picture.png', fit: BoxFit.cover,),
                       ) :
                       Image.network(_data.iconUrl!,
                           fit: BoxFit.cover),
@@ -645,7 +645,41 @@ SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position, 
   );
 }
 
-String ConvertCommentDate(String _date)
+String GetReleaseTime(String _createTime)
+{
+  var current = DateTime.now();
+  var create = DateTime.parse(_createTime);
+
+  var diff = current.difference(create);
+
+  //7일 이후
+  if (diff.inDays >= 7)
+  {
+    return ConvertDateString(_createTime);
+  }
+  var subDate = SubstringDate(_createTime);
+  //7일 이내
+  if (diff.inDays > 0)
+  {
+    SetTableStringArgument( 300062, [subDate.$3]);
+  }
+  //하루 이내
+  if (diff.inHours > 0)
+  {
+    var result = diff.inHours.toString().padLeft(2, '0');
+    return SetTableStringArgument(300061 , [result]);
+  }
+
+  if (diff.inMinutes > 0)
+  {
+    var result = diff.inMinutes.toString().padLeft(2, '0');
+    return SetTableStringArgument(300060 , [result]);
+  }
+
+  return StringTable().Table![300059]!;
+}
+
+String ConvertDateString(String _date)
 {
   if (_date.isEmpty) {
     return '';
@@ -653,10 +687,10 @@ String ConvertCommentDate(String _date)
 
   var result = DateTime.parse(_date);
 
-  return ConvertDateToString(result);
+  return DateToString(result);
 }
 
-String ConvertDateToString(DateTime _date)
+String DateToString(DateTime _date)
 {
   var year = _date.year.toString().padLeft(2, '0');
   var month = _date.month.toString().padLeft(2, '0');
@@ -724,4 +758,28 @@ String ConvertGenderToString(String _genderType)
   }
 
   return StringTable().Table![stringID]!;
+}
+
+String TranslateMonth(int _month)
+{
+  var index = 700000 + _month;
+  return StringTable().Table![index]!;
+}
+
+String TranslateDay(int _day)
+{
+  var index = 700012 + _day;
+  return StringTable().Table![index]!;
+}
+
+(String, String) GetDateString(String _createTime)
+{
+  var date = DateTime.parse(_createTime);
+  return (TranslateMonth(date.month), date.year.toString());
+}
+
+(int, int) GetMonth(String _createTime)
+{
+  var date = DateTime.parse(_createTime);
+  return (date.year, date.month);
 }

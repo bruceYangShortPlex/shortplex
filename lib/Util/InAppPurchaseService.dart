@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ class InAppPurchaseService extends GetxService
 {
   static InAppPurchaseService get to => Get.find();
 
+  ValueSetter<String>? callback;
   // Instance ▼ ============================================
 
   /// 구매를 위한 인스턴스를 가져옵니다.
@@ -28,9 +30,9 @@ class InAppPurchaseService extends GetxService
   late Rx<StreamSubscription?> subscription = (null as StreamSubscription?).obs;
 
   // Data ▼ ================================================
-
+  bool IsAvailable = false;
   /// 구매를 위한 인스턴스를 가져옵니다.
-  RxString productID = '여기에 제품 ID'.obs;
+  String productID = '여기에 제품 ID';
   // Playstore 또는 앱 스토어에서 쿼리한 제품 목록 유지
   RxList<ProductDetails> products = <ProductDetails>[].obs;
   // 과거 구매 사용자 목록
@@ -129,16 +131,24 @@ class InAppPurchaseService extends GetxService
     {
       PurchaseDetails purchase = purchases.firstWhere
       (
-            (purchase) => purchase.productID == productID.value,
+        (purchase) => purchase.productID == productID,
       );
       if (purchase.status == PurchaseStatus.purchased)
       {
-        // 구매 완료
+        print('구매 영수증 전달 및 구매요청.');
+        // 구매 완료 영수증
+        String receipt = purchase.verificationData.serverVerificationData;
+        callback?.call(receipt);
         return true;
+      }
+      else
+      {
+        callback?.call('');
       }
     } catch (e)
     {
       // 구매 미완료
+      callback?.call('');
     }
 
     return false;
@@ -157,7 +167,8 @@ class InAppPurchaseService extends GetxService
     {
       if (value)
       {
-        productID.value = prod.id;
+        print('구매 성공.');
+        productID = prod.id;
       }
     },);
   }
@@ -169,19 +180,19 @@ class InAppPurchaseService extends GetxService
   {
     try
     {
-      print('InAppPurchaseService Initialize Start');
       await getProducts();
-      // 인앱 구매가 가능한지 체크
 
-      final bool isAvailable = await iap.value.isAvailable();
-      if (isAvailable) {
+      // 인앱 구매가 가능한지 체크
+      IsAvailable = await iap.value.isAvailable();
+      if (IsAvailable)
+      {
         print('InAppPurchaseService iap.value.isAvailable true');
         // 구매 가능한 상품 목록 조회
         await fetchUserProducts();
         // 과거 구매 사용자 목록 조회
         // await fetchPastPurchases();
         // 상품을 이미 구매했는지 체크
-        verifyPurchases();
+        //verifyPurchases();
         // 구매 세부 정보에 대한 업데이트 스트림을 수신하는 구독
         subscription.value = iap.value.purchaseStream.listen((data)
         {
@@ -228,17 +239,36 @@ class InAppPurchaseService extends GetxService
     super.onClose();
   }
 
-  void BuyProduct(String _id)
+  void BuyProduct(String _id, ValueSetter<String> _callback)
   {
+    if (kDebugMode)
+    {
+      _callback.call(_id);
+      return;
+    }
+
+    if (IsAvailable == false)
+    {
+      _callback.call('');
+      return;
+    }
+
+    callback = null;
+    callback = _callback;
     if (products.any((element) => element.id == _id))
     {
       var details = products.firstWhere((element) => element.id == _id);
       purchaseProduct(details);
     }
+    else
+    {
+      callback?.call('');
+    }
   }
 }
 
-class PaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
+class PaymentQueueDelegate implements SKPaymentQueueDelegateWrapper
+{
   @override
   bool shouldContinueTransaction(
       SKPaymentTransactionWrapper transaction, SKStorefrontWrapper storefront) {

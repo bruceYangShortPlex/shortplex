@@ -53,24 +53,30 @@ class _MyAppState extends State<_MyApp> {
   String? _queryProductError;
 
   @override
-  void initState() {
-    final Stream<List<PurchaseDetails>> purchaseUpdated =
-        _inAppPurchase.purchaseStream;
-    _subscription =
-        purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-          _listenToPurchaseUpdated(purchaseDetailsList);
-        }, onDone: () {
-          _subscription.cancel();
-        }, onError: (Object error) {
-          // handle error here.
-        });
+  void initState()
+  {
+    final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
+    _subscription = purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList)
+    {
+      _listenToPurchaseUpdated(purchaseDetailsList);
+    },
+    onDone: ()
+    {
+      _subscription.cancel();
+    },
+    onError: (Object error)
+    {
+      // handle error here.
+    });
     initStoreInfo();
     super.initState();
   }
 
-  Future<void> initStoreInfo() async {
+  Future<void> initStoreInfo() async
+  {
     final bool isAvailable = await _inAppPurchase.isAvailable();
-    if (!isAvailable) {
+    if (!isAvailable)
+    {
       setState(() {
         _isAvailable = isAvailable;
         _products = <ProductDetails>[];
@@ -269,10 +275,12 @@ class _MyAppState extends State<_MyApp> {
               backgroundColor: Colors.green[800],
               foregroundColor: Colors.white,
             ),
-            onPressed: () {
+            onPressed: ()
+            {
               late PurchaseParam purchaseParam;
 
-              if (Platform.isAndroid) {
+              if (Platform.isAndroid)
+              {
                 // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
                 // verify the latest status of you your subscription by using server side receipt validation
                 // and update the UI accordingly. The subscription purchase status shown
@@ -280,7 +288,9 @@ class _MyAppState extends State<_MyApp> {
                 final GooglePlayPurchaseDetails? oldSubscription =
                 _getOldSubscription(productDetails, purchases);
 
-                purchaseParam = GooglePlayPurchaseParam(
+                purchaseParam =
+                GooglePlayPurchaseParam
+                (
                     productDetails: productDetails,
                     changeSubscriptionParam: (oldSubscription != null)
                         ? ChangeSubscriptionParam(
@@ -289,19 +299,26 @@ class _MyAppState extends State<_MyApp> {
                       ProrationMode.immediateWithTimeProration,
                     )
                         : null);
-              } else {
-                purchaseParam = PurchaseParam(
-                  productDetails: productDetails,
-                );
+              }
+              else
+              {
+                purchaseParam = PurchaseParam(productDetails: productDetails,);
               }
 
-              if (productDetails.id == _kConsumableId) {
-                _inAppPurchase.buyConsumable(
+              if (productDetails.id == _kConsumableId)
+              {
+                _inAppPurchase.buyConsumable
+                (
                     purchaseParam: purchaseParam,
-                    autoConsume: _kAutoConsume);
-              } else {
-                _inAppPurchase.buyNonConsumable(
-                    purchaseParam: purchaseParam);
+                    autoConsume: _kAutoConsume
+                );
+              }
+              else
+              {
+                _inAppPurchase.buyNonConsumable
+                (
+                  purchaseParam: purchaseParam
+                );
               }
             },
             child: Text(productDetails.price),

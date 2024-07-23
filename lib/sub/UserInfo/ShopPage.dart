@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shortplex/Network/Product_Res.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
+import 'package:shortplex/Util/InAppPurchaseService.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/sub/Home/HomeData.dart';
 import '../../table/StringTable.dart';
@@ -343,38 +344,47 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
       }
 
       buttonDisalbe = true;
-      //TODO:구글 결제를 먼저 해야한다.
-      HttpProtocolManager.to.Send_BuyProduct(_pid, '').then((value)
-      {
-        if (value == true)
-        {
-          HttpProtocolManager.to.Get_WalletBalance().then((value)
-          {
-            if (value == null)
-            {
-              buttonDisalbe = false;
-              return;
-            }
 
-            for(var item in value.data!.items!)
-            {
-              if (item.userId == UserData.to.userId)
-              {
-                String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
-                ShowCustomSnackbar(message, SnackPosition.TOP, ()
-                {
-                  buttonDisalbe = false;
-                });
-                break;
-              }
-            }
-          },);
-        }
-        else
+      InAppPurchaseService.to.BuyProduct(_pid,
+      (receipt)
+      {
+        if (receipt.isEmpty)
         {
-          buttonDisalbe = false;
+          return;
         }
-      },);
+
+        HttpProtocolManager.to.Send_BuyProduct(_pid, receipt).then((value)
+        {
+          if (value == true)
+          {
+            HttpProtocolManager.to.Get_WalletBalance().then((value)
+            {
+              if (value == null)
+              {
+                buttonDisalbe = false;
+                return;
+              }
+
+              for(var item in value.data!.items!)
+              {
+                if (item.userId == UserData.to.userId)
+                {
+                  String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+                  ShowCustomSnackbar(message, SnackPosition.TOP, ()
+                  {
+                    buttonDisalbe = false;
+                  });
+                  break;
+                }
+              }
+            },);
+          }
+          else
+          {
+            buttonDisalbe = false;
+          }
+        },);
+      });
     },
     child: Stack
       (

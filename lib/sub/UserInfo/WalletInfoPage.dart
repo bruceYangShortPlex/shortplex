@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/sub/UserInfo/UsedHistoryPage.dart';
 
+import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 import 'BonusHistoryPage.dart';
@@ -379,6 +380,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
         ],
       );
 
+  var snackbarComplete = true;
   Widget _toggleButton() =>
       Transform.scale
         (
@@ -390,11 +392,23 @@ class _WalletInfoPageState extends State<WalletInfoPage>
           activeColor: Color(0xFF00FFBF),
           onChanged: (bool? value)
           {
+            if (snackbarComplete == false) {
+              return;
+            }
             //TODO : 서버에 알리기
             setState(()
             {
               UserData.to.autoPlay = value ?? false;
             });
+
+            if (snackbarComplete)
+            {
+              snackbarComplete = false;
+              var stringID = value != null && value ? 400075 : 400074;
+              ShowCustomSnackbar(StringTable().Table![stringID]!, SnackPosition.TOP, () {
+                snackbarComplete = true;
+              });
+            }
           },
         ),
       );

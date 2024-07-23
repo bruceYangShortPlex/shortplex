@@ -94,4 +94,15 @@ class HomeData extends GetxController
 
     return formatter.format(99999);
   }
+
+  String GetSubscriptionID()
+  {
+    if (productList.any((element) => element.productType == 'subscription'))
+    {
+      var item = productList.firstWhere((element) => element.productType == 'subscription');
+      return item.id;
+    }
+
+    return '';
+  }
 }

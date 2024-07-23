@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
 
+import '../Util/ShortplexTools.dart';
+
 enum SelectResolutionType
 {
   FHD,
@@ -97,6 +99,45 @@ class UserData extends GetxController
     var popcornCount = formatter.format(this.popcornCount.value);
     var cornCount = formatter.format(this.bonusCornCount.value);
     return (popcornCount, cornCount);
+  }
+
+  String MoneyUpdate(String _currentPopcorn, String _currentBonuscorn)
+  {
+    String message = '';
+    if (double.tryParse(_currentPopcorn) == false)
+    {
+      print('_currentPopcorn convert error');
+      return message;
+    }
+
+    if (double.tryParse(_currentBonuscorn) == false)
+    {
+      print('_currentBonusPopcorn convert error');
+      return message;
+    }
+
+    var currentPopcorn = double.parse(_currentPopcorn).toInt();
+    var currentBonuscorn = double.parse(_currentBonuscorn).toInt();
+    var addPopcorn = currentPopcorn - popcornCount.value;
+    var addBonus = currentBonuscorn - bonusCornCount.value;
+
+    if (addPopcorn > 0 && addBonus > 0)
+    {
+      message = SetTableStringArgument(300041, [addPopcorn.toString(), addBonus.toString()]);
+    }
+    else if (addPopcorn > 0)
+    {
+      message = SetTableStringArgument(300039, [addPopcorn.toString()]);
+    }
+    else if (addBonus > 0)
+    {
+      message = SetTableStringArgument(300040, [addBonus.toString()]);
+    }
+
+    popcornCount.value = currentPopcorn;
+    bonusCornCount.value = currentBonuscorn;
+
+    return message;
   }
 
   String GetProviderIcon()

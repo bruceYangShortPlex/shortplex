@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -244,7 +246,7 @@ Widget ShopGoods([bool _visibleTap = true])
         (
           onTap: ()
           {
-            Get.to(() => BuySubscriptionPage(), arguments: [HomeData.to.GetSubscriptionPrice()]);
+            Get.to(() => BuySubscriptionPage());
           },
           child:
           Container
@@ -255,7 +257,7 @@ Widget ShopGoods([bool _visibleTap = true])
             child:
             SvgPicture.asset
             (
-              'assets/images/Shop/my_shop_freepass.svg',
+              'assets/images/shop/my_shop_freepass.svg',
               width: 330,
               height: 78,
             ),
@@ -322,12 +324,13 @@ Widget ShopGoods([bool _visibleTap = true])
   );
 }
 
+var buttonDisalbe = false;
 Widget Goods(String _title, String _bonus, String _iconPath, String _price, String _sale, String _pid)
 {
   return
   GestureDetector
   (
-    onTap: ()
+    onTap: buttonDisalbe ? null : ()
     {
       if (UserData.to.isLogin.value == false)
       {
@@ -339,14 +342,17 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
         return;
       }
 
+      buttonDisalbe = true;
       //TODO:구글 결제를 먼저 해야한다.
-      HttpProtocolManager.to.Send_BuyProduct('', _pid, '').then((value)
+      HttpProtocolManager.to.Send_BuyProduct(_pid, '').then((value)
       {
         if (value == true)
         {
           HttpProtocolManager.to.Get_WalletBalance().then((value)
           {
-            if (value == null) {
+            if (value == null)
+            {
+              buttonDisalbe = false;
               return;
             }
 
@@ -354,12 +360,19 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
             {
               if (item.userId == UserData.to.userId)
               {
-                UserData.to.popcornCount.value = double.parse(item.popcorns).toInt();
-                UserData.to.bonusCornCount.value = double.parse(item.bonus).toInt();
+                String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+                ShowCustomSnackbar(message, SnackPosition.TOP, ()
+                {
+                  buttonDisalbe = false;
+                });
                 break;
               }
             }
           },);
+        }
+        else
+        {
+          buttonDisalbe = false;
         }
       },);
     },
@@ -369,8 +382,8 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
       children:
       [
         SvgPicture.asset
-          (
-          'assets/images/Shop/my_shop.svg',
+        (
+          'assets/images/shop/my_shop.svg',
           width: 94,
           height: 150,
         ),
@@ -460,9 +473,9 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
           visible: _bonus != '',
           child:
           SvgPicture.asset
-            (
+          (
             alignment: Alignment.center,
-            'assets/images/Shop/my_shop_1.svg',
+            'assets/images/shop/my_shop_1.svg',
             width: 94,
             height: 150,
           ),

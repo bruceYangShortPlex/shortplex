@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -1084,9 +1085,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/profile/wallet/balance';
-      print('Get_Preview send url : $url');
+      print('Get_WalletBalance send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
-      print('Get_Preview res.body ${res.body}');
+      print('Get_WalletBalance res.body ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -1095,12 +1096,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       }
       else
       {
-        print('Get_Preview FAILD : ${res.statusCode}');
+        print('Get_WalletBalance FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('Get_Preview error : $e');
+      print('Get_WalletBalance error : $e');
     }
 
     return null;
@@ -1218,15 +1219,16 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<bool> Send_BuyProduct(String _paymentProvider, String _productID, String _receipt) async
+  Future<bool> Send_BuyProduct(String _productID, String _receipt) async
   {
     try
     {
+      var provider = Platform.isIOS ?  'apple' : 'google';
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/profile/store/order';
 
       var data =  PaymentData(productId: _productID );
-      var req = ProductReq(paymentData: data, paymentProvider: _paymentProvider);
+      var req = ProductReq(paymentData: data, paymentProvider: provider);
       //print('stat : ${stat.value}');
       var bodys = jsonEncode(req.toJson());
       if (kDebugMode) {

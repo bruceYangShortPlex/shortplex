@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
+import 'package:shortplex/sub/Home/HomeData.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../table/UserData.dart';
+import 'LoginPage.dart';
 
 
 class BuySubscriptionPage extends StatelessWidget
 {
   BuySubscriptionPage({super.key});
-
-  var price = Get.arguments[0];
 
   Widget mainWidget(BuildContext context)
   {
@@ -47,7 +48,7 @@ class BuySubscriptionPage extends StatelessWidget
                     alignment: Alignment.centerLeft,
                     child:
                     CupertinoNavigationBarBackButton
-                      (
+                    (
                       color: Colors.white,
                       onPressed: ()
                       {
@@ -56,7 +57,7 @@ class BuySubscriptionPage extends StatelessWidget
                     ),
                   ),
                   Container
-                    (
+                  (
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: 50,
                     //color: Colors.green,
@@ -75,18 +76,18 @@ class BuySubscriptionPage extends StatelessWidget
             ),
             child:
             Container
-              (
+            (
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               padding: EdgeInsets.only(top: 50),
               child:
               Column
-                (
+              (
                 children:
                 [
                   SizedBox(height: 50,),
                   Container
-                    (
+                  (
                     alignment: Alignment.center,
                     width: MediaQuery.of(context).size.width * 322 / 390,
                     height: 60,
@@ -101,7 +102,6 @@ class BuySubscriptionPage extends StatelessWidget
                     ),
                   ),
                   SizedBox(height: 20,),
-
                   Obx(() => userData.isSubscription.value ?
                     Stack
                     (
@@ -110,7 +110,7 @@ class BuySubscriptionPage extends StatelessWidget
                       [
                         SvgPicture.asset
                         (
-                          'assets/images/Shop/my_shop_freepass_1.svg',
+                          'assets/images/shop/my_shop_freepass_1.svg',
                         ),
                         Container
                         (
@@ -120,10 +120,10 @@ class BuySubscriptionPage extends StatelessWidget
                           //color: Colors.white,
                           child:
                           Padding
-                            (
+                          (
                             padding: const EdgeInsets.only(top: 15, left: 30),
                             child: Column
-                              (
+                            (
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children:
                               [
@@ -132,14 +132,14 @@ class BuySubscriptionPage extends StatelessWidget
                                   textAlign: TextAlign.center,
                                   StringTable().Table![400014]!,
                                   style:
-                                  TextStyle(fontSize: 16, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                  const TextStyle(fontSize: 16, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                                 Text
                                 (
                                   textAlign: TextAlign.center,
                                   SetTableStringArgument(400015, ['99.12.31']),
                                   style:
-                                  TextStyle(fontSize: 14, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                  const TextStyle(fontSize: 14, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                 ),
                               ],
                             ),
@@ -149,22 +149,41 @@ class BuySubscriptionPage extends StatelessWidget
                     ) :
                     SvgPicture.asset
                     (
-                      'assets/images/Shop/my_shop_freepass.svg',
+                      'assets/images/shop/my_shop_freepass.svg',
                     )
                   ),
                   SizedBox(height: 50,),
                   Obx(() => Visibility
-                    (
+                  (
                     visible: !userData.isSubscription.value,
                     child:
                     GestureDetector
-                      (
+                    (
                       onTap: ()
                       {
-                        userData.isSubscription(true);
+                        if (UserData.to.isLogin.value == false)
+                        {
+                          showDialogTwoButton(StringTable().Table![600018]!, '',
+                          ()
+                          {
+                            Get.to(() => LoginPage());
+                          });
+                          return;
+                        }
+                        //구매 
+                        HttpProtocolManager.to.Send_BuyProduct(HomeData.to.GetSubscriptionID(), '').then((value)
+                        {
+                          if (value) {
+                            userData.isSubscription(true);
+                          }
+                          else
+                          {
+                            //TODO:구매 실패 매시지
+                          }
+                        },);
                       },
                       child: Container
-                        (
+                      (
                         alignment: Alignment.center,
                         padding: EdgeInsets.only(bottom: 3),
                         width: 120,
@@ -180,7 +199,7 @@ class BuySubscriptionPage extends StatelessWidget
                         Text
                           (
                           textAlign: TextAlign.center,
-                          SetTableStringArgument(400035, [price]),
+                          SetTableStringArgument(400035, [HomeData.to.GetSubscriptionPrice()]),
                           style:
                           TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),

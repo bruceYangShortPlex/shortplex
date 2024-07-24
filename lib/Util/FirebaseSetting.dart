@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/sub/Featured/FeaturedPage.dart';
 import '../firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseSetting {
   FirebaseSetting._privateConstructor();
@@ -26,15 +28,27 @@ class FirebaseSetting {
 
     var messaging = FirebaseMessaging.instance;
 
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+    var prefs = await SharedPreferences.getInstance();
+    bool? hasRequested = prefs.getBool('hasRequestedNotificationPermission');
+
+    if (hasRequested == null || hasRequested == false)
+    {
+      NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      if (kDebugMode) {
+        print('User granted permission: ${settings.authorizationStatus}');
+      }
+    }
+
+    prefs.setBool('hasRequestedNotificationPermission', true);
 
     messaging.onTokenRefresh.listen((fcmToken1) {
       // TODO: If necessary send token to application server.
@@ -45,8 +59,6 @@ class FirebaseSetting {
         .onError((err) {
       // Error getting token.
     });
-
-    print('User granted permission: ${settings.authorizationStatus}');
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 

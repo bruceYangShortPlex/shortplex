@@ -48,6 +48,12 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-6209332264163024~2074476217"/>
         <!-- [] for admob end-->
+<!--        <meta-data-->
+<!--            android:name="firebase_messaging_auto_init_enabled"-->
+<!--            android:value="false" />-->
+<!--        <meta-data-->
+<!--            android:name="firebase_analytics_collection_enabled"-->
+<!--            android:value="false" />-->
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility?hl=en and

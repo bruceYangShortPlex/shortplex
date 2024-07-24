@@ -241,13 +241,21 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
                ),
                onEditingComplete: ()
                {
+                 print('edit complete');
+
                  phoneNumber = textEditingController1.text;
+
+                 print('edit phoneNumber 1 : $phoneNumber');
 
                  if (phoneNumber.length > 12)
                  {
-                   if (snackbarComplete) {
+                   print('edit phoneNumber 2 : $phoneNumber');
+
+                   if (snackbarComplete)
+                   {
                      snackbarComplete = false;
-                     ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP, () {
+                     ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP, ()
+                     {
                        snackbarComplete = true;
                      });
                    }
@@ -260,7 +268,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
                {
                  if (int.tryParse(value) == null || value[value.length -1] == ' ')
                  {
-                   textEditingController1.text = textEditingController1.text.replaceAll(value[value.length -1], '');
+                   phoneNumber = textEditingController1.text = textEditingController1.text.replaceAll(value[value.length -1], '');
                  }
                  // 여기서 value는 사용자가 입력한 전화번호입니다.
                  //print('전화번호: $phoneNumber');

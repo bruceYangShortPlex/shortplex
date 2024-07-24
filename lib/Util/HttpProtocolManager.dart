@@ -43,9 +43,11 @@ enum Comment_CD_Type
 
 enum WalletHistoryType
 {
+  NONE,
   CHARGE,
   SPEND,
   BONUS,
+  REWARD,
 }
 
 class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin

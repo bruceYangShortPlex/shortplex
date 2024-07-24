@@ -5,14 +5,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 
+import '../../Util/HttpProtocolManager.dart';
 import '../../table/StringTable.dart';
 
 
 class HistoryPage extends StatefulWidget
 {
-  HistoryPage({super.key, required this.PageTitle});
+  HistoryPage({super.key, required this.PageTitle, required this.historyType});
 
   final String PageTitle;
+  final WalletHistoryType historyType;
+  bool loadingComplete = false;
 
   List<List<HistoryData>> mainlist = <List<HistoryData>>[];
 
@@ -82,7 +85,55 @@ class HistoryPage extends StatefulWidget
               width: MediaQuery.of(context).size.width,
               //color: Colors.yellow,
               child:
-              mainlist.length == 0 ? Container() :
+              mainlist.length == 0 && loadingComplete ?
+              Container
+              (
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child:
+                Column
+                (
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                  [
+                    Image.asset('assets/images/user/notfound_icon.png'),
+                    SizedBox(height: 20,),
+                    Text
+                    (
+                      '충전 기록이 없어요',
+                      style:
+                      TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                    SizedBox(height: 4,),
+                    Text
+                    (
+                      '지금 바로 작업해라 하드코딩이다',
+                      style:
+                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                    SizedBox(height: 20,),
+                    Container
+                    (
+                      alignment: Alignment.center,
+                      width: 90,
+                      height: 26,
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF00FFBF),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      ),
+                      child:  
+                      Text
+                      (
+                        '하드코딩',
+                        style:
+                        TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      ),
+                    )
+                  ],
+                ),
+
+              ) 
+              :
               ListView.builder
               (
                 padding: EdgeInsets.all(0),

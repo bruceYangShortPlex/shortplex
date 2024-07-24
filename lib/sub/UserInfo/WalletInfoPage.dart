@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/sub/UserInfo/UsedHistoryPage.dart';
 
@@ -10,14 +11,6 @@ import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 import 'BonusHistoryPage.dart';
 import 'ChargeHistoryPage.dart';
-
-enum WalletSubPageType
-{
-  NONE,
-  CHARGET_HISTORY,
-  BONUS_HISTORY,
-  USED_HISTORY,
-}
 
 class WalletInfoPage extends StatefulWidget
 {
@@ -298,10 +291,10 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                   ),
                   SizedBox(height: 20,),
                   //Divider(height: 50, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
-                  _option(400017, WalletSubPageType.CHARGET_HISTORY),
-                  _option(400018, WalletSubPageType.BONUS_HISTORY),
-                  _option(400019, WalletSubPageType.USED_HISTORY),
-                  _option(400020, WalletSubPageType.NONE, true),
+                  _option(400017, WalletHistoryType.CHARGE),
+                  _option(400018, WalletHistoryType.BONUS),
+                  _option(400019, WalletHistoryType.SPEND),
+                  _option(400020, WalletHistoryType.NONE, true),
                   Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
                 ],
               ),
@@ -342,7 +335,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
     ),
   );
 
-  Widget _option(int _titleID, WalletSubPageType _moveSubpageType, [bool _isToggle = false]) =>
+  Widget _option(int _titleID, WalletHistoryType _movePageType, [bool _isToggle = false]) =>
       Column
         (
         mainAxisAlignment: MainAxisAlignment.center,
@@ -373,7 +366,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
               Padding
               (
                 padding:EdgeInsets.only(right: 20),
-                child: _isToggle ? _toggleButton() : _moveButton(_moveSubpageType),
+                child: _isToggle ? _toggleButton() : _moveButton(_movePageType),
               ),
             ],
           ),
@@ -413,7 +406,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
         ),
       );
 
-  Widget _moveButton(WalletSubPageType _type) =>
+  Widget _moveButton(WalletHistoryType _type) =>
     IconButton
       (
         alignment: Alignment.center,
@@ -424,14 +417,14 @@ class _WalletInfoPageState extends State<WalletInfoPage>
         {
           switch(_type)
           {
-            case WalletSubPageType.CHARGET_HISTORY:
-              Get.to(()=> ChargeHistoryPage(PageTitle: StringTable().Table![400017]!));
+            case WalletHistoryType.CHARGE:
+              Get.to(()=> ChargeHistoryPage(PageTitle: StringTable().Table![400017]!, historyType: _type));
               break;
-            case WalletSubPageType.BONUS_HISTORY:
-              Get.to(()=> BonusHistoryPage(PageTitle:StringTable().Table![400018]!));
+            case WalletHistoryType.BONUS:
+              Get.to(()=> BonusHistoryPage(PageTitle:StringTable().Table![400018]!,historyType: _type));
               break;
-            case WalletSubPageType.USED_HISTORY:
-              Get.to(()=> UsedHistoryPage(PageTitle:StringTable().Table![400019]!));
+            case WalletHistoryType.SPEND:
+              Get.to(()=> UsedHistoryPage(PageTitle:StringTable().Table![400019]!,historyType: _type,));
               break;
             default:
               print('not found type ${_type}');

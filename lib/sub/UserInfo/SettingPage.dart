@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
@@ -23,6 +24,7 @@ enum SettingSubPageType
   PRIVATE_POLICY,
   LEGAL_NOTICE,
   ACCOUNT_DELETE,
+  ALARM_SETTING,
 }
 
 class SettingPage extends StatefulWidget
@@ -39,10 +41,21 @@ class _SettingPageState extends State<SettingPage>
   String cacheSize = '';
   //final VoidCallback _callback = () {};
 
+  Future alamCheck() async
+  {
+    //_isChecked = UserData.to.Alarmallow;
+  }
+
   @override
-  void initState() {
-    _isChecked = UserData.to.Alarmallow;
+  void initState()
+  {
+
+    alamCheck();
     super.initState();
+  }
+
+  void openNotificationSettings() {
+    AppSettings.openAppSettings(type: AppSettingsType.notification);
   }
 
   @override
@@ -119,7 +132,7 @@ class _SettingPageState extends State<SettingPage>
                 children:
                 [
                   _option(400040, SettingSubPageType.ACCOUNT_INFO),
-                  _option(400041, SettingSubPageType.NONE, true),
+                  _option(400041, SettingSubPageType.ALARM_SETTING),
                   //_option(400042, SettingSubPageType.CASH_DELETE),
                   _option(400043, SettingSubPageType.SERVICE_POLICY),
                   _option(400044, SettingSubPageType.PRIVATE_POLICY),
@@ -250,6 +263,11 @@ class _SettingPageState extends State<SettingPage>
                 });
             }
             break;
+          case SettingSubPageType.ALARM_SETTING:
+            {
+              openNotificationSettings();
+            }
+            break;
           default:
             print('not found type ${_type}');
             break;
@@ -258,6 +276,7 @@ class _SettingPageState extends State<SettingPage>
     );
   }
 
+  bool toggleButtonDisable = false;
   Widget _toggleButton()
   {
     return
@@ -268,28 +287,42 @@ class _SettingPageState extends State<SettingPage>
         _isChecked = UserData.to.Alarmallow;
       }
       return
-      Transform.scale
+      IgnorePointer
       (
-        scale: 0.7,
-        child:
-        CupertinoSwitch
+        ignoring: toggleButtonDisable,
+        child: Transform.scale
         (
-          value: _isChecked,
-          activeColor: Color(0xFF00FFBF),
-          onChanged: (bool? value)
-          {
-            UserData.to.Alarmallow = value ?? false;
-
-            HttpProtocolManager.to.Send_UserInfo().then((value)
+          scale: 0.7,
+          child:
+          CupertinoSwitch
+          (
+            value: _isChecked,
+            activeColor: Color(0xFF00FFBF),
+            onChanged: (bool? value) async
             {
-              UserData.to.UpdateInfo(value);
-
               setState(()
               {
-                _isChecked = UserData.to.Alarmallow;
+                _isChecked = value ?? true;
               });
-            },);
-          },
+
+              if (UserData.to.isLogin.value == false)
+              {
+                return;
+              }
+
+              UserData.to.Alarmallow = value ?? false;
+
+              HttpProtocolManager.to.Send_UserInfo().then((value)
+              {
+                UserData.to.UpdateInfo(value);
+
+                setState(()
+                {
+                  _isChecked = UserData.to.Alarmallow;
+                });
+              },);
+            },
+          ),
         ),
       );
     },);

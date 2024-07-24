@@ -17,7 +17,7 @@ import '../Home/HomeData.dart';
 
 class ChargeHistoryPage extends HistoryPage
 {
-  ChargeHistoryPage({super.key, required super.PageTitle});
+  ChargeHistoryPage({super.key, required super.PageTitle, required super.historyType});
 
   @override
   State<ChargeHistoryPage> createState() => _ChargeHistoryPageState();
@@ -62,11 +62,12 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
 
       for(var item in mapData.values)
       {
-        setState(()
-        {
-          widget.mainlist.add(item);
-        });
+        widget.mainlist.add(item);
       }
+
+      setState(() {
+        widget.loadingComplete = true;
+      });
     },);
 
    super.initState();

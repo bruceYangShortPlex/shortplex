@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/AdsManager.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 import 'package:shortplex/sub/Reward/BonusPage.dart';
 import 'package:shortplex/sub/Reward/RewardHistoryPage.dart';
@@ -579,7 +580,7 @@ Widget mainWidget(BuildContext context)=>
                     icon: const Icon(Icons.arrow_forward_ios),
                     onPressed: ()
                     {
-                      Get.to(() => RewardHistory(PageTitle: StringTable().Table![300007]!));
+                      Get.to(() => RewardHistory(PageTitle: StringTable().Table![300007]!, historyType: WalletHistoryType.REWARD,));
                     }
                 ),
               )

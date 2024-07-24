@@ -216,7 +216,8 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           SizedBox(height: 10,),
                           Obx(()
                           {
-                            if (UserData.to.refreshCount.value != 0) {
+                            if (UserData.to.refreshCount.value != 0) 
+                            {
                               accountInfoCountCheck();
                             }
                             return
@@ -315,7 +316,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           break;
                         case AccountInfoSubPageType.BIRTHDAY:
                           {
-                            print('UserData.to.BirthDay : ${UserData.to.BirthDay}');
+                            //print('UserData.to.BirthDay : ${UserData.to.BirthDay}');
 
                             if (UserData.to.BirthDay.isNotEmpty) {
                               text = ConvertDateString(UserData.to.BirthDay);

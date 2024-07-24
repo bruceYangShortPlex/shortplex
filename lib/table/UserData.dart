@@ -197,6 +197,11 @@ class UserData extends GetxController
     {
       refreshCount++;
     }
+
+    if (kDebugMode)
+    {
+      print('User Info Update Complete');
+    }
   }
 }
 

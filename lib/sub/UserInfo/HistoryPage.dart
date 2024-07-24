@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
+import 'package:shortplex/sub/CupertinoMain.dart';
+import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 
 import '../../Util/HttpProtocolManager.dart';
 import '../../table/StringTable.dart';
@@ -22,19 +24,58 @@ class HistoryPage extends StatefulWidget
   @override
   State<HistoryPage> createState() => _HistoryPageState();
 
-  Widget HistoryBuild(BuildContext context) =>
+  Widget HistoryBuild(BuildContext context)
+  {
+    var emptyIndex = 0;
+    var announceIndex = 0;
+    switch(historyType)
+    {
+      case WalletHistoryType.CHARGE:
+        {
+          emptyIndex = 400104;
+          announceIndex = 400107;
+        }
+        break;
+      case WalletHistoryType.SPEND:
+        {
+          emptyIndex = 400106;
+          announceIndex = 400109;
+        }
+        break;
+      case WalletHistoryType.BONUS:
+        {
+          announceIndex = 400108;
+          emptyIndex = 400105;
+        }
+        break;
+      case WalletHistoryType.REWARD:
+        {
+          emptyIndex = 400104;
+          announceIndex = 400107;
+        }
+        break;
+      default:
+        {
+          print('not found type : $historyType');
+          emptyIndex = 400104;
+          announceIndex = 400107;
+        }
+        break;
+    };
+
+    return
       SafeArea
-      (
+        (
         child:
         CupertinoApp
-        (
+          (
           home:
           CupertinoPageScaffold
-          (
+            (
             backgroundColor: Colors.black,
             navigationBar:
             CupertinoNavigationBar
-            (
+              (
               backgroundColor: Colors.transparent,
               leading:
               Row
@@ -44,7 +85,10 @@ class HistoryPage extends StatefulWidget
                 [
                   Container
                     (
-                    width: MediaQuery.of(context).size.width * 0.3,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.3,
                     height: 50,
                     //color: Colors.blue,
                     padding: EdgeInsets.zero,
@@ -53,100 +97,149 @@ class HistoryPage extends StatefulWidget
                     CupertinoNavigationBarBackButton
                       (
                       color: Colors.white,
-                      onPressed: ()
-                      {
+                      onPressed: () {
                         Get.back();
                       },
                     ),
                   ),
                   Container
                     (
-                    width: MediaQuery.of(context).size.width * 0.3,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.3,
                     height: 50,
                     //color: Colors.green,
                     alignment: Alignment.center,
                     child:
                     Text
-                    (
+                      (
                       PageTitle,
                       style:
-                      TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      TextStyle(fontSize: 15,
+                        color: Colors.white,
+                        fontFamily: 'NotoSans',
+                        fontWeight: FontWeight.bold,),
                     ),
                   ),
-                  Container(width: MediaQuery.of(context).size.width * 0.3, height: 50,)
+                  Container(width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.3, height: 50,)
                 ],
               ),
             ),
             child:
             Container
-            (
+              (
               alignment: Alignment.topCenter,
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
               //color: Colors.yellow,
               child:
               mainlist.length == 0 && loadingComplete ?
               Container
-              (
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
+                (
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
                 child:
                 Column
-                (
+                  (
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:
                   [
                     Image.asset('assets/images/user/notfound_icon.png'),
                     SizedBox(height: 20,),
                     Text
-                    (
-                      '충전 기록이 없어요',
+                      (
+                      StringTable().Table![emptyIndex]!,
                       style:
-                      TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      TextStyle(fontSize: 16,
+                        color: Colors.white,
+                        fontFamily: 'NotoSans',
+                        fontWeight: FontWeight.bold,),
                     ),
                     SizedBox(height: 4,),
                     Text
                     (
-                      '지금 바로 작업해라 하드코딩이다',
+                      StringTable().Table![announceIndex]!,
                       style:
-                      TextStyle(fontSize: 11, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                      TextStyle(fontSize: 11,
+                        color: Colors.grey,
+                        fontFamily: 'NotoSans',
+                        fontWeight: FontWeight.bold,),
                     ),
                     SizedBox(height: 20,),
-                    Container
+                    GestureDetector
                     (
-                      alignment: Alignment.center,
-                      width: 90,
-                      height: 26,
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF00FFBF),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                      ),
-                      child:  
-                      Text
+                      onTap: ()
+                      {
+                        if (historyType == WalletHistoryType.CHARGE)
+                        {
+                          Get.to(() => ShopPage());
+                        }
+                        else if (historyType == WalletHistoryType.BONUS)
+                        {
+                          Get.offAll(CupertinoMain(), arguments: MainPageType.RewardPage.index);
+                        }
+                        else if (historyType == WalletHistoryType.SPEND)
+                        {
+                          Get.offAll(CupertinoMain());
+                        }
+                      },
+                      child:
+                      Container
                       (
-                        '하드코딩',
-                        style:
-                        TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                        alignment: Alignment.center,
+                        width: 90,
+                        height: 26,
+                        decoration: ShapeDecoration(
+                          color: Color(0xFF00FFBF),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                        ),
+                        child:
+                        Text
+                        (
+                          StringTable().Table![400101]!,
+                          style:
+                          TextStyle(fontSize: 13,
+                            color: Colors.black,
+                            fontFamily: 'NotoSans',
+                            fontWeight: FontWeight.bold,),
+                        ),
                       ),
                     )
                   ],
                 ),
 
-              ) 
-              :
+              )
+                  :
               ListView.builder
-              (
+                (
                 padding: EdgeInsets.all(0),
                 itemCount: mainlist.length,
-                itemBuilder: (context, index)
-                {
-                  return  historyMain(mainlist[index]);
+                itemBuilder: (context, index) {
+                  return historyMain(mainlist[index]);
                 },
               ),
             ),
           ),
         ),
       );
+  }
 
   Widget historyMain(List<HistoryData> _itemlist)
   {
@@ -472,7 +565,6 @@ class HistoryPage extends StatefulWidget
                   ),
                 ),
               ),
-
                 Expanded
                 (
                   flex: 1,

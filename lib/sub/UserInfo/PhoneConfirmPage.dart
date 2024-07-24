@@ -268,8 +268,10 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
                {
                  if (int.tryParse(value) == null || value[value.length -1] == ' ')
                  {
-                   phoneNumber = textEditingController1.text = textEditingController1.text.replaceAll(value[value.length -1], '');
+                   textEditingController1.text = textEditingController1.text.replaceAll(value[value.length -1], '');
                  }
+
+                 phoneNumber = textEditingController1.text;
                  // 여기서 value는 사용자가 입력한 전화번호입니다.
                  //print('전화번호: $phoneNumber');
                },
@@ -321,7 +323,8 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             if (snackbarComplete)
             {
               snackbarComplete = false;
-              ShowCustomSnackbar(
+              ShowCustomSnackbar
+              (
                   StringTable().Table![400088]!, SnackPosition.TOP, ()
               {
                 snackbarComplete = true;
@@ -362,10 +365,13 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           //인증번호 받기 누름.
           HttpProtocolManager.to.Send_GetCertificationMessage(hpCountryCode, phoneNumber).then((value)
           {
-            // if (value != null) {
-            //   ShowCustomSnackbar(StringTable().Table![400086]!, SnackPosition.TOP);
-            // }
-            buttonDisable = false;
+            if (value != null)
+            {
+              ShowCustomSnackbar(StringTable().Table![400086]!, SnackPosition.TOP, ()
+              {
+                buttonDisable = false;
+              });
+            }
           },);
         },
         child:
@@ -417,11 +423,6 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             ),
             onChanged: (value)
             {
-              if (int.tryParse(value) == null || value[value.length -1] == ' ')
-              {
-                textEditingController2.text = textEditingController2.text.replaceAll(value[value.length -1], '');
-              }
-
               certificationNumber = textEditingController2.text;
             },
           ),
@@ -439,6 +440,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         onTap: buttonDisable ? null : ()
         {
+          print('send checkNumber');
           if (certificationNumber.isEmpty && phoneNumber.isNotEmpty)
           {
             ShowCustomSnackbar(StringTable().Table![400089]!, SnackPosition.TOP);
@@ -454,10 +456,26 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           buttonDisable = true;
           HttpProtocolManager.to.Send_CertificationNumber(certificationNumber).then((value)
           {
-            if (value) {
-              ShowCustomSnackbar(StringTable().Table![400091]!, SnackPosition.TOP);
+            //print('Receive checkNumber value : $value');
+            if (value)
+            {
+              HttpProtocolManager.to.Get_UserInfo().then((value)
+              {
+                //print('Receive checkNumber 2 value : $value');
+
+                if(value != null)
+                {
+                  UserData.to.UpdateInfo(value);
+                  buttonDisable = false;
+                }
+                ShowCustomSnackbar(StringTable().Table![400091]!, SnackPosition.TOP);
+              },);
             }
-            buttonDisable = false;
+            else
+            {
+              ShowCustomSnackbar(StringTable().Table![400090]!, SnackPosition.TOP);
+              buttonDisable = false;
+            }
           },);
         },
         child:

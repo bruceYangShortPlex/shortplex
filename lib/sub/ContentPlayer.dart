@@ -1889,7 +1889,7 @@ Widget contentPlayMain()
                             (
                              onTap: ()
                              {
-                               MainBottomNavgationBarController.to.selectedIndex.value = 3;
+                               MainBottomNavgationBarController.to.selectedIndex.value = MainPageType.RewardPage.index;
                                Get.back();
                              },
                               child: Stack

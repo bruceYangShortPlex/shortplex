@@ -65,7 +65,11 @@ class CupertinoMain extends StatelessWidget{
     // 페이지 전환을 위한 MyBottomNavgationBarController 인스턴스화 (의존성 주입)
     // Get.put : 수명이 페이지와 같음
     Get.put(MainBottomNavgationBarController());
-
+    var index = Get.arguments;
+    if (index != null)
+    {
+      MainBottomNavgationBarController.to.selectedIndex(index);
+    }
     return
     Scaffold
     (
@@ -80,6 +84,15 @@ class CupertinoMain extends StatelessWidget{
       Obx(() => tabPages[MainBottomNavgationBarController.to.selectedIndex.value]),
     );
   }
+}
+
+enum MainPageType
+{
+  HOME,
+  FeaturedPage,
+  ReleasedContentsPage,
+  RewardPage,
+  UserInfoPage,
 }
 
 // BottomNavigationBar 상태 관리를 위한 GetX controller

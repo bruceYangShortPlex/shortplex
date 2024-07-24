@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -19,6 +18,7 @@ import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
 import '../Network/MobileCertification_Req.dart';
+import '../Network/MoblieCertification_Res.dart';
 import '../Network/OAuth_Res.dart';
 import '../Network/Product_Req.dart';
 import '../Network/Product_Res.dart';
@@ -1018,7 +1018,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return false;
   }
 
-  Future<UserInfoRes?> Send_GetCertificationMessage(String _countryCode, String _phoneNumber) async
+  Future<MoblieCertificationRes?> Send_GetCertificationMessage(String _countryCode, String _phoneNumber) async
   {
     try
     {
@@ -1033,7 +1033,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       if (res.statusCode == 200)
       {
-        var data =  UserInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        var data =  MoblieCertificationRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
         return data;
       }
       else
@@ -1043,7 +1043,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
     catch (e)
     {
-      print('Send_WatchData error : $e');
+      print('Send_GetCertificationMessage error : $e');
     }
 
     return null;
@@ -1054,10 +1054,11 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/profile/settings/sms/sendcode';
+      var url = 'https://www.quadra-system.com/api/v1/profile/settings/sms/verifycode';
 
       final map = <String, dynamic>{};
       map['verification_code'] = _number;
+
       var bodys = jsonEncode(map);
       print('Send_CertificationNumber send heads : ${heads} / send bodys : ${bodys}');
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);

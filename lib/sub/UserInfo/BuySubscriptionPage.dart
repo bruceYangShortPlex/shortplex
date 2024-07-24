@@ -21,7 +21,7 @@ class BuySubscriptionPage extends StatelessWidget
 
     return
       SafeArea
-        (
+      (
         child:
         CupertinoApp
           (
@@ -40,7 +40,7 @@ class BuySubscriptionPage extends StatelessWidget
                 children:
                 [
                   Container
-                    (
+                  (
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: 50,
                     //color: Colors.blue,

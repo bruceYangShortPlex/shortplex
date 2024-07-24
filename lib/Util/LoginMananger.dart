@@ -233,6 +233,23 @@ class LoginMananger
       }
     },);
 
+    await HttpProtocolManager.to.Get_WalletBalance().then((value)
+    {
+      if (value == null)
+      {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        if (item.userId == UserData.to.userId)
+        {
+          UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+          break;
+        }
+      }
+    },);
+
     userData.isLogin.value = isLogin;
   }
 

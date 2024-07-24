@@ -297,7 +297,7 @@ class _UserInfoPageState extends State<UserInfoPage>
               Container
               (
                 color: Colors.black,
-                child: Image.asset('assets/images/User/my_picture.png', fit: BoxFit.cover,),) :
+                child: Image.asset('assets/images/user/my_picture.png', fit: BoxFit.cover,),) :
                 Image.network('${Get.find<UserData>().photoUrl.value}',
                 fit: BoxFit.cover),
         ),
@@ -537,7 +537,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                     alignment: Alignment.center,
                                     width: 32,
                                     height: 32,
-                                    'assets/images/User/my_popcon.png',
+                                    'assets/images/user/my_popcon.png',
                                     fit: BoxFit.fitHeight,
                                   ),
                                 ),
@@ -603,7 +603,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                   alignment: Alignment.center,
                                   width: 32,
                                   height: 32,
-                                  'assets/images/User/my_bonus.png',
+                                  'assets/images/user/my_bonus.png',
                                   fit: BoxFit.fitHeight,
                                 ),
                               ),

@@ -348,8 +348,10 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
       InAppPurchaseService.to.BuyProduct(_pid,
       (receipt)
       {
+        print('receipt : $receipt');
         if (receipt.isEmpty)
         {
+          buttonDisalbe = false;
           return;
         }
 

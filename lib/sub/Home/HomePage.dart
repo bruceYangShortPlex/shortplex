@@ -678,7 +678,7 @@ class _HomePageState extends State<HomePage>
               else
               {
                 print('go to info page');
-                //print(_data.id);
+                print('_data.id = ${_data.id}');
                 Get.to(() => const ContentInfoPage(), arguments: _data);
               }
             },

@@ -647,32 +647,33 @@ SnackbarController ShowCustomSnackbar(String _content, SnackPosition _position, 
 
 String GetReleaseTime(String _createTime)
 {
-  var current = DateTime.now();
+  var current = DateTime.now().toUtc();
   var create = DateTime.parse(_createTime);
-
   var diff = current.difference(create);
+
+  print('diff.inDays : ${diff.inDays} / diff.inHours : ${diff.inHours} / diff.inMinutes : ${diff.inMinutes}');
 
   //7일 이후
   if (diff.inDays >= 7)
   {
     return ConvertDateString(_createTime);
   }
-  var subDate = SubstringDate(_createTime);
   //7일 이내
   if (diff.inDays > 0)
   {
-    SetTableStringArgument( 300062, [subDate.$3]);
+    var result = diff.inDays.toString();
+    return SetTableStringArgument( 300062, [result]);
   }
   //하루 이내
   if (diff.inHours > 0)
   {
-    var result = diff.inHours.toString().padLeft(2, '0');
+    var result = diff.inHours.toString();
     return SetTableStringArgument(300061 , [result]);
   }
-
+  //print('diff.inMinutes : ${diff.inMinutes} / create : $create  / current : $current');
   if (diff.inMinutes > 0)
   {
-    var result = diff.inMinutes.toString().padLeft(2, '0');
+    var result = diff.inMinutes.toString();
     return SetTableStringArgument(300060 , [result]);
   }
 

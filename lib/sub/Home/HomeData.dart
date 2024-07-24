@@ -103,7 +103,8 @@ class HomeData extends GetxController
     {
       index = 6;
     }
-    else {
+    else
+    {
       if (_popcornCount == '40.00') {
         index = 1;
       }
@@ -119,15 +120,14 @@ class HomeData extends GetxController
       else if (_popcornCount == '300.00') {
         index = 5;
       }
-      else {
-        index = 6;
-      }
     }
 
     if (index >= productIcons.length)
     {
       index= 0;
     }
+
+    //print('index : $index / _popcornCount : $_popcornCount');
 
     return productIcons[index];
   }

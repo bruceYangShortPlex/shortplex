@@ -114,21 +114,40 @@ class HistoryPage extends StatefulWidget
             padding: const EdgeInsets.only(top: 60.0, left: 20),
             child:
             Container
-              (
+            (
               width: 390,
               height: 30,
               //color: Colors.yellow,
               alignment: Alignment.bottomLeft,
               child:
-              Text
-                (
-                '5월 2024',
-                style:
-                TextStyle(fontSize: 12,
-                  color: Colors.white.withOpacity(0.6),
-                  fontFamily: 'NotoSans',
-                  fontWeight: FontWeight.bold,),
+              Row
+              (
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children:
+                [
+                  Text
+                  (
+                    GetDateString(_itemlist[0].createdAt).$1,
+                    style:
+                    TextStyle(fontSize: 13,
+                      color: Colors.white,
+                      fontFamily: 'NotoSans',
+                      fontWeight: FontWeight.bold,),
+                  ),
+                  SizedBox(width: 10,),
+                  Text
+                  (
+                    GetDateString(_itemlist[0].createdAt).$2,
+                    style:
+                    TextStyle(fontSize: 12,
+                      color: Colors.grey,
+                      fontFamily: 'NotoSans',
+                      fontWeight: FontWeight.bold,),
+                  ),
+                ],
               ),
+
             ),
           ),
         ),
@@ -149,6 +168,7 @@ class HistoryPage extends StatefulWidget
             child:
             ListView.builder
             (
+              physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.all(0),
               itemCount: _itemlist.length,
               itemBuilder: (context, index) {
@@ -164,7 +184,7 @@ class HistoryPage extends StatefulWidget
 
   Widget historyItem(HistoryData _data)
   {
-    print('_data.iconUrl : ${_data.iconUrl}');
+    //print('_data.iconUrl : ${_data.iconUrl}');
     try {
       return
         Column
@@ -176,17 +196,14 @@ class HistoryPage extends StatefulWidget
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:
               [
-                Expanded
-                (
-                  flex: 1,
-                  child:
+
                   Padding
                   (
                     padding: const EdgeInsets.only(left: 30),
                     child:
                     Container
                     (
-                      width: ((390 * 0.5) - 20),
+                      //width: ((390 * 0.5) - 20),
                       height: 60,
                       //color: Colors.blue,
                       child:
@@ -194,10 +211,19 @@ class HistoryPage extends StatefulWidget
                       (
                         children:
                         [
-                          Image.asset(_data.iconUrl, width: 32, height: 32,),
-                          Padding
+                          Container
                           (
-                            padding: const EdgeInsets.only(left: 10.0),
+                            //color: Colors.red,
+                            width: 50,
+                            height: 50,
+                            child: Image.asset(_data.iconUrl, fit: BoxFit.scaleDown,)
+                          ),
+                          SizedBox(width: 10,),
+                          Container
+                          (
+                            width: 200.w,
+                            //color: Colors.red,
+                            //padding: const EdgeInsets.only(left: 10.0),
                             child:
                             Column
                             (
@@ -212,10 +238,11 @@ class HistoryPage extends StatefulWidget
                                   TextStyle(fontSize: 15,
                                     color: Colors.white,
                                     fontFamily: 'NotoSans',
-                                    fontWeight: FontWeight.bold,),
+                                    fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.ellipsis),
                                 ),
                                 Visibility
-                                  (
+                                (
                                   visible: _data.episode != 0,
                                   child: Text
                                     (
@@ -243,13 +270,10 @@ class HistoryPage extends StatefulWidget
                       ),
                     ),
                   ),
-                ),
-                Expanded
-                (
-                  flex: 1,
-                  child:
-                  Padding
+                  Container
                   (
+                    width: 104.w,
+                    //color: Colors.blue,
                     padding: const EdgeInsets.only(right: 20),
                     child:
                     Column
@@ -258,7 +282,6 @@ class HistoryPage extends StatefulWidget
                       [
                         Container
                         (
-                          width: ((390 * 0.5) - 20),
                           height: 25,
                           //color: Colors.blue,
                           alignment: Alignment.centerRight,
@@ -278,7 +301,6 @@ class HistoryPage extends StatefulWidget
                           child:
                           Container
                           (
-                            width: ((390 * 0.5) - 20),
                             height: 25,
                             //color: Colors.blue,
                             alignment: Alignment.centerRight,
@@ -296,7 +318,6 @@ class HistoryPage extends StatefulWidget
                       ],
                     )
                   ),
-                ),
               ],
             ),
             Divider(height: 10,
@@ -490,10 +511,11 @@ class HistoryData
   String time = '1분 전';
   String content1 = '';
   String content2 = '';
+  String createdAt = '';
 
   int GetKey()
   {
-    var keyDate = DateTime.parse(date);
+    var keyDate = DateTime.parse(createdAt);
     var key =  keyDate.year * 100 + keyDate.month;
     return key;
   }

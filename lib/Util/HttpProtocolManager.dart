@@ -1289,4 +1289,69 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
     return null;
   }
+
+  Future<MissionRes?> Send_MissionComplete(String _mid) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+
+      final map = <String, dynamic>{};
+      map['mission_id'] = _mid;
+
+      var bodys = jsonEncode(map);
+      print('Send_MissionComplete send heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_MissionComplete res.body ${res.body}');
+      if (res.statusCode == 200)
+      {
+        var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Send_MissionComplete FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_MissionComplete error : $e');
+    }
+
+    return null;
+  }
+
+  Future<MissionRes?> Send_ReceiveMissionReward(String _mid, [bool _receiveAll = true]) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+
+      final map = <String, dynamic>{};
+      map['mission_id'] = _mid;
+      map['claim_everything'] = _receiveAll;
+
+      var bodys = jsonEncode(map);
+      print('Send_ReceiveMissionReward send heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_ReceiveMissionReward res.body ${res.body}');
+      if (res.statusCode == 200)
+      {
+        var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Send_ReceiveMissionReward FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_ReceiveMissionReward error : $e');
+    }
+
+    return null;
+  }
 }

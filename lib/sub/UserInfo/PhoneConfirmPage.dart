@@ -32,6 +32,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
   String phoneNumber = ''; // 사용자가 입력한 전화번호를 저장할 변수
   String hpCountryCode = '';
   String certificationNumber = '';
+  bool buttonDisable = false;
 
   TextEditingController textEditingController1 = TextEditingController();
   TextEditingController textEditingController2 = TextEditingController();
@@ -221,6 +222,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
              child:
              CupertinoTextField
              (
+               readOnly : buttonDisable,
                maxLength: 12,
                controller: textEditingController1,
                cursorColor: Colors.white,
@@ -305,7 +307,6 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
     ),
   );
 
-  bool buttonDisable = false;
   Widget getCertificationNumber() => Align
   (
     alignment: Alignment.center,
@@ -348,10 +349,16 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           phoneNumber = phoneNumber.replaceAll('-', '');
           if (phoneNumber.length > 12)
           {
-            buttonDisable = true;
+            setState(()
+            {
+              buttonDisable = true;
+            });
             ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP,()
             {
-              buttonDisable = false;
+              setState(()
+              {
+                buttonDisable = false;
+              });
             });
             return;
           }
@@ -361,7 +368,10 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           if (kDebugMode) {
             print('Send Number : ${hpCountryCode} ${phoneNumber}');
           }
-          buttonDisable = true;
+          setState(()
+          {
+            buttonDisable = true;
+          });
           //인증번호 받기 누름.
           HttpProtocolManager.to.Send_GetCertificationMessage(hpCountryCode, phoneNumber).then((value)
           {
@@ -369,7 +379,10 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             {
               ShowCustomSnackbar(StringTable().Table![400086]!, SnackPosition.TOP, ()
               {
-                buttonDisable = false;
+                setState(()
+                {
+                  buttonDisable = false;
+                });
               });
             }
           },);
@@ -409,6 +422,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           child:
           CupertinoTextField
           (
+            readOnly: buttonDisable,
             maxLength: 6,
             controller: textEditingController2,
             textAlign: TextAlign.center,
@@ -440,7 +454,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         onTap: buttonDisable ? null : ()
         {
-          print('send checkNumber');
+          //print('send checkNumber');
           if (certificationNumber.isEmpty && phoneNumber.isNotEmpty)
           {
             ShowCustomSnackbar(StringTable().Table![400089]!, SnackPosition.TOP);
@@ -453,28 +467,39 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
             return;
           }
 
-          buttonDisable = true;
+          setState(()
+          {
+            buttonDisable = true;
+          });
+
           HttpProtocolManager.to.Send_CertificationNumber(certificationNumber).then((value)
           {
             //print('Receive checkNumber value : $value');
             if (value)
             {
-              HttpProtocolManager.to.Get_UserInfo().then((value)
-              {
-                //print('Receive checkNumber 2 value : $value');
+              UserData.to.HP_CountryCode = hpCountryCode;
+              UserData.to.HP_Number = phoneNumber;
 
-                if(value != null)
+              HttpProtocolManager.to.Send_UserInfo().then((value)
+              {
+                if (value != null)
                 {
                   UserData.to.UpdateInfo(value);
-                  buttonDisable = false;
+                  ShowCustomSnackbar(StringTable().Table![400091]!, SnackPosition.TOP);
+                  setState(()
+                  {
+                    buttonDisable = false;
+                  });
                 }
-                ShowCustomSnackbar(StringTable().Table![400091]!, SnackPosition.TOP);
+                else
+                {
+                  ShowCustomSnackbar(StringTable().Table![400090]!, SnackPosition.TOP);
+                  setState(()
+                  {
+                    buttonDisable = false;
+                  });
+                }
               },);
-            }
-            else
-            {
-              ShowCustomSnackbar(StringTable().Table![400090]!, SnackPosition.TOP);
-              buttonDisable = false;
             }
           },);
         },

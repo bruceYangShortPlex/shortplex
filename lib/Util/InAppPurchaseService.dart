@@ -79,7 +79,7 @@ class InAppPurchaseService extends GetxService
 
     for(var item in HomeData.to.productList)
     {
-      _kProductIds.add(item.id);
+      _kProductIds.add(item.shopid);
     }
 
     if (Platform.isIOS)

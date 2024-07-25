@@ -128,6 +128,9 @@ class ProductItem
     _durationDays = json['duration_days'] ?? 0;
     _createdAt = json['created_at'] ?? '';
     currency = json['currency'] ?? '';
+    shopid = json['shopid'] ?? '';
+    itemicon = json['itemicon'] ?? '';
+
   }
   String _seq = '';
   String _id = '';
@@ -144,6 +147,8 @@ class ProductItem
   int _durationDays  = 0;
   String _createdAt  = '';
   String currency = "KRW";
+  String shopid = '';
+  String itemicon ='';
 
   String get seq => _seq;
   String get id => _id;

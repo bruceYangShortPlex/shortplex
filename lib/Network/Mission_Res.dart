@@ -76,6 +76,8 @@ class MissionItems
     _maxCnt = json['max_cnt'] ?? 0;
     _rewardType = json['reward_type'] ?? '';
     _amount = json['amount'] ?? 0;
+    userID = json['usr_id'] ?? '';
+    mission_cnt = json['mission_cnt'] ?? 0;
   }
 
   String _id = '';
@@ -90,6 +92,8 @@ class MissionItems
   int _maxCnt = 1;
   String _rewardType = '';
   int _amount = 0;
+  String userID = '';
+  int mission_cnt = 0;
 
   String get id => _id;
   String get name => _name;

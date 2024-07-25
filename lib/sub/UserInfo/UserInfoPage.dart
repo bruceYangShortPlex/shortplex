@@ -537,7 +537,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                                     alignment: Alignment.center,
                                     width: 32,
                                     height: 32,
-                                    'assets/images/user/my_popcon.png',
+                                    'assets/images/user/my_popcorn.png',
                                     fit: BoxFit.fitHeight,
                                   ),
                                 ),

@@ -141,7 +141,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                                           Obx(()
                                           {
                                             return
-                                            _moneyInfo('assets/images/user/my_popcon.png', UserData.to.GetPopupcornCount().$1);
+                                            _moneyInfo('assets/images/user/my_popcorn.png', UserData.to.GetPopupcornCount().$1);
                                           },)
                                         ),
                                         Expanded

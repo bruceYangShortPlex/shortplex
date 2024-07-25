@@ -10,12 +10,12 @@ class HomeData extends GetxController
 
   static var _productIcons = <String>
   [
-    'assets/images/user/my_popcon.png',
-    'assets/images/shop/my_popcon2.png',
-    'assets/images/shop/my_popcon3.png',
-    'assets/images/shop/my_popcon4.png',
-    'assets/images/shop/my_popcon5.png',
-    'assets/images/shop/my_popcon6.png',
+    'assets/images/user/my_popcorn.png',
+    'assets/images/shop/my_popcorn2.png',
+    'assets/images/shop/my_popcorn3.png',
+    'assets/images/shop/my_popcorn4.png',
+    'assets/images/shop/my_popcorn5.png',
+    'assets/images/shop/my_popcorn6.png',
     'assets/images/user/my_pass_icon.png',
   ];
 

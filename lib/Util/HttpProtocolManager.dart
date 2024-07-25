@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/HomeData_Res.dart';
 import 'package:shortplex/Network/Home_Content_Res.dart';
+import 'package:shortplex/Network/Mission_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
@@ -1258,5 +1259,34 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return false;
+  }
+
+  Future<MissionRes?> Get_Missions() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+
+      print('Get_Missions send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_Missions res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_Missions FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Missions error : $e');
+    }
+
+    return null;
   }
 }

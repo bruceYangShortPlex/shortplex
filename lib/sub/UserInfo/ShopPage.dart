@@ -203,11 +203,11 @@ Widget ShopGoods([bool _visibleTap = true])
                     products[i].bonusrate == '0' ? '' :SetTableStringArgument(400028, [products[i].bonusrate]), products[i].id),
 
               // Goods( SetTableStringArgument(400060, ['20']), '',
-              //     'assets/images/user/my_popcon.png', '₩1,900',''),
+              //     'assets/images/user/my_popcorn.png', '₩1,900',''),
               // Goods(SetTableStringArgument(400060, ['40']), SetTableStringArgument(400008, ['+2']),
-              //     'assets/images/Shop/my_popcon2.png', '₩3,900', SetTableStringArgument(400028, [' 5'])),
+              //     'assets/images/Shop/my_popcorn2.png', '₩3,900', SetTableStringArgument(400028, [' 5'])),
               // Goods(SetTableStringArgument(400060, ['80']), SetTableStringArgument(400008, ['+8']),
-              //     'assets/images/Shop/my_popcon3.png', '₩7,900', SetTableStringArgument(400028, ['10'])),
+              //     'assets/images/Shop/my_popcorn3.png', '₩7,900', SetTableStringArgument(400028, ['10'])),
             ],
           );
         },),

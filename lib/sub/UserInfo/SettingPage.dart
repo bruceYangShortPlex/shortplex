@@ -13,6 +13,7 @@ import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import 'AccountInfoPage.dart';
 import 'LoginPage.dart';
+import 'NotiPage.dart';
 
 enum SettingSubPageType
 {
@@ -266,6 +267,21 @@ class _SettingPageState extends State<SettingPage>
           case SettingSubPageType.ALARM_SETTING:
             {
               openNotificationSettings();
+            }
+            break;
+          case SettingSubPageType.SERVICE_POLICY:
+            {
+              Get.to(() => const NotiPage(type: NotiType.TermsOfService,));
+            }
+            break;
+          case SettingSubPageType.PRIVATE_POLICY:
+            {
+              Get.to(() => const NotiPage(type: NotiType.PrivacyPolicy,));
+            }
+            break;
+          case SettingSubPageType.LEGAL_NOTICE:
+            {
+              Get.to(() => const NotiPage(type: NotiType.LegalNotice,));
             }
             break;
           default:

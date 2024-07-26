@@ -68,7 +68,9 @@ class CupertinoMain extends StatelessWidget{
     var index = Get.arguments;
     if (index != null)
     {
-      MainBottomNavgationBarController.to.selectedIndex(index);
+      if (int.tryParse(index) != null) {
+        MainBottomNavgationBarController.to.selectedIndex(index);
+      }
     }
     return
     Scaffold

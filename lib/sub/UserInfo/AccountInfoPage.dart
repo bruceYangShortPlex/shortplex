@@ -42,7 +42,8 @@ class AccountInfoPage extends StatefulWidget {
 
 class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderStateMixin
 {
-  var _infoCount = 0;
+  var infoCount = 0;
+  var isBonusReceive = false; //입력수령 보너스 받았는가?
 
   @override
   void initState()
@@ -81,11 +82,11 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
 
   void accountInfoCountCheck()
   {
-    _infoCount = 0;
-    _infoCount = UserData.to.Gender.isNotEmpty ? ++_infoCount : _infoCount;
-    _infoCount = UserData.to.BirthDay.isNotEmpty ? ++_infoCount : _infoCount;
-    _infoCount = UserData.to.Country.isNotEmpty ? ++_infoCount : _infoCount;
-    _infoCount = UserData.to.HP_Number.isNotEmpty ? ++_infoCount : _infoCount;
+    infoCount = 0;
+    infoCount = UserData.to.Gender.isNotEmpty ? ++infoCount : infoCount;
+    infoCount = UserData.to.BirthDay.isNotEmpty ? ++infoCount : infoCount;
+    infoCount = UserData.to.Country.isNotEmpty ? ++infoCount : infoCount;
+    infoCount = UserData.to.HP_Number.isNotEmpty ? ++infoCount : infoCount;
   }
 
   @override
@@ -185,52 +186,94 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                       style:
                       TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
                   ),
-                  Padding
+                  Visibility
                   (
-                    padding: EdgeInsets.only(top: 20.0),
+                    visible: isBonusReceive == false,
                     child:
-                    Container
+                    Padding
                     (
-                      width: 356.w,
-                      height: 100,
-                      decoration: ShapeDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment(-1.00, 0.5),
-                          end: Alignment(1, 0.5),
-                          colors: [Color(0x330006A5).withOpacity(0.22), Color(0xFF00FFBF).withOpacity(0.22),],
-                        ),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+                      padding: EdgeInsets.only(top: 20.0),
+                      child:
+                      Container
+                      (
+                        width: 356.w,
+                        height: 100,
+                        decoration:
+                        BoxDecoration
+                        (
+                          color: Color(0xFF2B2B2B ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      child:
-                      Column
-                      (
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children:
-                        [
-                          Text(StringTable().Table![400056]!,
-                            style:
-                            TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
-                          SizedBox(height: 10,),
-                          Obx(()
-                          {
-                            if (UserData.to.refreshCount.value != 0) 
-                            {
-                              accountInfoCountCheck();
-                            }
-                            return
-                            Text
-                            (
-                              '${_infoCount} / 4',
+                        // decoration: ShapeDecoration(
+                        //   gradient: LinearGradient(
+                        //     begin: Alignment(-1.00, 0.5),
+                        //     end: Alignment(1, 0.5),
+                        //     colors: [Color(0x330006A5).withOpacity(0.22), Color(0xFF00FFBF).withOpacity(0.22),],
+                        //   ),
+                        //   shape: RoundedRectangleBorder(
+                        //     side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+                        //     borderRadius: BorderRadius.circular(12),
+                        //   ),
+                        //)
+                        child:
+                        Column
+                        (
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:
+                          [
+                            Text(StringTable().Table![400056]!,
                               style:
-                              TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                            );
-                          },)
-                        ],
-                      ),
-                    )
+                              TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),),
+                            SizedBox(height: 10,),
+                            Obx(()
+                            {
+                              if (UserData.to.refreshCount.value != 0)
+                              {
+                                accountInfoCountCheck();
+                              }
+
+                              bool isReceive = infoCount >= 4;
+
+                              return
+                              isReceive == false ?
+                              Text
+                              (
+                                '${infoCount} / 4',
+                                style:
+                                TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                              )
+                              :
+                              GestureDetector
+                              (
+                                onTap: ()
+                                {
+                                  print('TODO:받기작업해라');
+                                },
+                                child:
+                                Container
+                                (
+                                  alignment: Alignment.center,
+                                  width: 90,
+                                  height: 26,
+                                  decoration: ShapeDecoration(
+                                    color: Color(0xFF00FFBF),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                  ),
+                                  child:
+                                  Text
+                                  (
+                                    StringTable().Table![300027]!,
+                                    style:
+                                    TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                  ),
+                                ),
+                              )
+                              ;
+                            },)
+                          ],
+                        ),
+                      )
+                    ),
                   ),
                 ],
               ),
@@ -304,14 +347,16 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                       switch (_type)
                       {
                         case AccountInfoSubPageType.GENDER:
-                          text = ConvertGenderToString(UserData.to.Gender);
+                          {
+                            text = ConvertGenderToString(UserData.to.Gender);
+                          }
                           break;
                         case AccountInfoSubPageType.PHONENUMBER_INPUT:
                           {
-                            if (UserData.to.HP_CountryCode.isNotEmpty && UserData.to.HP_Number.isNotEmpty)
-                            {
-                              text = '+${UserData.to.HP_CountryCode} ${UserData.to.HP_Number}'; //UserData.to.CountryCode + UserData.to.HP_Number;
-                            }
+                            // if (UserData.to.HP_CountryCode.isNotEmpty && UserData.to.HP_Number.isNotEmpty)
+                            // {
+                            //   text = '+${UserData.to.HP_CountryCode} ${UserData.to.HP_Number}'; //UserData.to.CountryCode + UserData.to.HP_Number;
+                            // }
                           }
                           break;
                         case AccountInfoSubPageType.BIRTHDAY:

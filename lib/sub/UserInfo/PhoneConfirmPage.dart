@@ -32,6 +32,10 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
   String phoneNumber = ''; // 사용자가 입력한 전화번호를 저장할 변수
   String hpCountryCode = '';
   String certificationNumber = '';
+
+  String certificationPhoneNumber = ''; // 사용자가 입력한 전화번호를 저장할 변수
+  String certificationCountryCode = '';
+
   bool buttonDisable = false;
 
   TextEditingController textEditingController1 = TextEditingController();
@@ -243,16 +247,10 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
                ),
                onEditingComplete: ()
                {
-                 print('edit complete');
-
                  phoneNumber = textEditingController1.text;
-
-                 print('edit phoneNumber 1 : $phoneNumber');
 
                  if (phoneNumber.length > 12)
                  {
-                   print('edit phoneNumber 2 : $phoneNumber');
-
                    if (snackbarComplete)
                    {
                      snackbarComplete = false;
@@ -319,18 +317,18 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         onTap: buttonDisable ? null : ()
         {
+          setState(() {
+            buttonDisable = true;
+          });
+
           if (phoneNumber.isEmpty)
           {
-            if (snackbarComplete)
+            ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP, ()
             {
-              snackbarComplete = false;
-              ShowCustomSnackbar
-              (
-                  StringTable().Table![400088]!, SnackPosition.TOP, ()
-              {
-                snackbarComplete = true;
-              });
-            }
+                setState(() {
+                  buttonDisable = false;
+                });
+            });
             return;
           }
 
@@ -377,6 +375,28 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           {
             if (value != null)
             {
+              for(var item in value.data!.items!)
+              {
+                if (item.userId == UserData.to.userId)
+                {
+                  certificationPhoneNumber = item.hpNumber;
+                  certificationCountryCode = item.hpCountryCode;
+                  break;
+                }
+              }
+
+              if (certificationPhoneNumber != phoneNumber ||certificationCountryCode != hpCountryCode )
+              {
+                if (kDebugMode) {
+                  print('send number / res number 가 맞지 않음');
+                }
+                setState(()
+                {
+                  buttonDisable = false;
+                });
+                return;
+              }
+
               ShowCustomSnackbar(StringTable().Table![400086]!, SnackPosition.TOP, ()
               {
                 setState(()
@@ -454,23 +474,47 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         onTap: buttonDisable ? null : ()
         {
+          setState(() {
+            buttonDisable = true;
+          });
+
           //print('send checkNumber');
           if (certificationNumber.isEmpty && phoneNumber.isNotEmpty)
           {
-            ShowCustomSnackbar(StringTable().Table![400089]!, SnackPosition.TOP);
+            ShowCustomSnackbar(StringTable().Table![400089]!, SnackPosition.TOP, ()
+            {
+              setState(() {
+                buttonDisable = false;
+              });
+            });
             return;
           }
 
           if (certificationNumber.isEmpty || phoneNumber.isEmpty)
           {
-            ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP);
+            ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP, ()
+            {
+              setState(() {
+                buttonDisable = false;
+              });
+            });
             return;
           }
 
-          setState(()
+          if (certificationPhoneNumber != phoneNumber ||certificationCountryCode != hpCountryCode )
           {
-            buttonDisable = true;
-          });
+            if (kDebugMode) {
+              print('검증받은 번호가 아님');
+            }
+
+            ShowCustomSnackbar(StringTable().Table![400090]!, SnackPosition.TOP, ()
+            {
+              setState(() {
+                buttonDisable = false;
+              });
+            });
+            return;
+          }
 
           HttpProtocolManager.to.Send_CertificationNumber(certificationNumber).then((value)
           {
@@ -485,18 +529,23 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
                 if (value != null)
                 {
                   UserData.to.UpdateInfo(value);
-                  ShowCustomSnackbar(StringTable().Table![400091]!, SnackPosition.TOP);
-                  setState(()
+                  ShowCustomSnackbar(StringTable().Table![400091]!, SnackPosition.TOP,
+                  ()
                   {
-                    buttonDisable = false;
+                    setState(()
+                    {
+                      buttonDisable = false;
+                    });
                   });
                 }
                 else
                 {
-                  ShowCustomSnackbar(StringTable().Table![400090]!, SnackPosition.TOP);
-                  setState(()
+                  ShowCustomSnackbar(StringTable().Table![400090]!, SnackPosition.TOP, ()
                   {
-                    buttonDisable = false;
+                    setState(()
+                    {
+                      buttonDisable = false;
+                    });
                   });
                 }
               },);

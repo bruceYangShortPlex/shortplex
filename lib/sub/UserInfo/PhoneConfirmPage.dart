@@ -266,6 +266,13 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
                },
                onChanged: (value)
                {
+                  if (value.isEmpty)
+                  {
+                    phoneNumber = '';
+                    textEditingController1.text = '';
+                    return;
+                  }
+
                  if (int.tryParse(value) == null || value[value.length -1] == ' ')
                  {
                    textEditingController1.text = textEditingController1.text.replaceAll(value[value.length -1], '');
@@ -345,7 +352,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           // }
 
           phoneNumber = phoneNumber.replaceAll('-', '');
-          if (phoneNumber.length > 12)
+          if (phoneNumber.length > 12 || phoneNumber.length < 10)
           {
             setState(()
             {
@@ -366,10 +373,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           if (kDebugMode) {
             print('Send Number : ${hpCountryCode} ${phoneNumber}');
           }
-          setState(()
-          {
-            buttonDisable = true;
-          });
+
           //인증번호 받기 누름.
           HttpProtocolManager.to.Send_GetCertificationMessage(hpCountryCode, phoneNumber).then((value)
           {
@@ -398,6 +402,16 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
               }
 
               ShowCustomSnackbar(StringTable().Table![400086]!, SnackPosition.TOP, ()
+              {
+                setState(()
+                {
+                  buttonDisable = false;
+                });
+              });
+            }
+            else
+            {
+              ShowCustomSnackbar(StringTable().Table![400088]!, SnackPosition.TOP, ()
               {
                 setState(()
                 {

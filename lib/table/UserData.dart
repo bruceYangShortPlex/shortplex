@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
 
 import '../Util/ShortplexTools.dart';
+import '../sub/Reward/RewardPage.dart';
 
 enum SelectResolutionType
 {

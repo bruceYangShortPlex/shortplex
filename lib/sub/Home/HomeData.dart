@@ -2,7 +2,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../Network/Product_Res.dart';
+import '../../Util/HttpProtocolManager.dart';
 import '../../table/UserData.dart';
+import '../Reward/RewardPage.dart';
 
 class HomeData extends GetxController
 {
@@ -25,6 +27,7 @@ class HomeData extends GetxController
   static Map<String, List<ContentData>> _themesList = {};
   static var _recentList = <ContentData>[];
   var productList = <ProductItem>[].obs;
+  RxList DailyMissionList = <DailyMissionData>[].obs;
 
   get pageList => _pageList;
   get watchingContentsDataList => _watchingContentsDataList;
@@ -141,5 +144,29 @@ class HomeData extends GetxController
     }
 
     return '';
+  }
+
+  GetMisstionList()
+  {
+    DailyMissionList.clear();
+
+    HttpProtocolManager.to.Get_Missions().then((value)
+    {
+      if(value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        var missionTestData = DailyMissionData();
+        missionTestData.SetMissionType(item.nameCd);
+        missionTestData.title = item.name;
+        missionTestData.missionCompleteCount = item.mission_cnt;
+        missionTestData.totalMissionCount = item.maxCnt;
+        missionTestData.isReceive = !item.isActive;
+        missionTestData.isVisible = item.visibility;
+        DailyMissionList.add(missionTestData);
+      }
+    });
   }
 }

@@ -58,10 +58,13 @@ class InAppPurchaseService extends GetxService
         if (value.data!.items!.isEmpty)
         {
           print('Products list is Zero !!!!!!');
+          result = false;
         }
         else
         {
-          print('Get_Products result : ${value.data!.items!.length}');
+          if (kDebugMode) {
+            print('Get_Products result : ${value.data!.items!.length}');
+          }
           HomeData.to.productList.value = value.data!.items!;
           result = true;
         }
@@ -190,9 +193,9 @@ class InAppPurchaseService extends GetxService
         // 구매 가능한 상품 목록 조회
         await fetchUserProducts();
         // 과거 구매 사용자 목록 조회
-        // await fetchPastPurchases();
+        await fetchPastPurchases();
         // 상품을 이미 구매했는지 체크
-        //verifyPurchases();
+        verifyPurchases();
         // 구매 세부 정보에 대한 업데이트 스트림을 수신하는 구독
         subscription.value = iap.value.purchaseStream.listen((data)
         {

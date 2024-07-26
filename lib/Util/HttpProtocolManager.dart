@@ -51,6 +51,17 @@ enum WalletHistoryType
   REWARD,
 }
 
+enum DailyMissionType
+{
+  NONE,
+  SHARE_CONTENT,  //영상 1회 공유하기 300016
+  CONTENT_UNLOCK, //유료 콘텐츠 잠금해제 300017, 300018, 300019
+  TITLE_SCHOOL, // 제목학원 댓글 좋아요 누르기 300020
+  RELEASE_NOTI, // 공개예정 추천 알림 받기 300022
+  ADS_VIEW, //광고시청 300023 300024 300025
+  ASD_GOODS_BUY, //광고상품 구매 300021
+}
+
 class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin
 {
   static HttpProtocolManager get to => Get.find();

@@ -104,7 +104,7 @@ class MissionItems
   String get nameCd => _nameCd;
   num get groupNo => _groupNo;
   String get rewardicon => _rewardicon;
-  num get maxCnt => _maxCnt;
+  int get maxCnt => _maxCnt;
   String get rewardType => _rewardType;
   num get amount => _amount;
 

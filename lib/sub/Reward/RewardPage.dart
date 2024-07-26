@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ import 'package:shortplex/sub/Reward/TitleSchoolPage.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
+import '../Home/HomeData.dart';
 
 void main() async
 {
@@ -39,7 +41,6 @@ class _RewardPageState extends State<RewardPage> {
 
   var eventList = <ShortPlexEventData>[];
   var eventTimerList = <ShortPlexEventData>[];
-  var dailyMissionList = <DailyMissionData>[];
 
   bool isInteractionDisabled = false;
 
@@ -89,6 +90,9 @@ class _RewardPageState extends State<RewardPage> {
   @override
   void initState()
   {
+
+    HomeData.to.GetMisstionList();
+
     super.initState();
 
     var defaultText = UserData.to.recommendedName.isEmpty ? StringTable().Table![300013]! : UserData.to.recommendedName;
@@ -113,15 +117,6 @@ class _RewardPageState extends State<RewardPage> {
       testData.Title = '왭하드 테이블에서 받든지 서버에서 받든지';
       eventList.add(testData);
       eventTimerList.add(testData);
-    }
-
-    for (int i = 0 ; i < 6 ; ++i)
-    {
-      var missionTestData = DailyMissionData();
-      missionTestData.missionType = DailyMissionType.values[i];
-      missionTestData.missionCompleteCount = i;
-      missionTestData.isReceive = i == 2;
-      dailyMissionList.add(missionTestData);
     }
 
     startTimer();
@@ -1044,13 +1039,23 @@ Widget mainWidget(BuildContext context)=>
             ),
           ),
           SizedBox(height: 10,),
-          for(var item in dailyMissionList)
-            Padding
+          Obx(()
+          {
+            return
+            Column
             (
-              padding: const EdgeInsets.only(bottom: 20),
-              child:
-              dailyMissionItem(item),
-            ),
+              children:
+              [
+                for(var item in HomeData.to.DailyMissionList)
+                  Padding
+                  (
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child:
+                    dailyMissionItem(item),
+                  ),
+              ],
+            );
+          }),
           SizedBox(height: 15),
           Center
           (
@@ -1269,16 +1274,6 @@ class ShortPlexEventData
   }
 }
 
-enum DailyMissionType
-{
-  SHARE_CONTENT,
-  CONTENT_UNLOCK,
-  TITLE_SCHOOL,
-  RELEASE_NOTI,
-  ADS_VIEW,
-  ASD_GOODS_BUY,
-}
-
 class DailyMissionData
 {
   int bounusCount = 1;
@@ -1287,4 +1282,42 @@ class DailyMissionData
   int missionCompleteCount = 0;
   String title = '타이틀';
   bool isReceive = false;
+  bool isVisible = true;
+
+  SetMissionType(String _nameCD)
+  {
+    if (_nameCD == '300016')
+    {
+      missionType = DailyMissionType.SHARE_CONTENT;
+    }
+    else if (_nameCD == '300017' ||  _nameCD == '300018' || _nameCD == '300019')
+    {
+      missionType = DailyMissionType.CONTENT_UNLOCK;
+    }
+    else if (_nameCD == '300020')
+    {
+      missionType = DailyMissionType.TITLE_SCHOOL;
+    }
+    else if (_nameCD == '300022')
+    {
+      missionType = DailyMissionType.RELEASE_NOTI;
+    }
+    else if (_nameCD == '300023' ||  _nameCD == '300024' || _nameCD == '300025')
+    {
+      missionType = DailyMissionType.ADS_VIEW;
+    }
+    else if (_nameCD == '300021')
+    {
+      missionType = DailyMissionType.ASD_GOODS_BUY;
+    }
+    else
+    {
+      if (kDebugMode) {
+        print('not found mission type : $_nameCD');
+      }
+      missionType = DailyMissionType.NONE;
+    }
+  }
 }
+
+

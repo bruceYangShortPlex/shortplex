@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/InAppPurchaseService.dart';
@@ -7,6 +8,7 @@ import 'package:shortplex/Util/google_login.dart';
 import 'package:shortplex/Util/kakao_login.dart';
 import 'package:shortplex/Util/social_login.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/sub/Home/HomeData.dart';
 
 import '../Network/OAuthLogin.dart';
 import 'FirebaseSetting.dart';
@@ -190,10 +192,16 @@ class LoginMananger
     {
       Send_OAuthLogin(loginType);
     }
+    else
+    {
+      HomeData.to.GetMisstionList();
+    }
 
     InAppPurchaseService.to.Initialize();
 
-    print('Login Manager Check Complete');
+    if (kDebugMode) {
+      print('Login Manager Check Complete');
+    }
     return isLogin;
   }
 
@@ -222,7 +230,11 @@ class LoginMananger
     {
       userData.userId = result.userId!;
       userData.id = result.id!;
-      print('Login Sucess! ${userData}');
+      if (kDebugMode) {
+        print('Login Sucess! ${userData}');
+      }
+
+      HomeData.to.GetMisstionList();
     }
 
     await manager.Get_UserInfo().then((value)

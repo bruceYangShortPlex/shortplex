@@ -317,6 +317,8 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         onTap: buttonDisable ? null : ()
         {
+          FocusScope.of(context).unfocus();
+
           setState(() {
             buttonDisable = true;
           });
@@ -366,6 +368,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
           if (kDebugMode) {
             print('Send Number : ${hpCountryCode} ${phoneNumber}');
           }
+
           setState(()
           {
             buttonDisable = true;
@@ -474,6 +477,8 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
       (
         onTap: buttonDisable ? null : ()
         {
+          FocusScope.of(context).unfocus();
+
           setState(() {
             buttonDisable = true;
           });

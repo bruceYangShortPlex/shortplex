@@ -26,6 +26,7 @@ enum SettingSubPageType
   LEGAL_NOTICE,
   ACCOUNT_DELETE,
   ALARM_SETTING,
+  MARKETING_AGREE,
 }
 
 class SettingPage extends StatefulWidget
@@ -134,10 +135,10 @@ class _SettingPageState extends State<SettingPage>
                 [
                   _option(400040, SettingSubPageType.ACCOUNT_INFO),
                   _option(400041, SettingSubPageType.ALARM_SETTING),
-                  //_option(400042, SettingSubPageType.CASH_DELETE),
                   _option(400043, SettingSubPageType.SERVICE_POLICY),
                   _option(400044, SettingSubPageType.PRIVATE_POLICY),
                   _option(400045, SettingSubPageType.LEGAL_NOTICE),
+                  _option(400042, SettingSubPageType.MARKETING_AGREE, true),
                   Obx(() {
                     return
                     Visibility(visible: UserData.to.isLogin.value, child:_option(400046, SettingSubPageType.ACCOUNT_DELETE),);
@@ -300,7 +301,7 @@ class _SettingPageState extends State<SettingPage>
     {
       if (UserData.to.isLogin.value)
       {
-        _isChecked = UserData.to.Alarmallow;
+        _isChecked = UserData.to.Acceptmarketing;
       }
       return
       IgnorePointer
@@ -326,7 +327,7 @@ class _SettingPageState extends State<SettingPage>
                 return;
               }
 
-              UserData.to.Alarmallow = value ?? false;
+              UserData.to.Acceptmarketing = value ?? false;
 
               HttpProtocolManager.to.Send_UserInfo().then((value)
               {
@@ -334,7 +335,7 @@ class _SettingPageState extends State<SettingPage>
 
                 setState(()
                 {
-                  _isChecked = UserData.to.Alarmallow;
+                  _isChecked = UserData.to.Acceptmarketing;
                 });
               },);
             },

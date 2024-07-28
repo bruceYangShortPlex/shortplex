@@ -189,6 +189,7 @@ class UserInfoItems
     _deletedBy = json['deleted_by'] ?? '';
     _remark = json['remark'] ?? '';
     countryCode = json['country_code'] ?? '';
+    acceptmarketing = json['acceptmarketing'] ?? true;
   }
   String _seq = '';
   String _id = '';
@@ -212,6 +213,7 @@ class UserInfoItems
   String _deletedAt = '';
   String _deletedBy = '';
   String _remark = '';
+  bool acceptmarketing = true;
 
   String get seq => _seq;
   String get id => _id;

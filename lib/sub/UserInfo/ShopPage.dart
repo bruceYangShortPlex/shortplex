@@ -325,13 +325,13 @@ Widget ShopGoods([bool _visibleTap = true])
   );
 }
 
-var buttonDisalbe = false;
+var buttonDisable = false;
 Widget Goods(String _title, String _bonus, String _iconPath, String _price, String _sale, String _pid)
 {
   return
   GestureDetector
   (
-    onTap: buttonDisalbe ? null : ()
+    onTap: buttonDisable ? null : ()
     {
       if (UserData.to.isLogin.value == false)
       {
@@ -343,7 +343,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
         return;
       }
 
-      buttonDisalbe = true;
+      buttonDisable = true;
 
       InAppPurchaseService.to.BuyProduct(_pid,
       (receipt)
@@ -351,7 +351,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
         print('receipt : $receipt');
         if (receipt.isEmpty)
         {
-          buttonDisalbe = false;
+          buttonDisable = false;
           return;
         }
 
@@ -363,7 +363,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
             {
               if (value == null)
               {
-                buttonDisalbe = false;
+                buttonDisable = false;
                 return;
               }
 
@@ -374,7 +374,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
                   String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
                   ShowCustomSnackbar(message, SnackPosition.TOP, ()
                   {
-                    buttonDisalbe = false;
+                    buttonDisable = false;
                   });
                   break;
                 }
@@ -383,7 +383,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
           }
           else
           {
-            buttonDisalbe = false;
+            buttonDisable = false;
           }
         },);
       });

@@ -1101,6 +1101,7 @@ Widget mainWidget(BuildContext context)=>
     }
 
     var missionCount = _data.totalMissionCount - _data.missionCompleteCount;
+    //print('_data.totalMissionCount : ${_data.totalMissionCount} / _data.missionCompleteCount : ${_data.missionCompleteCount} / missionCount : $missionCount');
 
     return
     Container
@@ -1139,7 +1140,8 @@ Widget mainWidget(BuildContext context)=>
                   Padding
                   (
                     padding: const EdgeInsets.only(left: 20),
-                    child: Row
+                    child:
+                    Row
                     (
                       children:
                       [
@@ -1159,26 +1161,27 @@ Widget mainWidget(BuildContext context)=>
                           TextStyle(fontSize: 14, color: textColor, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                         SizedBox(width: 5,),
-                        for(int i = 0; i < _data.missionCompleteCount; ++i)
-                          Padding
-                          (
-                            padding: EdgeInsets.only(left: 2),
-                            child:
-                            Icon(CupertinoIcons.circle_fill, size: 10, color: textColor,)
-                          ),
 
-                        for(int i = 0; i < missionCount; ++i)
-                          Padding
-                          (
-                            padding: EdgeInsets.only(left: 2),
-                            child:
-                            Icon
-                            (
-                              CupertinoIcons.circle,
-                              size: 10,
-                              color: textColor,
-                            ),
-                          ),
+                        // for(int i = 0; i < _data.missionCompleteCount; ++i)
+                        //   Padding
+                        //   (
+                        //     padding: EdgeInsets.only(left: 2),
+                        //     child:
+                        //     Icon(CupertinoIcons.circle_fill, size: 10, color: textColor,)
+                        //   ),
+
+                        // for(int i = 0; i < missionCount; ++i)
+                        //   Padding
+                        //   (
+                        //     padding: EdgeInsets.only(left: 2),
+                        //     child:
+                        //     Icon
+                        //     (
+                        //       CupertinoIcons.circle,
+                        //       size: 10,
+                        //       color: textColor,
+                        //     ),
+                        //   ),
                       ],
                     ),
                   ),

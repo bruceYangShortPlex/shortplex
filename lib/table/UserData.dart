@@ -48,7 +48,7 @@ class UserData extends GetxController
   String Country = '';
   String HP_Number = '';
   String HP_CountryCode = '';
-  bool Alarmallow = true;
+  bool Acceptmarketing = true;
 
   InitValue()
   {
@@ -67,7 +67,7 @@ class UserData extends GetxController
     HP_Number = '';
     HP_CountryCode = '';
     Country = '';
-    Alarmallow = true;
+    Acceptmarketing = true;
   }
 
   Future SaveResoluton(int _index) async
@@ -188,7 +188,7 @@ class UserData extends GetxController
         HP_Number = item.hpNumber;
         HP_CountryCode = item.hpCountryCode;
         Country = item.countryCode;
-        Alarmallow = item.alarmallow;
+        Acceptmarketing = item.acceptmarketing;
         break;
       }
     }

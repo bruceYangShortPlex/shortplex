@@ -43,7 +43,31 @@ class AccountInfoPage extends StatefulWidget {
 class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderStateMixin
 {
   var infoCount = 0;
+  var missionID = '';
   var isBonusReceive = false; //입력수령 보너스 받았는가?
+  var buttonDisable = false;
+
+  getMissionInfo()
+  {
+    HttpProtocolManager.to.Get_Missions().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        if (item.description.contains('회원정보를 모두 입력')) {
+          missionID = item.id;
+          setState(() {
+            isBonusReceive = !item.isActive;
+          });
+          print('mission id : $missionID');
+          break;
+        }
+      }
+    });
+  }
 
   @override
   void initState()
@@ -72,7 +96,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
 
     super.initState();
     accountInfoCountCheck();
-
+    getMissionInfo();
     // tweenController = AnimationController
     // (
     //   duration: const Duration(milliseconds: 300),
@@ -245,9 +269,59 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                               :
                               GestureDetector
                               (
-                                onTap: ()
+                                onTap: buttonDisable ? null : () async
                                 {
-                                  print('TODO:받기작업해라');
+                                  if (missionID.isEmpty) {
+                                    return;
+                                  }
+
+                                  buttonDisable = true;
+
+                                  var result1 = await HttpProtocolManager.to.Send_MissionComplete(missionID);
+                                  if (result1.$2 == false)
+                                  {
+                                    if (kDebugMode) {
+                                      print('mission complete fail');
+                                    }
+                                    buttonDisable = false;
+                                    return;
+                                  }
+
+                                  var result2 = await HttpProtocolManager.to.Send_ReceiveMissionReward(missionID, false);
+                                  if (result2 == null)
+                                  {
+                                    if (kDebugMode) {
+                                      print('Send_ReceiveMissionReward faile');
+                                    }
+                                    buttonDisable = false;
+                                    return;
+                                  }
+
+                                  var value = await HttpProtocolManager.to.Get_WalletBalance();
+                                  if (value == null)
+                                  {
+                                    if (kDebugMode) {
+                                      print('Get_WalletBalance faile');
+                                    }
+                                    buttonDisable = false;
+                                    return;
+                                  }
+
+                                  for(var item in value.data!.items!)
+                                  {
+                                    if (item.userId == UserData.to.userId)
+                                    {
+                                      String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+                                      ShowCustomSnackbar(message, SnackPosition.TOP, ()
+                                      {
+                                        buttonDisable = false;
+                                        setState(() {
+                                          isBonusReceive = true;
+                                        });
+                                      });
+                                      break;
+                                    }
+                                  }
                                 },
                                 child:
                                 Container
@@ -353,10 +427,10 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                           break;
                         case AccountInfoSubPageType.PHONENUMBER_INPUT:
                           {
-                            // if (UserData.to.HP_CountryCode.isNotEmpty && UserData.to.HP_Number.isNotEmpty)
-                            // {
-                            //   text = '+${UserData.to.HP_CountryCode} ${UserData.to.HP_Number}'; //UserData.to.CountryCode + UserData.to.HP_Number;
-                            // }
+                            if (UserData.to.HP_CountryCode.isNotEmpty && UserData.to.HP_Number.isNotEmpty)
+                            {
+                              text = '+${UserData.to.HP_CountryCode} ${UserData.to.HP_Number}'; //UserData.to.CountryCode + UserData.to.HP_Number;
+                            }
                           }
                           break;
                         case AccountInfoSubPageType.BIRTHDAY:
@@ -756,7 +830,6 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
       );
   }
 
-  var buttonDisable = false;
   var gender = GenderType.NONE;
   Widget genderSelect()
   {

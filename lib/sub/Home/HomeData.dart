@@ -150,7 +150,7 @@ class HomeData extends GetxController
   {
     DailyMissionList.clear();
 
-    HttpProtocolManager.to.Get_Missions().then((value)
+    HttpProtocolManager.to.Get_DailyMissions().then((value)
     {
       if(value == null) {
         return;

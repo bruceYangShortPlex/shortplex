@@ -958,7 +958,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = 'https://www.quadra-system.com/api/v1/profile/settings/userinfo';
       var reqBody = UserInfoReq
       (
-        alarmallow: UserData.to.Alarmallow,
+        alarmallow: true,
         displayname: UserData.to.name.value,
         birthDt: UserData.to.BirthDay,
         email: UserData.to.email,
@@ -969,6 +969,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
         photourl: UserData.to.photoUrl.value,
         updatedBy: UserData.to.userId,
         countryCode: UserData.to.Country,
+        marketing: UserData.to.Acceptmarketing,
       );
       var bodys = jsonEncode(reqBody.toJson());
 
@@ -1272,12 +1273,106 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return false;
   }
 
-  Future<MissionRes?> Get_Missions() async
+  Future<MissionRes?> Get_DailyMissions() async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+
+      print('Get_DailyMissions send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_DailyMissions res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_DailyMissions FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_DailyMissions error : $e');
+    }
+
+    return null;
+  }
+
+  Future<MissionRes?> Send_DailyMissionComplete(String _mid) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+
+      final map = <String, dynamic>{};
+      map['mission_id'] = _mid;
+
+      var bodys = jsonEncode(map);
+      print('Send_DailyMissionComplete send heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_DailyMissionComplete res.body ${res.body}');
+      if (res.statusCode == 200)
+      {
+        var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Send_DailyMissionComplete FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_DailyMissionComplete error : $e');
+    }
+
+    return null;
+  }
+
+  Future<MissionRes?> Send_ReceiveDailyMissionReward(String _mid, [bool _receiveAll = false]) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+
+      final map = <String, dynamic>{};
+      map['mission_id'] = _mid;
+      map['claim_everything'] = _receiveAll;
+
+      var bodys = jsonEncode(map);
+      print('Send_ReceiveDailyMissionReward send heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_ReceiveDailyMissionReward res.body ${res.body}');
+      if (res.statusCode == 200)
+      {
+        var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Send_ReceiveDailyMissionReward FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_ReceiveDailyMissionReward error : $e');
+    }
+
+    return null;
+  }
+
+  Future<MissionRes?> Get_Missions() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission';
 
       print('Get_Missions send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
@@ -1301,12 +1396,13 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<MissionRes?> Send_MissionComplete(String _mid) async
+  Future<(MissionRes?, bool)> Send_MissionComplete(String _mid) async
   {
+    bool result = false;
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission';
 
       final map = <String, dynamic>{};
       map['mission_id'] = _mid;
@@ -1317,12 +1413,17 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       print('Send_MissionComplete res.body ${res.body}');
       if (res.statusCode == 200)
       {
+        result = true;
         var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        return data;
+        return (data, result);
       }
       else
       {
         print('Send_MissionComplete FAILD : ${res.statusCode}');
+        if (res.body.contains('already completed'))
+        {
+          result = true;
+        }
       }
     }
     catch (e)
@@ -1330,15 +1431,15 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       print('Send_MissionComplete error : $e');
     }
 
-    return null;
+    return (null, result);
   }
 
-  Future<MissionRes?> Send_ReceiveMissionReward(String _mid, [bool _receiveAll = true]) async
+  Future<MissionRes?> Send_ReceiveMissionReward(String _mid, [bool _receiveAll = false]) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/reward/mission_daily';
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission';
 
       final map = <String, dynamic>{};
       map['mission_id'] = _mid;
@@ -1346,7 +1447,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       var bodys = jsonEncode(map);
       print('Send_ReceiveMissionReward send heads : ${heads} / send bodys : ${bodys}');
-      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
       print('Send_ReceiveMissionReward res.body ${res.body}');
       if (res.statusCode == 200)
       {

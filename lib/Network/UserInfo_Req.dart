@@ -24,6 +24,7 @@ class UserInfoReq
     required bool alarmallow,
     required String updatedBy,
     required String countryCode,
+    required bool marketing,
    }){
     _email = email;
     _displayname = displayname;
@@ -36,6 +37,7 @@ class UserInfoReq
     _alarmallow = alarmallow;
     _updatedBy = updatedBy;
     _countryCode = countryCode;
+    acceptmarketing = marketing;
   }
 
   UserInfoReq.fromJson(dynamic json)
@@ -52,6 +54,7 @@ class UserInfoReq
     _alarmallow = json['alarmallow'] ?? false;
     _updatedBy = json['updated_by'] ?? '';
     _countryCode = json['country_code'] ?? '';
+    acceptmarketing = json['acceptmarketing'] ?? true;
   }
 
   String _email = '';
@@ -66,6 +69,7 @@ class UserInfoReq
   bool _alarmallow = false;
   String _updatedBy = '';
   String _countryCode = '';
+  bool acceptmarketing = true;
 
   String get email => _email;
   String get displayname => _displayname;
@@ -96,6 +100,7 @@ class UserInfoReq
     map['alarmallow'] = _alarmallow;
     map['updated_by'] = _updatedBy;
     map['country_code'] = _countryCode;
+    map['acceptmarketing'] = acceptmarketing;
     return map;
   }
 }

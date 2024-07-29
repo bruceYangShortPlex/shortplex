@@ -17,13 +17,13 @@ import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 import '../Home/HomeData.dart';
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  Get.lazyPut(() => UserData());
-  await StringTable().InitTable();
-  runApp(const RewardPage());
-}
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   Get.lazyPut(() => UserData());
+//   await StringTable().InitTable();
+//   runApp(const RewardPage());
+// }
 
 class RewardPage extends StatefulWidget
 {
@@ -44,7 +44,10 @@ class _RewardPageState extends State<RewardPage> {
 
   bool isInteractionDisabled = false;
 
-  String featureCode = '숏플렉스대박!';
+  String referralCode = ''; //나의 코드
+  String sendCode = '';
+  String bonusCount = ''; // 내가 받은 보너스
+  String invitaionCount = ''; //나를 추천한 / 내가 초대한 친구의 명수.
 
   void startTimer()
   {
@@ -87,19 +90,46 @@ class _RewardPageState extends State<RewardPage> {
     }
   }
 
+  getInvitaionInfo()
+  {
+    HttpProtocolManager.to.Get_InvitationInfo().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.info!)
+      {
+        if (item.userId == UserData.to.userId)
+        {
+          setState(()
+          {
+            bonusCount= '0';
+            invitaionCount = item.followerUserCnt;
+            referralCode = item.referralCode;
+            sendCode = item.followingReferralCode;
+            if (sendCode.isNotEmpty)
+            {
+              textEditingController.text = sendCode;
+            }
+          });
+          break;
+        }
+      }
+
+    });
+  }
+
   @override
   void initState()
   {
-
-    HomeData.to.GetMisstionList();
-
-    super.initState();
-
-    var defaultText = UserData.to.recommendedName.isEmpty ? StringTable().Table![300013]! : UserData.to.recommendedName;
-
-    textEditingController = TextEditingController(text: defaultText,);
+    textEditingController = TextEditingController(text: StringTable().Table![300013]!,);
     textFieldFocusNode = FocusNode();
     textFieldFocusNode.addListener(onFocusChange);
+
+    HomeData.to.GetMisstionList();
+    getInvitaionInfo();
+    super.initState();
 
     for (int i = 0 ; i < 2; ++i)
     {
@@ -358,11 +388,21 @@ Widget mainWidget(BuildContext context)=>
                   (
                     children:
                     [
-                      ClipRRect
+                      Container
                       (
-                          borderRadius: BorderRadius.circular(7),
-                          child:
-                          Image.network(_data.BG_Url, width: 356, height: 64,fit: BoxFit.cover, )
+                        width: 356,
+                        height: 60,
+                        decoration: ShapeDecoration(
+                          color: Color(0xFF1E1E1E),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                              color: Color(0xFF00FFBF),
+                            ),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                        ),
                       ),
                       Align
                       (
@@ -701,7 +741,7 @@ Widget mainWidget(BuildContext context)=>
                             child:
                             Text
                             (
-                              StringTable().Table![300009]!,
+                              invitaionCount,
                               style:
                               TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
@@ -771,7 +811,7 @@ Widget mainWidget(BuildContext context)=>
                           child:
                           Text
                           (
-                            StringTable().Table![300010]!,
+                            bonusCount,
                             style:
                             TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
@@ -858,8 +898,7 @@ Widget mainWidget(BuildContext context)=>
                       child:
                       CupertinoTextField
                       (
-                        //enabled: false,
-                        readOnly: UserData.to.recommendedName.isEmpty == false,
+                        readOnly: sendCode.isNotEmpty,
                         padding: const EdgeInsets.only(top: 3, left: 20),
                         controller: textEditingController,
                         cursorColor: Colors.white,
@@ -890,13 +929,68 @@ Widget mainWidget(BuildContext context)=>
                         },
                         onEditingComplete: ()
                         {
-                          print('입력 스트링 ${textEditingController.text}');
-                          //TODO:추천인 서버랑 통신해서 보너스 받거나 에러코드 보여주기
-                          ShowCustomSnackbar(SetTableStringArgument(300040, ['10']),SnackPosition.BOTTOM);
-                          UserData.to.recommendedName = textEditingController.text;
-                          setState(() {
+                          textFieldFocusNode.unfocus();
 
-                          });
+                          if (textEditingController.text.isEmpty || textEditingController.text == referralCode)
+                          {
+                            print('afdas');
+                            ShowCustomSnackbar( StringTable().Table![300057]! ,SnackPosition.TOP);
+                            return;
+                          }
+
+                          HttpProtocolManager.to.Send_InvitationCode(textEditingController.text).then((value)
+                          {
+                            if(value.$1.isNotEmpty)
+                            {
+                              var stringIndex = 0;
+                              if (value.$1.contains('Cannot accept more following'))
+                              {
+                                stringIndex = 300051;
+                              }
+                              else
+                              {
+                                print('Send_InvitationCode res.code ${value.$1}');
+                                stringIndex = 300057;
+                              }
+
+                              ShowCustomSnackbar(StringTable().Table![stringIndex]!,SnackPosition.TOP);
+                            }
+                            else
+                            {
+                              if (value.$2)
+                              {
+                                getInvitaionInfo();
+
+                                HttpProtocolManager.to.Get_WalletBalance().then((value1)
+                                {
+                                  if (value1 == null)
+                                  {
+                                    print('Send invitation after Get_WalletBalance is null!');
+                                    return;
+                                  }
+
+                                  for(var item in value1.data!.items!)
+                                  {
+                                    if (item.userId == UserData.to.userId)
+                                    {
+                                      String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+                                      if (message.isNotEmpty)
+                                      {
+                                        ShowCustomSnackbar(message, SnackPosition.TOP);
+                                      }
+                                      break;
+                                    }
+                                  }
+                                },);
+                              }
+                              else
+                              {
+                                setState(() {
+                                  sendCode = '';
+                                });
+                              }
+                            }
+                          },);
                         },
                       ),
                     ),
@@ -916,7 +1010,7 @@ Widget mainWidget(BuildContext context)=>
               child:
               Text
               (
-                UserData.to.recommendedName.isEmpty ? StringTable().Table![300012]! : '',
+                sendCode.isEmpty ? StringTable().Table![300012]! : sendCode,
                 style:
                 TextStyle(fontSize: 10, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
@@ -989,7 +1083,7 @@ Widget mainWidget(BuildContext context)=>
                         [
                           Text
                           (
-                            featureCode,
+                            referralCode,
                             style:
                             TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
@@ -999,7 +1093,7 @@ Widget mainWidget(BuildContext context)=>
                             alignment: Alignment.center,
                             onPressed: ()
                             {
-                              Clipboard.setData(ClipboardData(text: featureCode));
+                              Clipboard.setData(ClipboardData(text: referralCode));
                             },
                             icon: Icon(CupertinoIcons.doc_on_clipboard, color: Colors.white, size: 20,),
                           ),
@@ -1265,7 +1359,6 @@ class ShortPlexEventData
 {
   String IconUrl = 'https://picsum.photos/250?image=9';
   String Title = '';
-  String BG_Url = 'https://picsum.photos/250?image=9';
   DateTime? EndTime;
   Duration? difference;
   EventPageType eventPage = EventPageType.NONE;

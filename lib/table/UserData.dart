@@ -35,7 +35,6 @@ class UserData extends GetxController
   bool autoPlay = true;
   int usedPopcorn = 0;
   int usedBonusCorn = 0;
-  String recommendedName = '';
   String id = '';//barer token.
   String userId = ''; //server id
   SelectResolutionType selectResolution = SelectResolutionType.HD;

@@ -18,6 +18,7 @@ import 'package:shortplex/Network/Watch_Req.dart';
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
+import '../Network/Invitation_Res.dart';
 import '../Network/MobileCertification_Req.dart';
 import '../Network/MoblieCertification_Res.dart';
 import '../Network/OAuth_Res.dart';
@@ -1470,5 +1471,70 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return result;
+  }
+
+  Future<InvitationRes?> Get_InvitationInfo() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/invitation';
+
+      print('Get_InvitationInfo send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_InvitationInfo res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  InvitationRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_Missions FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_Missions error : $e');
+    }
+
+    return null;
+  }
+
+  Future<(String, bool)> Send_InvitationCode(String _code) async
+  {
+    bool result = false;
+    String resString = '';
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/mission';
+
+      final map = <String, dynamic>{};
+      map['referral_code'] = _code;
+
+      var bodys = jsonEncode(map);
+      print('Send_InvitationCode send heads : ${heads} / send bodys : ${bodys}');
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_InvitationCode res.body ${res.body}');
+      if (res.statusCode == 200)
+      {
+        result = true;
+      }
+      else
+      {
+        if (kDebugMode) {
+          print('Send_InvitationCode FAILD : ${res.statusCode}');
+        }
+        resString = res.body;
+      }
+    }
+    catch (e)
+    {
+      print('Send_InvitationCode error : $e');
+    }
+
+    return (resString, result);
   }
 }

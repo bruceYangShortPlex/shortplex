@@ -26,9 +26,33 @@ class ShopPage extends StatefulWidget {
 
 class _ShopPageState extends State<ShopPage>
 {
+  getProducts()
+  {
+    HttpProtocolManager.to.Get_Products().then((value)
+    {
+      if (value != null)
+      {
+        if (value.data!.items!.isEmpty)
+        {
+          print('Products list is Zero !!!!!!');
+        }
+        else
+        {
+          if (kDebugMode)
+          {
+            print('Get_Products result : ${value.data!.items!.length}');
+          }
+          HomeData.to.productList.value = value.data!.items!;
+        }
+      }
+    },);
+  }
+
   @override
   void initState()
   {
+    //getProducts();
+
     super.initState();
   }
 
@@ -179,17 +203,9 @@ Widget ShopGoods([bool _visibleTap = true])
         Obx(()
         {
           var products = <ProductItem>[];
-          var icons = <String>[];
           if (HomeData.to.productList.length >= 3) {
             products = HomeData.to.productList.sublist(0, 3);
-            icons = HomeData.to.productIcons.sublist(0, 3);
           }
-
-          print(icons[0]);
-
-          print(icons[1]);
-
-          print(icons[2]);
 
           return
           Row
@@ -198,16 +214,10 @@ Widget ShopGoods([bool _visibleTap = true])
             children:
             [
               for(int i = 0; i < products.length; ++i)
-                Goods(products[i].name, products[i].bonus == 0 ? '' : products[i].description,
-                    icons[i], HomeData.to.GetPrice(products[i].id),
+                Goods(SetStringArgument(products[i].name,[products[i].popcorns.toString()]),
+                    products[i].bonus == 0 ? '' : SetTableStringArgument(400008, [products[i].bonus.toString()]),
+                    HomeData.to.GetShopIcon(products[i].popcorns.toString(), false), HomeData.to.GetPrice(products[i].id),
                     products[i].bonusrate == '0' ? '' :SetTableStringArgument(400028, [products[i].bonusrate]), products[i].id),
-
-              // Goods( SetTableStringArgument(400060, ['20']), '',
-              //     'assets/images/user/my_popcorn.png', '₩1,900',''),
-              // Goods(SetTableStringArgument(400060, ['40']), SetTableStringArgument(400008, ['+2']),
-              //     'assets/images/Shop/my_popcorn2.png', '₩3,900', SetTableStringArgument(400028, [' 5'])),
-              // Goods(SetTableStringArgument(400060, ['80']), SetTableStringArgument(400008, ['+8']),
-              //     'assets/images/Shop/my_popcorn3.png', '₩7,900', SetTableStringArgument(400028, ['10'])),
             ],
           );
         },),
@@ -215,10 +225,8 @@ Widget ShopGoods([bool _visibleTap = true])
         Obx(()
         {
           var products = <ProductItem>[];
-          var icons = <String>[];
           if (HomeData.to.productList.length >= 6) {
             products = HomeData.to.productList.sublist(3, 6);
-            icons = HomeData.to.productIcons.sublist(3, 6);
           }
 
           return
@@ -228,8 +236,9 @@ Widget ShopGoods([bool _visibleTap = true])
               children:
               [
                 for(int i = 0; i < products.length; ++i)
-                  Goods(products[i].name, products[i].bonus == 0 ? '' : products[i].description,
-                      icons[i], HomeData.to.GetPrice(products[i].id),
+                  Goods(SetStringArgument(products[i].name,[products[i].popcorns.toString()]),
+                      products[i].bonus == 0 ? '' : SetTableStringArgument(400008, [products[i].bonus.toString()]),
+                      HomeData.to.GetShopIcon(products[i].popcorns.toString(), false), HomeData.to.GetPrice(products[i].id),
                       products[i].bonusrate == '0' ? '' :SetTableStringArgument(400028, [products[i].bonusrate]), products[i].id),
               ],
             );
@@ -328,6 +337,13 @@ Widget ShopGoods([bool _visibleTap = true])
 var buttonDisable = false;
 Widget Goods(String _title, String _bonus, String _iconPath, String _price, String _sale, String _pid)
 {
+  // print('_title : $_title');
+  // print('_bonus : $_bonus');
+  // print('_iconPath : $_iconPath');
+  // print('_price : $_price');
+  // print('_sale : $_sale');
+  // print('_pid : $_pid');
+
   return
   GestureDetector
   (
@@ -388,8 +404,9 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
         },);
       });
     },
-    child: Stack
-      (
+    child:
+    Stack
+    (
       alignment: Alignment.center,
       children:
       [
@@ -400,19 +417,19 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
           height: 150,
         ),
         Container
-          (
+        (
           width: 94,
           height: 150,
           alignment: Alignment.center,
           child:
           Column
-            (
+          (
             mainAxisAlignment: MainAxisAlignment.start,
             children:
             [
               Padding
-                (
-                padding: const EdgeInsets.only(top: 14),
+              (
+                padding: const EdgeInsets.only(top: 16),
                 child:
                 Text
                   (

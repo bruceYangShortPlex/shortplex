@@ -168,7 +168,7 @@ class UserData extends GetxController
     return IconPath;
   }
 
-  UpdateInfo(UserInfoRes? _data)
+  UpdateInfo(UserInfoRes? _data, [bool _refresh = true])
   {
     if (_data == null)
     {
@@ -189,14 +189,18 @@ class UserData extends GetxController
         HP_CountryCode = item.hpCountryCode;
         Country = item.countryCode;
         Acceptmarketing = item.acceptmarketing;
+
+        print('Acceptmarketing : ${item.acceptmarketing}');
+
         break;
       }
     }
 
-    refreshCount++;
-    if (refreshCount.value == 0)
-    {
+    if (_refresh) {
       refreshCount++;
+      if (refreshCount.value == 0) {
+        refreshCount++;
+      }
     }
 
     if (kDebugMode)

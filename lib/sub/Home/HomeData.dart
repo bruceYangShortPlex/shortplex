@@ -102,25 +102,40 @@ class HomeData extends GetxController
   String GetShopIcon(String _popcornCount, bool _isSubscription)
   {
     var index = 0;
+    var count = 0;
+    if (double.tryParse(_popcornCount) != null)
+    {
+      count = double.parse(_popcornCount).toInt() ;
+    }
+    else
+    {
+      return productIcons[index];
+    }
+
     if (_isSubscription)
     {
       index = 6;
     }
     else
     {
-      if (_popcornCount == '40.00') {
+      if (20 < count && count <= 40 )
+      {
         index = 1;
       }
-      else if (_popcornCount == '80.00') {
+      else if (40 < count && count <= 80 )
+      {
         index = 2;
       }
-      else if (_popcornCount == '140.00') {
+      else if (80 < count && count <= 140 )
+      {
         index = 3;
       }
-      else if (_popcornCount == '200.00') {
+      else if (140 < count && count <= 200 )
+      {
         index = 4;
       }
-      else if (_popcornCount == '300.00') {
+      else if (200 < count)
+      {
         index = 5;
       }
     }

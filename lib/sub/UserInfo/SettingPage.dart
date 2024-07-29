@@ -40,19 +40,11 @@ class SettingPage extends StatefulWidget
 class _SettingPageState extends State<SettingPage>
 {
   bool _isChecked = true;
-  String cacheSize = '';
-  //final VoidCallback _callback = () {};
-
-  Future alamCheck() async
-  {
-    //_isChecked = UserData.to.Alarmallow;
-  }
 
   @override
   void initState()
   {
-
-    alamCheck();
+    _isChecked = UserData.to.Acceptmarketing;
     super.initState();
   }
 
@@ -331,7 +323,7 @@ class _SettingPageState extends State<SettingPage>
 
               HttpProtocolManager.to.Send_UserInfo().then((value)
               {
-                UserData.to.UpdateInfo(value);
+                UserData.to.UpdateInfo(value, false);
 
                 setState(()
                 {

@@ -63,7 +63,8 @@ class MissionData {
 
 class MissionItems
 {
-  MissionItems.fromJson(dynamic json) {
+  MissionItems.fromJson(dynamic json)
+  {
     _id = json['id'] ?? '';
     _name = json['name'] ?? '';
     _description = json['description'] ?? '';
@@ -78,6 +79,7 @@ class MissionItems
     _amount = json['amount'] ?? 0;
     userID = json['usr_id'] ?? '';
     mission_cnt = json['mission_cnt'] ?? 0;
+    claim_cnt = json['claim_cnt'] ?? 0;
   }
 
   String _id = '';
@@ -94,6 +96,7 @@ class MissionItems
   int _amount = 0;
   String userID = '';
   int mission_cnt = 0;
+  int claim_cnt = 0;
 
   String get id => _id;
   String get name => _name;

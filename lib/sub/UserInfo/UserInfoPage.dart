@@ -741,16 +741,15 @@ class _UserInfoPageState extends State<UserInfoPage>
             return
             Column
             (
-            children:
-            [
-              defaultInfo(400010, 400097, 400098, CupertinoIcons.bell_fill, alarmList),
-              defaultInfo(400011,400099, 400100, CupertinoIcons.heart_solid, favoritesList),
-              option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO),
-              option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING),
-            ],
-          );
+              children:
+              [
+                defaultInfo(400010, 400097, 400098, CupertinoIcons.bell_fill, alarmList),
+                defaultInfo(400011,400099, 400100, CupertinoIcons.heart_solid, favoritesList),
+                option(400012, CupertinoIcons.headphones, UserInfoSubPageType.WALLET_INFO),
+                option(400013, Icons.settings_outlined, UserInfoSubPageType.SETTING),
+              ],
+            );
           },),
-
         )
         // Obx
         //   (() =>

@@ -124,6 +124,9 @@ class ProductItem
     _stock = json['stock'] ?? 0;
     _popcorns = json['popcorns'] ?? 0;
     _bonus = json['bonus'] ?? 0;
+
+    print('json[bonus] : ${json['bonus']} :');
+
     _bonusrate = json['bonusrate'] ?? '';
     _durationDays = json['duration_days'] ?? 0;
     _createdAt = json['created_at'] ?? '';

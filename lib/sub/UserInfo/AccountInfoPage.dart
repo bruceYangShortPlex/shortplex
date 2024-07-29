@@ -44,14 +44,16 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
 {
   var infoCount = 0;
   var missionID = '';
-  var isBonusReceive = false; //입력수령 보너스 받았는가?
+  var isBonusReceive = true; //입력수령 보너스 받았는가?
   var buttonDisable = false;
 
   getMissionInfo()
   {
     HttpProtocolManager.to.Get_Missions().then((value)
     {
-      if (value == null) {
+      if (value == null)
+      {
+        isBonusReceive = false;
         return;
       }
 
@@ -60,7 +62,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
         if (item.description.contains('회원정보를 모두 입력')) {
           missionID = item.id;
           setState(() {
-            isBonusReceive = !item.isActive;
+            isBonusReceive = item.maxCnt <= item.claim_cnt ;
           });
           print('mission id : $missionID');
           break;
@@ -94,14 +96,9 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
       }
     },);
 
-    super.initState();
     accountInfoCountCheck();
+    super.initState();
     getMissionInfo();
-    // tweenController = AnimationController
-    // (
-    //   duration: const Duration(milliseconds: 300),
-    //   vsync: this,
-    // );
   }
 
   void accountInfoCountCheck()
@@ -275,7 +272,9 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                                     return;
                                   }
 
-                                  buttonDisable = true;
+                                  setState(() {
+                                    buttonDisable = true;
+                                  });
 
                                   var result1 = await HttpProtocolManager.to.Send_MissionComplete(missionID);
                                   if (result1.$2 == false)
@@ -283,17 +282,21 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                                     if (kDebugMode) {
                                       print('mission complete fail');
                                     }
-                                    buttonDisable = false;
+                                    setState(() {
+                                      buttonDisable = false;
+                                    });
                                     return;
                                   }
 
                                   var result2 = await HttpProtocolManager.to.Send_ReceiveMissionReward(missionID, false);
-                                  if (result2 == null)
+                                  if (result2 == false)
                                   {
                                     if (kDebugMode) {
                                       print('Send_ReceiveMissionReward faile');
                                     }
-                                    buttonDisable = false;
+                                    setState(() {
+                                      buttonDisable = false;
+                                    });
                                     return;
                                   }
 
@@ -303,7 +306,9 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                                     if (kDebugMode) {
                                       print('Get_WalletBalance faile');
                                     }
-                                    buttonDisable = false;
+                                    setState(() {
+                                      buttonDisable = false;
+                                    });
                                     return;
                                   }
 
@@ -312,13 +317,20 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                                     if (item.userId == UserData.to.userId)
                                     {
                                       String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
-                                      ShowCustomSnackbar(message, SnackPosition.TOP, ()
+                                      if (message.isNotEmpty)
                                       {
-                                        buttonDisable = false;
-                                        setState(() {
-                                          isBonusReceive = true;
+                                        ShowCustomSnackbar(message, SnackPosition.TOP, ()
+                                        {
+                                          setState(() {
+                                            buttonDisable = false;
+                                          });
                                         });
+                                      }
+
+                                      setState(() {
+                                        isBonusReceive = true;
                                       });
+
                                       break;
                                     }
                                   }
@@ -744,7 +756,8 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                   (
                     onTap: ()
                     {
-                      if (snackbarComplete == false || buttonDisable) {
+                      if (snackbarComplete == false || buttonDisable)
+                      {
                         return;
                       }
 

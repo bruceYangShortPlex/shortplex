@@ -1131,9 +1131,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = _isFavorites ? 'https://www.quadra-system.com/api/v1/profile/favorites?sortkey=created_at&sortorder=desc'
                 :
                 'https://www.quadra-system.com/api/v1/profile/alarms?sortkey=created_at&sortorder=desc';
-      print('Get_Favorites send url : $url');
+      print('Get_UserInfoContentList send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
-      print('Get_Favorites res.body ${res.body}');
+      print('Get_UserInfoContentList res.body ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -1142,12 +1142,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       }
       else
       {
-        print('Get_Favorites FAILD : ${res.statusCode}');
+        print('Get_UserInfoContentList FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('Get_Favorites error : $e');
+      print('Get_UserInfoContentList error : $e');
     }
 
     return null;
@@ -1434,8 +1434,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return (null, result);
   }
 
-  Future<MissionRes?> Send_ReceiveMissionReward(String _mid, [bool _receiveAll = false]) async
+  Future<bool> Send_ReceiveMissionReward(String _mid, [bool _receiveAll = false]) async
   {
+    bool result = false;
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
@@ -1451,12 +1452,16 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       print('Send_ReceiveMissionReward res.body ${res.body}');
       if (res.statusCode == 200)
       {
-        var data =  MissionRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        return data;
+        //var data =  jsonDecode(utf8.decode(res.bodyBytes));
+        result = true;
       }
       else
       {
         print('Send_ReceiveMissionReward FAILD : ${res.statusCode}');
+        if (res.body.contains('already completed'))
+        {
+          result = true;
+        }
       }
     }
     catch (e)
@@ -1464,6 +1469,6 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       print('Send_ReceiveMissionReward error : $e');
     }
 
-    return null;
+    return result;
   }
 }

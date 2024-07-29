@@ -1,14 +1,11 @@
 import 'dart:async';
 
-
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
-
 import '../Util/ShortplexTools.dart';
-import '../sub/Reward/RewardPage.dart';
 
 enum SelectResolutionType
 {
@@ -252,7 +249,6 @@ class ContentData
       return false;
     }
 
-    var result = '';
     var release = DateTime.parse(releaseAt!);
     var current = DateTime.now();
 

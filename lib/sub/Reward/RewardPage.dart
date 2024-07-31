@@ -107,7 +107,7 @@ class _RewardPageState extends State<RewardPage> {
             bonusCount= '0';
             invitaionCount = item.followerUserCnt;
             referralCode = item.referralCode;
-            sendCode = item.followingReferralCode;
+            sendCode = item.followingDisplayname;
             if (sendCode.isNotEmpty)
             {
               textEditingController.text = sendCode;

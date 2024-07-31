@@ -68,13 +68,13 @@ class InvitationInfo
     _referralCode = json['referral_code'] ?? '';
     _followerUserCnt = json['follower_user_cnt'] ?? '';
     _followingUserCnt = json['following_user_cnt'] ?? '';
-    followingReferralCode = json['following_referral_code'] ?? '';
+    followingDisplayname = json['following_displayname'] ?? '';
   }
   String _userId = '';
   String _referralCode = '';
   String _followerUserCnt = '';
   String _followingUserCnt = '';
-  String followingReferralCode = '';
+  String followingDisplayname = '';
 
   String get userId => _userId;
   String get referralCode => _referralCode;

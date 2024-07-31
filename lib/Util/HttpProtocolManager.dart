@@ -1102,6 +1102,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
   Future<WalletRes?> Get_WalletBalance() async
   {
+    connecting = true;
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
@@ -1112,7 +1113,10 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       if (res.statusCode == 200)
       {
+        print('Get_WalletBalance Success');
         var data =  WalletRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('Get_WalletBalance Success data : $data');
+        connecting = false;
         return data;
       }
       else
@@ -1124,7 +1128,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       print('Get_WalletBalance error : $e');
     }
-
+    connecting = false;
     return null;
   }
 
@@ -1242,7 +1246,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
   Future<bool> Send_Preorder(String _productID) async
   {
-
+    connecting = true;
     try
     {
       var provider = Platform.isIOS ?  'apple' : 'google';
@@ -1263,6 +1267,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       if (res.statusCode == 200)
       {
+        connecting = false;
         return true;
       }
       else
@@ -1280,8 +1285,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return false;
   }
 
-  Future<PreorderRes?> Get_PreorderList(String _productID) async
+  Future<PreorderRes?> Get_PreorderList() async
   {
+    connecting = true;
     try
     {
       var provider = Platform.isIOS ?  'apple' : 'google';
@@ -1299,6 +1305,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       if (res.statusCode == 200)
       {
         var data = PreorderRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        connecting = false;
         return data;
       }
       else
@@ -1311,7 +1318,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       print('Send_BuyProduct error : $e');
     }
-
+    connecting = false;
     return null;
   }
 
@@ -1321,7 +1328,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var provider = Platform.isIOS ?  'apple' : 'google';
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/profile/store/order';
+      var url = 'https://www.quadra-system.com/api/v1/profile/store/preorder';
       var receipt = _receipt == _productID ? 'test-transaction-id' : _receipt;
 
       var data =  PreorderPaymentData(productId: _productID, orderId: receipt);
@@ -1329,9 +1336,9 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var bodys = jsonEncode(req.toJson());
 
       if (kDebugMode) {
-        print('Send_BuyProduct heads : ${heads} / \n send bodys : ${bodys}');
+        print('Send_BuyProduct heads : ${heads} / \n send patch bodys : ${bodys}');
       }
-      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
       if (kDebugMode) {
         print('Send_BuyProduct res.body ${res.body}');
       }

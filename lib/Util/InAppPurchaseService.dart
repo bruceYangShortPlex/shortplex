@@ -11,9 +11,11 @@ import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+import 'package:shortplex/table/UserData.dart';
 
 import '../sub/Home/HomeData.dart';
 import 'HttpProtocolManager.dart';
+import 'ShortplexTools.dart';
 
 /// 인앱 결제 서비스
 class InAppPurchaseService extends GetxService
@@ -246,6 +248,7 @@ class InAppPurchaseService extends GetxService
   {
     if (kDebugMode)
     {
+      print('Debug product');
       _callback.call(_id);
       return;
     }
@@ -267,6 +270,89 @@ class InAppPurchaseService extends GetxService
     {
       callback?.call('');
     }
+  }
+
+  Future<bool> BuyProcess(String _pid) async
+  {
+    var processResult = false;
+
+    print('BuyProcess step1 start');
+    var step1 = await HttpProtocolManager.to.Send_Preorder(_pid);
+
+    if (step1 == false)
+    {
+      print('step1 fail');
+      return processResult;
+    }
+
+    print('BuyProcess step2 start');
+
+    var step2 = await HttpProtocolManager.to.Get_PreorderList();
+    if (step2 == null)
+    {
+      print('step2 fail');
+      return processResult;
+    }
+
+    var preorderID = '';
+    for(var item in step2.data!.items!)
+    {
+      if(item.userId == UserData.to.userId && item.productId == _pid)
+      {
+        preorderID = item.id;
+        break;
+      }
+    }
+
+    if(preorderID.isEmpty)
+    {
+      print('step2 fail preorderID is empty');
+      return processResult;
+    }
+
+    print('BuyProcess step3 start 1');
+
+    BuyProduct(_pid, (value)
+    {
+      print('BuyProcess step3 start 2');
+      HttpProtocolManager.to.Send_BuyProduct(_pid, preorderID, value).then((buyProductResult)
+      {
+        if (buyProductResult == false)
+        {
+          print('BuyProcess step3 fail');
+          return;
+        }
+        print('BuyProcess step4 start');
+        HttpProtocolManager.to.Get_WalletBalance().then((r1)
+        {
+          if (r1 == null)
+          {
+            print('BuyProcess Get_WalletBalance fail !!!!');
+            return;
+          }
+
+          for(var item in r1.data!.items!)
+          {
+            if (item.userId == UserData.to.userId)
+            {
+              processResult = true;
+
+              String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+              if (message.isNotEmpty)
+              {
+                ShowCustomSnackbar(message, SnackPosition.TOP);
+              }
+
+              print('BuyProcess Get_WalletBalance $processResult');
+
+              break;
+            }
+          }
+        });
+      });
+    },);
+
+    return processResult;
   }
 }
 

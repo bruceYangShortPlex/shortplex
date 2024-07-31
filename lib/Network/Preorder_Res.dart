@@ -89,20 +89,20 @@ class PreorderData
 class PreorderItems
 {
   PreorderItems.fromJson(dynamic json) {
-    _id = json['id'];
-    _userId = json['user_id'];
-    _productType = json['product_type'];
-    _productId = json['product_id'];
-    _name = json['name'];
-    _description = json['description'];
-    _price = json['price'];
-    _quantity = json['quantity'];
-    _amount = json['amount'];
-    _status = json['status'];
+    _id = json['id'] ?? '';
+    _userId = json['user_id'] ?? '';
+    _productType = json['product_type'] ?? '';
+    _productId = json['product_id'] ?? '';
+    _name = json['name'] ?? '';
+    _description = json['description'] ?? '';
+    _price = json['price'] ?? '0';
+    _quantity = json['quantity'] ?? 0;
+    _amount = json['amount'] ?? '0';
+    _status = json['status'] ?? '';
     _orderData = json['order_data'] != null ? OrderData.fromJson(json['order_data']) : null;
-    _createdAt = json['created_at'];
-    _updatedAt = json['updated_at'];
-    _updatedBy = json['updated_by'];
+    _createdAt = json['created_at'] ?? '';
+    _updatedAt = json['updated_at'] ?? '';
+    _updatedBy = json['updated_by'] ?? '';
   }
   String _id = '';
   String _userId = '';
@@ -164,7 +164,7 @@ class PreorderItems
 class OrderData
 {
   OrderData.fromJson(dynamic json) {
-    _paymentProvider = json['payment_provider'];
+    _paymentProvider = json['payment_provider'] ?? '';
     _paymentData = json['payment_data'] != null ? PreorderPaymentData.fromJson(json['payment_data']) : null;
   }
   String _paymentProvider = '';
@@ -199,8 +199,8 @@ class PreorderPaymentData
   }
 
   PreorderPaymentData.fromJson(dynamic json) {
-    _productId = json['productId'];
-    _orderId = json['orderId'];
+    _productId = json['productId'] ?? '';
+    _orderId = json['orderId'] ?? '';
   }
   String _productId = '';
   String _orderId = '';

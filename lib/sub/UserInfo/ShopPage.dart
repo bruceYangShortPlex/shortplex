@@ -344,12 +344,15 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
   return
   GestureDetector
   (
-    onTap: () async
+    onTap: ()
     {
       if (HttpProtocolManager.to.connecting)
       {
+        print('connecting return');
         return;
       }
+
+      print('Click Buy Product $_pid');
 
       if (UserData.to.isLogin.value == false)
       {
@@ -361,47 +364,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
         return;
       }
 
-      InAppPurchaseService.to.BuyProduct(_pid,
-      (receipt)
-      {
-        print('_pid : $_pid / receipt : $receipt');
-        if (receipt.isEmpty)
-        {
-          return;
-        }
-
-        // HttpProtocolManager.to.Send_BuyProduct(_pid, receipt).then((value)
-        // {
-        //   if (value == true)
-        //   {
-        //     HttpProtocolManager.to.Get_WalletBalance().then((value)
-        //     {
-        //       if (value == null)
-        //       {
-        //         buttonDisable = false;
-        //         return;
-        //       }
-        //
-        //       for(var item in value.data!.items!)
-        //       {
-        //         if (item.userId == UserData.to.userId)
-        //         {
-        //           String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
-        //           ShowCustomSnackbar(message, SnackPosition.TOP, ()
-        //           {
-        //             buttonDisable = false;
-        //           });
-        //           break;
-        //         }
-        //       }
-        //     },);
-        //   }
-        //   else
-        //   {
-        //     buttonDisable = false;
-        //   }
-        // },);
-      });
+      InAppPurchaseService.to.BuyProcess(_pid);
     },
     child:
     Stack
@@ -560,7 +523,7 @@ Widget goods_subscriptionTitle() =>
           padding:EdgeInsets.only(right: 0),
           child:
           IconButton
-            (
+          (
             alignment: Alignment.center,
             iconSize: 20,
             color: Colors.white,

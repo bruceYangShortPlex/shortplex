@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/Content_Res.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
@@ -43,7 +44,7 @@ class ContentPlayer extends StatefulWidget
   _ContentPlayerState createState() => _ContentPlayerState();
 }
 
-class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateMixin
+class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateMixin, WidgetsBindingObserver
 {
   final CarouselController pagecontroller = CarouselController();
   VideoPlayerController? videoController;
@@ -58,6 +59,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   bool isEdit = false;
   bool prevLogin = false;
   bool initialized = false;
+  bool buttonDisable = false;
 
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
@@ -99,29 +101,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             videoController!.play();
           });
           videoController!.addListener(eventListener);
-
-          // videoController!.addListener(()
-          // {
-          //   if (videoController!.value.position >=
-          //       videoController!.value.duration)
-          //   {
-          //     // 동영상 재생이 끝났을 때 실행할 로직
-          //     print("동영상 재생이 끝났습니다.");
-          //     if (selectedEpisodeNo < episodeList.length)
-          //     {
-          //       selectedEpisodeNo = selectedEpisodeNo + 1;
-          //       initContent();
-          //       // Get.off(NextContentPlayer(),
-          //       //     arguments: [selectedEpisodeNo + 1, episodeList]);
-          //       return;
-          //     }
-          //   }
-          //
-          //   setState(()
-          //   {
-          //     currentTime = videoController!.value.position.inSeconds.toDouble();
-          //   });
-          // });
         }
       });
     },);
@@ -309,6 +288,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   @override
   void initState()
   {
+    buttonDisable = false;
     prevLogin = UserData.to.isLogin.value;
     selectedEpisodeNo = Get.arguments[0];
     print('selectedEpisodeNo : $selectedEpisodeNo');
@@ -384,6 +364,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     getCommentsData();
 
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed)
+    {
+      buttonDisable = false;
+    }
   }
 
   @override
@@ -757,8 +745,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         padding: const EdgeInsets.only(top:2, bottom: 10.0, right: 25),
         child: GestureDetector
         (
-          onTap: connecting == false ? ()
+          onTap: ()
           {
+            if (connecting) {
+              return;
+            }
+
             if (showCheck() == false)
             {
               return;
@@ -835,12 +827,29 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                   });
                 }
                 break;
+              case ContentUI_ButtonType.SHARE:
+                {
+                  if (buttonDisable == false) {
+                    return;
+                  }
+
+                  if (episodeData!.shareLink!.isEmpty) {
+                    return;
+                  }
+
+                  buttonDisable = true;
+                  Share.share(episodeData!.shareLink!);
+                  if (kDebugMode) {
+                    print('tap share');
+                  }
+                }
+                break;
               default:
                 print('to do type $_type');
                 break;
             }
             print('contentUIButtons tap');
-          } : null,
+          },
           child:
           Opacity
           (

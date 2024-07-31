@@ -8,13 +8,12 @@ import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../ContentInfoPage.dart';
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  await StringTable().InitTable();
-  runApp(const TitleSchoolHistoryPage());
-}
-
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await StringTable().InitTable();
+//   runApp(const TitleSchoolHistoryPage());
+// }
 
 class TitleSchoolHistoryPage extends StatefulWidget {
   const TitleSchoolHistoryPage({super.key});
@@ -209,9 +208,19 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
           iconSize: 20,
           icon: const Icon(Icons.arrow_forward_ios, color: Colors.white,), onPressed: ()
           {
-            pickedDate = pickedDate?.add(Duration(days: 1));
-            setState(() {
+            var result = pickedDate?.add(Duration(days: 1));
+            if (result == null) {
+              return;
+            }
+            var today = DateTime.now();
 
+            if (result.isAfter(today))
+            {
+              return;
+            }
+
+            setState(() {
+              pickedDate = result;
             });
           },
         ),

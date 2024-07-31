@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
@@ -151,6 +152,8 @@ class _UserInfoPageState extends State<UserInfoPage>
   @override
   void initState()
   {
+    //UserData.to.isSubscription(true);
+
     getContentList();
     getWalletInfo();
     super.initState();
@@ -332,122 +335,115 @@ class _UserInfoPageState extends State<UserInfoPage>
       Obx(()=>
         Visibility
         (
-          visible: Get.find<UserData>().isSubscription.value,
+          visible: UserData.to.isSubscription.value,
           child:
           Container
           (
             width: 356.w,
             height: 50,
-            decoration: ShapeDecoration(
-              gradient: LinearGradient(
-                begin: Alignment(-1.00, 0.5),
-                end: Alignment(1, 0.5),
-                colors: [Color(0x330006A5).withOpacity(0.22), Color(0xFF00FFBF).withOpacity(0.22),],
-              ),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1.50, color: Color(0xFF4D4D4D)),
+            decoration:
+            ShapeDecoration
+            (
+              //color: Colors.black,
+              shape: RoundedRectangleBorder
+              (
+                side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
+            //color: Colors.red,
             child:
-            Column
+            Stack
             (
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              alignment: Alignment.center,
               children:
               [
-                Row
+                ClipRRect
                 (
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  borderRadius: BorderRadius.circular(12),
+                  child: 
+                  Image.asset
+                  (
+                    width: 356.w,
+                    'assets/images/user/my_user_freepass.png',
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Column
+                (
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children:
                   [
-                    SizedBox
+                    Row
                     (
-                      height: 40,
-                      width: 290.w,
-                      child:
-                      Column
-                      (
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children:
-                        [
-                          Padding
-                          (
-                            padding: EdgeInsets.only(left: 20,top: 2),
-                            child:
-                            Text
-                            (
-                              StringTable().Table![400014]!,
-                              style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 13),
-                            ),
-                          ),
-                          Padding
-                          (
-                            padding: EdgeInsets.only(left: 20, top: 2),
-                            child:
-                            Text
-                            (
-                              StringTable().Table![400015]!,
-                              style: TextStyle(color: Colors.white.withOpacity(0.6),fontFamily: 'NotoSans', fontSize: 10),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container
-                    (
-                      alignment: Alignment.center,
-                      height: 40,
-                      child:
-                      Container
-                      (
-                        alignment: Alignment.center,
-                        width: 55,
-                        height: 20,
-                        decoration: ShapeDecoration(
-                          color: Colors.black.withOpacity(0.7),
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        child:
-                        GestureDetector
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:
+                      [
+                        Padding
                         (
-                          child:
-                          Container
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Column
                           (
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:
+                            [
+                              Text
+                              (
+                                StringTable().Table![400014]!,
+                                style: TextStyle(color: Colors.white,fontFamily: 'NotoSans', fontSize: 13),
+                              ),
+                              Text
+                              (
+                                StringTable().Table![400015]!,
+                                style: TextStyle(color: Colors.white.withOpacity(0.6),fontFamily: 'NotoSans', fontSize: 10),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding
+                        (
+                          padding: EdgeInsets.only(right: 20),
+                          child:
+                          GestureDetector
+                          (
+                            onTap: ()
+                            {
+                               Get.to(() => BuySubscriptionPage());
+                            },
                             child:
-                            Text
+                            Container
                             (
-                              StringTable().Table![400016]!,
-                              style:
-                              TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                              alignment: Alignment.center,
+                              width: 55,
+                              height: 20,
+                              decoration: ShapeDecoration(
+                                color: Colors.black.withOpacity(0.7),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(width: 1.50, color: Color(0xFF00FFBF)),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              child:
+                              Container
+                              (
+                                child:
+                                Text
+                                  (
+                                  StringTable().Table![400016]!,
+                                  style:
+                                  TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                                ),
+                              ),
                             ),
                           ),
-                          onTap: ()
-                          {
-                            // if (Get.find<UserData>().isLogin.value)
-                            // {
-                            //   Get.to(() => ShopPage());
-                            // }
-                            // else
-                            // {
-                            //   showDialogTwoButton(400003, 400003,
-                            //   () =>
-                            //   {
-                            //       Get.to(() => LoginPage(), transition: Transition.noTransition),
-                            //   });
-                            // }
-
-                            Get.to(() => BuySubscriptionPage());
-                          },
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
               ],
-            ),
+            )
           ),
         ),
       ),

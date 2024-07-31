@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/AdsManager.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
@@ -16,6 +18,7 @@ import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 import '../Home/HomeData.dart';
+import '../UserInfo/LoginPage.dart';
 
 // void main() async
 // {
@@ -46,8 +49,9 @@ class _RewardPageState extends State<RewardPage> {
 
   String referralCode = ''; //나의 코드
   String sendCode = '';
-  String bonusCount = ''; // 내가 받은 보너스
-  String invitaionCount = ''; //나를 추천한 / 내가 초대한 친구의 명수.
+  String bonusCount = '0'; // 내가 받은 보너스
+  String invitaionCount = '0'; //나를 추천한 / 내가 초대한 친구의 명수.
+  bool buttonDisable = false;
 
   void startTimer()
   {
@@ -104,7 +108,7 @@ class _RewardPageState extends State<RewardPage> {
         {
           setState(()
           {
-            bonusCount= '0';
+            bonusCount = item.bonus.toString();
             invitaionCount = item.followerUserCnt;
             referralCode = item.referralCode;
             sendCode = item.followingDisplayname;
@@ -470,9 +474,60 @@ Widget mainWidget(BuildContext context)=>
           SizedBox(height: 10,),
           Container
           (
-            width: 390,
-            height: 160,
-            color: Colors.grey,
+            // width: 390,
+            // height: 160,
+            //color: Colors.grey,
+            child:
+            Stack
+            (
+              alignment: Alignment.center,
+              children:
+              [
+                Image.asset
+                (
+                  'assets/images/Reward/reward_acabemy_image.png',
+                ),
+                Positioned
+                (
+                  left: 20,
+                  top: 12,
+                  child:
+                  Container
+                  (
+                    //color: Colors.blue,
+                    width: 200,
+                    height: 40,
+                    child:
+                    Text
+                    (
+                      StringTable().Table![300003]!,
+                      style:
+                      TextStyle(fontSize: 14, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                ),
+                Positioned
+                (
+                  right: 20,
+                  bottom: 18,
+                  child:
+                  Container
+                  (
+                    width: 250,
+                    height: 32,
+                    alignment: Alignment.center,
+                    ///color: Colors.yellow,
+                    child:
+                    Text
+                    (
+                      StringTable().Table![300055]!,
+                      style:
+                      TextStyle(fontSize: 14, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 10,),
           Align
@@ -491,7 +546,7 @@ Widget mainWidget(BuildContext context)=>
           (
             width: 310,
             height: 209,
-            color: Colors.grey,
+            color: Colors.red,
           ),
           SizedBox(height: 5,),
           Container
@@ -625,13 +680,31 @@ Widget mainWidget(BuildContext context)=>
           (
             width: 390,
             height: 160,
-            color: Colors.grey,
+            //color: Colors.grey,
             child:
             Stack
             (
               alignment: Alignment.center,
               children:
               [
+                Image.asset('assets/images/Reward/reward_share_image.png'),
+                Positioned
+                (
+                  top: 6,
+                  child: Container
+                  (
+                    height: 40,
+                    width: 300,
+                    //color: Colors.red,
+                    child: Text
+                    (
+                      textAlign: TextAlign.center,
+                      StringTable().Table![300008]!,
+                      style:
+                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ),
+                ),
                 Align
                 (
                   alignment: Alignment.bottomRight,
@@ -678,8 +751,9 @@ Widget mainWidget(BuildContext context)=>
                               Padding
                               (
                                 padding: const EdgeInsets.only(top: 18),
-                                child: Text
-                                  (
+                                child:
+                                Text
+                                (
                                   StringTable().Table![100024]!,
                                   style:
                                   TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
@@ -917,8 +991,19 @@ Widget mainWidget(BuildContext context)=>
                           ),
                         ),
                         focusNode: textFieldFocusNode,
-                        onTap: ()
+                        onTap: buttonDisable ? null : ()
                         {
+                          if (UserData.to.isLogin.value == false)
+                          {
+                            textFieldFocusNode.unfocus();
+                            showDialogTwoButton(StringTable().Table![600018]!, '',
+                            ()
+                            {
+                              Get.to(() => LoginPage());
+                            });
+                            return;
+                          }
+
                           if (textEditingController.text == StringTable().Table![300013]!)
                           {
                             setState(()

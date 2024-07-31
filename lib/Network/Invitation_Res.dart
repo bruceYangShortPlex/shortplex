@@ -36,21 +36,13 @@ class InvitationData
     }
   }
   List<InvitationInfo>? _info;
-  List<dynamic>? _bonus;
-
   List<InvitationInfo>? get info => _info;
-  List<dynamic>? get bonus => _bonus;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     final _info = this._info;
     if (_info != null) {
       map['info'] = _info.map((v) => v.toJson()).toList();
-    }
-    if (_bonus != null) {
-      if (kDebugMode) {
-        print('receive bonus info');
-      }
     }
     return map;
   }
@@ -69,12 +61,14 @@ class InvitationInfo
     _followerUserCnt = json['follower_user_cnt'] ?? '';
     _followingUserCnt = json['following_user_cnt'] ?? '';
     followingDisplayname = json['following_displayname'] ?? '';
+    bonus = json['bonus'] ?? 0;
   }
   String _userId = '';
   String _referralCode = '';
   String _followerUserCnt = '';
   String _followingUserCnt = '';
   String followingDisplayname = '';
+  int bonus = 0;
 
   String get userId => _userId;
   String get referralCode => _referralCode;

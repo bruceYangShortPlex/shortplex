@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:share/share.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/sub/ContentPlayer.dart';
@@ -30,7 +31,7 @@ class ContentInfoPage extends StatefulWidget
   State<ContentInfoPage> createState() => _ContentInfoPageState();
 }
 
-class _ContentInfoPageState extends State<ContentInfoPage>
+class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingObserver
 {
   ContentRes? contentRes;
   ContentData? contentData;
@@ -63,8 +64,17 @@ class _ContentInfoPageState extends State<ContentInfoPage>
 
       HttpProtocolManager.to.Get_ContentData(contentData!.id!).then((value)
       {
+        if (value == null)
+        {
+          if (kDebugMode) {
+            print('Get_ContentData is null');
+          }
+          return;
+        }
+
         contentRes = value;
         contentData!.title = contentRes!.data!.title;
+        contentData?.shareUrl = contentRes!.data!.shareLink;
         mapEpisodeData[0] = contentRes!.data!.episode!;
         contentEpisodes.addAll(contentRes!.data!.episode!);
         int totalEpisodeCount = contentRes!.data!.episodeTotal;
@@ -253,6 +263,14 @@ class _ContentInfoPageState extends State<ContentInfoPage>
     {
       selections[0] = true;
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed)
+    {
+      buttonEnabled = true;
+    }
   }
 
   @override
@@ -489,8 +507,12 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                     Icon(CupertinoIcons.heart, size: 30, color: Colors.white, );
                   },),
 
-                  onPressed: buttonEnabled ? ()
+                  onPressed: ()
                   {
+                    if (buttonEnabled == false) {
+                      return;
+                    }
+
                     if (UserData.to.isLogin.value == false)
                     {
                       showDialogTwoButton(StringTable().Table![600018]!, '',
@@ -522,7 +544,7 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                       }
                       buttonEnabled = true;
                     });
-                  } : null,
+                  },
                 ),
                 Text
                 (
@@ -544,7 +566,20 @@ class _ContentInfoPageState extends State<ContentInfoPage>
                   Icon(CupertinoIcons.share, size: 27, color: Colors.white,),
                   onPressed: ()
                   {
-                    print('to do share');
+                    if (buttonEnabled == false) {
+                      return;
+                    }
+
+                    if (contentData!.shareUrl!.isEmpty)
+                    {
+                      return;
+                    }
+
+                    buttonEnabled = false;
+                    Share.share(contentData!.shareUrl!);
+                    if (kDebugMode) {
+                      print('tap share');
+                    }
                   },
                 ),
                 SizedBox(height: 3,),

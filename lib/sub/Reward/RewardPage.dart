@@ -96,6 +96,10 @@ class _RewardPageState extends State<RewardPage> {
 
   getInvitaionInfo()
   {
+    if (UserData.to.isLogin.value == false) {
+      return;
+    }
+
     HttpProtocolManager.to.Get_InvitationInfo().then((value)
     {
       if (value == null) {
@@ -120,7 +124,6 @@ class _RewardPageState extends State<RewardPage> {
           break;
         }
       }
-
     });
   }
 

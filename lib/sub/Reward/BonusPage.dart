@@ -475,13 +475,13 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                           remainTimer(),
                           Padding
                           (
-                            padding : EdgeInsets.only(top: 26),
+                            padding : const EdgeInsets.only(top: 26),
                             child:
                             popcornAnimation()),
 
                           Padding
                           (
-                            padding: EdgeInsets.only(left: 24, top: 26),
+                            padding: const EdgeInsets.only(left: 24, top: 26),
                               child: bounusInfoPageView()
                           ),
                           bonusResultPopup(),

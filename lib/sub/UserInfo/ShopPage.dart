@@ -332,7 +332,6 @@ Widget ShopGoods([bool _visibleTap = true])
   );
 }
 
-var buttonDisable = false;
 Widget Goods(String _title, String _bonus, String _iconPath, String _price, String _sale, String _pid)
 {
   // print('_title : $_title');
@@ -345,8 +344,13 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
   return
   GestureDetector
   (
-    onTap: buttonDisable ? null : ()
+    onTap: () async
     {
+      if (HttpProtocolManager.to.connecting)
+      {
+        return;
+      }
+
       if (UserData.to.isLogin.value == false)
       {
         showDialogTwoButton(StringTable().Table![600018]!, '',
@@ -357,49 +361,46 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
         return;
       }
 
-      buttonDisable = true;
-
       InAppPurchaseService.to.BuyProduct(_pid,
       (receipt)
       {
-        print('receipt : $receipt');
+        print('_pid : $_pid / receipt : $receipt');
         if (receipt.isEmpty)
         {
-          buttonDisable = false;
           return;
         }
 
-        HttpProtocolManager.to.Send_BuyProduct(_pid, receipt).then((value)
-        {
-          if (value == true)
-          {
-            HttpProtocolManager.to.Get_WalletBalance().then((value)
-            {
-              if (value == null)
-              {
-                buttonDisable = false;
-                return;
-              }
-
-              for(var item in value.data!.items!)
-              {
-                if (item.userId == UserData.to.userId)
-                {
-                  String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
-                  ShowCustomSnackbar(message, SnackPosition.TOP, ()
-                  {
-                    buttonDisable = false;
-                  });
-                  break;
-                }
-              }
-            },);
-          }
-          else
-          {
-            buttonDisable = false;
-          }
-        },);
+        // HttpProtocolManager.to.Send_BuyProduct(_pid, receipt).then((value)
+        // {
+        //   if (value == true)
+        //   {
+        //     HttpProtocolManager.to.Get_WalletBalance().then((value)
+        //     {
+        //       if (value == null)
+        //       {
+        //         buttonDisable = false;
+        //         return;
+        //       }
+        //
+        //       for(var item in value.data!.items!)
+        //       {
+        //         if (item.userId == UserData.to.userId)
+        //         {
+        //           String message = UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+        //           ShowCustomSnackbar(message, SnackPosition.TOP, ()
+        //           {
+        //             buttonDisable = false;
+        //           });
+        //           break;
+        //         }
+        //       }
+        //     },);
+        //   }
+        //   else
+        //   {
+        //     buttonDisable = false;
+        //   }
+        // },);
       });
     },
     child:

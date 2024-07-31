@@ -8,6 +8,8 @@ import 'package:shortplex/Network/HomeData_Res.dart';
 import 'package:shortplex/Network/Home_Content_Res.dart';
 import 'package:shortplex/Network/Mission_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
+import 'package:shortplex/Network/Preorder_PatchReq.dart';
+import 'package:shortplex/Network/Preorder_Res.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
@@ -68,6 +70,8 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
   static HttpProtocolManager get to => Get.find();
 
   static String ApiKey = 'cbj1PqcA1NKlJEzQa0BGKwJulkfBqQcb';
+
+  bool connecting = false;
 
   // getData() async
   // {
@@ -1236,20 +1240,96 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<bool> Send_BuyProduct(String _productID, String _receipt) async
+  Future<bool> Send_Preorder(String _productID) async
+  {
+
+    try
+    {
+      var provider = Platform.isIOS ?  'apple' : 'google';
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/store/preorder';
+
+      var data = PaymentData(productId: _productID);
+      var req = ProductReq(paymentData: data, paymentProvider: provider);
+      //print('stat : ${stat.value}');
+      var bodys = jsonEncode(req.toJson());
+      if (kDebugMode) {
+        print('Send_Preorder heads : ${heads} / send bodys : ${bodys}');
+      }
+      var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
+      if (kDebugMode) {
+        print('Send_Preorder res.body ${res.body}');
+      }
+
+      if (res.statusCode == 200)
+      {
+        return true;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('Send_Preorder FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_Preorder error : $e');
+    }
+
+    connecting = false;
+    return false;
+  }
+
+  Future<PreorderRes?> Get_PreorderList(String _productID) async
+  {
+    try
+    {
+      var provider = Platform.isIOS ?  'apple' : 'google';
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/store/preorder';
+
+      if (kDebugMode) {
+        print('Send_BuyProduct heads : ${heads}');
+      }
+      var res = await http.get(Uri.parse(url), headers: heads);
+      if (kDebugMode) {
+        print('Send_BuyProduct res.body ${res.body}');
+      }
+
+      if (res.statusCode == 200)
+      {
+        var data = PreorderRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        //TODO:에러때 팝업 어떻게 할것인지.
+        print('Send_BuyProduct FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_BuyProduct error : $e');
+    }
+
+    return null;
+  }
+
+  Future<bool> Send_BuyProduct(String _productID, String _orderID, String _receipt) async
   {
     try
     {
       var provider = Platform.isIOS ?  'apple' : 'google';
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/profile/store/order';
+      var receipt = _receipt == _productID ? 'test-transaction-id' : _receipt;
 
-      var data =  PaymentData(productId: _productID );
-      var req = ProductReq(paymentData: data, paymentProvider: provider);
-      //print('stat : ${stat.value}');
+      var data =  PreorderPaymentData(productId: _productID, orderId: receipt);
+      var req = PreorderPatchReq(paymentData: data, paymentProvider: provider, orderId: _orderID);
       var bodys = jsonEncode(req.toJson());
+
       if (kDebugMode) {
-        print('Send_BuyProduct heads : ${heads} / send bodys : ${bodys}');
+        print('Send_BuyProduct heads : ${heads} / \n send bodys : ${bodys}');
       }
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
       if (kDebugMode) {

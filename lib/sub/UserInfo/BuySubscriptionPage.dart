@@ -171,16 +171,16 @@ class BuySubscriptionPage extends StatelessWidget
                           return;
                         }
                         //구매 
-                        HttpProtocolManager.to.Send_BuyProduct(HomeData.to.GetSubscriptionID(), '').then((value)
-                        {
-                          if (value) {
-                            userData.isSubscription(true);
-                          }
-                          else
-                          {
-                            //TODO:구매 실패 매시지
-                          }
-                        },);
+                        // HttpProtocolManager.to.Send_BuyProduct(HomeData.to.GetSubscriptionID(), '').then((value)
+                        // {
+                        //   if (value) {
+                        //     userData.isSubscription(true);
+                        //   }
+                        //   else
+                        //   {
+                        //     //TODO:구매 실패 매시지
+                        //   }
+                        // },);
                       },
                       child: Container
                       (

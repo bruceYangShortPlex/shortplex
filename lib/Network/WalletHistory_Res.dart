@@ -183,7 +183,11 @@ class WalletHistoryItems
   String? get paymentCurrency => _paymentCurrency;
   String? get paymentAmt => _paymentAmt;
   String? get debit => _debit;
-  String? get credit => _credit;
+  String? get credit
+  {
+    var value = _credit?.replaceAll('.00', '');
+    return value;
+  }
   String? get balance => _balance;
   String? get createdAt => _createdAt;
   String? get createdBy => _createdBy;

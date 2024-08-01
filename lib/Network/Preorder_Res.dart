@@ -37,7 +37,7 @@ class PreorderData
     if (json['items'] != null) {
       _items = [];
       json['items'].forEach((v) {
-        _items?.add(PreorderItems.fromJson(v));
+        _items?.add(PreorderItem.fromJson(v));
       });
     }
   }
@@ -46,14 +46,14 @@ class PreorderData
   int _itemsPerPage = 0;
   int _page = 0;
   int _maxPage = 0;
-  List<PreorderItems>? _items;
+  List<PreorderItem>? _items;
 
   int get count => _count;
   int get total => _total;
   int get itemsPerPage => _itemsPerPage;
   int get page => _page;
   int get maxPage => _maxPage;
-  List<PreorderItems>? get items => _items;
+  List<PreorderItem>? get items => _items;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -86,9 +86,9 @@ class PreorderData
 /// updated_at : null
 /// updated_by : null
 
-class PreorderItems
+class PreorderItem
 {
-  PreorderItems.fromJson(dynamic json) {
+  PreorderItem.fromJson(dynamic json) {
     _id = json['id'] ?? '';
     _userId = json['user_id'] ?? '';
     _productType = json['product_type'] ?? '';

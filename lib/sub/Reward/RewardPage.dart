@@ -52,6 +52,7 @@ class _RewardPageState extends State<RewardPage> {
   String bonusCount = '0'; // 내가 받은 보너스
   String invitaionCount = '0'; //나를 추천한 / 내가 초대한 친구의 명수.
   bool buttonDisable = false;
+  int bonusRate = 10;
 
   void startTimer()
   {
@@ -157,6 +158,23 @@ class _RewardPageState extends State<RewardPage> {
     }
 
     startTimer();
+
+    //친구초대 보너스율.
+    HttpProtocolManager.to.Get_InvitationRwardInfo().then((value)
+    {
+      if (value == null)
+      {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        setState(() {
+          bonusRate = item.bonusrate;
+        });
+        break;
+      }
+    },);
   }
 
   @override
@@ -702,7 +720,7 @@ Widget mainWidget(BuildContext context)=>
                     child: Text
                     (
                       textAlign: TextAlign.center,
-                      StringTable().Table![300008]!,
+                      SetTableStringArgument(300008, [bonusRate.toString()]),
                       style:
                       TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                     ),

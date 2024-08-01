@@ -20,6 +20,7 @@ import 'package:shortplex/Network/Watch_Req.dart';
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
+import '../Network/InvitationRewardInfo_Res.dart';
 import '../Network/Invitation_Res.dart';
 import '../Network/MobileCertification_Req.dart';
 import '../Network/MoblieCertification_Res.dart';
@@ -1258,11 +1259,11 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       //print('stat : ${stat.value}');
       var bodys = jsonEncode(req.toJson());
       if (kDebugMode) {
-        print('Send_Preorder heads : ${heads} / send bodys : ${bodys}');
+        print('Send_Preorder url : $url \n heads : ${heads} \n send bodys : ${bodys}');
       }
       var res = await http.post(Uri.parse(url), headers: heads, body: bodys);
       if (kDebugMode) {
-        print('Send_Preorder res.body ${res.body}');
+        print('Send_Preorder res.body : \n ${res.body}');
       }
 
       if (res.statusCode == 200)
@@ -1295,11 +1296,11 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = 'https://www.quadra-system.com/api/v1/profile/store/preorder';
 
       if (kDebugMode) {
-        print('Send_BuyProduct heads : ${heads}');
+        print('Get_PreorderList url : {$url} \n heads : ${heads}');
       }
       var res = await http.get(Uri.parse(url), headers: heads);
       if (kDebugMode) {
-        print('Send_BuyProduct res.body ${res.body}');
+        print('Get_PreorderList res.body : \n ${res.body}');
       }
 
       if (res.statusCode == 200)
@@ -1311,12 +1312,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       else
       {
         //TODO:에러때 팝업 어떻게 할것인지.
-        print('Send_BuyProduct FAILD : ${res.statusCode}');
+        print('Get_PreorderList FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('Send_BuyProduct error : $e');
+      print('Get_PreorderList error : $e');
     }
     connecting = false;
     return null;
@@ -1336,11 +1337,11 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var bodys = jsonEncode(req.toJson());
 
       if (kDebugMode) {
-        print('Send_BuyProduct heads : ${heads} / \n send patch bodys : ${bodys}');
+        print('Send_BuyProduct url : $url \n heads : ${heads} \n send bodys : ${bodys}');
       }
       var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
       if (kDebugMode) {
-        print('Send_BuyProduct res.body ${res.body}');
+        print('Send_BuyProduct res.body : \n ${res.body}');
       }
 
       if (res.statusCode == 200)
@@ -1588,6 +1589,42 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
     return null;
   }
+
+  Future<InvitationRewardInfoRes?> Get_InvitationRwardInfo() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/invitation_var';
+
+      if (kDebugMode) {
+        print('Get_InvitationRwardInfo send url : $url');
+      }
+
+      var res = await http.get(Uri.parse(url), headers: heads);
+
+      if (kDebugMode) {
+        print('Get_InvitationRwardInfo res.body ${res.body}');
+      }
+
+      if (res.statusCode == 200)
+      {
+        var data =  InvitationRewardInfoRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_InvitationRwardInfo FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_InvitationRwardInfo error : $e');
+    }
+
+    return null;
+  }
+
 
   Future<(String, bool)> Send_InvitationCode(String _code) async
   {

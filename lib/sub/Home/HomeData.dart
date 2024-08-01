@@ -184,4 +184,16 @@ class HomeData extends GetxController
       }
     });
   }
+
+  String GetShopID(String _pid)
+  {
+    var result = '';
+    if (productList.any((element) => element.id == _pid))
+    {
+      var item = productList.firstWhere((element) => element.id == _pid);
+      result = item.shopid;
+    }
+
+    return result;
+  }
 }

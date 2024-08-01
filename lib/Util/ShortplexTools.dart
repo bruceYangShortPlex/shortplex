@@ -651,7 +651,7 @@ String GetReleaseTime(String _createTime)
   var create = DateTime.parse(_createTime);
   var diff = current.difference(create);
 
-  print('diff.inDays : ${diff.inDays} / diff.inHours : ${diff.inHours} / diff.inMinutes : ${diff.inMinutes}');
+  //print('diff.inDays : ${diff.inDays} / diff.inHours : ${diff.inHours} / diff.inMinutes : ${diff.inMinutes}');
 
   //7일 이후
   if (diff.inDays >= 7)

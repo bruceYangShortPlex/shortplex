@@ -13,6 +13,7 @@ import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:shortplex/table/UserData.dart';
 
+import '../Network/Preorder_Res.dart';
 import '../sub/Home/HomeData.dart';
 import 'HttpProtocolManager.dart';
 import 'ShortplexTools.dart';
@@ -106,7 +107,8 @@ class InAppPurchaseService extends GetxService
 
     if (response.productDetails.isEmpty)
     {
-      print('response.productDetails : ${response.productDetails}');
+      print('response.productDetails isEmpty 등록된 상품이 없습니다.');
+      return;
     }
 
     // 제품 목록 데이터 추가
@@ -116,7 +118,8 @@ class InAppPurchaseService extends GetxService
   /// 과거 구매 사용자를 검색하는 방법
   ///
   /// @return Future<void>
-  Future<void> fetchPastPurchases() async {
+  Future<void> fetchPastPurchases() async
+  {
     /// 모든 이전 구매를 복원합니다.
     /// `applicationUserName`은 초기 `PurchaseParam`에서 전송된 내용과 일치해야 합니다.
     /// 초기 `PurchaseParam`에 `applicationUserName`이 지정되지 않은 경우 null을 사용합니다.
@@ -124,14 +127,15 @@ class InAppPurchaseService extends GetxService
     /// 이러한 구매를 수신하고, 영수증을 확인하고, 콘텐츠를 전달하고, 각 구매에 대해 [finishPurchase] 메서드를 호출하여 구매 완료를 표시해야 합니다.
     /// 이것은 소비된 제품을 반환하지 않습니다.
     /// `사용하지 않는 소모품을 복원하려면 자체 서버에서 사용자에 대한 소모품 정보를 유지해야 합니다.`
-    // await iap.value.restorePurchases();
+    await iap.value.restorePurchases();
   }
 
   /// 상품을 이미 구매했는지 여부를 확인하는 방법입니다.
   ///
   /// @return void
-  bool verifyPurchases()
+  String verifyPurchases()
   {
+    String receipt = '';
     try
     {
       PurchaseDetails purchase = purchases.firstWhere
@@ -140,11 +144,14 @@ class InAppPurchaseService extends GetxService
       );
       if (purchase.status == PurchaseStatus.purchased)
       {
-        print('구매 영수증 전달 및 구매요청.');
         // 구매 완료 영수증
-        String receipt = purchase.verificationData.serverVerificationData;
+        receipt = purchase.verificationData.serverVerificationData;
+
+        print('구매 영수증 전달 및 구매요청.');
+        print('receipt : $receipt');
+
         callback?.call(receipt);
-        return true;
+        return receipt;
       }
       else
       {
@@ -156,7 +163,7 @@ class InAppPurchaseService extends GetxService
       callback?.call('');
     }
 
-    return false;
+    return receipt;
   }
 
   /// 제품 구매 방법
@@ -192,12 +199,7 @@ class InAppPurchaseService extends GetxService
       if (IsAvailable)
       {
         print('InAppPurchaseService iap.value.isAvailable true');
-        // 구매 가능한 상품 목록 조회
-        await fetchUserProducts();
-        // 과거 구매 사용자 목록 조회
-        //await fetchPastPurchases();
-        // 상품을 이미 구매했는지 체크
-        //verifyPurchases();
+
         // 구매 세부 정보에 대한 업데이트 스트림을 수신하는 구독
         subscription.value = iap.value.purchaseStream.listen((data)
         {
@@ -205,7 +207,24 @@ class InAppPurchaseService extends GetxService
           purchases.addAll(data);
           // 상품을 이미 구매했는지 체크
           verifyPurchases();
-        });
+
+        },
+        // onDone: ()
+        // {
+        //
+        // },
+        onError: (e)
+        {
+          print('purchaseStream error : $e');
+        },);
+
+        // 구매 가능한 상품 목록 조회
+        await fetchUserProducts();
+        // 상품을 이미 구매했는지 체크
+        //verifyPurchases();
+
+        // 과거 구매 사용자 목록 조회
+        await fetchPastPurchases();
       }
       else {
         print('isAvailable fail');
@@ -215,6 +234,8 @@ class InAppPurchaseService extends GetxService
     {
       print('iap init fail : $e');
     }
+
+    //preorderCheck();
   }
 
   @override
@@ -261,14 +282,98 @@ class InAppPurchaseService extends GetxService
 
     callback = null;
     callback = _callback;
-    if (products.any((element) => element.id == _id))
+
+    var shopID = HomeData.to.GetShopID(_id);
+    if (products.any((element) => element.id == shopID))
     {
-      var details = products.firstWhere((element) => element.id == _id);
+      var details = products.firstWhere((element) => element.id == shopID);
       purchaseProduct(details);
     }
     else
     {
+      print('not found shop id : $shopID');
       callback?.call('');
+    }
+  }
+
+
+  List<PreorderItem> pendingItems = <PreorderItem>[];
+  preorderCheck() async
+  {
+    if (kDebugMode) {
+      print('preorder check start');
+    }
+
+    try {
+      //pending list 받기.
+      await HttpProtocolManager.to.Get_PreorderList().then((value) {
+        if (value == null) {
+          return;
+        }
+
+        if (value.data!.items!.isEmpty) {
+          return;
+        }
+
+        pendingItems = value.data!.items!;
+      },);
+
+      print('pendingItems list count : ${pendingItems.length}');
+
+      var item = pendingItems[0];
+
+      //영수증 받아서 서버에 전달.
+      productID = HomeData.to.GetShopID(item.productId);
+      var receipt = verifyPurchases();
+
+      if (kDebugMode) {
+        receipt = productID;
+        print('Debug Test receipt : $receipt');
+      }
+
+      if (receipt.isEmpty) {
+        print('pending id : ${item.id} / product id : ${item
+            .productId} / Shop id : $productID / Not Found receipt !!!!');
+        return;
+      }
+
+      HttpProtocolManager.to.Send_BuyProduct(item.productId, item.id, receipt)
+          .then((buyProductResult)
+      {
+        if (buyProductResult == false) {
+          print('Buy Fail');
+          return;
+        }
+
+        print('Buy success!');
+
+        HttpProtocolManager.to.Get_WalletBalance().then((r1) {
+          if (r1 == null) {
+            print('preorderCheck Get_WalletBalance fail !!!!');
+            return;
+          }
+
+          for (var item in r1.data!.items!) {
+            if (item.userId == UserData.to.userId) {
+              String message = UserData.to.MoneyUpdate(
+                  item.popcorns, item.bonus);
+              if (message.isNotEmpty) {
+                print('Preorder Process OK');
+              }
+              break;
+            }
+          }
+
+          var remainCount = pendingItems.length - 1;
+          if (remainCount > 0) {
+            preorderCheck();
+          }
+        });
+      });
+    }
+    catch(e)
+    {
+      print('preorderCheck catch $e');
     }
   }
 
@@ -276,7 +381,7 @@ class InAppPurchaseService extends GetxService
   {
     var processResult = false;
 
-    print('BuyProcess step1 start');
+    print('BuyProcess step1 start / popcorn count : ${UserData.to.popcornCount.value}');
     var step1 = await HttpProtocolManager.to.Send_Preorder(_pid);
 
     if (step1 == false)

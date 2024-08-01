@@ -40,7 +40,8 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
         var historyData = HistoryData();
         historyData.content1 = HomeData.to.GetPrice(item.productId!); //임시 과거의 값을 알수 없기때문에 서버에서 받아야한다.
         //historyData.content2 = item.description!;
-        historyData.title = item.description!;
+        print('item.description! : ${item.description!}');
+        historyData.title = SetStringArgument(item.description!, [item.credit!]);
         historyData.time = GetReleaseTime(item.createdAt!);
         historyData.iconUrl = HomeData.to.GetShopIcon(item.credit!, false);
         //historyData.episode = 1;

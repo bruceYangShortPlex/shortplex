@@ -235,7 +235,7 @@ class InAppPurchaseService extends GetxService
       print('iap init fail : $e');
     }
 
-    //preorderCheck();
+    preorderCheck();
   }
 
   @override

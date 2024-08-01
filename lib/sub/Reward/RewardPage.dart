@@ -53,6 +53,7 @@ class _RewardPageState extends State<RewardPage> {
   String invitaionCount = '0'; //나를 추천한 / 내가 초대한 친구의 명수.
   bool buttonDisable = false;
   int bonusRate = 10;
+  String titleSchoolImageUrl = '';
 
   void startTimer()
   {
@@ -135,6 +136,8 @@ class _RewardPageState extends State<RewardPage> {
     textFieldFocusNode = FocusNode();
     textFieldFocusNode.addListener(onFocusChange);
 
+    titleSchoolImageUrl = HomeData.to.TitleSchoolImageUrl;
+
     HomeData.to.GetMisstionList();
     getInvitaionInfo();
     super.initState();
@@ -175,6 +178,25 @@ class _RewardPageState extends State<RewardPage> {
         break;
       }
     },);
+
+    HttpProtocolManager.to.Get_TitleSchoolInfo().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        if (HomeData.to.TitleSchoolImageUrl != item.imageUrl)
+        {
+          HomeData.to.TitleSchoolImageUrl = item.imageUrl;
+          setState(() {
+            titleSchoolImageUrl = item.imageUrl;
+          });
+        }
+        break;
+      }
+    });
   }
 
   @override
@@ -567,7 +589,10 @@ Widget mainWidget(BuildContext context)=>
           (
             width: 310,
             height: 209,
-            color: Colors.red,
+            //color: Colors.red,
+            child:
+            titleSchoolImageUrl.isEmpty ? SizedBox() :
+            Image.network(titleSchoolImageUrl),
           ),
           SizedBox(height: 5,),
           Container

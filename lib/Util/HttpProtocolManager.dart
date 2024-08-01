@@ -28,6 +28,7 @@ import '../Network/OAuth_Res.dart';
 import '../Network/Product_Req.dart';
 import '../Network/Product_Res.dart';
 import '../Network/Recommended_Res.dart';
+import '../Network/TitleSchool_Res.dart';
 import '../Network/UserInfo_Req.dart';
 import '../table/UserData.dart';
 
@@ -1660,5 +1661,34 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     return (resString, result);
+  }
+
+  Future<TitleSchoolRes?> Get_TitleSchoolInfo() async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/academy';
+
+      print('Get_TitleSchoolInfo send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_TitleSchoolInfo res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  TitleSchoolRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_TitleSchoolInfo FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_TitleSchoolInfo error : $e');
+    }
+
+    return null;
   }
 }

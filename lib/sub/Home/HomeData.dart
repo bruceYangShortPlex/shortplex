@@ -36,6 +36,8 @@ class HomeData extends GetxController
   get recentList => _recentList;
   get productIcons => _productIcons;
 
+  String TitleSchoolImageUrl = '';
+
   void SetPageList(List<ContentData> _list)
   {
     _pageList = _list;

@@ -268,7 +268,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       if (res.statusCode == 200)
       {
-        var data =  HomeContentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        var data = HomeContentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
         return data;
       }
       else
@@ -279,6 +279,37 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('get home data error : ${e}');
+    }
+
+    return null;
+  }
+
+  Future<EpisodeGroupRes?> Get_HomeContentWatchData(int _page, int _itemsPerPage) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+      var type = HomeDataType.watch.name;
+      var url = 'https://www.quadra-system.com/api/v1/home/$type?page=$_page&itemsPerPage=$_itemsPerPage';
+      var res = await http.get(Uri.parse(url), headers: heads);
+
+      // print('Get_HomeContentWatchData send url = $url');
+      // print('heads = $heads');
+      print('Get_HomeContentWatchData res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data = EpisodeGroupRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_HomeContentWatchData FAILD : ${res.statusCode} send url = $url');
+      }
+    }
+    catch (e)
+    {
+      print('Get_HomeContentWatchData error : ${e}');
     }
 
     return null;

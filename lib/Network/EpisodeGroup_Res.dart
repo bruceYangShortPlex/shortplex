@@ -73,11 +73,11 @@ class EpisodeGroupData {
   int _maxPage = 0;
   List<Episode>? _items;
 
-  num get count => _count;
-  num get total => _total;
-  num get itemsPerPage => _itemsPerPage;
-  num get page => _page;
-  num get maxPage => _maxPage;
+  int get count => _count;
+  int get total => _total;
+  int get itemsPerPage => _itemsPerPage;
+  int get page => _page;
+  int get maxPage => _maxPage;
   List<Episode>? get episode => _items;
 
   Map<String, dynamic> toJson() {

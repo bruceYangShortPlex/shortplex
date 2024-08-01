@@ -4,9 +4,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/sub/ContentInfoPage.dart';
 import 'package:shortplex/sub/Home/HomeData.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
@@ -98,24 +100,33 @@ class _HomePageState extends State<HomePage>
         });
       });
 
-      HttpProtocolManager.to.Get_HomeContentData(HomeDataType.watch, 0, 20).then((value)
+      HttpProtocolManager.to.Get_HomeContentWatchData(0, 20).then((value)
       {
-        watchingContentsDataList.clear();
-        for (var item in value!.data!.items!)
+        if (value == null)
         {
+          print('watch value null return');
+          return;
+        }
+
+        watchingContentsDataList.clear();
+        for (var item in value.data!.episode!)
+        {
+          print('watching episode id ${item.id}');
+
           var data = ContentData
           (
-            id: item.content_id,
-            title: value.data!.title,
-            imagePath: item.posterPortraitImgUrl,
+            id: item.contentId,
+            title: StringTable().Table![100009]!,
+            imagePath: item.thumbnailImgUrlHd,
             cost: 0,
-            releaseAt: item.releaseAt,
-            landScapeImageUrl: item.posterLandscapeImgUrl,
-            rank: item.topten,
+            releaseAt: '',
+            landScapeImageUrl: item.thumbnailImgUrlFhd,
+            rank: false,
           );
           data.isWatching = true;
-          data.watchingEpisode = item.no;
-          data.contentTitle = item.subtitle ?? '';
+          data.watchingEpisode = item.no ;
+          data.contentTitle = item.title ?? '';
+          data.TotalEpisodeCount = value.data!.total;
           watchingContentsDataList.add(data);
         }
         setState(() {
@@ -148,7 +159,12 @@ class _HomePageState extends State<HomePage>
 
       HttpProtocolManager.to.Get_HomeContentData(HomeDataType.activethemes, 0, 100).then((value)
       {
-        for(var themse in value!.data!.items!)
+        if (value == null) {
+          return;
+        }
+
+        themesList.clear();
+        for(var themse in value.data!.items!)
         {
           if (themesList.containsKey(themse.id))
           {
@@ -323,7 +339,8 @@ class _HomePageState extends State<HomePage>
           Padding
           (
             padding: const EdgeInsets.only(top: 80),
-            child: Center
+            child:
+            Center
             (
               child:
               Column
@@ -387,7 +404,7 @@ class _HomePageState extends State<HomePage>
       child:
       Container
       (
-        width: 390,
+        width: MediaQuery.of(context).size.width,
         height: 410,
         //color: Colors.green,
         child:
@@ -407,7 +424,7 @@ class _HomePageState extends State<HomePage>
             viewportFraction: 0.7,
             height: 410,
             autoPlay: true,
-            //aspectRatio: 1.0,
+            //aspectRatio: 9/16,
             initialPage: 0,
             onPageChanged: (index, reason)
             {
@@ -433,10 +450,11 @@ class _HomePageState extends State<HomePage>
         Get.to(()=> ContentInfoPage(), arguments: _data);
         print('pageIndex : $pageIndex');
       },
-      child: Container
+      child:
+      Container
       (
-        width: 260,
-        height: 410,
+        width: 260.w,
+        height: 410.h,
         decoration: ShapeDecoration(
         color: Colors.black,
         shape: RoundedRectangleBorder(
@@ -463,7 +481,7 @@ class _HomePageState extends State<HomePage>
     return
     SizedBox
     (
-      width: 390,
+      width: MediaQuery.of(context).size.width,
       child:
       Column
       (
@@ -472,9 +490,10 @@ class _HomePageState extends State<HomePage>
         [
           Row
           (
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children:
             [
+              SizedBox(width: 10,),
               Text
               (
                 _list[0].title!,
@@ -515,6 +534,7 @@ class _HomePageState extends State<HomePage>
               mainAxisAlignment: MainAxisAlignment.start,
               children:
               [
+                SizedBox(width: 10,),
                 for(var item in _list)
                   contentItem(item),
               ],
@@ -534,7 +554,7 @@ class _HomePageState extends State<HomePage>
     return
     Container
     (
-      width: 390,
+      width: MediaQuery.of(context).size.width,
       child:
       Column
       (
@@ -768,23 +788,44 @@ class _HomePageState extends State<HomePage>
             child:
             SizedBox
             (
-              width: 105,
+              //width: 105,
               child:
               Row
               (
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:
                 [
-                  Padding
+                  Column
                   (
-                    padding: const EdgeInsets.only(left: 6, bottom: 2.1),
-                    child:
-                    Text
-                    (
-                      _data.watchingEpisode != null ? _data.watchingEpisode.toString() : '',
-                      style:
-                      const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                    ),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:
+                    [
+                      Container
+                      (
+                        //color: Colors.red,
+                        width: 70,
+                        padding: const EdgeInsets.only(left: 6, bottom: 2),
+                        child:
+                        Text
+                        (
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          _data.contentTitle!,
+                          style:
+                          const TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),
+                        ),
+                      ),
+                      Padding
+                      (
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Text
+                        (
+                          '${SetTableStringArgument(100033, [_data.watchingEpisode.toString()])}/${SetTableStringArgument(100033, [_data.TotalEpisodeCount.toString()])} ' ,
+                          style:
+                          const TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                        ),
+                      ),
+                    ],
                   ),
                   IconButton
                   (

@@ -1,4 +1,3 @@
-
 class ContentRes
 {
   ContentInfoRes({
@@ -23,85 +22,31 @@ class ContentRes
   }
 }
 
-class ContentResData {
-  ContentResData({
-    required String id,
-    required String title,
-    required String subtitle,
-    required String slug,
-    required String description,
-    required String teaser,
-    required String releaseAt,
-    required String restrainAt,
-    required String previewStartAt,
-    required String genre,
-    required String tag,
-    required String shareLink,
-    required String coverImgUrl,
-    required String thumbnailImgUrl,
-    required String posterLandscapeImgUrl,
-    required String posterPortraitImgUrl,
-    required String stringKey,
-    required String createdAt,
-    required int episodeTotal,
-    required int episodeMaxpage,
-    required int weight,
-    required bool previewYn,
-    required bool featured,
-    required bool topten,
-    required List<Episode> episode,
-    required List<Stat> stat,}){
-    _id = id;
-    _title = title;
-    _subtitle = subtitle;
-    _slug = slug;
-    _description = description;
-    _teaser = teaser;
-    _releaseAt = releaseAt;
-    _restrainAt = restrainAt;
-    _previewYn = previewYn;
-    _previewStartAt = previewStartAt;
-    _genre = genre;
-    _tag = tag;
-    _shareLink = shareLink;
-    _coverImgUrl = coverImgUrl;
-    _thumbnailImgUrl = thumbnailImgUrl;
-    _posterLandscapeImgUrl = posterLandscapeImgUrl;
-    _posterPortraitImgUrl = posterPortraitImgUrl;
-    _stringKey = stringKey;
-    _weight = weight;
-    _featured = featured;
-    _topten = topten;
-    _createdAt = createdAt;
-    _episodeTotal = episodeTotal;
-    _episodeMaxpage = episodeMaxpage;
-    _episode = episode;
-    _stat = stat;
-  }
-
+class ContentResData
+{
   ContentResData.fromJson(dynamic json) {
-    _id = json['id'];
-    _title = json['title'];
-    _subtitle = json['subtitle'];
-    _slug = json['slug'];
+    _id = json['id'] ?? '';
+    _title = json['title'] ?? '';
+    _subtitle = json['subtitle'] ?? '';
+    _slug = json['slug'] ?? '';
     _description = json['description'] ?? '';
-    _teaser = json['teaser'];
-    _releaseAt = json['release_at'];
-    _restrainAt = json['restrain_at'];
+    _teaser = json['teaser'] ?? '';
+    _releaseAt = json['release_at'] ?? '';
+    _restrainAt = json['restrain_at'] ?? '';
     _previewYn = json['preview_yn'] ?? false;
-    _previewStartAt = json['preview_start_at'];
-    _genre = json['genre_cd'];
-    _tag = json['tag'];
-    _shareLink = json['share_link'];
-    _coverImgUrl = json['cover_img_url'];
-    _thumbnailImgUrl = json['thumbnail_img_url'];
-    _posterLandscapeImgUrl = json['poster_landscape_img_url'];
-    _posterPortraitImgUrl = json['poster_portrait_img_url'];
-    _stringKey = json['string_key'];
+    _previewStartAt = json['preview_start_at'] ?? '';
+    _genre = json['genre_cd'] ?? '';
+    _tag = json['tag'] ?? '';
+    _shareLink = json['share_link'] ?? '';
+    _coverImgUrl = json['cover_img_url'] ?? '';
+    _thumbnailImgUrl = json['thumbnail_img_url'] ?? '';
+    _posterLandscapeImgUrl = json['poster_landscape_img_url'] ?? '';
+    _posterPortraitImgUrl = json['poster_portrait_img_url'] ?? '';
+    _stringKey = json['string_key'] ?? '';
     _weight = json['weight'] ?? 0;
     _featured = json['featured'] ?? false;
     _topten = json['topten'] ?? false;
-    _createdAt = json['created_at'];
+    _createdAt = json['created_at'] ?? '';
     _episodeTotal = json['episode_total'] ?? 0;
     _episodeMaxpage = json['episode_maxpage'] ?? 0;
     if (json['episode'] != null) {
@@ -117,55 +62,55 @@ class ContentResData {
       });
     }
   }
-  String? _id;
-  String? _title;
-  String? _subtitle;
-  String? _slug;
-  String? _description;
-  String? _teaser;
-  String? _releaseAt;
-  String? _restrainAt;
+  String _id = '';
+  String _title = '';
+  String _subtitle = '';
+  String _slug = '';
+  String _description = '';
+  String _teaser = '';
+  String _releaseAt = '';
+  String _restrainAt = '';
   bool _previewYn = false;
-  String? _previewStartAt;
-  String? _genre;
-  String? _tag;
-  String? _shareLink;
-  String? _coverImgUrl;
-  String? _thumbnailImgUrl;
-  String? _posterLandscapeImgUrl;
-  String? _posterPortraitImgUrl;
-  String? _stringKey;
+  String _previewStartAt = '';
+  String _genre = '';
+  String _tag = '';
+  String _shareLink = '';
+  String _coverImgUrl = '';
+  String _thumbnailImgUrl = '';
+  String _posterLandscapeImgUrl = '';
+  String _posterPortraitImgUrl = '';
+  String _stringKey = '';
   int _weight = 0;
   bool _featured = false;
   bool _topten = false;
-  String? _createdAt;
+  String _createdAt  = '';
   int _episodeTotal = 0;
   int _episodeMaxpage = 0;
   List<Episode>? _episode;
   List<Stat>? _stat;
 
-  String? get id => _id;
-  String? get title => _title;
-  String? get subtitle => _subtitle;
-  String? get slug => _slug;
-  String? get description => _description;
-  String? get teaser => _teaser;
-  String? get releaseAt => _releaseAt;
-  String? get restrainAt => _restrainAt;
+  String get id => _id;
+  String get title => _title;
+  String get subtitle => _subtitle;
+  String get slug => _slug;
+  String get description => _description;
+  String get teaser => _teaser;
+  String get releaseAt => _releaseAt;
+  String get restrainAt => _restrainAt;
   bool get previewYn => _previewYn;
-  String? get previewStartAt => _previewStartAt;
-  String? get genre => _genre;
-  String? get tag => _tag;
-  String? get shareLink => _shareLink;
-  String? get coverImgUrl => _coverImgUrl;
-  String? get thumbnailImgUrl => _thumbnailImgUrl;
-  String? get posterLandscapeImgUrl => _posterLandscapeImgUrl;
-  String? get posterPortraitImgUrl => _posterPortraitImgUrl;
-  String? get stringKey => _stringKey;
+  String get previewStartAt => _previewStartAt;
+  String get genre => _genre;
+  String get tag => _tag;
+  String get shareLink => _shareLink;
+  String get coverImgUrl => _coverImgUrl;
+  String get thumbnailImgUrl => _thumbnailImgUrl;
+  String get posterLandscapeImgUrl => _posterLandscapeImgUrl;
+  String get posterPortraitImgUrl => _posterPortraitImgUrl;
+  String get stringKey => _stringKey;
   int get weight => _weight;
   bool get featured => _featured;
   bool get topten => _topten;
-  String? get createdAt => _createdAt;
+  String get createdAt => _createdAt;
   int get episodeTotal => _episodeTotal;
   int get episodeMaxpage => _episodeMaxpage;
   List<Episode>? get episode => _episode;
@@ -237,43 +182,43 @@ class Stat {
   }
 
   Stat.fromJson(dynamic json) {
-    _platform = json['platform'];
-    _typeCd = json['type_cd'];
-    _key = json['key'];
-    _host = json['host'];
-    _path = json['path'];
-    _href = json['href'];
-    _slug = json['slug'];
-    _action = json['action'];
-    _cnt = json['cnt'];
+    _platform = json['platform'] ?? '';
+    _typeCd = json['type_cd'] ?? '';
+    _key = json['key'] ?? '';
+    _host = json['host'] ?? '';
+    _path = json['path'] ?? '';
+    _href = json['href'] ?? '';
+    _slug = json['slug'] ?? '';
+    _action = json['action'] ?? '';
+    _cnt = json['cnt'] ?? '';
     _amt = json['amt'] != null ? int.parse(json['amt']) : 0;
     _users = json['users'] ?? '';
     user_id = json['user_id'] ?? '';
   }
-  String? _platform;
-  String? _typeCd;
-  String? _key;
-  String? _host;
-  String? _path;
-  String? _href;
-  String? _slug;
-  String? _action;
-  String? _cnt;
+  String _platform = '';
+  String _typeCd = '';
+  String _key = '';
+  String _host = '';
+  String _path = '';
+  String _href = '';
+  String _slug = '';
+  String _action = '';
+  String _cnt = '';
   int _amt = 0;
-  String? _users;
-  String? user_id;
+  String _users = '';
+  String user_id = '';
 
-  String? get platform => _platform;
-  String? get typeCd => _typeCd;
-  String? get key => _key;
-  String? get host => _host;
-  String? get path => _path;
-  String? get href => _href;
-  String? get slug => _slug;
-  String? get action => _action;
-  String? get cnt => _cnt;
+  String get platform => _platform;
+  String get typeCd => _typeCd;
+  String get key => _key;
+  String get host => _host;
+  String get path => _path;
+  String get href => _href;
+  String get slug => _slug;
+  String get action => _action;
+  String get cnt => _cnt;
   int get amt => _amt;
-  String? get users => _users;
+  String get users => _users;
 
   Map<String, dynamic> toJson()
   {
@@ -330,62 +275,70 @@ class Episode {
   }
 
   Episode.fromJson(dynamic json) {
-    _id = json['id'];
+    _id = json['id'] ?? '';
     _no = json['no'] ?? 0;
-    _title = json['title'];
-    _episodeFhd = json['episode_fhd'];
-    _episodeHd = json['episode_hd'];
-    _episodeSd = json['episode_sd'];
-    _altImgUrlFhd = json['alt_img_url_fhd'];
-    _altImgUrlHd = json['alt_img_url_hd'];
-    _altImgUrlSd = json['alt_img_url_sd'];
-    _thumbnailImgUrlFhd = json['thumbnail_img_url_fhd'];
-    _thumbnailImgUrlHd = json['thumbnail_img_url_hd'];
-    _thumbnailImgUrlSd = json['thumbnail_img_url_sd'];
+    _title = json['title'] ?? '';
+    _episodeFhd = json['episode_fhd'] ?? '';
+    _episodeHd = json['episode_hd'] ?? '';
+    _episodeSd = json['episode_sd'] ?? '';
+    _altImgUrlFhd = json['alt_img_url_fhd'] ?? '';
+    _altImgUrlHd = json['alt_img_url_hd'] ?? '';
+    _altImgUrlSd = json['alt_img_url_sd'] ?? '';
+    _thumbnailImgUrlFhd = json['thumbnail_img_url_fhd'] ?? '';
+    _thumbnailImgUrlHd = json['thumbnail_img_url_hd'] ?? '';
+    _thumbnailImgUrlSd = json['thumbnail_img_url_sd'] ?? '';
     _priceAmt = json['price_amt'] ?? 0;
-    _shareLink = json['share_link'];
-    _contentId = json['content_id'];
-    _createdAt = json['created_at'];
+    _shareLink = json['share_link'] ?? '';
+    _contentId = json['content_id'] ?? '';
+    _createdAt = json['created_at'] ?? '';
+    owned = json['owned'] ?? false;
   }
-  String? _id;
+  String _id = '';
   int _no = 0;
-  String? _title;
-  String? _episodeFhd;
-  String? _episodeHd;
-  String? _episodeSd;
-  String? _altImgUrlFhd;
-  String? _altImgUrlHd;
-  String? _altImgUrlSd;
-  String? _thumbnailImgUrlFhd;
-  String? _thumbnailImgUrlHd;
-  String? _thumbnailImgUrlSd;
-  String? _priceAmt;
-  String? _shareLink;
-  String? _contentId;
-  String? _createdAt;
+  String _title = '';
+  String _episodeFhd = '';
+  String _episodeHd = '';
+  String _episodeSd = '';
+  String _altImgUrlFhd = '';
+  String _altImgUrlHd = '';
+  String _altImgUrlSd = '';
+  String _thumbnailImgUrlFhd = '';
+  String _thumbnailImgUrlHd = '';
+  String _thumbnailImgUrlSd = '';
+  String _priceAmt = '0';
+  String _shareLink = '';
+  String _contentId = '';
+  String _createdAt = '';
+  bool owned = false;
 
-  bool isLock = false;
   int get cost
   {
-   return int.parse(_priceAmt!);
+   return int.parse(_priceAmt);
   }
 
-  String? get id => _id;
+  String get id => _id;
   int get no => _no;
-  String? get title => _title;
-  String? get episodeFhd => _episodeFhd;
-  String? get episodeHd => _episodeHd;
-  String? get episodeSd => _episodeSd;
-  String? get altImgUrlFhd => _altImgUrlFhd;
-  String? get altImgUrlHd => _altImgUrlHd;
-  String? get altImgUrlSd => _altImgUrlSd;
-  String? get thumbnailImgUrlFhd => _thumbnailImgUrlFhd;
-  String? get thumbnailImgUrlHd => _thumbnailImgUrlHd;
-  String? get thumbnailImgUrlSd => _thumbnailImgUrlSd;
-  String? get priceAmt => _priceAmt;
-  String? get shareLink => _shareLink;
-  String? get contentId => _contentId;
-  String? get createdAt => _createdAt;
+  String get title => _title;
+  String get episodeFhd => _episodeFhd;
+  String get episodeHd => _episodeHd;
+  String get episodeSd => _episodeSd;
+  String get altImgUrlFhd => _altImgUrlFhd;
+  String get altImgUrlHd => _altImgUrlHd;
+  String get altImgUrlSd => _altImgUrlSd;
+  String get thumbnailImgUrlFhd => _thumbnailImgUrlFhd;
+  String get thumbnailImgUrlHd => _thumbnailImgUrlHd;
+  String get thumbnailImgUrlSd => _thumbnailImgUrlSd;
+  String get priceAmt => _priceAmt;
+  String get shareLink => _shareLink;
+  String get contentId => _contentId;
+  String get createdAt => _createdAt;
+
+  bool get isLock
+  {
+    //가격이있는데 구매한적이 없다.
+    var result = cost != 0 && owned == false;
+    return result;
+  }
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

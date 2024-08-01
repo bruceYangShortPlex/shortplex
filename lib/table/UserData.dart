@@ -227,6 +227,7 @@ class ContentData
   String? genre;
   bool isAlarmCheck = false;
   String? shareUrl = '';
+  int TotalEpisodeCount = 0;
 
   ContentData
   (

@@ -812,7 +812,7 @@ class _HomePageState extends State<HomePage>
                           overflow: TextOverflow.ellipsis,
                           _data.contentTitle!,
                           style:
-                          const TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),
+                          const TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                         ),
                       ),
                       Padding

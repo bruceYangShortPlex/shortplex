@@ -578,7 +578,7 @@ Widget mainWidget(BuildContext context)=>
             alignment: Alignment.center,
             child:
             Text
-              (
+            (
               StringTable().Table![300004]!,
               style:
               TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),

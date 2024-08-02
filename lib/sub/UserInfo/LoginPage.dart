@@ -42,22 +42,30 @@ class _LoginPageState extends State<LoginPage> {
                 },
             ),
           ),
-          child: Align(
+          child:
+          Align
+          (
             alignment: Alignment.topCenter,
-              child : Stack(  children:
+            child :
+            Stack
+            (
+              children:
               [
-                Container( width: 390.w,
-                height: 844.h,
-                decoration: BoxDecoration(
+                Container
+                (
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment(-0.00, 1.00),
                     end: Alignment(0, -1),
                     colors: [Colors.black, Colors.black54],
                   ),
                 ),),
-                Container(
-                    width: 390.w,
-                    height: 844.h,
+                Container
+                (
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
                     decoration:
                     BoxDecoration
                     (
@@ -70,7 +78,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Container
                 (
-                    child: Align(alignment: Alignment.center,
+                    child:
+                    Align
+                    (
+                      alignment: Alignment.center,
                       child:
                       Column
                       (
@@ -79,11 +90,46 @@ class _LoginPageState extends State<LoginPage> {
                         children:
                         [
                           LogoImage(),
-                          Text(StringTable().Table![400062]!,style: TextStyle(color: Colors.white, fontSize: 16),),
-                          Text(StringTable().Table![400063]!,style: TextStyle(color: Colors.white, fontSize: 16),),
+                          Text
+                          (
+                            StringTable().Table![400062]!,
+                            style:
+                            TextStyle(fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'NotoSans',
+                              fontWeight: FontWeight.bold,),
+                          ),
+                          Text
+                            (
+                            StringTable().Table![400063]!,
+                            style:
+                            TextStyle(fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'NotoSans',
+                              fontWeight: FontWeight.bold,),
+                          ),
                           SizedBox(height: 50,),
                           loginButtons(),
                         ],
+                      ),
+                    ),
+                  ),
+                  Positioned
+                  (
+                    width: MediaQuery.of(context).size.width,
+                    bottom: 20,
+                    child:
+                    Padding
+                    (
+                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      child: Text
+                      (
+                        StringTable().Table![400069]!,
+                        style:
+                        TextStyle(fontSize: 11,
+                          color: Colors.grey,
+                          fontFamily: 'NotoSans',
+                          fontWeight: FontWeight.w500,),
                       ),
                     ),
                   ),

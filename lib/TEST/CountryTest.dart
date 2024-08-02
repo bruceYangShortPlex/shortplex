@@ -170,11 +170,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   textStyle: const TextStyle(
                       color: Colors.black,
                       fontSize: 16,
-                      fontWeight: FontWeight.w400),
+                      fontWeight: FontWeight.w500),
                   hintStyle: TextStyle(
                       color: Colors.black.withOpacity(0.5),
                       fontSize: 16,
-                      fontWeight: FontWeight.w400),
+                      fontWeight: FontWeight.w500),
                 ),
               ),
             ],

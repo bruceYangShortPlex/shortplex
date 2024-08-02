@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shortplex/sub/Reward/TitleSchoolCommentPage.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolHistoryPage.dart';
 import 'package:shortplex/table/UserData.dart';
 
@@ -15,7 +16,6 @@ import '../ContentInfoPage.dart';
 import '../Home/HomeData.dart';
 import '../UserInfo/LoginPage.dart';
 
-
 // void main() async
 // {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +23,6 @@ import '../UserInfo/LoginPage.dart';
 //   Get.lazyPut(() => UserData());
 //   runApp(const TitleSchoolPage());
 // }
-
-enum TitleSchoolPageType
-{
-  INFO,
-  COMMENT,
-}
 
 class TitleSchoolPage extends StatefulWidget {
   const TitleSchoolPage({super.key});
@@ -47,22 +41,12 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   String titleCommenter = '홍길동';
   String titleComment = '아버지를 아버지라 부르지 못하고 형을 형이라 부르지 못하는김에 좀 털자';
   int titleCommentReplyCount = 2000;
-  TitleSchoolPageType pageType = TitleSchoolPageType.INFO;
   String titleSchoolImageUrl = '';
-
-  //comment 관련
-  var rankedCommentList = <EpisodeCommentData>[];
-  var commentList = <EpisodeCommentData>[];
-  var scrollController = ScrollController();
-  var totalCommentCount = 0;
-  CommentSortType commentSortType = CommentSortType.created_at;
-
-  TextEditingController textEditingController = TextEditingController();
-  FocusNode textFocusNode = FocusNode();
 
   void startTimer()
   {
-    if (endTimeDifference == Duration.zero) {
+    if (endTimeDifference == Duration.zero)
+    {
       return;
     }
 
@@ -88,53 +72,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         }
       },
     );
-  }
-
-  void onEndOfPage() async
-  {
-    if (pageType != TitleSchoolPageType.COMMENT)
-      return;
-
-    try
-    {
-      //여기서 리스트 요청하고 만들고 해야한다.
-      // Replace with your method to fetch data from the server.
-      final newItems = await Future.delayed(Duration(seconds: 1),
-              ()
-          {
-
-            for(int i = 0; i < 10; ++i)
-            {
-              var commentData = EpisodeCommentData
-              (
-                name: '황후마마가 돌아왔다.',
-                comment: '이건 재미있다. 무조건 된다고 생각한다.',
-                date: '24.09.06',
-                episodeNumber: '',
-                iconUrl: '',
-                ID: i.toString(),
-                isLikeCheck: i % 2 == 0,
-                likeCount: '12',
-                replyCount: '3',
-                isDelete: i == 0,
-                commentType: CommentType.NORMAL, parentID: '',
-                isEdit: false,
-                userID: '',
-              );
-              commentList.add(commentData);
-            }
-            setState(()
-            {
-
-            });
-
-          }
-      );
-    }
-    catch (e)
-    {
-      print(e);
-    }
   }
 
   initDayData()
@@ -169,92 +106,14 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
     titleSchoolImageUrl = HomeData.to.TitleSchoolImageUrl;
     initDayData();
 
-    // FocusNode에 리스너 추가
-    textFocusNode.addListener(()
-    {
-      if (textFocusNode.hasFocus)
-      {
-        if (UserData.to.isLogin.value == false)
-        {
-          textFocusNode.unfocus();
-
-          showDialogTwoButton(StringTable().Table![600018]!, '',
-          ()
-          {
-            Get.to(() => LoginPage());
-          });
-        }
-      }
-      else
-      {
-        // CupertinoTextField가 포커스를 잃었을 때 실행할 코드
-        textEditingController.text = '';
-      }
-    });
-
-    scrollController.addListener(() {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
-        onEndOfPage();
-      }
-    });
-
     startTimer();
 
     super.initState();
-
-
-    for(int i = 0; i < 10; ++i)
-    {
-      var commentData = EpisodeCommentData
-        (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isDelete: i == 0,
-        commentType: CommentType.TOP10,
-        parentID: '',
-        isEdit: false,
-        userID: '',
-      );
-      rankedCommentList.add(commentData);
-    }
-
-    for(int i = 0; i < 6; ++i)
-    {
-      var commentData = EpisodeCommentData
-        (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isDelete: i == 0,
-        commentType: CommentType.NORMAL,
-        parentID: '',
-        isEdit: false,
-        userID: '',
-      );
-      commentList.add(commentData);
-    }
   }
 
   @override
   void dispose() {
     schoolTimer.cancel();
-    textFocusNode.dispose();
-    textEditingController.dispose();
-    scrollController.dispose();
     super.dispose();
   }
 
@@ -326,16 +185,15 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
             ),
             child:
             Stack
-              (
+            (
               children:
               [
                 SingleChildScrollView
                 (
-                  physics: pageType == TitleSchoolPageType.INFO ? BouncingScrollPhysics() : NeverScrollableScrollPhysics(),
-                  controller: scrollController,
+                  //controller: scrollController,
                   child:
                   Container
-                    (
+                  (
                       width: MediaQuery
                           .of(context)
                           .size
@@ -344,15 +202,15 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                       //color: Colors.blue,
                       child:
                       Column
-                        (
+                      (
                         children:
                         [
                           Padding
-                            (
+                          (
                             padding: const EdgeInsets.only(left: 35, top: 60),
                             child:
                             Container
-                              (
+                            (
                               width: 390,
                               alignment: Alignment.centerLeft,
                               child:
@@ -375,11 +233,11 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                             //color: Colors.blue,
                             child:
                             Stack
-                              (
+                            (
                               children:
                               [
                                 Align
-                                  (
+                                (
                                   alignment: Alignment.topRight,
                                   child:
                                   Padding
@@ -459,8 +317,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                             ),
                           ),
                           const SizedBox(height: 30,),
-                          pageType == TitleSchoolPageType.INFO ?
-                          info() : titleSchoolCommnet(),
+                          info(),
                         ],
                       )
                   ),
@@ -483,14 +340,10 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
           (
             onTap: ()
             {
-              pageType = TitleSchoolPageType.COMMENT;
-              scrollController.jumpTo(0);
-              setState(() {
-
-              });
+              Get.to(() => const TitleSchoolCommentPage());
             },
             child: Container
-              (
+            (
               width: 350,
               height: 60,
               decoration: ShapeDecoration(
@@ -787,18 +640,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   Widget bottomCommentButton(BuildContext context)
   {
     return
-    pageType == TitleSchoolPageType.COMMENT ?
-    Obx(()
-    {
-      return
-      VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
-      !UserData.to.isLogin.value,
-      0, ()
-      {
-
-      },);
-    })
-    :
     Align
     (
       alignment: Alignment.bottomCenter,
@@ -807,11 +648,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
       (
         onTap: ()
         {
-          pageType = TitleSchoolPageType.COMMENT;
-          scrollController.jumpTo(0);
-          setState(() {
-
-          });
+          Get.to(() => const TitleSchoolCommentPage());
         },
         child:
         Container
@@ -857,252 +694,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
           ),
         ),
       ),
-    );
-  }
-
-  Widget titleSchoolCommnet()
-  {
-    return
-    Container
-    (
-      height: 400,
-      child:
-        Column
-        (
-          children:
-          [
-            SizedBox
-              (
-              width: 390,
-              child:
-              Row
-                (
-                children:
-                [
-                  Expanded
-                    (
-                    child:
-                    Container
-                      (
-                      padding: EdgeInsets.only(left: 30, bottom: 1),
-                      child:
-                      Text
-                        (
-                        '${StringTable().Table![100026]!} (${totalCommentCount})',
-                        style:
-                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                      ),
-                    ),
-                  ),
-                  GestureDetector
-                    (
-                    onTap: ()
-                    {
-                      setState(()
-                      {
-                        commentSortType = CommentSortType.likes;
-                      });
-                    },
-                    child: Container
-                      (
-                      width: 73,
-                      height: 26,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFF1E1E1E),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.likes ? const Color(0xFF00FFBF) : const Color(0xFF878787)),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.only(bottom: 1),
-                      child:
-                      Text
-                        (
-                        StringTable().Table![100035]!,
-                        style:
-                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.likes ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10,),
-                  GestureDetector
-                    (
-                    onTap: ()
-                    {
-                      setState(()
-                      {
-                        commentSortType = CommentSortType.created_at;
-                      });
-                    },
-                    child: Container
-                      (
-                      width: 73,
-                      height: 26,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFF1E1E1E),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 1.50, color: commentSortType == CommentSortType.created_at ? Color(0xFF00FFBF) : Color(0xFF878787)),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.only(bottom: 1),
-                      child:
-                      Text
-                        (
-                        StringTable().Table![100036]!,
-                        style:
-                        TextStyle(fontSize: 11, color: commentSortType == CommentSortType.created_at ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10,),
-                ],
-              ),
-            ),
-            SizedBox(height: 10,),
-            Expanded
-            (
-              child:
-              SingleChildScrollView
-              (
-                child:
-                Column
-                  (
-                  children:
-                  [
-                    const SizedBox(height: 10,),
-                    Stack
-                      (
-                      alignment: Alignment.topCenter,
-                      children:
-                      [
-                        Container
-                          (
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.only(top: 20),
-                            child:
-                            Image.asset('assets/images/Reward/reward_Top10_BG.png',width: 390, height: 1024,)
-                        ),
-                        Container
-                          (
-                          height: 300,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black, Colors.transparent],
-                            ),
-                          ),
-                        ),
-                        Padding
-                          (
-                          padding: EdgeInsets.only(top: 744),
-                          child:
-                          Container
-                            (
-                            height: 300,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                                colors: [Colors.black, Colors.transparent],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Column
-                          (
-                          children:
-                          [
-                            Image.asset('assets/images/Reward/reward_Top10_text.png'),
-                            const SizedBox(height: 20,),
-                            for(var data in rankedCommentList)
-                              CommentWidget
-                                (
-                                data,
-                                false,
-                                    (id)
-                                {
-                                  //TODO : 좋아요 버튼 처리
-                                  print(id);
-                                },
-                                    (id)
-                                {
-                                  //TODO : 댓글의 답글 열기 버튼 처리
-              
-                                },
-                                    (id)
-                                {
-                                  //TODO : 수정하기 버튼 처리
-              
-                                },
-                                    (id)
-                                {
-                                  //TODO : 삭제 버튼 처리
-                                },
-                              ),
-                          ],
-                        )
-              
-                      ],
-                    ),
-                    const SizedBox(height: 40,),
-                    Stack
-                      (
-                      alignment: Alignment.center,
-                      children:
-                      [
-                        Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
-                        Container
-                          (
-                          color: Colors.black,
-                          padding: EdgeInsets.only(bottom: 3, left: 10, right: 10),
-                          child:
-                          Text
-                            (
-                            textAlign: TextAlign.center,
-                            StringTable().Table![300038]!,
-                            style:
-                            TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30,),
-                    for(int i = 0; i < commentList.length; ++i)
-                      CommentWidget
-                        (
-                        commentList[i],
-                        false,
-                            (id)
-                        {
-                          //TODO : 좋아요 버튼 처리
-                          print(id);
-                        },
-                            (id)
-                        {
-                          //TODO : 댓글의 답글 열기 버튼 처리
-              
-                        },
-                            (id)
-                        {
-                          //TODO : 수정하기 버튼 처리
-              
-                        },
-                            (id)
-                        {
-                          //TODO : 삭제 버튼 처리
-                        },
-                      ),
-                    const SizedBox(height: 40,),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        )
     );
   }
 

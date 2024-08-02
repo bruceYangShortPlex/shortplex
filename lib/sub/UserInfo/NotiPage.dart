@@ -154,7 +154,7 @@ Widget mainWidget(BuildContext context)=>
                     (
                       StringTable().Table![listNoti[0].DescriptionStringID]!,
                       style:
-                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w400,),
+                      TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                     ),
                   ),
                   SizedBox(height: 60,),

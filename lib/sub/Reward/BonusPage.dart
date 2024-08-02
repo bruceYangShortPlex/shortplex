@@ -46,6 +46,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   late final GifController controller1;
   PopcornAnimationState animationState = PopcornAnimationState.START;
   int playCount = 0;
+  int remainCount = 0;
   late Timer eventTimer;
   DateTime? endTime;
   Duration? difference;
@@ -98,8 +99,23 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
       for(var item in value.data!.items!)
       {
-
+        if (item.bonus == 0)
+        {
+          ++playCount;
+        }
+        else
+        {
+          ++stackCount;
+          if(stackCount >= Event2table().tableData.length)
+          {
+            stackCount = Event2table().tableData.length -1;
+          }
+        }
       }
+
+      setState(() {
+        remainCount = Event2table().tableData.length - playCount;
+      });
     },);
   }
 
@@ -121,7 +137,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     );
 
     super.initState();
-
+    getInfo();
     startTimer();
     createBonusInfoScroll();
 
@@ -745,15 +761,15 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                       [
                         Text
                         (
-                          '남은 횟수',
+                          StringTable().Table![800005]!,
                           style:
-                          TextStyle(fontSize: 11, color: playCount > 0 ? Color(0xFF00FFBF) : Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          TextStyle(fontSize: 11, color: remainCount > 0 ? Color(0xFF00FFBF) : Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                         Text
                         (
-                          '$playCount',
+                          '$remainCount',
                           style:
-                          TextStyle(fontSize: 25, color: playCount > 0 ? Color(0xFF00FFBF) : Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                          TextStyle(fontSize: 25, color: remainCount > 0 ? Color(0xFF00FFBF) : Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                         ),
                       ],
                     ),
@@ -1253,35 +1269,35 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
     if (_result == 0)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate1), tableData.chance1);
+      return (BonusCalculator(tableData.condition, tableData.rate1), tableData.chance1.toInt());
     }
     if (_result == 1)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate2), tableData.chance2);
+      return (BonusCalculator(tableData.condition, tableData.rate2), tableData.chance2.toInt());
     }
     if (_result == 2)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate3), tableData.chance3);
+      return (BonusCalculator(tableData.condition, tableData.rate3), tableData.chance3.toInt());
     }
     if (_result == 3)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate4), tableData.chance4);
+      return (BonusCalculator(tableData.condition, tableData.rate4), tableData.chance4.toInt());
     }
     if (_result == 4)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate5), tableData.chance5);
+      return (BonusCalculator(tableData.condition, tableData.rate5), tableData.chance5.toInt());
     }
     if (_result == 5)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate6), tableData.chance6);
+      return (BonusCalculator(tableData.condition, tableData.rate6), tableData.chance6.toInt());
     }
     if (_result == 6)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate7), tableData.chance7);
+      return (BonusCalculator(tableData.condition, tableData.rate7), tableData.chance7.toInt());
     }
     if (_result == 7)
     {
-      return (BonusCalculator(tableData.condition, tableData.rate8), tableData.chance8);
+      return (BonusCalculator(tableData.condition, tableData.rate8), tableData.chance8.toInt());
     }
 
     return (0,0);

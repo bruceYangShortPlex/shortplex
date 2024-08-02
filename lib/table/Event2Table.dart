@@ -19,7 +19,7 @@ class Event2table
 
   //Map<int?, String>? Table = null;
   static List<Event2TableData> tableDataList = <Event2TableData>[];
-  get tableData => tableDataList;
+  List<Event2TableData> get tableData => tableDataList;
 
   InitTable() async
   {

@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage>
         watchingContentsDataList.clear();
         for (var item in value.data!.episode!)
         {
-          print('watching episode id ${item.id}');
+          //print('watching episode id ${item.id}');
 
           var data = ContentData
           (
@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage>
             imagePath: item.thumbnailImgUrlHd,
             cost: 0,
             releaseAt: '',
-            landScapeImageUrl: item.thumbnailImgUrlFhd,
+            landScapeImageUrl: '',
             rank: false,
           );
           data.isWatching = true;

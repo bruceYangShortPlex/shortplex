@@ -74,6 +74,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
 
         contentRes = value;
         contentData!.title = contentRes!.data!.title;
+        contentData!.landScapeImageUrl = contentRes!.data!.posterLandscapeImgUrl;
         contentData?.shareUrl = contentRes!.data!.shareLink;
         mapEpisodeData[0] = contentRes!.data!.episode!;
         contentEpisodes.addAll(contentRes!.data!.episode!);

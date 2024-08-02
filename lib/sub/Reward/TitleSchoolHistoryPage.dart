@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../Util/HttpProtocolManager.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../ContentInfoPage.dart';
@@ -25,10 +26,36 @@ class TitleSchoolHistoryPage extends StatefulWidget {
 class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
 {
   var recordCommentList = <EpisodeCommentData>[];
-  DateTime? pickedDate = DateTime.now();
+  DateTime pickedDate = DateTime.now();
+  String titleSchoolImageUrl = '';
+
+  initDayData(DateTime _date)
+  {
+    var sendDate = DateFormat('yyyy-MM-dd').format(_date);
+    HttpProtocolManager.to.Get_TitleSchoolHistory(sendDate).then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        if (item.imageUrl.isNotEmpty)
+        {
+          setState(() {
+            titleSchoolImageUrl = item.imageUrl;
+          });
+          break;
+        }
+      }
+    });
+  }
 
   @override
-  void initState() {
+  void initState()
+  {
+    initDayData(pickedDate);
+
     super.initState();
 
     for(int i = 0; i < 3; ++i)
@@ -70,12 +97,12 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
             backgroundColor: Colors.transparent,
             leading:
             Row
-              (
+            (
               mainAxisAlignment: MainAxisAlignment.start,
               children:
               [
                 Container
-                  (
+                (
                   width: MediaQuery.of(context).size.width * 0.3,
                   height: 50,
                   //color: Colors.blue,
@@ -132,7 +159,10 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
                     (
                       width: 390,
                       height: 260,
-                      color: Colors.grey,
+                      //color: Colors.grey,
+                      child:
+                      titleSchoolImageUrl.isEmpty ? SizedBox() :
+                      Image.network(titleSchoolImageUrl),
                     ),
                     SizedBox(height: 20,),
                     titleSchoolRecord()
@@ -160,18 +190,24 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
           padding: EdgeInsets.only(bottom: 1),
           color: Colors.white,
           iconSize: 20,
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,), onPressed: ()
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white,),
+          onPressed: ()
           {
-            pickedDate = pickedDate?.subtract(Duration(days: 1));
-            setState(() {
+            if (HttpProtocolManager.to.connecting) {
+              return;
+            }
 
+            setState(() {
+              pickedDate = pickedDate.subtract(Duration(days: 1));
             });
+
+            initDayData(pickedDate);
           },
         ),
         SizedBox(width: 20,),
         Text
         (
-          DateFormat('yy.MM.dd').format(pickedDate!),
+          DateFormat('yy.MM.dd').format(pickedDate),
           style:
           TextStyle(fontSize: 15, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
         ),
@@ -184,6 +220,10 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
           icon: const Icon(CupertinoIcons.calendar, color: Colors.white,),
           onPressed: () async
           {
+            if(HttpProtocolManager.to.connecting) {
+              return;
+            }
+
             var selectDate = await showDatePicker(
               context: context,
               initialDate: DateTime.now(),
@@ -196,6 +236,8 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
               setState(() {
                 pickedDate = selectDate;
               });
+
+              initDayData(pickedDate);
             }
           },
         ),
@@ -208,10 +250,13 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
           iconSize: 20,
           icon: const Icon(Icons.arrow_forward_ios, color: Colors.white,), onPressed: ()
           {
-            var result = pickedDate?.add(Duration(days: 1));
-            if (result == null) {
+            if (HttpProtocolManager.to.connecting)
+            {
               return;
             }
+
+            var result = pickedDate.add(Duration(days: 1));
+
             var today = DateTime.now();
 
             if (result.isAfter(today))
@@ -222,6 +267,8 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
             setState(() {
               pickedDate = result;
             });
+
+            initDayData(pickedDate);
           },
         ),
       ],

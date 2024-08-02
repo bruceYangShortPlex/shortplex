@@ -121,7 +121,6 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       }
     },);
 
-
     tweenController.addListener(()
     {
       if (prevState1 == AnimationStatus.reverse && tweenController.status == AnimationStatus.dismissed)
@@ -561,12 +560,12 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
             ),
             child:
             Padding
-              (
-              padding: EdgeInsets.only(top: 4.h, left: 8, right: 8, bottom: 32.h),
+            (
+              padding: const EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 32),
               child:
               Text
-                (
-                textAlign: TextAlign.center,
+              (
+                //textAlign: TextAlign.center,
                 endTime != null ? SetTableStringArgument(800007, [SubstringDuration(difference!).$1,SubstringDuration(difference!).$2]) : '',
                 style:
                 TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),

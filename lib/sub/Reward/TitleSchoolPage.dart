@@ -8,19 +8,21 @@ import 'package:intl/intl.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolHistoryPage.dart';
 import 'package:shortplex/table/UserData.dart';
 
+import '../../Util/HttpProtocolManager.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../ContentInfoPage.dart';
+import '../Home/HomeData.dart';
 import '../UserInfo/LoginPage.dart';
 
 
-void main() async
-{
-  WidgetsFlutterBinding.ensureInitialized();
-  await StringTable().InitTable();
-  Get.lazyPut(() => UserData());
-  runApp(const TitleSchoolPage());
-}
+// void main() async
+// {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await StringTable().InitTable();
+//   Get.lazyPut(() => UserData());
+//   runApp(const TitleSchoolPage());
+// }
 
 enum TitleSchoolPageType
 {
@@ -46,6 +48,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   String titleComment = '아버지를 아버지라 부르지 못하고 형을 형이라 부르지 못하는김에 좀 털자';
   int titleCommentReplyCount = 2000;
   TitleSchoolPageType pageType = TitleSchoolPageType.INFO;
+  String titleSchoolImageUrl = '';
 
   //comment 관련
   var rankedCommentList = <EpisodeCommentData>[];
@@ -54,12 +57,15 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.created_at;
 
-
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
 
   void startTimer()
   {
+    if (endTimeDifference == Duration.zero) {
+      return;
+    }
+
     schoolTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer)
     {
         if (mounted)
@@ -69,6 +75,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
           {
             timer.cancel();
             endTimeDifference = Duration.zero;
+            initDayData();
           }
           setState(()
           {
@@ -130,12 +137,37 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
     }
   }
 
+  initDayData()
+  {
+    var now = DateTime.now();
+    endTime = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
+    endTimeDifference = endTime!.difference(DateTime.now());
+
+    HttpProtocolManager.to.Get_TitleSchoolInfo().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        if (HomeData.to.TitleSchoolImageUrl != item.imageUrl)
+        {
+          HomeData.to.TitleSchoolImageUrl = item.imageUrl;
+          setState(() {
+            titleSchoolImageUrl = item.imageUrl;
+          });
+        }
+        break;
+      }
+    });
+  }
+
   @override
   void initState()
   {
-    super.initState();
-    endTime = DateTime.now().add(Duration(minutes: 3));
-    endTimeDifference = endTime!.difference(DateTime.now());
+    titleSchoolImageUrl = HomeData.to.TitleSchoolImageUrl;
+    initDayData();
 
     // FocusNode에 리스너 추가
     textFocusNode.addListener(()
@@ -147,10 +179,10 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
           textFocusNode.unfocus();
 
           showDialogTwoButton(StringTable().Table![600018]!, '',
-                  ()
-              {
-                Get.to(() => LoginPage());
-              });
+          ()
+          {
+            Get.to(() => LoginPage());
+          });
         }
       }
       else
@@ -166,6 +198,11 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
         onEndOfPage();
       }
     });
+
+    startTimer();
+
+    super.initState();
+
 
     for(int i = 0; i < 10; ++i)
     {
@@ -210,8 +247,6 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
       );
       commentList.add(commentData);
     }
-
-    startTimer();
   }
 
   @override
@@ -334,7 +369,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                           ),
                           SizedBox(height: 20,),
                           Container
-                            (
+                          (
                             width: 390,
                             height: 287,
                             //color: Colors.blue,
@@ -408,12 +443,16 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                   ),
                                 ),
                                 Align
-                                  (
+                                (
                                   alignment: Alignment.bottomCenter,
-                                  child: Container
-                                    (
+                                  child: 
+                                  Container
+                                  (
                                     height: 260,
-                                    color: Colors.grey,
+                                    //color: Colors.grey,
+                                    child:
+                                    titleSchoolImageUrl.isEmpty ? SizedBox() :
+                                    Image.network(titleSchoolImageUrl,),
                                   ),
                                 )
                               ],

@@ -1722,4 +1722,37 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
     return null;
   }
+
+  Future<TitleSchoolRes?> Get_TitleSchoolHistory(String _date) async
+  {
+    connecting = true;
+    try
+    {
+      var targetDate = _date;//'2024-07-30'
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/academy_history?dt=$targetDate';
+
+      print('Get_TitleSchoolHistory send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_TitleSchoolHistory res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  TitleSchoolRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        connecting = false;
+        return data;
+      }
+      else
+      {
+        print('Get_TitleSchoolHistory FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_TitleSchoolHistory error : $e');
+    }
+
+    connecting = false;
+    return null;
+  }
 }

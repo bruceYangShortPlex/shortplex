@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gif/gif.dart';
+import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 
 import '../../Util/ShortplexTools.dart';
@@ -85,6 +86,21 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       }
     },
     );
+  }
+
+  getInfo()
+  {
+    HttpProtocolManager.to.Get_BonusPageInfo().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+
+      }
+    },);
   }
 
   @override
@@ -711,8 +727,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                     child:
                     Text
                     (
-                      SetTableStringArgument(800012, ['${tableData.condition}','$playCount']),
-
+                      SetTableStringArgument(800012, ['${tableData.condition}']),
                       style:
                       TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
                     ),
@@ -814,13 +829,13 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                         [
                           Text
                           (
-                            '튀기기',
+                            StringTable().Table![800009]!,
                             style:
                             TextStyle(fontSize: 16, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),
                           Text
-                            (
-                            '튀기기 횟수 $playCount',
+                          (
+                            SetTableStringArgument(800010, ['$playCount']),
                             style:
                             TextStyle(fontSize: 11, color: Colors.black, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                           ),

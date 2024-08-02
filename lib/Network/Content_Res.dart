@@ -49,6 +49,7 @@ class ContentResData
     _createdAt = json['created_at'] ?? '';
     _episodeTotal = json['episode_total'] ?? 0;
     _episodeMaxpage = json['episode_maxpage'] ?? 0;
+    releaseEventDt = json['release_event_dt'] ?? '';
     if (json['episode'] != null) {
       _episode = [];
       json['episode'].forEach((v) {
@@ -86,6 +87,7 @@ class ContentResData
   String _createdAt  = '';
   int _episodeTotal = 0;
   int _episodeMaxpage = 0;
+  String releaseEventDt = '';
   List<Episode>? _episode;
   List<Stat>? _stat;
 

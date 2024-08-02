@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shortplex/Network/BonusGame_Res.dart';
 import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/HomeData_Res.dart';
 import 'package:shortplex/Network/Home_Content_Res.dart';
@@ -1750,6 +1751,38 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     catch (e)
     {
       print('Get_TitleSchoolHistory error : $e');
+    }
+
+    connecting = false;
+    return null;
+  }
+
+  Future<BonusGameRes?> Get_BonusPageInfo() async
+  {
+    connecting = true;
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/popcornizer';
+
+      print('Get_BonusPageInfo send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_BonusPageInfo res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  BonusGameRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        connecting = false;
+        return data;
+      }
+      else
+      {
+        print('Get_BonusPageInfo FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_BonusPageInfo error : $e');
     }
 
     connecting = false;

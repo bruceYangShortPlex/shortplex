@@ -51,31 +51,34 @@ class _LoginPageState extends State<LoginPage> {
             (
               children:
               [
-                Container
+                SizedBox
                 (
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment(-0.00, 1.00),
-                    end: Alignment(0, -1),
-                    colors: [Colors.black, Colors.black54],
-                  ),
-                ),),
-                Container
-                (
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    decoration:
-                    BoxDecoration
-                    (
-                      gradient: LinearGradient(
-                      begin: Alignment(1, 1),
-                      end: Alignment(1, -3),
-                      colors: [Color(0x000F60), Color(0xFF00FFBF),],
-                    ),
-                  ),
+                  // decoration: BoxDecoration(
+                  // gradient: LinearGradient(
+                  //   begin: Alignment(-0.00, 1.00),
+                  //   end: Alignment(0, -1),
+                  //   colors: [Colors.black, Colors.black54],
+                  //),
+                  //),
+                  child:
+                  Image.asset('assets/images/Public/login_bg.png', fit: BoxFit.fitWidth,),
                 ),
+                // Container
+                // (
+                //     width: MediaQuery.of(context).size.width,
+                //     height: MediaQuery.of(context).size.height,
+                //     decoration:
+                //     BoxDecoration
+                //     (
+                //       gradient: LinearGradient(
+                //       begin: Alignment(1, 1),
+                //       end: Alignment(1, -3),
+                //       colors: [Color(0x000F60), Color(0xFF00FFBF),],
+                //     ),
+                //   ),
+                // ),
                 Container
                 (
                     child:

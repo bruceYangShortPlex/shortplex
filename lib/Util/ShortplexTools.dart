@@ -101,6 +101,10 @@ String SetStringArgument(String _source, List<String> list)
 
 (String, String, String) SubstringDuration(Duration duration)
 {
+  if (duration == Duration.zero) {
+    return ('','','');
+  }
+
   int hours = duration.inHours;
   int minutes = duration.inMinutes.remainder(60);
   int seconds = duration.inSeconds.remainder(60);

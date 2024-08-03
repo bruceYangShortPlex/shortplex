@@ -12,6 +12,7 @@ import 'package:gif/gif.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 
+import '../../Network/BonusGame_Res.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/Event2Table.dart';
 import '../../table/StringTable.dart';
@@ -59,17 +60,27 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   late AnimationController tweenController2;
   var prevState1 = AnimationStatus.completed;
   var prevState2 = AnimationStatus.completed;
+  String ticketID = '';
+  Prize? serverTable;
+  String resultBonus = '';
+  String resultRate = '';
 
   void startTimer()
   {
-    endTime = DateTime.now().add(Duration(minutes: 3));
+    if (endTime == null)
+    {
+      return;
+    }
+
     difference = endTime!.difference(DateTime.now());
+    if (difference!.inDays > 1)
+    {
+      endTime = null;
+      return;
+    }
+
     eventTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer)
     {
-      if (endTime == null) {
-        return;
-      }
-
       if (mounted)
       {
         setState(()
@@ -91,16 +102,51 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   getInfo()
   {
+    createBonusInfoScroll();
+
+    //현재 플레이 가능한 티켓수.
+    playCount = 0;
+    //이미 사용해서 올라간 단계
+    stackCount = 0;
+
     HttpProtocolManager.to.Get_BonusPageInfo().then((value)
     {
       if (value == null) {
         return;
       }
 
+      if (value.data!.expiredAt.isNotEmpty) {
+        endTime = DateTime.parse(value.data!.expiredAt);
+      }
+
+      if (kDebugMode)
+      {
+        var table = value.data!.prize;
+        if (table != null && table.step1 != null)
+        {
+          for (var item in table.step1!)
+          {
+            print('Server Table data bonus : ${item.bonus}');
+          }
+        }
+      }
+
+      serverTable = value.data!.prize;
+
       for(var item in value.data!.items!)
       {
+        if (item.userId != UserData.to.userId)
+        {
+          continue;
+        }
+
+        //사용하지 않은거.
         if (item.bonus == 0)
         {
+          if (ticketID.isEmpty)
+          {
+            ticketID = item.id;
+          }
           ++playCount;
         }
         else
@@ -113,7 +159,11 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         }
       }
 
-      setState(() {
+      startTimer();
+      setState(()
+      {
+        createBonusInfoScroll();
+        //남은 횟수.
         remainCount = Event2table().tableData.length - playCount;
       });
     },);
@@ -123,9 +173,8 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   void initState()
   {
     Get.lazyPut(() => Event2table());
-    stackCount = 0; //서버에서 받아야한드아..
-    controller1 = GifController(vsync: this);
 
+    controller1 = GifController(vsync: this);
     tweenController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -137,10 +186,10 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     );
 
     super.initState();
-    getInfo();
-    startTimer();
-    createBonusInfoScroll();
 
+    getInfo();
+
+    //팝콘에니메이션 이벤트 리스너.
     controller1.addListener(()
     {
       if (controller1.status == AnimationStatus.completed )
@@ -150,6 +199,26 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           setState(() {
 
           });
+
+          print('popcorn animation compelte');
+
+          HttpProtocolManager.to.Get_WalletBalance().then((walletBalanceValue)
+          {
+            if (walletBalanceValue == null) {
+              return;
+            }
+
+            for(var item in walletBalanceValue.data!.items!)
+            {
+              if (item.userId == UserData.to.userId)
+              {
+                UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+                break;
+              }
+            }
+          },);
+
+          getInfo();
       }
     },);
 
@@ -181,7 +250,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   void createBonusInfoScroll()
   {
     var tableData = Event2table().tableData[stackCount];
-
+    pageList.clear();
     pageList.add(SizedBox(width: 50, height: 50, child: Stack
     (
       children:
@@ -315,7 +384,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       ],
     )));
     pageList.add(SizedBox(width: 50, height: 50, child: Stack
-      (
+    (
       children:
       [
         SvgPicture.asset('assets/images/Reward/reward_event_popcorn/reward_event_popcorn_icon_frame.svg',width: 50,height: 50,),
@@ -822,13 +891,42 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                   (
                     onTap: ()
                     {
-                      if (animationState == PopcornAnimationState.START)
-                      {
-                        animationState = PopcornAnimationState.END;
-                        setState(() {
-                          controller1.forward(from: 0);
-                        });
+                      if (playCount <= 0 || ticketID.isEmpty) {
+                        return;
                       }
+
+                      setState(() {
+                        --playCount;
+                      });
+
+                      HttpProtocolManager.to.Send_BonusPlay(ticketID).then((value)
+                      {
+                        if (value == null) {
+                          return;
+                        }
+
+                        for(var item in value.data!.items!)
+                        {
+                          if (item.userId == UserData.to.userId && ticketID == item.id)
+                          {
+                            print('used ticket id : ${item.id}');
+                            bonusResult = getResultIndex(item.conditionSum, item.bonus);
+                            resultBonus = item.bonus.toString();
+                            resultRate = item.percentage.split('.')[0];
+                            ticketID = '';
+                            break;
+                          }
+                        }
+
+                        if (animationState == PopcornAnimationState.START)
+                        {
+                          animationState = PopcornAnimationState.END;
+                          setState(()
+                          {
+                            controller1.forward(from: 0);
+                          });
+                        }
+                      },);
                     },
                     child:
                     Container
@@ -838,7 +936,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                       //color: Colors.blue,
                       child:
                       Column
-                        (
+                      (
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children:
@@ -1141,9 +1239,49 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     return result.toInt();
   }
 
+  int getResultIndex(int _condition_sum, int _bonus)
+  {
+    var index = 1;
+    if (serverTable == null || serverTable!.step1 == null)
+    {
+      if (kDebugMode) {
+        print('table is null');
+      }
+      return index;
+    }
+
+    List<BonusTableData> table = serverTable!.step1!;
+    if (_condition_sum == 60)
+    {
+      table = serverTable!.step2!;
+    }
+    else if (_condition_sum == 140)
+    {
+      table = serverTable!.step3!;
+    }
+    else if (_condition_sum == 340)
+    {
+      table = serverTable!.step4!;
+    }
+    else
+    {
+      print('not found table');
+    }
+
+    for(var item in table)
+    {
+      if (item.bonus < _bonus)
+      {
+        ++index;
+      }
+    }
+
+    return index;
+  }
+
   Widget bonusResultPopup()
   {
-    var resultBonus = getResultPoint(bonusResult);
+    //var resultBonus = getResultPoint(bonusResult);
     return
     Visibility
     (
@@ -1192,25 +1330,24 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
                 Container
                 (
-                  padding: EdgeInsets.only(top: 40),
+                  padding: const EdgeInsets.only(top: 40),
                   alignment: Alignment.center,
                   child:
                   Text
                   (
-                    SetTableStringArgument(400061, ['${resultBonus.$1}']),
+                    SetTableStringArgument(400061, [resultBonus]),
                     style:
-                    TextStyle(fontSize: 24, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    const TextStyle(fontSize: 24, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ),
-
                 Container
                 (
-                  padding: EdgeInsets.only(top: 110),
+                  padding: const EdgeInsets.only(top: 110),
                   alignment: Alignment.center,
                   child:
                   Text
                   (
-                    SetTableStringArgument(800008, ['${resultBonus.$2}']),
+                    SetTableStringArgument(800008, [resultRate]),
                     style:
                     TextStyle(fontSize: 16, color:Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),

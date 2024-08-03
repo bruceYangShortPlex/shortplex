@@ -1788,4 +1788,40 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     connecting = false;
     return null;
   }
+
+  Future<BonusGameRes?> Send_BonusPlay(String _ticketID) async
+  {
+    connecting = true;
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/reward/popcornizer';
+
+      final map = <String, dynamic>{};
+      map['id'] = _ticketID;
+      var bodys = jsonEncode(map);
+      print('Send_BonusPlay send url : $url');
+      print('Send body : $bodys');
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_BonusPlay res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  BonusGameRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        connecting = false;
+        return data;
+      }
+      else
+      {
+        print('Send_BonusPlay FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_BonusPlay error : $e');
+    }
+
+    connecting = false;
+    return null;
+  }
 }

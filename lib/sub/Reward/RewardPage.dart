@@ -36,8 +36,8 @@ class RewardPage extends StatefulWidget
   State<RewardPage> createState() => _RewardPageState();
 }
 
-class _RewardPageState extends State<RewardPage> {
-
+class _RewardPageState extends State<RewardPage>
+{
   late Timer eventTimer;
   late TextEditingController textEditingController;
   late FocusNode textFieldFocusNode;
@@ -55,6 +55,43 @@ class _RewardPageState extends State<RewardPage> {
   int bonusRate = 10;
   String titleSchoolImageUrl = '';
 
+  getBonusEventInfo()
+  {
+    HttpProtocolManager.to.Get_BonusPageInfo().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      if (value.data!.expiredAt.isNotEmpty)
+      {
+        for(var item in eventList)
+        {
+          if (item.eventPage == EventPageType.BONUS)
+          {
+            var end = DateTime.parse(value.data!.expiredAt);
+            bool hasPassed =  DateTime.now().isAfter(end);
+            if (hasPassed == false)
+            {
+              item.EndTime = end;
+              item.difference = end.difference(DateTime.now());
+            }
+            else
+            {
+              item.EndTime = null;
+              item.difference = null;
+
+              if (kDebugMode) {
+                print('remove event list bonus');
+              }
+              eventList.remove(item);
+            }
+          }
+        }
+      }
+    },);
+  }
+
   void startTimer()
   {
     eventTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer)
@@ -67,6 +104,7 @@ class _RewardPageState extends State<RewardPage> {
             {
               if (item.EndTime == null)
               {
+                eventTimerList.remove(item);
                 continue;
               }
 
@@ -79,6 +117,10 @@ class _RewardPageState extends State<RewardPage> {
               //print('Time left: ${formatDuration(item.difference!).$1}:${formatDuration(item.difference!).$2}');
             }
           });
+
+          if (eventTimerList.isEmpty) {
+            timer.cancel();
+          }
         }
         else
         {
@@ -156,9 +198,12 @@ class _RewardPageState extends State<RewardPage> {
         testData.eventPage = EventPageType.SEARCH;
       }
       testData.Title = '왭하드 테이블에서 받든지 서버에서 받든지';
+
       eventList.add(testData);
       eventTimerList.add(testData);
     }
+
+    //getBonusEventInfo();
 
     startTimer();
 

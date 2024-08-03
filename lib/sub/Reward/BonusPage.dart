@@ -25,15 +25,6 @@ enum PopcornAnimationState
   END,
 }
 
-// void main() async
-// {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   Get.lazyPut(() => UserData());
-//   await Event2table().InitTable();
-//   await StringTable().InitTable();
-//   runApp(const BonusPage());
-// }
-
 class BonusPage extends StatefulWidget
 {
   const BonusPage({super.key});
@@ -72,13 +63,18 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       return;
     }
 
-    difference = endTime!.difference(DateTime.now());
-    if (difference!.inDays > 1)
+    bool hasPassed =  DateTime.now().isAfter(endTime!);
+
+    if (hasPassed)
     {
+      if (kDebugMode) {
+        print('종료 시간이 지났습니다.');
+      }
       endTime = null;
       return;
     }
 
+    difference = endTime!.difference(DateTime.now());
     eventTimer = Timer.periodic(const Duration(minutes: 1), (Timer timer)
     {
       if (mounted)
@@ -102,8 +98,6 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   getInfo()
   {
-    createBonusInfoScroll();
-
     //현재 플레이 가능한 티켓수.
     playCount = 0;
     //이미 사용해서 올라간 단계
@@ -143,10 +137,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         //사용하지 않은거.
         if (item.bonus == 0)
         {
-          if (ticketID.isEmpty)
-          {
-            ticketID = item.id;
-          }
+          ticketID = item.id;
           ++playCount;
         }
         else
@@ -186,7 +177,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     );
 
     super.initState();
-
+    createBonusInfoScroll();
     getInfo();
 
     //팝콘에니메이션 이벤트 리스너.

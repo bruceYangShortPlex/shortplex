@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
@@ -31,14 +32,13 @@ class ContentInfoPage extends StatefulWidget
   State<ContentInfoPage> createState() => _ContentInfoPageState();
 }
 
-class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingObserver
-{
+class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingObserver {
   ContentRes? contentRes;
   ContentData? contentData;
   bool buttonEnabled = true;
 
   //회차 정보.
-  var selections = List.generate(3, (_) => false);
+  List<bool> selections = List.generate(3, (_) => false);
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
   late Map<int, List<Episode>> mapEpisodeData = {};
@@ -52,20 +52,19 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
   var totalCommentCount = 0;
   CommentSortType commentSortType = CommentSortType.created_at;
 
-  void GetContentData()
-  {
-    try
-    {
-      if (contentData == null)
-      {
+  //이벤트 관련.
+  String startDate = '';
+  String endDate = '';
+
+  void GetContentData() {
+    try {
+      if (contentData == null) {
         print('ContentData is Null');
         return;
       }
 
-      HttpProtocolManager.to.Get_ContentData(contentData!.id!).then((value)
-      {
-        if (value == null)
-        {
+      HttpProtocolManager.to.Get_ContentData(contentData!.id!).then((value) {
+        if (value == null) {
           if (kDebugMode) {
             print('Get_ContentData is null');
           }
@@ -74,49 +73,72 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
 
         contentRes = value;
         contentData!.title = contentRes!.data!.title;
-        contentData!.landScapeImageUrl = contentRes!.data!.posterLandscapeImgUrl;
+        contentData!.landScapeImageUrl =
+            contentRes!.data!.posterLandscapeImgUrl;
         contentData?.shareUrl = contentRes!.data!.shareLink;
         mapEpisodeData[0] = contentRes!.data!.episode!;
         contentEpisodes.addAll(contentRes!.data!.episode!);
+
+        //event time 설정.
+        if (contentRes!.data!.releaseAt.isNotEmpty &&
+            contentRes!.data!.releaseEventDt.isNotEmpty) {
+          var end = DateTime.parse(contentRes!.data!.releaseEventDt);
+          bool hasPassed = DateTime.now().isAfter(end);
+          if (hasPassed == false) {
+            startDate = DateFormat('yy.MM.dd').format(
+                DateTime.parse(contentRes!.data!.releaseAt));
+            endDate = DateFormat('yy.MM.dd').format(end);
+          }
+          else {
+            if (kDebugMode) {
+              print('event is passed');
+            }
+          }
+        }
+        else {
+          if (kDebugMode) {
+            print('event date isEmpty');
+          }
+        }
+
         int totalEpisodeCount = contentRes!.data!.episodeTotal;
         //print('totalEpisodeCount : $totalEpisodeCount / total page : ${contentRes!.data!.episode_maxpage}');
         int dividingNumber = 20;
         int groupCount = contentRes!.data!.episodeMaxpage;
         //print('groupCount = $groupCount');
-        for (int i = 0; i < groupCount; ++i)
-        {
+        for (int i = 0; i < groupCount; ++i) {
           var startString = i * dividingNumber + 1;
           var endString = i * dividingNumber + dividingNumber;
-          episodeGroupList.add('${startString}~${SetTableStringArgument(100033, ['$endString'],)}');
+          episodeGroupList.add('${startString}~${SetTableStringArgument(
+            100033, ['$endString'],)}');
         }
 
         var remain = totalEpisodeCount % 20;
-        if (remain != 0)
-        {
+        if (remain != 0) {
           var startIndex = groupCount * dividingNumber + 1;
           var endIndex = groupCount * dividingNumber + remain;
-          episodeGroupList.add('${startIndex}~${SetTableStringArgument(100033, ['$endIndex'],)}');
+          episodeGroupList.add('${startIndex}~${SetTableStringArgument(
+            100033, ['$endIndex'],)}');
         }
 
-        episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
+        episodeGroupSelections =
+            List.generate(episodeGroupList.length, (_) => false);
         episodeGroupSelections[0] = true;
 
         setState(() {
 
         });
 
-        for(int i = 1 ; i <= contentRes!.data!.episodeMaxpage; ++i)
-        {
-          HttpProtocolManager.to.Get_EpisodeGroup(contentData!.id!, i).then((value)
-          {
+        for (int i = 1; i <= contentRes!.data!.episodeMaxpage; ++i) {
+          HttpProtocolManager.to.Get_EpisodeGroup(contentData!.id!, i).then((
+              value) {
             mapEpisodeData[i] = value!.data!.episode!;
             contentEpisodes.addAll(value.data!.episode!);
           });
         }
       });
     }
-    catch(e)
-    {
+    catch (e) {
       print('GetContentData Catch $e');
     }
   }
@@ -124,17 +146,13 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
   int downCompletePage = 0;
   int maxPage = 0;
 
-  void GetCommentsData([bool _refresh = false])
-  {
-    if (_refresh)
-    {
-      for(int i = 0; i < downCompletePage; ++i)
-      {
+  void GetCommentsData([bool _refresh = false]) {
+    if (_refresh) {
+      for (int i = 0; i < downCompletePage; ++i) {
         GetCommentPage(i);
       }
     }
-    else
-    {
+    else {
       if (downCompletePage > maxPage) {
         return;
       }
@@ -145,31 +163,29 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
 
   Future GetCommentPage(int _downloadPage) async
   {
-    try
-    {
-      await HttpProtocolManager.to.Get_Comments(contentData!.id!, _downloadPage, commentSortType.name).then((value)
-      {
+    try {
+      await HttpProtocolManager.to.Get_Comments(
+          contentData!.id!, _downloadPage, commentSortType.name).then((value) {
         var commentRes = value;
         totalCommentCount = commentRes!.data!.total;
         maxPage = commentRes.data!.maxPage;
-        for(var item in commentRes.data!.items!)
-        {
-          if (commentList.any((element) => element.ID == item.id))
-          {
-            for(int i = 0; i < commentList.length; ++i)
-            {
-              if (commentList[i].ID == item.id)
-              {
+        for (var item in commentRes.data!.items!) {
+          if (commentList.any((element) => element.ID == item.id)) {
+            for (int i = 0; i < commentList.length; ++i) {
+              if (commentList[i].ID == item.id) {
                 commentList[i].name = item.displayname;
                 commentList[i].comment = item.content;
                 commentList[i].date = GetReleaseTime(item.createdAt!);
                 commentList[i].episodeNumber = item.episode_no.toString();
                 commentList[i].iconUrl = item.photourl ?? '';
-                commentList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
+                commentList[i].isLikeCheck = item.whoami!.isNotEmpty &&
+                    item.whoami == UserData.to.userId && item.ilike > 0;
                 commentList[i].likeCount = item.likes ?? '0';
                 commentList[i].replyCount = item.replies ?? '0';
                 commentList[i].isDelete = false;
-                commentList[i].commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
+                commentList[i].commentType =
+                item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType
+                    .NORMAL;
                 commentList[i].parentID = item.key!;
                 commentList[i].isEdit = false;
                 commentList[i].userID = item.userId;
@@ -180,18 +196,21 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
           }
 
           var commentData = EpisodeCommentData
-          (
+            (
             name: item.displayname,
             comment: item.content,
             date: GetReleaseTime(item.createdAt!),
             episodeNumber: item.episode_no.toString(),
             iconUrl: item.photourl ?? '',
             ID: item.id!,
-            isLikeCheck: item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0,
+            isLikeCheck: item.whoami!.isNotEmpty &&
+                item.whoami == UserData.to.userId && item.ilike > 0,
             likeCount: item.likes ?? '0',
             replyCount: item.replies ?? '0',
             isDelete: false,
-            commentType: item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL,
+            commentType: item.rank > 0 && item.rank < 3
+                ? CommentType.BEST
+                : CommentType.NORMAL,
             parentID: item.key!,
             isEdit: false,
             userID: item.userId,
@@ -203,37 +222,31 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
         });
       });
     }
-    catch(e)
-    {
+    catch (e) {
       print('GetCommentData Catch $e');
     }
   }
 
-  void GetFavorite()
-  {
-    if (UserData.to.isLogin.value == false)
-    {
+  void getFavorite() {
+    if (UserData.to.isLogin.value == false) {
       UserData.to.isFavoriteCheck.value = false;
       return;
     }
 
-    HttpProtocolManager.to.Get_Stat(contentData!.id!).then((value)
-    {
-      if (value == null || value.data == null || value.data!.isEmpty )
-      {
+    HttpProtocolManager.to.Get_Stat(contentData!.id!).then((value) {
+      if (value == null || value.data == null || value.data!.isEmpty) {
         UserData.to.isFavoriteCheck.value = false;
         return;
       }
 
-      for(var item in value.data!)
-      {
-        if (item.action == Stat_Type.favorite.name)
-        {
+      for (var item in value.data!) {
+        if (item.action == Stat_Type.favorite.name) {
           var amt = item.amt;
           UserData.to.isFavoriteCheck.value = amt > 0;
 
           if (kDebugMode) {
-            print('item.amt ${item.amt} / check  : ${UserData.to.isFavoriteCheck.value}');
+            print('item.amt ${item.amt} / check  : ${UserData.to.isFavoriteCheck
+                .value}');
           }
           return;
         }
@@ -242,8 +255,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
   }
 
   @override
-  void initState()
-  {
+  void initState() {
     prevLogin = UserData.to.isLogin.value;
 
     super.initState();
@@ -257,26 +269,23 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
     contentData = Get.arguments;
     contentData!.title = '';
     GetContentData();
-    GetFavorite();
+    getFavorite();
     //GetCommentsData();
 
-    setState(()
-    {
+    setState(() {
       selections[0] = true;
     });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed)
-    {
+    if (state == AppLifecycleState.resumed) {
       buttonEnabled = true;
     }
   }
 
   @override
-  void dispose()
-  {
+  void dispose() {
     scrollController.dispose();
 
     super.dispose();
@@ -284,403 +293,477 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
 
   void onEndOfPage() async
   {
-    if (!selections[1])
-    {
+    if (!selections[1]) {
       return;
     }
 
-    try
-    {
-      if (totalCommentCount > commentList.length)
-      {
+    try {
+      if (totalCommentCount > commentList.length) {
         //print('Start GetCommentsData 222');
         GetCommentsData();
       }
     }
-    catch (e)
-    {
+    catch (e) {
       print(e);
     }
   }
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return mainWidget(context);
   }
 
-  Widget mainWidget(BuildContext context)=>
-  SafeArea
-  (
-    child:
-    CupertinoApp
-    (
-      home:
-      CupertinoPageScaffold
-      (
-        backgroundColor: Colors.black,
-        navigationBar:
-        CupertinoNavigationBar
+  Widget mainWidget(BuildContext context) =>
+      SafeArea
         (
-          backgroundColor: Colors.transparent,
-          leading:
-          Container
+        child:
+        CupertinoApp
           (
-            width: MediaQuery.of(context).size.width * 0.3,
-            height: 50,
-            //color: Colors.blue,
-            padding: EdgeInsets.zero,
+          home:
+          CupertinoPageScaffold
+            (
+            backgroundColor: Colors.black,
+            navigationBar:
+            CupertinoNavigationBar
+              (
+              backgroundColor: Colors.transparent,
+              leading:
+              Container
+                (
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.3,
+                height: 50,
+                //color: Colors.blue,
+                padding: EdgeInsets.zero,
+                alignment: Alignment.centerLeft,
+                child:
+                CupertinoNavigationBarBackButton
+                  (
+                  color: Colors.white,
+                  onPressed: () {
+                    UserData.to.isOpenPopup.value = false;
+                    Get.back();
+                  },
+                ),
+              ),
+            ),
+            child:
+            contentData == null ? SizedBox() :
+            SingleChildScrollView
+              (
+              controller: scrollController,
+              child:
+              Container
+                (
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
+                color: Colors.black,
+                padding: EdgeInsets.only(top: 60),
+                child:
+                Column
+                  (
+                  children:
+                  [
+                    top(),
+                    SizedBox(height: 20,),
+                    tabButtons(),
+                    episodeInfo(),
+                    contentComment(),
+                    SizedBox(height: 20,),
+                    contentEventAnnounce(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget top() =>
+      Column
+        (
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children:
+        [
+          AspectRatio
+            (
+            aspectRatio: 16 / 9,
+            child:
+            Container
+              (
+              //color: Colors.blueGrey,
+                child:
+                Stack
+                  (
+                  alignment: Alignment.bottomCenter,
+                  children:
+                  [
+                    contentData!.landScapeImageUrl == null ||
+                        contentData!.landScapeImageUrl!.isEmpty ?
+                    SizedBox() :
+                    Image.network(
+                      contentData!.landScapeImageUrl!, fit: BoxFit.contain,),
+                  ],
+                )
+
+            ),
+          ),
+          SizedBox(height: 20,),
+          Container
+            (
+            width: 390,
+            //color: Colors.white,
+            child:
+            Text
+              (
+              contentData!.title!,
+              style:
+              TextStyle(fontSize: 20,
+                color: Colors.white,
+                fontFamily: 'NotoSans',
+                fontWeight: FontWeight.bold,),
+            ),
+          ),
+          SizedBox(height: 10,),
+          Container
+            (
+              width: 390,
+              //color: Colors.white,
+              child:
+              Row
+                (
+                mainAxisAlignment: MainAxisAlignment.start,
+                children:
+                [
+                  Visibility
+                    (
+                    visible: contentData!.isNew,
+                    child:
+                    SvgPicture.asset
+                      (
+                      'assets/images/main/main_new.svg',
+                    ),
+                  ),
+                  Visibility(
+                      visible: contentData!.isNew, child: SizedBox(width: 12,)),
+                  Visibility
+                    (
+                    visible: contentData!.rank,
+                    child:
+                    SvgPicture.asset
+                      (
+                      'assets/images/main/main_top10.svg',
+                    ),
+                  ),
+                  Visibility(
+                      visible: contentData!.rank, child: SizedBox(width: 12,)),
+                  Text
+                    (
+                    '${contentData?.GetReleaseDate()}',
+                    style:
+                    const TextStyle(fontSize: 12,
+                      color: Colors.grey,
+                      fontFamily: 'NotoSans',
+                      fontWeight: FontWeight.bold,),
+                  ),
+                  SizedBox(width: 12,),
+                  Text
+                    (
+                    contentRes != null ? SetTableStringArgument(
+                        100022, ['${contentRes!.data!.episodeTotal}']) : '',
+                    style:
+                    const TextStyle(fontSize: 12,
+                      color: Colors.grey,
+                      fontFamily: 'NotoSans',
+                      fontWeight: FontWeight.bold,),
+                  ),
+                  SizedBox(width: 12,),
+                  Text
+                    (
+                    contentRes != null ? ConvertCodeToString(
+                        contentRes!.data!.genre!) : '',
+                    style:
+                    const TextStyle(fontSize: 12,
+                      color: Colors.grey,
+                      fontFamily: 'NotoSans',
+                      fontWeight: FontWeight.bold,),
+                  ),
+                ],
+              )
+
+          ),
+          SizedBox(height: 10,),
+          Container
+            (
+            width: 390,
+            //color: Colors.white,
+            child:
+            Text
+              (
+              contentRes != null ? contentRes!.data!.description! : '',
+              style:
+              const TextStyle(fontSize: 12,
+                color: Colors.grey,
+                fontFamily: 'NotoSans',
+                fontWeight: FontWeight.bold,),
+            ),
+          ),
+          SizedBox(height: 10,),
+          Container
+            (
+            width: 390,
+            //color: Colors.white,
+            child:
+            Row
+              (
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:
+              [
+                Column
+                  (
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:
+                  [
+                    IconButton
+                      (
+                      icon:
+                      Obx(() {
+                        return
+                          UserData.to.isFavoriteCheck.value ? Icon(
+                            CupertinoIcons.heart_solid, size: 30,
+                            color: Colors.white,) :
+                          Icon(CupertinoIcons.heart, size: 30,
+                            color: Colors.white,);
+                      },),
+
+                      onPressed: () {
+                        if (buttonEnabled == false) {
+                          return;
+                        }
+
+                        if (UserData.to.isLogin.value == false) {
+                          showDialogTwoButton(StringTable().Table![600018]!, '',
+                                  () {
+                                Get.to(() => LoginPage());
+                              });
+                          return;
+                        }
+
+                        buttonEnabled = false;
+                        int value = UserData.to.isFavoriteCheck.value ? -1 : 1;
+                        HttpProtocolManager.to.Send_Stat(
+                            contentData!.id!, value, Comment_CD_Type.content,
+                            Stat_Type.favorite).then((value) {
+                          if (value == null) {
+                            buttonEnabled = true;
+                            return;
+                          }
+
+                          for (var item in value.data!) {
+                            if (item.key == contentData!.id! &&
+                                item.action == Stat_Type.favorite.name) {
+                              UserData.to.isFavoriteCheck.value = item.amt > 0;
+                              //print('isFavoriteCheck update');
+                              UserData.to.refreshCount++;
+                              break;
+                            }
+                          }
+                          buttonEnabled = true;
+                        });
+                      },
+                    ),
+                    Text
+                      (
+                      StringTable().Table![100023]!,
+                      style:
+                      TextStyle(fontSize: 10,
+                        color: Colors.grey,
+                        fontFamily: 'NotoSans',
+                        fontWeight: FontWeight.bold,),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 20,),
+                Column
+                  (
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:
+                  [
+                    IconButton
+                      (
+                      icon:
+                      Icon(
+                        CupertinoIcons.share, size: 27, color: Colors.white,),
+                      onPressed: () {
+                        if (buttonEnabled == false) {
+                          return;
+                        }
+
+                        if (contentData!.shareUrl!.isEmpty) {
+                          return;
+                        }
+
+                        buttonEnabled = false;
+                        Share.share(contentData!.shareUrl!);
+                        if (kDebugMode) {
+                          print('tap share');
+                        }
+                      },
+                    ),
+                    SizedBox(height: 3,),
+                    Text
+                      (
+                      StringTable().Table![100024]!,
+                      style:
+                      TextStyle(fontSize: 10,
+                        color: Colors.white.withOpacity(0.6),
+                        fontFamily: 'NotoSans',
+                        fontWeight: FontWeight.bold,),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+
+  Widget tabButtons()
+  {
+    return
+    Padding
+    (
+      padding: const EdgeInsets.only(left: 10),
+      child:
+      Container
+      (
+        width: 390,
+        child:
+        Align
+        (
             alignment: Alignment.centerLeft,
             child:
-            CupertinoNavigationBarBackButton
-            (
-              color: Colors.white,
-              onPressed: ()
-              {
-                UserData.to.isOpenPopup.value = false;
-                Get.back();
-              },
-            ),
-          ),
-        ),
-        child:
-        contentData == null ? SizedBox() :
-        SingleChildScrollView
-        (
-          controller: scrollController,
-          child:
-          Container
-          (
-            width: MediaQuery.of(context).size.width,
-            color: Colors.black,
-            padding: EdgeInsets.only(top: 60),
-            child:
-            Column
+            Stack
             (
               children:
               [
-                top(),
-                SizedBox(height: 20,),
-                tabButtons(),
-                episodeInfo(),
-                contentComment(),
-                SizedBox(height: 20,),
-                contentEventAnnounce(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  Widget top() => Column
-  (
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children:
-    [
-      AspectRatio
-      (
-        aspectRatio: 16/9,
-        child:
-        Container
-        (
-          //color: Colors.blueGrey,
-          child:
-          Stack
-          (
-            alignment: Alignment.bottomCenter,
-            children:
-            [
-              contentData!.landScapeImageUrl == null || contentData!.landScapeImageUrl!.isEmpty ?
-              SizedBox() :
-              Image.network(contentData!.landScapeImageUrl!, fit: BoxFit.contain,),
-            ],
-          )
-
-        ),
-      ),
-      SizedBox(height: 20,),
-      Container
-      (
-        width: 390,
-        //color: Colors.white,
-        child:
-        Text
-        (
-          contentData!.title!,
-          style:
-          TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-        ),
-      ),
-      SizedBox(height: 10,),
-      Container
-      (
-        width: 390,
-        //color: Colors.white,
-        child:
-        Row
-        (
-          mainAxisAlignment: MainAxisAlignment.start,
-          children:
-          [
-            Visibility
-            (
-              visible: contentData!.isNew,
-              child:
-              SvgPicture.asset
-              (
-                'assets/images/main/main_new.svg',
-              ),
-            ),
-            Visibility(visible: contentData!.isNew, child: SizedBox(width: 12,)),
-            Visibility
-            (
-              visible: contentData!.rank,
-              child:
-              SvgPicture.asset
-              (
-                'assets/images/main/main_top10.svg',
-              ),
-            ),
-            Visibility(visible: contentData!.rank, child: SizedBox(width: 12,)),
-            Text
-            (
-              '${contentData?.GetReleaseDate()}',
-              style:
-              const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-            ),
-            SizedBox(width: 12,),
-            Text
-            (
-              contentRes != null ?  SetTableStringArgument(100022, ['${contentRes!.data!.episodeTotal}']) : '',
-              style:
-              const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-            ),
-            SizedBox(width: 12,),
-            Text
-            (
-              contentRes != null ? ConvertCodeToString(contentRes!.data!.genre!) : '',
-              style:
-              const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-            ),
-          ],
-        )
-
-      ),
-      SizedBox(height: 10,),
-      Container
-      (
-        width: 390,
-        //color: Colors.white,
-        child:
-        Text
-        (
-          contentRes != null ? contentRes!.data!.description! : '',
-          style:
-          const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-        ),
-      ),
-      SizedBox(height: 10,),
-      Container
-      (
-        width: 390,
-        //color: Colors.white,
-        child:
-        Row
-        (
-          mainAxisAlignment: MainAxisAlignment.start,
-          children:
-          [
-            Column
-            (
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children:
-              [
-                IconButton
+                Divider(height: 10,
+                  color: Colors.white38,
+                  indent: 10,
+                  endIndent: 10,
+                  thickness: 1,),
+                selectedPoint(),
+                Row
                 (
-                  icon:
-                  Obx(()
-                  {
-                    return
-                    UserData.to.isFavoriteCheck.value ? Icon(CupertinoIcons.heart_solid, size: 30, color: Colors.white,) :
-                    Icon(CupertinoIcons.heart, size: 30, color: Colors.white, );
-                  },),
-
-                  onPressed: ()
-                  {
-                    if (buttonEnabled == false) {
-                      return;
-                    }
-
-                    if (UserData.to.isLogin.value == false)
-                    {
-                      showDialogTwoButton(StringTable().Table![600018]!, '',
-                      ()
+                  children:
+                  [
+                    GestureDetector
+                    (
+                      onTap: ()
                       {
-                        Get.to(() => LoginPage());
-                      });
-                      return;
-                    }
-
-                    buttonEnabled = false;
-                    int value = UserData.to.isFavoriteCheck.value ? -1 : 1;
-                    HttpProtocolManager.to.Send_Stat(contentData!.id!, value, Comment_CD_Type.content, Stat_Type.favorite).then((value)
-                    {
-                      if (value == null) {
-                        buttonEnabled = true;
-                        return;
-                      }
-
-                      for(var item in value.data!)
-                      {
-                        if (item.key == contentData!.id! && item.action == Stat_Type.favorite.name)
+                        setState(()
                         {
-                          UserData.to.isFavoriteCheck.value = item.amt > 0;
-                          //print('isFavoriteCheck update');
-                          UserData.to.refreshCount++;
-                          break;
-                        }
-                      }
-                      buttonEnabled = true;
-                    });
-                  },
-                ),
-                Text
-                (
-                  StringTable().Table![100023]!,
-                  style:
-                  TextStyle(fontSize: 10, color: Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                ),
+                          for (int i = 0; i < selections.length; ++i)
+                          {
+                            selections[i] = i == 0;
+                          }
+                        });
+                      },
+                      child: Container
+                      (
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 75,
+                        child:
+                        Text
+                        (
+                          StringTable().Table![100025]!,
+                          style:
+                          TextStyle(fontSize: 12,
+                            fontFamily: 'NotoSans',
+                            fontWeight: FontWeight.bold,
+                          color: selections[0] ? Colors.white : Colors.grey),
+                        ),
+                      ),
+                    ),
+                    GestureDetector
+                    (
+                      onTap: ()
+                      {
+                        setState(()
+                        {
+                          for (int i = 0; i < selections.length; ++i)
+                          {
+                            selections[i] = i == 1;
+                          }
+                        });
+                      },
+                      child:
+                      Container
+                      (
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 75,
+                        child:
+                        Text
+                          (
+                          StringTable().Table![100026]!,
+                          style:
+                          TextStyle(fontSize: 12,
+                            fontFamily: 'NotoSans',
+                            fontWeight: FontWeight.bold,
+                              color: selections[1] ? Colors.white : Colors.grey),
+                        ),
+                      ),
+                    ),
+                    Visibility
+                    (
+                      visible: startDate.isNotEmpty && endDate.isNotEmpty,
+                      child:
+                      GestureDetector
+                      (
+                        onTap: ()
+                        {
+                          setState(()
+                          {
+                            for (int i = 0; i < selections.length; ++i)
+                            {
+                              selections[i] = i == 2;
+                            }
+                          });
+                        },
+                        child:
+                        Container
+                        (
+                          alignment: Alignment.center,
+                          height: 40,
+                          width: 75,
+                          child:
+                          Text
+                          (
+                            StringTable().Table![100027]!,
+                            style:
+                            TextStyle(fontSize: 12,
+                              fontFamily: 'NotoSans',
+                              fontWeight: FontWeight.bold,
+                                color: selections[2] ? Colors.white : Colors.grey),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
-            ),
-            SizedBox(width: 20,),
-            Column
-            (
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children:
-              [
-                IconButton
-                (
-                  icon:
-                  Icon(CupertinoIcons.share, size: 27, color: Colors.white,),
-                  onPressed: ()
-                  {
-                    if (buttonEnabled == false) {
-                      return;
-                    }
-
-                    if (contentData!.shareUrl!.isEmpty)
-                    {
-                      return;
-                    }
-
-                    buttonEnabled = false;
-                    Share.share(contentData!.shareUrl!);
-                    if (kDebugMode) {
-                      print('tap share');
-                    }
-                  },
-                ),
-                SizedBox(height: 3,),
-                Text
-                (
-                  StringTable().Table![100024]!,
-                  style:
-                  TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.6), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                ),
-              ],
-            ),
-          ],
+            )
         ),
       ),
-    ],
-  );
-
-  Widget tabButtons() =>
-  Padding
-  (
-    padding: const EdgeInsets.only(left: 10),
-    child:
-    Container
-    (
-      width: 390,
-      child:
-      Align
-      (
-        alignment: Alignment.centerLeft,
-        child:
-        Stack
-        (
-          children:
-          [
-            Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
-            selectedPoint(),
-            ToggleButtons
-            (
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              fillColor: Colors.transparent,
-              borderColor: Colors.transparent,
-              selectedBorderColor: Colors.transparent,
-              color: Colors.white.withOpacity(0.6),
-              selectedColor: Colors.white,
-              children: <Widget>
-              [
-                Container
-                (
-                  alignment: Alignment.center,
-                  width: 75,
-                  child:
-                  Text
-                  (
-                    StringTable().Table![100025]!,
-                    style:
-                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                Container
-                (
-                  alignment: Alignment.center,
-                  width: 75,
-                  child:
-                  Text
-                  (
-                    StringTable().Table![100026]!,
-                    style:
-                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                Container
-                (
-                  alignment: Alignment.center,
-                  width: 75,
-                  child:
-                  Text
-                  (
-                    StringTable().Table![100027]!,
-                    style:
-                    TextStyle(fontSize: 12, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ],
-              isSelected: selections,
-              onPressed: (int index)
-              {
-                setState(()
-                {
-                  for(int i = 0 ; i < selections.length ; ++i)
-                  {
-                    selections[i] = i == index;
-                  }
-                });
-              },
-            ),
-          ],
-        )
-      ),
-    ),
-  );
+    );
+  }
   Widget selectedPoint() =>
   Row
   (
@@ -966,7 +1049,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
   {
     return
       Visibility
-        (
+      (
         visible: selections[1],
         child:
         Column
@@ -1226,9 +1309,9 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
     );
   }
 
-  Widget contentEventAnnounce([bool _active = true])
+  Widget contentEventAnnounce()
   {
-    String title = _active ? StringTable().Table![800001]! : '안함';
+    String title = StringTable().Table![800001]!;
     return
     Visibility
     (
@@ -1248,7 +1331,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
               mainAxisAlignment: MainAxisAlignment.center,
               children:
               [
-                Icon(Icons.event, size: 26,),
+                const Icon(Icons.event, size: 26,),
                 Padding
                 (
                   padding: const EdgeInsets.only(right: 16),
@@ -1265,7 +1348,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
             Text
             (
               textAlign: TextAlign.center,
-              SetTableStringArgument(800002, ['24.05.04', '24.06.03', '<황후마마가 돌아왔다>']),
+              SetTableStringArgument(800002, [startDate, endDate, contentData!.title!]),
               style:
               TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),

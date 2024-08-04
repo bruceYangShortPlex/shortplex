@@ -43,7 +43,7 @@ enum Stat_Type
 enum Comment_CD_Type
 {
   episode,
-  title_school,
+  academy,
   content,
   alarm,
 }
@@ -444,7 +444,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/addition/comment/$_episodeID';
-      var type_cd = _type.toString().replaceAll('Comment_CD_Type.', '');
+      var type_cd = _type.name;
       var comment =  CommentReq(content: _comment, parentId: _replyParentID, typeCd: type_cd);
       var bodys = jsonEncode(comment.toJson());
       print('send_Comment heads : ${heads} / send bodys : ${bodys}');
@@ -1822,6 +1822,38 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     }
 
     connecting = false;
+    return null;
+  }
+
+  Future<CommentRes?> Get_TitleSchoolComments(String _academyID, int _page, String _sortKey) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey,'Authorization': 'Bearer ${UserData.to.id}', 'Content-Type':'application/json'};
+
+      var url = Uri.parse('https://www.quadra-system.com/api/v1/reward/academy/$_academyID/comments?page=$_page&itemsPerPage=20&sortkey=$_sortKey&sortorder=desc');
+      print('Get_TitleSchoolComments url : $url');
+      var res = await http.get(url, headers: heads);
+
+      // print('get_CommentData heads = $heads');
+      print('Get_TitleSchoolComments res.body = ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        print('Get_TitleSchoolComments data = ${data}');
+        return data;
+      }
+      else
+      {
+        print('Get_TitleSchoolComments FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_TitleSchoolComments error : ${e}');
+    }
+
     return null;
   }
 }

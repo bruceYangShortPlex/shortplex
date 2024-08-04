@@ -95,9 +95,27 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
             titleSchoolImageUrl = item.imageUrl;
           });
         }
+
+        getBestComment(item.id);
+
         break;
       }
     });
+  }
+
+  getBestComment(String _academyID)
+  {
+    HttpProtocolManager.to.Get_TitleSchoolComments(_academyID, 0, CommentSortType.likes.name).then((value)
+    {
+      if (value == null)
+      {
+        return;
+      }
+
+      //댓글 표시
+      //작업중.
+
+    },);
   }
 
   @override

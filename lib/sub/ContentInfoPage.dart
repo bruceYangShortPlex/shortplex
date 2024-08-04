@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -486,7 +484,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                   Text
                     (
                     contentRes != null ? ConvertCodeToString(
-                        contentRes!.data!.genre!) : '',
+                        contentRes!.data!.genre) : '',
                     style:
                     const TextStyle(fontSize: 12,
                       color: Colors.grey,
@@ -505,7 +503,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
             child:
             Text
               (
-              contentRes != null ? contentRes!.data!.description! : '',
+              contentRes != null ? contentRes!.data!.description : '',
               style:
               const TextStyle(fontSize: 12,
                 color: Colors.grey,
@@ -997,8 +995,8 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                       (
                           borderRadius: BorderRadius.circular(7),
                           child:
-                        list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
-                        ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!, fit: BoxFit.cover,),
+                        list[i].thumbnailImgUrlSd.isEmpty
+                        ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd, fit: BoxFit.cover,),
                       ),
                     ),
                     Visibility

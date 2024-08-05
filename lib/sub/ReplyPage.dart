@@ -151,9 +151,10 @@ class _ReplyPageState extends State<ReplyPage>
   @override
   void initState()
   {
+    commentData = Get.arguments;
     prevLogin = UserData.to.isLogin.value;
     super.initState();
-    commentData = Get.arguments;
+
     GetRepliesData();
 
     scrollController.addListener(() {
@@ -218,6 +219,7 @@ class _ReplyPageState extends State<ReplyPage>
 
   void SendReply() async
   {
+    var type_cd = commentData.isAcademy ? Comment_CD_Type.academy : Comment_CD_Type.episode;
     try
     {
       connecting = true;
@@ -231,7 +233,7 @@ class _ReplyPageState extends State<ReplyPage>
 
         await HttpProtocolManager.to.Send_edit_reply
           (
-            commentData.parentID!, textEditingController.text, commentData.ID, replyID, Comment_CD_Type.episode).then((value) {
+            commentData.parentID!, textEditingController.text, commentData.ID, replyID, type_cd).then((value) {
           for(var item in value!.data!.items!)
           {
             for(int i = 0 ; i < replyList.length; ++i)
@@ -252,7 +254,7 @@ class _ReplyPageState extends State<ReplyPage>
       else
       {
         await HttpProtocolManager.to.Send_Reply(
-            commentData.parentID!, textEditingController.text, commentData.ID, Comment_CD_Type.episode).then((value)
+            commentData.parentID!, textEditingController.text, commentData.ID, type_cd).then((value)
         {
           CommentUpdate();
           if (value == null) {
@@ -355,7 +357,7 @@ SafeArea
           children:
           [
             Container
-              (
+            (
               width: MediaQuery.of(context).size.width * 0.3,
               height: 50,
               //color: Colors.blue,
@@ -413,7 +415,7 @@ SafeArea
                 prevLogin = UserData.to.isLogin.value;
                 return
                 ReplyPopup
-                  (
+                (
                     scrollController, commentData, replyList,
                     (id)
                     {
@@ -434,7 +436,8 @@ SafeArea
                         CommentUpdate();
                      });
                     },
-                    (id) {
+                    (id)
+                    {
                       return;
                     },
                     (id)
@@ -494,7 +497,7 @@ SafeArea
 
                       });
                     },
-                        (id)
+                    (id)
                     {
                       //수정.
                       replyID = id;

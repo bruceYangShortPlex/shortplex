@@ -167,8 +167,10 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
         var commentRes = value;
         totalCommentCount = commentRes!.data!.total;
         maxPage = commentRes.data!.maxPage;
-        for (var item in commentRes.data!.items!) {
-          if (commentList.any((element) => element.ID == item.id)) {
+        for (var item in commentRes.data!.items!)
+        {
+          if (commentList.any((element) => element.ID == item.id))
+          {
             for (int i = 0; i < commentList.length; ++i) {
               if (commentList[i].ID == item.id) {
                 commentList[i].name = item.displayname;
@@ -194,7 +196,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
           }
 
           var commentData = EpisodeCommentData
-            (
+          (
             name: item.displayname,
             comment: item.content,
             date: GetReleaseTime(item.createdAt!),
@@ -338,7 +340,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                 alignment: Alignment.centerLeft,
                 child:
                 CupertinoNavigationBarBackButton
-                  (
+                (
                   color: Colors.white,
                   onPressed: () {
                     UserData.to.isOpenPopup.value = false;
@@ -1284,7 +1286,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                       (id)
                   {
                     UserData.to.commentChange.value = '';
-                    Get.to(() => ReplyPage(), arguments: commentList[i]);
+                    Get.to(() => const ReplyPage(), arguments: commentList[i]);
                   },
                       (id)
                   {
@@ -1293,10 +1295,10 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                       (id)
                   {
                     //TODO : 삭제 버튼 처리
-                    setState(()
-                    {
-                      commentList.remove(commentList[i]);
-                    });
+                    // setState(()
+                    // {
+                    //   commentList.remove(commentList[i]);
+                    // });
                   },
                 ),
               ],
@@ -1417,6 +1419,7 @@ class EpisodeCommentData
   CommentType? commentType;
   String? parentID;
   String? userID;
+  bool isAcademy = false;
 
   EpisodeCommentData
   (

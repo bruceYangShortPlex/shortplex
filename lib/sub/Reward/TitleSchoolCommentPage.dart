@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 import 'package:shortplex/sub/Home/HomeData.dart';
+import '../../Network/Comment_Res.dart';
+import '../../Util/HttpProtocolManager.dart';
 import '../../Util/ShortplexTools.dart';
 import '../../table/StringTable.dart';
 import '../../table/UserData.dart';
 import '../ContentInfoPage.dart';
+import '../ReplyPage.dart';
 import '../UserInfo/LoginPage.dart';
 
 // void main() async
@@ -32,10 +36,319 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
   var rankedCommentList = <EpisodeCommentData>[];
   var commentList = <EpisodeCommentData>[];
   var totalCommentCount = 0;
-  CommentSortType commentSortType = CommentSortType.created_at;
+  CommentSortType commentSortType = CommentSortType.likes;
 
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
+
+  int downCompletePage = 0;
+  int maxPage = 0;
+  String academyID = '';
+
+  // int downReplyPage = 0;
+  // int maxReplyPage = 0;
+  // List<EpisodeCommentData> replyList = <EpisodeCommentData>[];
+  // EpisodeCommentData? commentData;
+  // String editReplyID = '';
+  // int totalCommentReplyCount = 0;
+  // bool isActiveReply = false;
+
+  Future getRankComment() async
+  {
+    if (rankedCommentList.length < 10)
+    {
+      await HttpProtocolManager.to.Get_TitleSchoolComments(
+          academyID, 0, CommentSortType.likes.name).then((value)
+      {
+        if (value == null) {
+          return;
+        }
+
+        var commentRes = value;
+        var rankCommentStartIndex = rankedCommentList.length;
+        //top10
+        for (int i = rankCommentStartIndex; i < 10; ++i)
+        {
+          if (i >= commentRes.data!.items!.length) {
+            break;
+          }
+
+          var item = commentRes.data!.items![i];
+
+          var commentData = EpisodeCommentData
+          (
+            name: item.displayname,
+            comment: item.content,
+            date: GetReleaseTime(item.createdAt!),
+            episodeNumber: item.episode_no.toString(),
+            iconUrl: item.photourl ?? '',
+            ID: item.id!,
+            isLikeCheck: item.whoami!.isNotEmpty &&
+            item.whoami == UserData.to.userId && item.ilike > 0,
+            likeCount: item.likes ?? '0',
+            replyCount: item.replies ?? '0',
+            isDelete: UserData.to.userId == item.userId,
+            commentType: CommentType.NORMAL,
+            parentID: item.key!,
+            isEdit: false,
+            userID: item.userId,
+          );
+
+          if (commentData.parentID != academyID)
+          {
+            if (kDebugMode) {
+              print(' !!!!!!!!!!!!!!!!! Wrong ID !!!!!!!!!!!!!!!!!!!!!!!!!!');
+            }
+          }
+
+          setState(()
+          {
+            rankedCommentList.add(commentData);
+          });
+        }
+      });
+    }
+  }
+
+  void getCommentsData([bool _refresh = false])
+  {
+    if (_refresh)
+    {
+      for(int i = 0; i < downCompletePage; ++i)
+      {
+        getComment(i);
+      }
+    }
+    else
+    {
+      if (downCompletePage > maxPage) {
+        return;
+      }
+      getComment(downCompletePage).then((value) => downCompletePage++);
+    }
+  }
+
+  Future getComment(int _page) async
+  {
+    try
+    {
+      await getRankComment();
+
+      await HttpProtocolManager.to.Get_TitleSchoolComments(academyID, _page, commentSortType.name).then((value)
+      {
+        maxPage = value!.data!.maxPage;
+        commentRefresh(value, false);
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
+    }
+  }
+
+  void deleteComment(String _id)
+  {
+    try
+    {
+      HttpProtocolManager.to.Send_delete_comment(academyID, _id).then((value)
+      {
+        if (value == null) {
+          return;
+        }
+
+        totalCommentCount = value.data!.total;
+
+        for(var item  in value.data!.items!)
+        {
+          print('receive delete id : ${item.id}');
+
+          for(int i = 0; i < rankedCommentList.length; ++i)
+          {
+            if (rankedCommentList[i].ID == item.id)
+            {
+              rankedCommentList.removeAt(i);
+              //print('delete complete id : ${item.id}');
+              setState(() {
+
+              });
+              return;
+            }
+          }
+
+          for(int i = 0; i < commentList.length; ++i)
+          {
+            if (commentList[i].ID == item.id)
+            {
+              commentList.removeAt(i);
+
+              //print('delete complete id : ${item.id}');
+              setState(() {
+
+              });
+              return;
+            }
+          }
+        }
+      });
+    }
+    catch(e)
+    {
+      print('send Comment error : $e');
+    }
+  }
+
+  void commentRefresh(CommentRes? _data, bool _isReply)
+  {
+    if (_data == null)
+    {
+      print("CommentRefresh data null return");
+      return;
+    }
+    var findComment = false;
+    for (var item in _data.data!.items!)
+    {
+      //var selectList = _isReply ? replyList : commentList;
+
+      //rank에 들어있는건 빼줌.
+      if (_isReply == false && commentSortType == CommentSortType.likes)
+      {
+        findComment = false;
+        for(var rankItem in rankedCommentList)
+        {
+          if (commentList.any((element) => element.ID == rankItem.ID))
+          {
+            findComment = true;
+            break;
+          }
+        }
+
+        if (findComment) {
+          continue;
+        }
+      }
+
+      if (commentList.any((element) => element.ID == item.id))
+      {
+        for(int i = 0 ; i < commentList.length; ++i)
+        {
+          if (commentList[i].ID == item.id)
+          {
+            commentList[i].name = item.displayname;
+            commentList[i].comment = item.content;
+            commentList[i].date = GetReleaseTime(item.createdAt!);
+            commentList[i].episodeNumber = item.episode_no.toString();
+            commentList[i].iconUrl = item.photourl;
+            commentList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
+            commentList[i].likeCount = item.likes;
+            commentList[i].replyCount = item.replies;
+            commentList[i].isDelete = UserData.to.userId ==  item.userId;
+            commentList[i].commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
+            commentList[i].parentID = item.key;
+            commentList[i].isEdit = false;
+            commentList[i].userID = item.userId;
+          }
+        }
+        continue;
+      }
+
+      var commentData = EpisodeCommentData
+      (
+        name: item.displayname!,
+        comment: item.content ?? '',
+        date: item.createdAt != null ? GetReleaseTime(item.createdAt!) : '00.00.00',
+        episodeNumber: '',
+        iconUrl: item.photourl,
+        ID: item.id!,
+        isLikeCheck: item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0,
+        likeCount: item.likes,
+        replyCount: '${item.replies}',
+        isDelete: UserData.to.userId == item.userId,
+        commentType: CommentType.NORMAL,
+        parentID: item.key,
+        isEdit: UserData.to.userId == item.userId,
+        userID: item.userId,
+      );
+
+      setState(() {
+        commentList.add(commentData);
+      });
+    }
+
+    setState(()
+    {
+      // if (_isReply)
+      // {
+      //   totalCommentReplyCount = _data.data!.total;
+      // }
+      // else
+      // {
+        totalCommentCount = _data.data!.total;
+      //}
+    });
+  }
+
+  // void getRepliesData([bool _refresh = false])
+  // {
+  //   if (_refresh)
+  //   {
+  //     for(int i = 0; i < downReplyPage; ++i)
+  //     {
+  //       getReplies(i);
+  //     }
+  //   }
+  //   else
+  //   {
+  //     if (downReplyPage > maxReplyPage)
+  //     {
+  //       return;
+  //     }
+  //
+  //     getReplies(downReplyPage).then((value) => downReplyPage++);
+  //   }
+  // }
+
+  // Future getReplies(int _page) async
+  // {
+  //   try
+  //   {
+  //     HttpProtocolManager.to.Get_RepliesData(academyID, commentData!.ID, _page).then((value)
+  //     {
+  //       maxReplyPage = value!.data!.maxPage;
+  //       commentRefresh(value, true);
+  //       print('Get Replies Complete');
+  //     });
+  //   }
+  //   catch(e)
+  //   {
+  //     print('send Comment error : $e');
+  //   }
+  // }
+
+  Future getInfo() async
+  {
+    await HttpProtocolManager.to.Get_TitleSchoolInfo().then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      for(var item in value.data!.items!)
+      {
+        if (HomeData.to.TitleSchoolImageUrl != item.imageUrl)
+        {
+          HomeData.to.TitleSchoolImageUrl = item.imageUrl;
+          setState(() {
+
+          });
+        }
+        academyID = item.id;
+
+        getCommentsData();
+
+        break;
+      }
+    });
+  }
 
   @override
   void initState()
@@ -65,101 +378,34 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
+          scrollController.position.maxScrollExtent)
+      {
         onEndOfPage();
       }
     });
 
     super.initState();
 
-    for(int i = 0; i < 10; ++i)
-    {
-      var commentData = EpisodeCommentData
-        (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isDelete: i == 0,
-        commentType: CommentType.TOP10,
-        parentID: '',
-        isEdit: false,
-        userID: '',
-      );
-      rankedCommentList.add(commentData);
-    }
-
-    for(int i = 0; i < 6; ++i)
-    {
-      var commentData = EpisodeCommentData
-        (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isDelete: i == 0,
-        commentType: CommentType.NORMAL,
-        parentID: '',
-        isEdit: false,
-        userID: '',
-      );
-      commentList.add(commentData);
-    }
+    getInfo();
   }
 
   void onEndOfPage() async
   {
-    try
-    {
-      //여기서 리스트 요청하고 만들고 해야한다.
-      // Replace with your method to fetch data from the server.
-      final newItems = await Future.delayed(Duration(seconds: 1),
-      ()
+    // if (isActiveReply)
+    // {
+    //   if (totalCommentReplyCount > replyList.length)
+    //   {
+    //     getRepliesData();
+    //   }
+    // }
+    // else
+    // {
+      if (totalCommentCount > (commentList.length + rankedCommentList.length))
       {
-        for(int i = 0; i < 10; ++i)
-        {
-          var commentData = EpisodeCommentData
-            (
-            name: '황후마마가 돌아왔다.',
-            comment: '이건 재미있다. 무조건 된다고 생각한다.',
-            date: '24.09.06',
-            episodeNumber: '',
-            iconUrl: '',
-            ID: i.toString(),
-            isLikeCheck: i % 2 == 0,
-            likeCount: '12',
-            replyCount: '3',
-            isDelete: i == 0,
-            commentType: CommentType.NORMAL, parentID: '',
-            isEdit: false,
-            userID: '',
-          );
-          commentList.add(commentData);
-        }
-        setState(()
-        {
-
-        });
-
+        getCommentsData();
       }
-      );
-    }
-    catch (e)
-    {
-      print(e);
-    }
+    //}
   }
-
 
   @override
   void dispose()
@@ -272,7 +518,7 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                   Image.network(HomeData.to.TitleSchoolImageUrl),
                 ),
                 SizedBox(height: 8,),
-                titleSchoolCommnet(),
+                titleSchoolComment(),
                 bottomKeyboard(),
               ],
             ),
@@ -282,7 +528,7 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
     );
   }
 
-  Widget titleSchoolCommnet()
+  Widget titleSchoolComment()
   {
     return
     Container
@@ -295,7 +541,7 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
           [
             SizedBox
             (
-              width: 390.w,
+              width: MediaQuery.of(context).size.width,
               child:
               Row
                 (
@@ -317,12 +563,20 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                     ),
                   ),
                   GestureDetector
-                    (
+                  (
                     onTap: ()
                     {
+                      if (commentSortType == CommentSortType.likes)
+                      {
+                        return;
+                      }
+                      //좋아요순 누름.
                       setState(()
                       {
                         commentSortType = CommentSortType.likes;
+                        downCompletePage = 0;
+                        commentList.clear();
+                        getCommentsData();
                       });
                     },
                     child: Container
@@ -349,16 +603,24 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                   ),
                   const SizedBox(width: 10,),
                   GestureDetector
-                    (
+                  (
                     onTap: ()
                     {
+                      if (commentSortType == CommentSortType.created_at) {
+                        return;
+                      }
+                      //최신순 누름.
                       setState(()
                       {
                         commentSortType = CommentSortType.created_at;
+                        downCompletePage = 0;
+                        commentList.clear();
+                        getCommentsData();
                       });
                     },
-                    child: Container
-                      (
+                    child:
+                    Container
+                    (
                       width: 73,
                       height: 26,
                       decoration: ShapeDecoration(
@@ -372,7 +634,7 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                       padding: const EdgeInsets.only(bottom: 1),
                       child:
                       Text
-                        (
+                      (
                         StringTable().Table![100036]!,
                         style:
                         TextStyle(fontSize: 11, color: commentSortType == CommentSortType.created_at ? Colors.white : const Color(0xFF878787), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
@@ -442,27 +704,73 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                             const SizedBox(height: 20,),
                             for(var data in rankedCommentList)
                               CommentWidget
-                                (
+                              (
                                 data,
                                 false,
-                                    (id)
+                                (id)
                                 {
-                                  //TODO : 좋아요 버튼 처리
-                                  print(id);
-                                },
-                                    (id)
-                                {
-                                  //TODO : 댓글의 답글 열기 버튼 처리
+                                  if (HttpProtocolManager.to.connecting)
+                                  {
+                                    return;
+                                  }
 
+                                  if (UserData.to.isLogin.value == false)
+                                  {
+                                    showDialogTwoButton(StringTable().Table![600018]!, '',
+                                            ()
+                                        {
+                                          Get.to(() => LoginPage());
+                                        });
+                                    return;
+                                  }
+
+                                  //var item = episodeCommentList.firstWhere((element) => element.ID == id);
+                                  var value = data.isLikeCheck! ? -1 : 1;
+                                  HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.academy, Stat_Type.like)
+                                      .then((value)
+                                  {
+                                    for(var item in value!.data!)
+                                    {
+                                      if (data.ID == item.key)
+                                      {
+                                        HttpProtocolManager.to.Get_Comment(data.parentID!, data.ID).then((value1)
+                                        {
+                                          if (value1 == null)
+                                          {
+                                             return;
+                                          }
+                                          var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                                          if (UserData.to.userId == resData.whoami)
+                                          {
+                                            setState(()
+                                            {
+                                              data.likeCount = resData.likes;
+                                              data.isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                            });
+                                          }
+                                        },);
+                                        break;
+                                      }
+                                    }
+                                  });
                                 },
-                                    (id)
+                                (id)
+                                {
+                                  if (data == id)
+                                  {
+                                    data.isAcademy = true;
+                                    UserData.to.commentChange.value = '';
+                                    Get.to(() => const ReplyPage(),
+                                        arguments: data);
+                                  }
+                                },
+                                (id)
                                 {
                                   //TODO : 수정하기 버튼 처리
-
                                 },
-                                    (id)
+                                (id)
                                 {
-                                  //TODO : 삭제 버튼 처리
+                                  deleteComment(id);
                                 },
                               ),
                           ],
@@ -472,18 +780,18 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                     ),
                     const SizedBox(height: 40,),
                     Stack
-                      (
+                    (
                       alignment: Alignment.center,
                       children:
                       [
                         Divider(height: 10, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
                         Container
-                          (
+                        (
                           color: Colors.black,
                           padding: EdgeInsets.only(bottom: 3, left: 10, right: 10),
                           child:
                           Text
-                            (
+                          (
                             textAlign: TextAlign.center,
                             StringTable().Table![300038]!,
                             style:
@@ -495,27 +803,75 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                     const SizedBox(height: 30,),
                     for(int i = 0; i < commentList.length; ++i)
                       CommentWidget
-                        (
+                      (
                         commentList[i],
                         false,
                             (id)
                         {
-                          //TODO : 좋아요 버튼 처리
-                          print(id);
-                        },
-                            (id)
-                        {
-                          //TODO : 댓글의 답글 열기 버튼 처리
+                          if (HttpProtocolManager.to.connecting)
+                          {
+                            return;
+                          }
 
+                          if (UserData.to.isLogin.value == false)
+                          {
+                            showDialogTwoButton(StringTable().Table![600018]!, '',
+                              ()
+                            {
+                              Get.to(() => LoginPage());
+                            });
+                            return;
+                          }
+
+                          //var item = episodeCommentList.firstWhere((element) => element.ID == id);
+                          var value = commentList[i].isLikeCheck! ? -1 : 1;
+                          HttpProtocolManager.to.Send_Stat(id, value, Comment_CD_Type.academy, Stat_Type.like)
+                              .then((value)
+                          {
+                            for(var item in value!.data!)
+                            {
+                              if (commentList[i].ID == item.key)
+                              {
+                                HttpProtocolManager.to.Get_Comment(commentList[i].parentID!, commentList[i].ID).then((value1)
+                                {
+                                  if (value1 == null)
+                                  {
+                                    return;
+                                  }
+                                  var resData = value1.data!.items!.firstWhere((element) => element.id == id);
+                                  if (UserData.to.userId == resData.whoami)
+                                  {
+                                    setState(()
+                                    {
+                                      commentList[i].likeCount = resData.likes;
+                                      commentList[i].isLikeCheck = resData.whoami!.isNotEmpty && resData.whoami == UserData.to.userId && resData.ilike > 0;
+                                    });
+                                  }
+                                },);
+                                break;
+                              }
+                            }
+                          });
                         },
-                            (id)
+                        (id)
+                        {
+                          if (commentList[i].ID == id)
+                          {
+                            commentList[i].isAcademy = true;
+                            UserData.to.commentChange.value = '';
+                            Get.to(() => const ReplyPage(),
+                                arguments: commentList[i]);
+                          }
+                        },
+                        (id)
                         {
                           //TODO : 수정하기 버튼 처리
 
+
                         },
-                            (id)
+                        (id)
                         {
-                          //TODO : 삭제 버튼 처리
+                          deleteComment(id);
                         },
                       ),
                     const SizedBox(height: 40,),

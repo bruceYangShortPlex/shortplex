@@ -49,7 +49,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   final CarouselController pagecontroller = CarouselController();
   VideoPlayerController? videoController;
   // Add a variable to handle the time of video playback
-  int commentCount = 0;
   int selectedEpisodeNo = 0;
   double currentTime = 0.0;
   double tweenDelay = 3;
@@ -291,7 +290,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     buttonDisable = false;
     prevLogin = UserData.to.isLogin.value;
     selectedEpisodeNo = Get.arguments[0];
-    print('selectedEpisodeNo : $selectedEpisodeNo');
+    //print('selectedEpisodeNo : $selectedEpisodeNo');
     episodeList = Get.arguments[1];
 
     initContent();
@@ -536,7 +535,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id!, _page, commentSortType.name).then((value)
+      await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id, _page, commentSortType.name).then((value)
       {
         maxPage = value!.data!.maxPage;
         CommentRefresh(value, false);
@@ -583,22 +582,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         continue;
       }
 
-      String? displayname = item.displayname;
-      if(displayname == null)
-      {
-        if ( item.userId == UserData.to.userId)
-        {
-          displayname = UserData.to.name.value;
-        }
-        else
-        {
-          print('Not Found displayname !!!');
-        }
-      }
-
       var commentData = EpisodeCommentData
       (
-        name: displayname,
+        name: item.displayname,
         comment: item.content ?? '',
         date: item.createdAt != null ? GetReleaseTime(item.createdAt!) : '00.00.00',
         episodeNumber: '',
@@ -609,7 +595,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         replyCount: '${item.replies}',
         isDelete: UserData.to.userId == item.userId,
         commentType: CommentType.NORMAL,
-        parentID: episodeData!.id!,
+        parentID: episodeData!.id,
         isEdit: UserData.to.userId == item.userId,
         userID: item.userId,
       );
@@ -618,8 +604,17 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
       });
     }
-    setState(() {
-      commentCount = _data.data!.total;
+
+    setState(()
+    {
+      if (_isReply)
+      {
+        totalCommentReplyCount = _data.data!.total;
+      }
+      else
+      {
+        totalCommentCount = _data.data!.total;
+      }
     });
   }
 
@@ -627,7 +622,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      HttpProtocolManager.to.Send_delete_comment(episodeData!.id!, _id).then((value)
+      HttpProtocolManager.to.Send_delete_comment(episodeData!.id, _id).then((value)
       {
         for(var item  in value!.data!.items!)
         {
@@ -637,7 +632,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             if (episodeCommentList[i].ID == item.id)
             {
               episodeCommentList.removeAt(i);
-              commentCount = value.data!.total;
+              totalCommentCount = value.data!.total;
               //print('delete complete id : ${item.id}');
               setState(() {
 
@@ -668,7 +663,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             {
               replyList.removeAt(i);
               setState(() {
-
+                totalCommentReplyCount = value.data!.total;
               });
               break;
             }
@@ -685,7 +680,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   int downReplyPage = 0;
   int maxReplyPage = 0;
 
-  void GetRepliesData([bool _refresh = false])
+  void getRepliesData([bool _refresh = false])
   {
     if (_refresh)
     {
@@ -709,7 +704,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      HttpProtocolManager.to.Get_RepliesData(episodeData!.id!, commentData!.ID, _page).then((value)
+      HttpProtocolManager.to.Get_RepliesData(episodeData!.id, commentData!.ID, _page).then((value)
       {
         maxReplyPage = value!.data!.maxPage;
         CommentRefresh(value, true);
@@ -1037,7 +1032,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               ),
             ),
           ),
-          contentUIButtons('$commentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
+          contentUIButtons('$totalCommentCount', CupertinoIcons.ellipses_bubble, ContentUI_ButtonType.COMMENT),
           contentUIButtons(StringTable().Table![100023]!, UserData.to.isFavoriteCheck.value ? CupertinoIcons.heart_solid : CupertinoIcons.heart, ContentUI_ButtonType.CHECK),
           contentUIButtons(StringTable().Table![100024]!, CupertinoIcons.share, ContentUI_ButtonType.SHARE),
           contentUIButtons(StringTable().Table![100043]!, CupertinoIcons.info, ContentUI_ButtonType.CONTENT_INFO),
@@ -1356,7 +1351,7 @@ Widget contentPlayMain()
                           if (bottomUItype == Bottom_UI_Type.EPISODE)
                             episodeInfo(),
                           Visibility
-                            (
+                          (
                             visible: bottomUItype == Bottom_UI_Type.COMMENT || bottomUItype == Bottom_UI_Type.REPLY,
                             child:
                             IgnorePointer
@@ -1368,7 +1363,7 @@ Widget contentPlayMain()
                                 return
                                   VirtualKeybord(StringTable().Table![100041]!, textEditingController, textFocusNode,
                                     !UserData.to.isLogin.value, MediaQuery.of(context).viewInsets.bottom,
-                                        ()
+                                    ()
                                     {
                                       print('comment complete ${textEditingController.text}');
 
@@ -1619,7 +1614,7 @@ Widget contentPlayMain()
                                 //commentScrollOffset = scrollController.offset;
                                 downReplyPage = 0;
                                 replyList.clear();
-                                GetRepliesData();
+                                getRepliesData();
                               },
                               (id)
                               {
@@ -1816,7 +1811,7 @@ Widget contentPlayMain()
       {
         if (totalCommentReplyCount > replyList.length)
         {
-          GetRepliesData();
+          getRepliesData();
         }
       }
       else if (bottomUItype == Bottom_UI_Type.COMMENT)

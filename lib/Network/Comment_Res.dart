@@ -153,15 +153,15 @@ class CommentItems {
 
   CommentItems.fromJson(dynamic json)
   {
-    _id = json['id'];
-    _parentId = json['parent_id'];
-    _platform = json['platform'];
-    _typeCd = json['type_cd'];
-    _key = json['key'];
-    _host = json['host'];
-    _path = json['path'];
-    _href = json['href'];
-    _slug = json['slug'];
+    _id = json['id'] ?? '';
+    _parentId = json['parent_id'] ?? '';
+    _platform = json['platform'] ?? '';
+    _typeCd = json['type_cd'] ?? '';
+    _key = json['key'] ?? '';
+    _host = json['host'] ?? '';
+    _path = json['path'] ?? '';
+    _href = json['href'] ?? '';
+    _slug = json['slug'] ?? '';
     _userId = json['user_id'] ?? '';
     _displayname = json['displayname'] ?? '';
     _photourl = json['photourl'] ?? '';

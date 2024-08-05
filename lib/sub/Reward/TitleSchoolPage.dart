@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -38,9 +39,9 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   Duration? endTimeDifference;
   int bonusCount = 10;
 
-  String titleCommenter = '홍길동';
-  String titleComment = '아버지를 아버지라 부르지 못하고 형을 형이라 부르지 못하는김에 좀 털자';
-  int titleCommentReplyCount = 2000;
+  String commentDisplayName = '';
+  String titleComment = '';
+  int titleCommentReplyCount = 0;
   String titleSchoolImageUrl = '';
 
   void startTimer()
@@ -109,12 +110,33 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
     {
       if (value == null)
       {
+        if (kDebugMode) {
+          print('comment null');
+        }
         return;
       }
 
-      //댓글 표시
-      //작업중.
+      if (value.data!.items!.isEmpty)
+      {
+        if (kDebugMode) {
+          print('comment isEmpty');
+        }
+        return;
+      }
 
+      var item = value.data!.items![0];
+
+      var likeCount = 0;
+      if (int.tryParse(item.likes!) != null)
+      {
+        likeCount = int.parse(item.likes!);
+      }
+
+      setState(() {
+        titleCommentReplyCount = likeCount;
+        commentDisplayName = item.displayname!;
+        titleComment = item.content!;
+      });
     },);
   }
 
@@ -373,7 +395,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
               ),
               child:
               Row
-                (
+              (
                 children:
                 [
                   SizedBox(width: 20,),
@@ -382,7 +404,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                   (
                     child:
                     Container
-                      (
+                    (
                       //color: Colors.grey,
                       child:
                       Column
@@ -392,7 +414,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                         [
                           SizedBox(height: 10,),
                           Row
-                            (
+                          (
                             mainAxisAlignment: MainAxisAlignment.center,
                             children:
                             [
@@ -405,7 +427,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                 alignment: Alignment.center,
                                 child:
                                 Container
-                                  (
+                                (
                                   width: 30,
                                   height: 13,
                                   decoration: ShapeDecoration(
@@ -419,11 +441,11 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                   padding: EdgeInsets.all(1),
                                   child:
                                   FittedBox
-                                    (
+                                  (
                                     alignment: Alignment.topCenter,
                                     child:
                                     Text
-                                      (
+                                    (
                                       StringTable().Table![500015]!,
                                       style:
                                       TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
@@ -433,7 +455,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
 
                               ),
                               Expanded
-                                (
+                              (
                                   child:
                                   Container
                                     (
@@ -442,8 +464,8 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                                     //color: Colors.blue,
                                     child:
                                     Text
-                                      (
-                                      titleCommenter,
+                                    (
+                                      commentDisplayName,
                                       style:
                                       TextStyle(fontSize: 10, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                                     ),

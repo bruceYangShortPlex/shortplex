@@ -68,6 +68,18 @@ enum DailyMissionType
   ASD_GOODS_BUY, //광고상품 구매 300021
 }
 
+enum SearchGroupType
+{
+  ALL,
+  ROMANCE,
+  FANTASY,
+  ROFAN,
+  ACTION,
+  HISTORICAL,
+  JAEBEOL,
+  EVENT,
+}
+
 class HttpProtocolManager extends GetxController with GetSingleTickerProviderStateMixin
 {
   static HttpProtocolManager get to => Get.find();

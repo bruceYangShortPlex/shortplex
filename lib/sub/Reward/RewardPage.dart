@@ -55,7 +55,7 @@ class _RewardPageState extends State<RewardPage>
   int bonusRate = 10;
   String titleSchoolImageUrl = '';
 
-  getBonusEventInfo()
+  checkBonusEventInfo()
   {
     HttpProtocolManager.to.Get_BonusPageInfo().then((value)
     {
@@ -65,28 +65,19 @@ class _RewardPageState extends State<RewardPage>
 
       if (value.data!.expiredAt.isNotEmpty)
       {
-        for(var item in eventList)
+        var end = DateTime.parse(value.data!.expiredAt);
+        bool hasPassed =  DateTime.now().isAfter(end);
+        if (hasPassed == false)
         {
-          if (item.eventPage == EventPageType.BONUS)
-          {
-            var end = DateTime.parse(value.data!.expiredAt);
-            bool hasPassed =  DateTime.now().isAfter(end);
-            if (hasPassed == false)
-            {
-              item.EndTime = end;
-              item.difference = end.difference(DateTime.now());
-            }
-            else
-            {
-              item.EndTime = null;
-              item.difference = null;
-
-              if (kDebugMode) {
-                print('remove event list bonus');
-              }
-              eventList.remove(item);
-            }
-          }
+          var eventData = ShortPlexEventData();
+          eventData.Title = StringTable().Table![800006]!;
+          eventData.eventPage = EventPageType.BONUS;
+          eventData.IconUrl = 'assets/images/Reward/reward_event_popcorn_icon.png';
+          eventData.EndTime = end;
+          eventData.difference = end.difference(DateTime.now());
+          eventList.add(eventData);
+          eventTimerList.add(eventData);
+          startTimer();
         }
       }
     },);
@@ -170,6 +161,26 @@ class _RewardPageState extends State<RewardPage>
       }
     });
   }
+  
+  checkCommentEvent()
+  {
+    var url = 'https://www.quadra-system.com/api/v1/home/all?page=0&itemsPerPage=15&genre_cd=800021';
+    HttpProtocolManager.to.Get_SearchData(url).then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      if (value.data!.items!.isNotEmpty)
+      {
+        var eventData = ShortPlexEventData();
+        eventData.Title = StringTable().Table![800020]!;
+        eventData.eventPage = EventPageType.SEARCH;
+        eventData.IconUrl = 'assets/images/Reward/reward_bestreply_icon.png';
+        eventList.add(eventData);
+      }
+    });
+  }
 
   @override
   void initState()
@@ -184,28 +195,8 @@ class _RewardPageState extends State<RewardPage>
     getInvitaionInfo();
     super.initState();
 
-    for (int i = 0 ; i < 2; ++i)
-    {
-      var testData = ShortPlexEventData();
-      if (i % 2 == 0)
-      {
-        testData.Title = '팝콘 거시기 해보즈아';
-        testData.eventPage = EventPageType.BONUS;
-        testData.SetTestTime();
-      }
-      else
-      {
-        testData.eventPage = EventPageType.SEARCH;
-      }
-      testData.Title = '왭하드 테이블에서 받든지 서버에서 받든지';
-
-      eventList.add(testData);
-      eventTimerList.add(testData);
-    }
-
-    //getBonusEventInfo();
-
-    startTimer();
+    checkBonusEventInfo();
+    checkCommentEvent();
 
     //친구초대 보너스율.
     HttpProtocolManager.to.Get_InvitationRwardInfo().then((value)
@@ -348,29 +339,34 @@ Widget mainWidget(BuildContext context)=>
   Widget eventGroup()
   {
     return
-    Container
+    Visibility
     (
-      width: 390,
+      visible: eventList.isNotEmpty,
       child:
-      Column
+      Container
       (
-        children:
-        [
-          Container
-          (
-            width: 390,
-            alignment: Alignment.centerLeft,
-            child:
-            Text
+        width: 390,
+        child:
+        Column
+        (
+          children:
+          [
+            Container
             (
-              StringTable().Table![400022]!,
-              style:
-              TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              width: 390,
+              alignment: Alignment.centerLeft,
+              child:
+              Text
+              (
+                StringTable().Table![400022]!,
+                style:
+                TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              ),
             ),
-          ),
-          for(var item in eventList)
-            eventItem(item),
-        ],
+            for(var item in eventList)
+              eventItem(item),
+          ],
+        ),
       ),
     );
   }
@@ -504,7 +500,8 @@ Widget mainWidget(BuildContext context)=>
                         (
                           padding: const EdgeInsets.only(left: 20),
                           child:
-                          Image.network(_data.IconUrl, height: 32, width: 32,),
+                          Image.asset(_data.IconUrl, width: 54, height: 54,),
+                          //Image.network(_data.IconUrl, height: 32, width: 32,),
                           // Container
                           // (
                           //   width: 32,

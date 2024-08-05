@@ -440,6 +440,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
   Future<CommentRes?> Send_Comment(String _episodeID, String _comment, String _replyParentID, Comment_CD_Type _type) async
   {
+    connecting = true;
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
@@ -455,6 +456,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       {
         var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
         print('send_Comment data = $data');
+        connecting = false;
         return data;
       }
       else
@@ -468,6 +470,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       print('send_Comment error : $e');
     }
 
+    connecting = false;
     return null;
   }
 

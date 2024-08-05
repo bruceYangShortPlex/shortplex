@@ -85,7 +85,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       videoController!.dispose();
     }
 
-    HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd!).then((value)
+    HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd).then((value)
     {
       //print('Play Url : $value');
       videoController = VideoPlayerController.networkUrl(Uri.parse(value))
@@ -144,7 +144,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
     //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
     //이번회차의 가격을 알아온다.
-    if (episodeData!.cost != 0 && episodeData!.isLock)
+    if (episodeData!.isLock)
     {
       //구독중이면 그냥 다음진행.
       if (UserData.to.isSubscription == false)

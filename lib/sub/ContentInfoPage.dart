@@ -976,7 +976,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                   {
                     var money = UserData.to.popcornCount.value + UserData.to.bonusCornCount.value;
 
-                    if (money < list[i].price)
+                    if (money < list[i].cost)
                     {
                       //재화가 부족한경우.
                       showDialogTwoButton(SetTableStringArgument(400110, [money.toString(), list[i].priceAmt]), '',

@@ -406,7 +406,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       {
         await HttpProtocolManager.to.Send_edit_comment
         (
-          episodeData!.id!, textEditingController.text, commentData!.ID,
+          episodeData!.id, textEditingController.text, commentData!.ID,
           Comment_CD_Type.episode).then((value)
         {
           for(var item in value!.data!.items!)

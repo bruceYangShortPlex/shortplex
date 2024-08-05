@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -42,6 +43,8 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
       {
         if (item.imageUrl.isNotEmpty)
         {
+          getRankingComment(item.id);
+
           setState(() {
             titleSchoolImageUrl = item.imageUrl;
           });
@@ -51,34 +54,90 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
     });
   }
 
+  getRankingComment(String _aid)
+  {
+    recordCommentList.clear();
+     HttpProtocolManager.to.Get_TitleSchoolComments(
+         _aid, 0, CommentSortType.likes.name).then((value)
+    {
+      if (value == null) {
+        return;
+      }
+
+      var commentRes = value;
+      //top10
+      for (int i = 0; i < 3; ++i)
+      {
+        if (i >= commentRes.data!.items!.length) {
+          break;
+        }
+
+        var item = commentRes.data!.items![i];
+
+        var commentData = EpisodeCommentData
+        (
+          name: item.displayname,
+          comment: item.content,
+          date: GetReleaseTime(item.createdAt!),
+          episodeNumber: item.episode_no.toString(),
+          iconUrl: item.photourl ?? '',
+          ID: item.id!,
+          isLikeCheck: false,
+          likeCount: item.likes ?? '0',
+          replyCount: item.replies ?? '0',
+          isDelete: false,
+          commentType: CommentType.NORMAL,
+          parentID: item.key!,
+          isEdit: false,
+          userID: item.userId,
+        );
+
+        if (commentData.parentID != _aid)
+        {
+          if (kDebugMode) {
+            print(' !!!!!!!!!!!!!!!!! Wrong ID !!!!!!!!!!!!!!!!!!!!!!!!!!');
+          }
+          return;
+        }
+
+        setState(()
+        {
+          recordCommentList.add(commentData);
+        });
+
+        if (kDebugMode) {
+          print('finish rank comment update');
+        }
+      }
+    });
+  }
+
   @override
   void initState()
   {
-    initDayData(pickedDate);
-
     super.initState();
-
-    for(int i = 0; i < 3; ++i)
-    {
-      var commentData = EpisodeCommentData
-        (
-        name: '황후마마가 돌아왔다.',
-        comment: '이건 재미있다. 무조건 된다고 생각한다.',
-        date: '24.09.06',
-        episodeNumber: '',
-        iconUrl: '',
-        ID: i.toString(),
-        isLikeCheck: i % 2 == 0,
-        likeCount: '12',
-        replyCount: '3',
-        isDelete: false,
-        commentType: CommentType.NORMAL,
-        parentID: '',
-        isEdit: false,
-        userID: '',
-      );
-      recordCommentList.add(commentData);
-    }
+    initDayData(pickedDate);
+    // for(int i = 0; i < 3; ++i)
+    // {
+    //   var commentData = EpisodeCommentData
+    //     (
+    //     name: '황후마마가 돌아왔다.',
+    //     comment: '이건 재미있다. 무조건 된다고 생각한다.',
+    //     date: '24.09.06',
+    //     episodeNumber: '',
+    //     iconUrl: '',
+    //     ID: i.toString(),
+    //     isLikeCheck: i % 2 == 0,
+    //     likeCount: '12',
+    //     replyCount: '3',
+    //     isDelete: false,
+    //     commentType: CommentType.NORMAL,
+    //     parentID: '',
+    //     isEdit: false,
+    //     userID: '',
+    //   );
+    //   recordCommentList.add(commentData);
+    // }
   }
 
   Widget mainWidget(BuildContext context)=>

@@ -55,6 +55,9 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
 
   Future getRankComment() async
   {
+
+    print('start rank comment update');
+
     if (rankedCommentList.length < 10)
     {
       await HttpProtocolManager.to.Get_TitleSchoolComments(
@@ -65,15 +68,38 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
         }
 
         var commentRes = value;
-        var rankCommentStartIndex = rankedCommentList.length;
         //top10
-        for (int i = rankCommentStartIndex; i < 10; ++i)
+        for (int i = 0; i < 10; ++i)
         {
           if (i >= commentRes.data!.items!.length) {
             break;
           }
 
           var item = commentRes.data!.items![i];
+
+          if (rankedCommentList.any((element) => element.ID == item.id))
+          {
+            for(int i = 0 ; i < rankedCommentList.length; ++i)
+            {
+              if (rankedCommentList[i].ID == item.id)
+              {
+                rankedCommentList[i].name = item.displayname;
+                rankedCommentList[i].comment = item.content;
+                rankedCommentList[i].date = GetReleaseTime(item.createdAt!);
+                rankedCommentList[i].episodeNumber = item.episode_no.toString();
+                rankedCommentList[i].iconUrl = item.photourl;
+                rankedCommentList[i].isLikeCheck = item.whoami!.isNotEmpty && item.whoami == UserData.to.userId && item.ilike > 0;
+                rankedCommentList[i].likeCount = item.likes;
+                rankedCommentList[i].replyCount = item.replies;
+                rankedCommentList[i].isDelete = UserData.to.userId ==  item.userId;
+                rankedCommentList[i].commentType = CommentType.NORMAL;
+                rankedCommentList[i].parentID = item.key;
+                rankedCommentList[i].isEdit = false;
+                rankedCommentList[i].userID = item.userId;
+              }
+            }
+            continue;
+          }
 
           var commentData = EpisodeCommentData
           (
@@ -99,12 +125,17 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
             if (kDebugMode) {
               print(' !!!!!!!!!!!!!!!!! Wrong ID !!!!!!!!!!!!!!!!!!!!!!!!!!');
             }
+            return;
           }
 
           setState(()
           {
             rankedCommentList.add(commentData);
           });
+
+          if (kDebugMode) {
+            print('finish rank comment update');
+          }
         }
       });
     }
@@ -204,27 +235,13 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
       print("CommentRefresh data null return");
       return;
     }
-    var findComment = false;
+
     for (var item in _data.data!.items!)
     {
       //var selectList = _isReply ? replyList : commentList;
-
-      //rank에 들어있는건 빼줌.
-      if (_isReply == false && commentSortType == CommentSortType.likes)
+      if (rankedCommentList.any((element) => element.ID == item.id))
       {
-        findComment = false;
-        for(var rankItem in rankedCommentList)
-        {
-          if (commentList.any((element) => element.ID == rankItem.ID))
-          {
-            findComment = true;
-            break;
-          }
-        }
-
-        if (findComment) {
-          continue;
-        }
+        continue;
       }
 
       if (commentList.any((element) => element.ID == item.id))
@@ -242,7 +259,7 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
             commentList[i].likeCount = item.likes;
             commentList[i].replyCount = item.replies;
             commentList[i].isDelete = UserData.to.userId ==  item.userId;
-            commentList[i].commentType = item.rank > 0 && item.rank < 3 ? CommentType.BEST : CommentType.NORMAL;
+            commentList[i].commentType = CommentType.NORMAL;
             commentList[i].parentID = item.key;
             commentList[i].isEdit = false;
             commentList[i].userID = item.userId;
@@ -866,8 +883,6 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                         (id)
                         {
                           //TODO : 수정하기 버튼 처리
-
-
                         },
                         (id)
                         {
@@ -894,8 +909,92 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
         !UserData.to.isLogin.value,
         0, ()
         {
+          print('comment complete ${textEditingController.text}');
 
+          if (textEditingController.text.isEmpty)
+          {
+            return;
+          }
+
+          // if (commentData != null && textEditingController.text == commentData!.comment)
+          // {
+          //   return;
+          // }
+          //
+          // if (bottomUItype == Bottom_UI_Type.REPLY)
+          // {
+          //   SendReply();
+          // }
+          // else
+          // {
+            sendComment();
+          //}
         },);
     });
+  }
+
+  var commentSend = false;
+  void sendComment() async
+  {
+    if (commentSend) {
+      return;
+    }
+
+    if (HttpProtocolManager.to.connecting) {
+      return;
+    }
+
+    print('start send comment');
+
+      // if (isEdit)
+      // {
+      //   await HttpProtocolManager.to.Send_edit_comment
+      //     (
+      //       episodeData!.id!, textEditingController.text, commentData!.ID,
+      //       Comment_CD_Type.episode).then((value)
+      //   {
+      //     for(var item in value!.data!.items!)
+      //     {
+      //       for(int i = 0 ; i < episodeCommentList.length; ++i)
+      //       {
+      //         if (episodeCommentList[i].ID == item.id && episodeCommentList[i].comment != item.content)
+      //         {
+      //           episodeCommentList[i].comment = item.content;
+      //           break;
+      //         }
+      //       }
+      //     }
+      //     setState(() {
+      //
+      //     });
+      //
+      //   });
+      // }
+      // else
+      // {
+    if (academyID.isEmpty) {
+      return;
+    }
+
+    commentSend = true;
+
+    print('send comment setp1 start ');
+
+    var result = await HttpProtocolManager.to.Send_Comment(academyID, textEditingController.text, '', Comment_CD_Type.academy);
+
+    print('send comment setp1 end');
+
+    if (result == null) {
+     return;
+    }
+
+    print('send comment setp2 start ');
+
+    await getRankComment();
+
+    print('send comment setp2 end');
+
+    commentRefresh(result, false);
+    commentSend = false;
   }
 }

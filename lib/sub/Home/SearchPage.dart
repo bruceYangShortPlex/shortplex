@@ -9,17 +9,6 @@ import 'package:shortplex/table/StringTable.dart';
 import '../../table/UserData.dart';
 
 const int _pageSize = 15;
-enum SearchGroupType
-{
-  ALL,
-  ROMANCE,
-  FANTASY,
-  ROFAN,
-  ACTION,
-  HISTORICAL,
-  JAEBEOL,
-  EVENT,
-}
 
 class SearchPage extends StatefulWidget
 {

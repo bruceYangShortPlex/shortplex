@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class ContentRes
 {
   ContentInfoRes({
@@ -334,6 +336,19 @@ class Episode {
   String get shareLink => _shareLink;
   String get contentId => _contentId;
   String get createdAt => _createdAt;
+
+  int get price
+  {
+    if (int.tryParse(priceAmt) == null)
+    {
+      if (kDebugMode) {
+        print('price tryparse is null');
+      }
+      return 0;
+    }
+
+    return int.parse(priceAmt);
+  }
 
   bool get isLock
   {

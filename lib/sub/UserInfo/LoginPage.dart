@@ -63,7 +63,12 @@ class _LoginPageState extends State<LoginPage> {
                   //),
                   //),
                   child:
-                  Image.asset('assets/images/Public/login_bg.png', fit: BoxFit.fitWidth,),
+                  Align
+                  (
+                    alignment: Alignment.topCenter,
+                      child
+                      : Image.asset('assets/images/Public/login_bg.png', fit: BoxFit.fitWidth,)
+                  ),
                 ),
                 // Container
                 // (
@@ -177,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.black,
                         fontSize: 13,
                         fontFamily: 'NotoSans',
-                        fontWeight: FontWeight.w200),
+                        fontWeight: FontWeight.bold),
                   )
                 ],
               ),

@@ -11,6 +11,7 @@ import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/sub/ContentPlayer.dart';
 import 'package:shortplex/sub/ReplyPage.dart';
+import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/table/UserData.dart';
 import '../Network/Content_Res.dart';
 import '../table/StringTable.dart';
@@ -973,14 +974,39 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                 {
                   if (list[i].isLock)
                   {
-                    //TODO:구매안한 컨텐츠임둥.
-                    print('is lock');
+                    var money = UserData.to.popcornCount.value + UserData.to.bonusCornCount.value;
 
-                    return;
+                    if (money < list[i].price)
+                    {
+                      //재화가 부족한경우.
+                      showDialogTwoButton(SetTableStringArgument(400110, [money.toString(), list[i].priceAmt]), '',
+                      ()
+                      {
+                        Get.to(() => ShopPage());
+                      });
+                      return;
+                    }
+
+                    if (UserData.to.autoPlay == false)
+                    {
+                      showDialogTwoButton(SetTableStringArgument(100038, [list[i].priceAmt, contentData!.title!, list[i].no.toString()]),
+                          SetTableStringArgument(100039 , [money.toString()]),
+                      ()
+                      {
+                        list[i].owned = true;
+                        Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
+                      });
+                    }
+                    else
+                    {
+                      list[i].owned = true;
+                      Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
+                    }
                   }
-
-                  Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
-                  print('click');
+                  else
+                  {
+                    Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
+                  }
                 },
                 child:
                 Stack

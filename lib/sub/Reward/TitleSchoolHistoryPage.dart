@@ -117,27 +117,6 @@ class _TitleSchoolHistoryPageState extends State<TitleSchoolHistoryPage>
   {
     super.initState();
     initDayData(pickedDate);
-    // for(int i = 0; i < 3; ++i)
-    // {
-    //   var commentData = EpisodeCommentData
-    //     (
-    //     name: '황후마마가 돌아왔다.',
-    //     comment: '이건 재미있다. 무조건 된다고 생각한다.',
-    //     date: '24.09.06',
-    //     episodeNumber: '',
-    //     iconUrl: '',
-    //     ID: i.toString(),
-    //     isLikeCheck: i % 2 == 0,
-    //     likeCount: '12',
-    //     replyCount: '3',
-    //     isDelete: false,
-    //     commentType: CommentType.NORMAL,
-    //     parentID: '',
-    //     isEdit: false,
-    //     userID: '',
-    //   );
-    //   recordCommentList.add(commentData);
-    // }
   }
 
   Widget mainWidget(BuildContext context)=>

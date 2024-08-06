@@ -201,14 +201,35 @@ class HomeData extends GetxController
 
     return result;
   }
-  
+
   Episode? GetEpisode(String _eid)
   {
     Episode result = listEpisode.firstWhere(
           (element) => element.id == _eid,
-      orElse: () => null,
+      orElse: ()
+      {
+        return null;
+      },
     );
 
+    return result;
+  }
+
+  Episode? EpisodeBuyUpdate(String _eid)
+  {
+    Episode? result;
+    for(int i = 0; i < listEpisode.length; ++i)
+    {
+      if (listEpisode[i].id == _eid)
+      {
+        var item = listEpisode[i];
+        item.owned = true;
+        listEpisode[i] = item;
+        result = item;
+        break;
+      }
+    }
+    
     return result;
   }
 }

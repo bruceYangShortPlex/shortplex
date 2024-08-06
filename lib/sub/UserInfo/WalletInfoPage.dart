@@ -376,11 +376,11 @@ class _WalletInfoPageState extends State<WalletInfoPage>
   var snackbarComplete = true;
   Widget _toggleButton() =>
       Transform.scale
-        (
+      (
         scale: 0.7,
         child:
         CupertinoSwitch
-          (
+        (
           value: UserData.to.autoPlay,
           activeColor: Color(0xFF00FFBF),
           onChanged: (bool? value)
@@ -388,20 +388,25 @@ class _WalletInfoPageState extends State<WalletInfoPage>
             if (snackbarComplete == false) {
               return;
             }
-            //TODO : 서버에 알리기
+
             setState(()
             {
               UserData.to.autoPlay = value ?? false;
             });
 
-            if (snackbarComplete)
+            var propertiesValue = UserData.to.autoPlay ? '1' : '0';
+            HttpProtocolManager.to.Send_Properties('autoplay', propertiesValue, true).then((res)
             {
-              snackbarComplete = false;
-              var stringID = value != null && value ? 400075 : 400074;
-              ShowCustomSnackbar(StringTable().Table![stringID]!, SnackPosition.TOP, () {
-                snackbarComplete = true;
-              });
-            }
+              if (snackbarComplete)
+              {
+                snackbarComplete = false;
+                var stringID = value != null && value ? 400075 : 400074;
+                ShowCustomSnackbar(StringTable().Table![stringID]!, SnackPosition.TOP, ()
+                {
+                  snackbarComplete = true;
+                });
+              }
+            });
           },
         ),
       );

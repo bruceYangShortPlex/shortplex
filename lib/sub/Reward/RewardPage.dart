@@ -63,6 +63,8 @@ class _RewardPageState extends State<RewardPage>
         return;
       }
 
+      print('value.data!.expiredAt : ${value.data!.expiredAt}');
+
       if (value.data!.expiredAt.isNotEmpty)
       {
         var end = DateTime.parse(value.data!.expiredAt);

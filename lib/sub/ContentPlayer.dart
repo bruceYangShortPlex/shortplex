@@ -146,10 +146,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     //이번회차의 가격을 알아온다.
     if (episodeData!.isLock)
     {
+      var money = UserData.to.popcornCount.value + UserData.to.bonusCornCount.value;
+      print('!!!! is Lock !!!!!');
       //구독중이면 그냥 다음진행.
       if (UserData.to.isSubscription == false)
       {
-        if (UserData.to.popcornCount.value + UserData.to.bonusCornCount.value < episodeData!.cost)
+        if (money < episodeData!.cost)
         {
           isShowContent = false;
           bottomOffset = 0;
@@ -166,26 +168,26 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
           {
             WidgetsBinding.instance.addPostFrameCallback((_)
             {
-              // 이곳에 빌드 후에 실행할 코드를 작성하세요.
-              showDialogTwoButton(StringTable().Table![100038]!, StringTable().Table![100039]!, ()
-              {
-                //서버에 통신하고 처리되면 거시기한다.
-                isShowContent = true;
-                initVideoController();
-                setState(() {
-
-                });
-              },
-                    () {
-                  Get.back();
-                },);
+              showDialogTwoButton(SetTableStringArgument(100038, [episodeData!.priceAmt, episodeData!.title, episodeData!.no.toString()]),
+                  SetTableStringArgument(100039 , [money.toString()]),
+                      ()
+                  {
+                    //소비하고 보겠다고 ok함.
+                    if (kDebugMode) {
+                      print('buy episode 1');
+                    }
+                    PlayEpisode(episodeData!.id);
+                  },
+                  ()
+                  {
+                    isShowContent = false;
+                    Get.back();
+                  },);
             });
-
-            isShowContent = false;
           }
           else
           {
-            isShowContent = true;
+            PlayEpisode(episodeData!.id);
           }
         }
       }
@@ -284,6 +286,93 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     });
   }
 
+  Future PlayEpisode(String _eid) async
+  {
+    HttpProtocolManager.to.Send_BuyEpisode(_eid).then((value)
+    {
+      if (value == null)
+      {
+        return;
+      }
+
+      if ( value.data!.status  == null) {
+        return;
+      }
+
+      if (value.data!.status is bool)
+      {
+        print('Status is a boolean: ${value.data!.status}');
+        if ( value.data!.status == false && value.data!.message.isNotEmpty)
+        {
+          if (kDebugMode) {
+            print(value.data!.message);
+          }
+          //이미 구매함.
+          if (value.data!.message == 'You already have it')
+          {
+            var completeEpisode = HomeData.to.EpisodeBuyUpdate(_eid);
+            if (completeEpisode != null)
+            {
+              print('play contetent');
+              isShowContent = true;
+              initVideoController();
+              setState(() {
+
+              });
+
+            }
+            return;
+          }
+        }
+      }
+      else if (value.data!.status is String)
+      {
+        if (value.data!.status == "completed")
+        {
+          print('value.data!.status : ${value.data!.status}');
+          if (_eid == value.data!.productId)
+          {
+            //구매 성공.
+            var completeEpisode = HomeData.to.EpisodeBuyUpdate(_eid);
+            if (completeEpisode != null)
+            {
+              if (kDebugMode) {
+                print('구매 성공');
+              }
+              isShowContent = true;
+              initVideoController();
+              setState(() {
+
+              });
+            }
+
+            HttpProtocolManager.to.Get_WalletBalance().then((walletBalanceValue)
+            {
+              if (walletBalanceValue == null) {
+                return;
+              }
+
+              for(var item in walletBalanceValue.data!.items!)
+              {
+                if (item.userId == UserData.to.userId)
+                {
+                  UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+                  break;
+                }
+              }
+            });
+          }
+        }
+      }
+      else
+      {
+        if (kDebugMode) {
+          print('Unknown type');
+        }
+      }
+    },);
+  }
+
   @override
   void initState()
   {
@@ -291,7 +380,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     prevLogin = UserData.to.isLogin.value;
     selectedEpisodeNo = Get.arguments;
     //print('selectedEpisodeNo : $selectedEpisodeNo');
-
 
     initContent();
 
@@ -301,8 +389,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     );
 
     //사용팝콘 알려준다.
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (UserData.to.usedPopcorn != 0) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async
+    {
+      if (UserData.to.usedPopcorn != 0)
+      {
         ShowCustomSnackbar(StringTable().Table![100047]!, SnackPosition.BOTTOM);
         UserData.to.usedPopcorn = 0;
       }
@@ -2008,7 +2098,6 @@ Widget contentPlayMain()
         value: UserData.to.autoPlay,
         activeColor: Color(0xFF00FFBF),
         onChanged: (bool? value) {
-          //TODO : 서버에 알리기
           setState(() {
             UserData.to.autoPlay = value ?? false;
           });
@@ -2100,7 +2189,7 @@ Widget contentPlayMain()
             child:
             Text
             (
-              episodeData!.title!,
+              episodeData!.title,
               style:
               TextStyle(fontSize: 20, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
             ),
@@ -2165,16 +2254,23 @@ Widget contentPlayMain()
                           (
                             onTap: ()
                             {
-                              if (list[i].isLock)
+                              if (list[i].no > selectedEpisodeNo)
                               {
-                                //TODO:구매안한 컨텐츠임둥.
-                                print('is lock');
-                                return;
+                                var value = list[i].no - selectedEpisodeNo;
+                                if (value > 1)
+                                {
+                                  print('전화차만 시청가능');
+                                  return;
+                                }
                               }
 
+                              isShowContent = false;
                               selectedEpisodeNo = list[i].no;
                               initContent();
-                              //Get.off(() => NextContentPlayer(), arguments: [list[i].no, episodeList]);
+                              downCompletePage = 0;
+                              episodeCommentList.clear();
+                              commentSortType = CommentSortType.created_at;
+                              getCommentsData();
                             },
                             child:
                             Stack
@@ -2231,15 +2327,25 @@ Widget contentPlayMain()
                                 ),
                                 Obx(()
                                 {
-                                  var episode = HomeData.to.GetEpisode(list[i].id);
-                                  if (episode == null)
+                                  Episode episode = list[i];
+                                  for(int i = 0; i < HomeData.to.listEpisode.length; ++i)
                                   {
-                                    print('no found episode');
-                                    episode = list[i];
+                                    if (HomeData.to.listEpisode[i].id == episode.id)
+                                    {
+                                      print('Find Episode complete id = ${episode.id} / owned : ${HomeData.to.listEpisode[i].owned}');
+                                      if (episode.owned !=  HomeData.to.listEpisode[i].owned)
+                                      {
+                                        setState(() {
+                                          episode.owned = HomeData.to.listEpisode[i].owned;
+                                        });
+                                      }
+                                      break;
+                                    }
                                   }
+
                                   return
                                     Visibility
-                                      (
+                                    (
                                       visible: UserData.to.isSubscription.value == false && episode.isLock,
                                       child:
                                       Container
@@ -2249,7 +2355,7 @@ Widget contentPlayMain()
                                         color: Colors.black.withOpacity(0.7),
                                         child:
                                         SizedBox
-                                          (
+                                        (
                                           child:
                                           SvgPicture.asset
                                             (
@@ -2272,7 +2378,7 @@ Widget contentPlayMain()
                             (
                               SetTableStringArgument(100033, ['${list[i].no}']),
                               style:
-                              TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                              const TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                             ),
                           ),
                         ],

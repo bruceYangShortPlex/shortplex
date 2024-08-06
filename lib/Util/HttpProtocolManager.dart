@@ -11,6 +11,7 @@ import 'package:shortplex/Network/Mission_Res.dart';
 import 'package:shortplex/Network/OAuthLogin.dart';
 import 'package:shortplex/Network/Preorder_PatchReq.dart';
 import 'package:shortplex/Network/Preorder_Res.dart';
+import 'package:shortplex/Network/Properties_Res.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
@@ -18,6 +19,8 @@ import 'package:shortplex/Network/WalletHistory_Res.dart';
 import 'package:shortplex/Network/Wallet_Res.dart';
 import 'package:shortplex/Network/Watch_Req.dart';
 
+import '../Network/BuyEpisode_Req.dart';
+import '../Network/BuyEpisode_Res.dart';
 import '../Network/Comment_Req.dart';
 import '../Network/Content_Res.dart';
 import '../Network/EpisodeGroup_Res.dart';
@@ -1088,6 +1091,88 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return false;
   }
 
+  Future<bool> Send_Properties(String _key, String _value, [bool _isPatch = false]) async
+  {
+    connecting = true;
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/properties';
+
+      final map = <String, dynamic>{};
+      map['key'] = _key;
+      map['value'] = _value;
+
+      var bodys = jsonEncode(map);
+      print('Send_Properties send url : $url');
+      print('Send_Properties body : $bodys');
+
+      Response? res;
+      if (_isPatch)
+      {
+        res = (await http.patch(Uri.parse(url), headers: heads, body: bodys)) as Response?;
+      }
+      else
+      {
+        res = (await http.post(Uri.parse(url), headers: heads, body: bodys)) as Response?;
+      }
+
+      if (res == null) {
+        return false;
+      }
+
+      print('Send_Properties res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        return true;
+      }
+      else
+      {
+        print('Send_Properties FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_Properties error : $e');
+    }
+
+    connecting = false;
+    return false;
+  }
+
+  Future<PropertiesRes?> Get_Properties() async
+  {
+    connecting = true;
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/properties';
+
+      print('Get_Properties send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+
+      print('Get_Properties res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data = PropertiesRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_Properties FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_Properties error : $e');
+    }
+
+    connecting = false;
+    return null;
+  }
+
   Future<MoblieCertificationRes?> Send_GetCertificationMessage(String _countryCode, String _phoneNumber) async
   {
     try
@@ -1150,7 +1235,6 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
     return false;
   }
-
 
   Future<WalletRes?> Get_WalletBalance() async
   {
@@ -1413,6 +1497,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return false;
   }
 
+  //일일 미션, 일일미션
   Future<MissionRes?> Get_DailyMissions() async
   {
     try
@@ -1874,4 +1959,42 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
     return null;
   }
+
+  Future<BuyEpisodeRes?> Send_BuyEpisode(String _episodeID) async
+  {
+    connecting = true;
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/store/order';
+      var data = EpisodePaymentData(productId: _episodeID, productType: "episode");
+      var req = BuyEpisodeReq(paymentData: data, paymentProvider: "shortplex");
+      //print('stat : ${stat.value}');
+      var bodys = jsonEncode(req.toJson());
+      print('Send_BonusPlay send url : $url');
+      print('Send body : $bodys');
+      var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
+      print('Send_BonusPlay res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =   BuyEpisodeRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        connecting = false;
+        return data;
+      }
+      else
+      {
+        print('Send_BonusPlay FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Send_BonusPlay error : $e');
+    }
+
+    connecting = false;
+    return null;
+  }
+
+
 }

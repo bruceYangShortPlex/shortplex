@@ -262,6 +262,37 @@ class LoginMananger
       }
     },);
 
+    //Set or Get autoplay value
+    await HttpProtocolManager.to.Get_Properties().then((value)
+    {
+      if (value == null)
+      {
+        var propertiesValue = UserData.to.autoPlay ? '1' : '0';
+        HttpProtocolManager.to.Send_Properties('autoplay', propertiesValue);
+        return;
+      }
+
+      var find = false;
+      for(var item in value.data!.items!)
+      {
+        if (item.userId == UserData.to.userId)
+        {
+          if (item.key == 'autoplay')
+          {
+            find = true;
+            UserData.to.autoPlay = item.value == '1' ? true : false;
+            break;
+          }
+        }
+      }
+
+      if (find == false)
+      {
+        var propertiesValue = UserData.to.autoPlay ? '1' : '0';
+        HttpProtocolManager.to.Send_Properties('autoplay', propertiesValue);
+      }
+    });
+
     userData.isLogin.value = isLogin;
   }
 

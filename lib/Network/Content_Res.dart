@@ -243,40 +243,6 @@ class Stat {
 }
 
 class Episode {
-  Episode({
-    required String id,
-    required int no,
-    required String title,
-    required String episodeFhd,
-    required String episodeHd,
-    required String episodeSd,
-    required String altImgUrlFhd,
-    required String altImgUrlHd,
-    required String altImgUrlSd,
-    required String thumbnailImgUrlFhd,
-    required String thumbnailImgUrlHd,
-    required String thumbnailImgUrlSd,
-    required String priceAmt,
-    required String shareLink,
-    required String contentId,
-    required String createdAt,}){
-    _id = id;
-    _no = no;
-    _title = title;
-    _episodeFhd = episodeFhd;
-    _episodeHd = episodeHd;
-    _episodeSd = episodeSd;
-    _altImgUrlFhd = altImgUrlFhd;
-    _altImgUrlHd = altImgUrlHd;
-    _altImgUrlSd = altImgUrlSd;
-    _thumbnailImgUrlFhd = thumbnailImgUrlFhd;
-    _thumbnailImgUrlHd = thumbnailImgUrlHd;
-    _thumbnailImgUrlSd = thumbnailImgUrlSd;
-    _priceAmt = priceAmt;
-    _shareLink = shareLink;
-    _contentId = contentId;
-    _createdAt = createdAt;
-  }
 
   Episode.fromJson(dynamic json) {
     _id = json['id'] ?? '';

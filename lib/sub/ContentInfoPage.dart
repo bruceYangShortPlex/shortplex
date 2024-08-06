@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
@@ -76,10 +77,17 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
 
         contentRes = value;
         contentData!.title = contentRes!.data!.title;
-        contentData!.landScapeImageUrl =
-            contentRes!.data!.posterLandscapeImgUrl;
+        contentData!.landScapeImageUrl = contentRes!.data!.posterLandscapeImgUrl;
         contentData?.shareUrl = contentRes!.data!.shareLink;
         mapEpisodeData[0] = contentRes!.data!.episode!;
+
+        // for(var data in contentRes!.data!.episode!)
+        // {
+        //   print('fhd : ${data.thumbnailImgUrlFhd}');
+        //   print('hd : ${data.thumbnailImgUrlHd}');
+        //   print('sd : ${data.thumbnailImgUrlSd}');
+        // }
+
         HomeData.to.listEpisode.addAll(contentRes!.data!.episode!);
 
         //event time 설정.
@@ -935,9 +943,88 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
     ),
   );
 
+  Future PlayEpisode(String _eid) async
+  {
+    HttpProtocolManager.to.Send_BuyEpisode(_eid).then((value)
+    {
+      if (value == null)
+      {
+        return;
+      }
+
+      if ( value.data!.status  == null) {
+        return;
+      }
+
+      if (value.data!.status is bool)
+      {
+        print('Status is a boolean: ${value.data!.status}');
+        if ( value.data!.status == false && value.data!.message.isNotEmpty)
+        {
+          if (kDebugMode) {
+            print(value.data!.message);
+          }
+          //이미 구매함.
+          if (value.data!.message == 'You already have it')
+          {
+            var completeEpisode = HomeData.to.EpisodeBuyUpdate(_eid);
+            if (completeEpisode != null)
+            {
+              Get.to(() => ContentPlayer(), arguments: completeEpisode.no);
+            }
+            return;
+          }
+        }
+      }
+      else if (value.data!.status is String)
+      {
+        if (value.data!.status == "completed")
+        {
+          print('value.data!.status : ${value.data!.status}');
+          if (_eid == value.data!.productId)
+          {
+            //구매 성공.
+
+            var completeEpisode = HomeData.to.EpisodeBuyUpdate(_eid);
+            if (completeEpisode != null)
+            {
+              if (kDebugMode) {
+                print('구매 성공');
+              }
+              UserData.to.usedPopcorn = completeEpisode.cost;
+              Get.to(() => ContentPlayer(), arguments: completeEpisode.no);
+            }
+
+            HttpProtocolManager.to.Get_WalletBalance().then((walletBalanceValue)
+            {
+              if (walletBalanceValue == null) {
+                return;
+              }
+
+              for(var item in walletBalanceValue.data!.items!)
+              {
+                if (item.userId == UserData.to.userId)
+                {
+                  UserData.to.MoneyUpdate(item.popcorns,item.bonus);
+                  break;
+                }
+              }
+            });
+          }
+        }
+      }
+      else
+      {
+        if (kDebugMode) {
+          print('Unknown type');
+        }
+      }
+    },);
+  }
+
   Widget episodeWrap()
   {
-    if (mapEpisodeData.length == 0)
+    if (mapEpisodeData.isEmpty)
     {
       return Container();
     }
@@ -977,6 +1064,11 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
               (
                 onTap: ()
                 {
+                  if(HttpProtocolManager.to.connecting)
+                  {
+                    return;
+                  }
+
                   if (list[i].isLock)
                   {
                     var money = UserData.to.popcornCount.value + UserData.to.bonusCornCount.value;
@@ -998,18 +1090,25 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                           SetTableStringArgument(100039 , [money.toString()]),
                       ()
                       {
-                        list[i].owned = true;
-                        Get.to(() => ContentPlayer(), arguments: list[i].no);
+                        //소비하고 보겠다고 ok함.
+                        if (kDebugMode) {
+                          print('buy episode 1');
+                        }
+                        PlayEpisode(list[i].id);
                       });
                     }
                     else
                     {
-                      list[i].owned = true;
-                      Get.to(() => ContentPlayer(), arguments: list[i].no);
+                      //자동 결제
+                      if (kDebugMode) {
+                        print('buy episode 2');
+                      }
+                      PlayEpisode(list[i].id);
                     }
                   }
                   else
                   {
+                    //공짜~
                     Get.to(() => ContentPlayer(), arguments: list[i].no);
                   }
                 },
@@ -1032,26 +1131,48 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                         ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd, fit: BoxFit.cover,),
                       ),
                     ),
-                    Visibility
-                    (
-                      visible: UserData.to.isSubscription.value == false && list[i].isLock,
-                      child:
-                      Container
+                    Obx(()
+                    {
+                      Episode episode = list[i];
+                      for(int i = 0; i < HomeData.to.listEpisode.length; ++i)
+                      {
+                        if (HomeData.to.listEpisode[i].id == episode.id)
+                        {
+                          //print('Find Episode complete id = ${episode.id} / owned : ${HomeData.to.listEpisode[i].owned}');
+                          if (episode.owned !=  HomeData.to.listEpisode[i].owned)
+                          {
+                            setState(() {
+                              episode.owned = HomeData.to.listEpisode[i].owned;
+                            });
+                          }
+                          break;
+                        }
+                      }
+
+                      return
+                      Visibility
                       (
-                        width: 77,
-                        height: 107,
-                        color: Colors.black.withOpacity(0.7),
+                        visible: UserData.to.isSubscription.value == false && episode.isLock,
                         child:
-                        SizedBox
-                        (
-                          child:
-                          SvgPicture.asset
+                        Container
                           (
-                            'assets/images/pick/pick_lock.svg',
-                            fit: BoxFit.scaleDown,
+                          width: 77,
+                          height: 107,
+                          color: Colors.black.withOpacity(0.7),
+                          child:
+                          SizedBox
+                            (
+                            child:
+                            SvgPicture.asset
+                              (
+                              'assets/images/pick/pick_lock.svg',
+                              fit: BoxFit.scaleDown,
+                            ),
                           ),
                         ),
-                      ),
+                      );
+                    },
+
                     ),
                   ],
                 ),

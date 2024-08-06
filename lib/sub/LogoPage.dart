@@ -55,7 +55,7 @@ class _LogoPageState extends State<LogoPage> with TickerProviderStateMixin
           print('logo play complete');
         }
 
-        Get.off(() => CupertinoMain(), transition: Transition.noTransition,);
+        Get.off(() => CupertinoMain());
       }
     },);
   }

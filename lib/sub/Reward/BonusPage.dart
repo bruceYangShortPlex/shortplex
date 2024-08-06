@@ -191,7 +191,9 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
           });
 
-          print('popcorn animation compelte');
+          if (kDebugMode) {
+            print('popcorn animation compelte');
+          }
 
           HttpProtocolManager.to.Get_WalletBalance().then((walletBalanceValue)
           {

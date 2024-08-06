@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shortplex/Network/Content_Res.dart';
 
 import '../../Network/Product_Res.dart';
 import '../../Util/HttpProtocolManager.dart';
@@ -27,7 +28,7 @@ class HomeData extends GetxController
   static Map<String, List<ContentData>> _themesList = {};
   static var _recentList = <ContentData>[];
   var productList = <ProductItem>[].obs;
-  RxList DailyMissionList = <DailyMissionData>[].obs;
+  RxList dailyMissionList = <DailyMissionData>[].obs;
 
   get pageList => _pageList;
   get watchingContentsDataList => _watchingContentsDataList;
@@ -36,7 +37,9 @@ class HomeData extends GetxController
   get recentList => _recentList;
   get productIcons => _productIcons;
 
-  String TitleSchoolImageUrl = '';
+  RxList listEpisode = <Episode>[].obs;
+
+  String titleSchoolImageUrl = '';
 
   void SetPageList(List<ContentData> _list)
   {
@@ -165,7 +168,7 @@ class HomeData extends GetxController
 
   GetMisstionList()
   {
-    DailyMissionList.clear();
+    dailyMissionList.clear();
 
     HttpProtocolManager.to.Get_DailyMissions().then((value)
     {
@@ -182,7 +185,7 @@ class HomeData extends GetxController
         missionTestData.totalMissionCount = item.maxCnt;
         missionTestData.isReceive = !item.isActive;
         missionTestData.isVisible = item.visibility;
-        DailyMissionList.add(missionTestData);
+        dailyMissionList.add(missionTestData);
       }
     });
   }
@@ -195,6 +198,16 @@ class HomeData extends GetxController
       var item = productList.firstWhere((element) => element.id == _pid);
       result = item.shopid;
     }
+
+    return result;
+  }
+  
+  Episode? GetEpisode(String _eid)
+  {
+    Episode result = listEpisode.firstWhere(
+          (element) => element.id == _eid,
+      orElse: () => null,
+    );
 
     return result;
   }

@@ -189,7 +189,7 @@ class _RewardPageState extends State<RewardPage>
     textFieldFocusNode = FocusNode();
     textFieldFocusNode.addListener(onFocusChange);
 
-    titleSchoolImageUrl = HomeData.to.TitleSchoolImageUrl;
+    titleSchoolImageUrl = HomeData.to.titleSchoolImageUrl;
 
     HomeData.to.GetMisstionList();
     getInvitaionInfo();
@@ -223,9 +223,9 @@ class _RewardPageState extends State<RewardPage>
 
       for(var item in value.data!.items!)
       {
-        if (HomeData.to.TitleSchoolImageUrl != item.imageUrl)
+        if (HomeData.to.titleSchoolImageUrl != item.imageUrl)
         {
-          HomeData.to.TitleSchoolImageUrl = item.imageUrl;
+          HomeData.to.titleSchoolImageUrl = item.imageUrl;
           setState(() {
             titleSchoolImageUrl = item.imageUrl;
           });
@@ -1313,7 +1313,7 @@ Widget mainWidget(BuildContext context)=>
             (
               children:
               [
-                for(var item in HomeData.to.DailyMissionList)
+                for(var item in HomeData.to.dailyMissionList)
                   Padding
                   (
                     padding: const EdgeInsets.only(bottom: 20),

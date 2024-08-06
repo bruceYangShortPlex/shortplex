@@ -351,9 +351,9 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
 
       for(var item in value.data!.items!)
       {
-        if (HomeData.to.TitleSchoolImageUrl != item.imageUrl)
+        if (HomeData.to.titleSchoolImageUrl != item.imageUrl)
         {
-          HomeData.to.TitleSchoolImageUrl = item.imageUrl;
+          HomeData.to.titleSchoolImageUrl = item.imageUrl;
           setState(() {
 
           });
@@ -531,8 +531,8 @@ class _TitleSchoolCommentPageState extends State<TitleSchoolCommentPage>
                   height: 209,
                   //color: Colors.green,
                   child:
-                  HomeData.to.TitleSchoolImageUrl.isEmpty ?  SizedBox() :
-                  Image.network(HomeData.to.TitleSchoolImageUrl),
+                  HomeData.to.titleSchoolImageUrl.isEmpty ?  SizedBox() :
+                  Image.network(HomeData.to.titleSchoolImageUrl),
                 ),
                 SizedBox(height: 8,),
                 titleSchoolComment(),

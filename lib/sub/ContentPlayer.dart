@@ -20,6 +20,7 @@ import '../Util/ShortplexTools.dart';
 import '../table/StringTable.dart';
 import 'ContentInfoPage.dart';
 import 'CupertinoMain.dart';
+import 'Home/HomeData.dart';
 import 'ReplyPage.dart';
 
 enum ContentUI_ButtonType
@@ -68,7 +69,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   late Ticker ticker;
   late AnimationController tweenController;
   Episode? episodeData;
-  late List<Episode> episodeList;
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
   late Map<int, List<Episode>> mapEpisodeData = {};
@@ -111,7 +111,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         videoController!.value.duration)
     {
       // 동영상 재생이 끝났을 때 실행할 로직
-      if (selectedEpisodeNo < episodeList.length)
+      if (selectedEpisodeNo < HomeData.to.listEpisode.length)
       {
         pagecontroller.nextPage();
         //pagecontroller.jumpToPage(selectedEpisodeNo);
@@ -135,7 +135,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      episodeData = episodeList.firstWhere((item) => item.no == selectedEpisodeNo);
+      episodeData = HomeData.to.listEpisode.firstWhere((item) => item.no == selectedEpisodeNo);
     }
     catch(e)
     {
@@ -209,10 +209,10 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   void initEpisodeGroup()
   {
-    int totalEpisodeCount = episodeList.length;
+    int totalEpisodeCount = HomeData.to.listEpisode.length;
     //print('totalEpisodeCount : $totalEpisodeCount / total page : ${contentRes!.data!.episode_maxpage}');
     int dividingNumber = 20;
-    int groupCount = episodeList.length ~/ dividingNumber;
+    int groupCount = HomeData.to.listEpisode.length ~/ dividingNumber;
     //print('groupCount = $groupCount');
     for (int i = 0; i < groupCount; ++i)
     {
@@ -223,7 +223,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       var list = <Episode>[];
       for(int j = startString - 1; j < endString; ++j)
       {
-        list.add(episodeList[j]);
+        list.add(HomeData.to.listEpisode[j]);
       }
       mapEpisodeData[i] = list;
     }
@@ -238,7 +238,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       var list = <Episode>[];
       for(int j = startIndex - 1; j < endIndex; ++j)
       {
-        list.add(episodeList[j]);
+        list.add(HomeData.to.listEpisode[j]);
       }
       mapEpisodeData[mapEpisodeData.length] = list;
     }
@@ -259,7 +259,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       return;
     }
 
-    HttpProtocolManager.to.Get_Stat(episodeData!.contentId!).then((value)
+    HttpProtocolManager.to.Get_Stat(episodeData!.contentId).then((value)
     {
       if (value == null || value.data == null || value.data!.isEmpty )
       {
@@ -289,9 +289,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     buttonDisable = false;
     prevLogin = UserData.to.isLogin.value;
-    selectedEpisodeNo = Get.arguments[0];
+    selectedEpisodeNo = Get.arguments;
     //print('selectedEpisodeNo : $selectedEpisodeNo');
-    episodeList = Get.arguments[1];
+
 
     initContent();
 
@@ -1201,10 +1201,10 @@ Widget contentPlayMain()
                   scrollPhysics: bottomOffset == 0 ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
                 ),
                 //items: pageList,
-                itemCount: episodeList.length,
+                itemCount: HomeData.to.listEpisode.length,
                 itemBuilder: (context, index, realIndex)
                 {
-                  return selectedEpisodeNo == index + 1 && initialized ? contentPlayMain() : Image.network(episodeList[index].altImgUrlHd!);
+                  return selectedEpisodeNo == index + 1 && initialized ? contentPlayMain() : Image.network(HomeData.to.listEpisode[index].altImgUrlHd!);
                 },
               ),
             )
@@ -1355,7 +1355,7 @@ Widget contentPlayMain()
                             visible: bottomUItype == Bottom_UI_Type.COMMENT || bottomUItype == Bottom_UI_Type.REPLY,
                             child:
                             IgnorePointer
-                              (
+                            (
                               ignoring: connecting,
                               child:
                               Obx(()
@@ -1424,7 +1424,7 @@ Widget contentPlayMain()
           [
             SizedBox
             (
-              width: 390,
+              width: MediaQuery.of(context).size.width,
               child:
               Row
               (
@@ -1441,7 +1441,7 @@ Widget contentPlayMain()
                       (
                         '${StringTable().Table![100026]!} (${totalCommentCount})',
                         style:
-                        TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                        const TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                       ),
                     ),
                   ),
@@ -2113,7 +2113,7 @@ Widget contentPlayMain()
 
   Widget episodeWrap()
   {
-    if (mapEpisodeData.length == 0)
+    if (mapEpisodeData.isEmpty)
     {
       return Container();
     }
@@ -2195,8 +2195,8 @@ Widget contentPlayMain()
                                     (
                                       children:
                                       [
-                                        list[i].thumbnailImgUrlSd == null || list[i].thumbnailImgUrlSd!.isEmpty
-                                            ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd!, fit: BoxFit.cover,),
+                                        list[i].thumbnailImgUrlSd.isEmpty
+                                            ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd, fit: BoxFit.cover,),
                                         Visibility
                                         (
                                           visible:list[i].no == episodeData!.no,
@@ -2229,26 +2229,37 @@ Widget contentPlayMain()
 
                                   )
                                 ),
-                                Visibility
-                                (
-                                  visible: UserData.to.isSubscription.value == false && list[i].isLock,
-                                  child:
-                                  Container
-                                  (
-                                    width: 77,
-                                    height: 107,
-                                    color: Colors.black.withOpacity(0.7),
-                                    child:
-                                    SizedBox
-                                    (
-                                      child:
-                                      SvgPicture.asset
+                                Obx(()
+                                {
+                                  var episode = HomeData.to.GetEpisode(list[i].id);
+                                  if (episode == null)
+                                  {
+                                    print('no found episode');
+                                    episode = list[i];
+                                  }
+                                  return
+                                    Visibility
                                       (
-                                        'assets/images/pick/pick_lock.svg',
-                                        fit: BoxFit.scaleDown,
+                                      visible: UserData.to.isSubscription.value == false && episode.isLock,
+                                      child:
+                                      Container
+                                        (
+                                        width: 77,
+                                        height: 107,
+                                        color: Colors.black.withOpacity(0.7),
+                                        child:
+                                        SizedBox
+                                          (
+                                          child:
+                                          SvgPicture.asset
+                                            (
+                                            'assets/images/pick/pick_lock.svg',
+                                            fit: BoxFit.scaleDown,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),

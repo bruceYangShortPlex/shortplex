@@ -89,9 +89,9 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
 
       for(var item in value.data!.items!)
       {
-        if (HomeData.to.TitleSchoolImageUrl != item.imageUrl)
+        if (HomeData.to.titleSchoolImageUrl != item.imageUrl)
         {
-          HomeData.to.TitleSchoolImageUrl = item.imageUrl;
+          HomeData.to.titleSchoolImageUrl = item.imageUrl;
           setState(() {
             titleSchoolImageUrl = item.imageUrl;
           });
@@ -143,7 +143,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
   @override
   void initState()
   {
-    titleSchoolImageUrl = HomeData.to.TitleSchoolImageUrl;
+    titleSchoolImageUrl = HomeData.to.titleSchoolImageUrl;
     initDayData();
 
     startTimer();

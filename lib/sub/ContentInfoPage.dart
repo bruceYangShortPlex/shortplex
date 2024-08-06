@@ -10,6 +10,7 @@ import 'package:share/share.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/Util/ShortplexTools.dart';
 import 'package:shortplex/sub/ContentPlayer.dart';
+import 'package:shortplex/sub/Home/HomeData.dart';
 import 'package:shortplex/sub/ReplyPage.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/table/UserData.dart';
@@ -41,7 +42,6 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
   var episodeGroupList = <String>[];
   var episodeGroupSelections = <bool>[];
   late Map<int, List<Episode>> mapEpisodeData = {};
-  List<Episode> contentEpisodes = <Episode>[];
 
   bool prevLogin = false;
 
@@ -55,14 +55,18 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
   String startDate = '';
   String endDate = '';
 
-  void GetContentData() {
+  void GetContentData()
+  {
     try {
       if (contentData == null) {
         print('ContentData is Null');
         return;
       }
 
-      HttpProtocolManager.to.Get_ContentData(contentData!.id!).then((value) {
+      HomeData.to.listEpisode.clear();
+
+      HttpProtocolManager.to.Get_ContentData(contentData!.id!).then((value)
+      {
         if (value == null) {
           if (kDebugMode) {
             print('Get_ContentData is null');
@@ -76,7 +80,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
             contentRes!.data!.posterLandscapeImgUrl;
         contentData?.shareUrl = contentRes!.data!.shareLink;
         mapEpisodeData[0] = contentRes!.data!.episode!;
-        contentEpisodes.addAll(contentRes!.data!.episode!);
+        HomeData.to.listEpisode.addAll(contentRes!.data!.episode!);
 
         //event time 설정.
         if (contentRes!.data!.releaseAt.isNotEmpty &&
@@ -128,11 +132,12 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
 
         });
 
-        for (int i = 1; i <= contentRes!.data!.episodeMaxpage; ++i) {
+        for (int i = 1; i <= contentRes!.data!.episodeMaxpage; ++i)
+        {
           HttpProtocolManager.to.Get_EpisodeGroup(contentData!.id!, i).then((
               value) {
             mapEpisodeData[i] = value!.data!.episode!;
-            contentEpisodes.addAll(value.data!.episode!);
+            HomeData.to.listEpisode.addAll(value.data!.episode!);
           });
         }
       });
@@ -994,18 +999,18 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                       ()
                       {
                         list[i].owned = true;
-                        Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
+                        Get.to(() => ContentPlayer(), arguments: list[i].no);
                       });
                     }
                     else
                     {
                       list[i].owned = true;
-                      Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
+                      Get.to(() => ContentPlayer(), arguments: list[i].no);
                     }
                   }
                   else
                   {
-                    Get.to(() => ContentPlayer(), arguments: [list[i].no, contentEpisodes]);
+                    Get.to(() => ContentPlayer(), arguments: list[i].no);
                   }
                 },
                 child:

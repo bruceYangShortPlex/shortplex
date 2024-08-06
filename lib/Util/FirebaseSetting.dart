@@ -28,6 +28,7 @@ class FirebaseSetting {
 
     var messaging = FirebaseMessaging.instance;
 
+    //push 안받겠다는 사람한테 계속 물어보지 않도록.
     var prefs = await SharedPreferences.getInstance();
     bool? hasRequested = prefs.getBool('hasRequestedNotificationPermission');
 

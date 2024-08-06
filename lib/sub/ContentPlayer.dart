@@ -302,7 +302,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       if (value.data!.status is bool)
       {
         print('Status is a boolean: ${value.data!.status}');
-        if ( value.data!.status == false && value.data!.message.isNotEmpty)
+        if ( value.data!.status == false)
         {
           if (kDebugMode) {
             print(value.data!.message);
@@ -313,7 +313,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
             var completeEpisode = HomeData.to.EpisodeBuyUpdate(_eid);
             if (completeEpisode != null)
             {
-              print('play contetent');
+              if (kDebugMode) {
+                print('play contetent');
+              }
               isShowContent = true;
               initVideoController();
               setState(() {

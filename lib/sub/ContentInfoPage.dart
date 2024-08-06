@@ -959,10 +959,10 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
       if (value.data!.status is bool)
       {
         print('Status is a boolean: ${value.data!.status}');
-        if ( value.data!.status == false && value.data!.message.isNotEmpty)
+        if ( value.data!.status == false)
         {
           if (kDebugMode) {
-            print(value.data!.message);
+            print('data!.message : ${value.data!.message}');
           }
           //이미 구매함.
           if (value.data!.message == 'You already have it')
@@ -972,8 +972,8 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
             {
               Get.to(() => ContentPlayer(), arguments: completeEpisode.no);
             }
-            return;
           }
+          return;
         }
       }
       else if (value.data!.status is String)
@@ -984,7 +984,6 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
           if (_eid == value.data!.productId)
           {
             //구매 성공.
-
             var completeEpisode = HomeData.to.EpisodeBuyUpdate(_eid);
             if (completeEpisode != null)
             {
@@ -1155,16 +1154,16 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                         visible: UserData.to.isSubscription.value == false && episode.isLock,
                         child:
                         Container
-                          (
+                        (
                           width: 77,
                           height: 107,
                           color: Colors.black.withOpacity(0.7),
                           child:
                           SizedBox
-                            (
+                          (
                             child:
                             SvgPicture.asset
-                              (
+                            (
                               'assets/images/pick/pick_lock.svg',
                               fit: BoxFit.scaleDown,
                             ),

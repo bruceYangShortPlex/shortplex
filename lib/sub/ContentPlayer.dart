@@ -118,6 +118,11 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
   void eventListener()
   {
+    if (isShowContent == false)
+    {
+      return;
+    }
+
     if (videoController!.value.position >=
         videoController!.value.duration)
     {
@@ -126,8 +131,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       {
         pagecontroller.nextPage();
         //pagecontroller.jumpToPage(selectedEpisodeNo);
-        // Get.off(NextContentPlayer(),
-        //     arguments: [selectedEpisodeNo + 1, episodeList]);
         return;
       }
       else
@@ -136,14 +139,25 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       }
     }
 
-    setState(()
-    {
-      currentTime = videoController!.value.position.inSeconds.toDouble();
-    });
+    if (mounted) {
+      setState(() {
+        currentTime = videoController!.value.position.inSeconds.toDouble();
+      });
+    }
   }
 
   void initContent()
   {
+    print('init start');
+    if (videoController != null)
+    {
+      videoController!.removeListener(eventListener);
+      videoController!.dispose();
+      videoController = null;
+    }
+
+    isShowContent = false;
+
     try
     {
       episodeData = HomeData.to.listEpisode.firstWhere((item) => item.no == selectedEpisodeNo);
@@ -198,17 +212,20 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
           }
           else
           {
+            print('buy episode 2');
             PlayEpisode(episodeData!.id);
           }
         }
       }
       else
       {
+        print('play content 1');
         isShowContent = true;
       }
     }
     else
     {
+      print('play content 2');
       isShowContent = true;
     }
 
@@ -391,7 +408,9 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     buttonDisable = false;
     prevLogin = UserData.to.isLogin.value;
-    selectedEpisodeNo = Get.arguments;
+    if (Get.arguments is int) {
+      selectedEpisodeNo = Get.arguments;
+    }
     //print('selectedEpisodeNo : $selectedEpisodeNo');
 
     initContent();
@@ -1049,29 +1068,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       Get.back();
                     },
                   ),
-                  // Visibility
-                  // (
-                  //   visible: selectedEpisodeNo < episodeList.length,
-                  //   child:
-                  //   IconButton
-                  //   (
-                  //     onPressed: ()
-                  //     {
-                  //       if (showCheck() == false)
-                  //       {
-                  //         return;
-                  //       }
-                  //
-                  //       pagecontroller.nextPage();
-                  //
-                  //       //Get.off(NextContentPlayer(), arguments: [selectedEpisodeNo + 1, episodeList]);
-                  //       if (kDebugMode) {
-                  //         print('다음회차 보기 누름');
-                  //       }
-                  //     },
-                  //     icon: Icon(Icons.skip_next), color: Colors.white, iconSize: 33,
-                  //   ),
-                  // )
                 ],
               ),
             ),
@@ -1301,7 +1297,7 @@ Widget contentPlayMain()
                   scrollDirection: Axis.vertical,
                   //height: MediaQuery.of(context).size.height,
                   //autoPlay: true,
-                  scrollPhysics: bottomOffset == 0 ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
+                  scrollPhysics: videoController == null || videoController!.value.isInitialized == false || bottomOffset == 0 ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
                 ),
                 //items: pageList,
                 itemCount: HomeData.to.listEpisode.length,
@@ -1447,7 +1443,8 @@ Widget contentPlayMain()
                         //상점에서 구매후 팝콘이 많아진경우.
                         if (UserData.to.popcornCount.value > episodeData!.cost )
                         {
-                          initContent();
+                          print('Play jumto page');
+                          pagecontroller.jumpToPage(selectedEpisodeNo);
                         }
 
                        return
@@ -1946,7 +1943,7 @@ Widget contentPlayMain()
     return
     Padding
     (
-      padding: const EdgeInsets.only(top: 30),
+      padding: const EdgeInsets.only(top: 0),
       child:
       SingleChildScrollView
       (
@@ -1957,7 +1954,7 @@ Widget contentPlayMain()
             [
               Padding
               (
-                padding: EdgeInsets.only(top: 20),
+                padding: EdgeInsets.only(top: 0),
                 child:
                 Container
                 (
@@ -2018,8 +2015,7 @@ Widget contentPlayMain()
                             (
                              onTap: ()
                              {
-                               MainBottomNavgationBarController.to.selectedIndex.value = MainPageType.RewardPage.index;
-                               Get.back();
+                               Get.offAll(() => CupertinoMain(), arguments: MainPageType.RewardPage.index);
                              },
                               child: Stack
                               (
@@ -2293,14 +2289,7 @@ Widget contentPlayMain()
                                   return;
                                 }
                               }
-                              //일단 다음회차로 초기화하면 상점뜨던지 할거다.
-                              isShowContent = false;
-                              selectedEpisodeNo = list[i].no;
-                              initContent();
-                              downCompletePage = 0;
-                              episodeCommentList.clear();
-                              commentSortType = CommentSortType.created_at;
-                              getCommentsData();
+                              pagecontroller.nextPage();
                             },
                             child:
                             Stack
@@ -2321,8 +2310,8 @@ Widget contentPlayMain()
                                     (
                                       children:
                                       [
-                                        list[i].thumbnailImgUrlSd.isEmpty
-                                            ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd, fit: BoxFit.cover,),
+                                        list[i].thumbnailImg.isEmpty
+                                            ? SizedBox() : Image.network(list[i].thumbnailImg, fit: BoxFit.cover,),
                                         Visibility
                                         (
                                           visible:list[i].no == episodeData!.no,
@@ -2362,7 +2351,7 @@ Widget contentPlayMain()
                                   {
                                     if (HomeData.to.listEpisode[i].id == episode.id)
                                     {
-                                      print('Find Episode complete id = ${episode.id} / owned : ${HomeData.to.listEpisode[i].owned}');
+                                      //print('Find Episode complete id = ${episode.id} / owned : ${HomeData.to.listEpisode[i].owned}');
                                       if (episode.owned !=  HomeData.to.listEpisode[i].owned)
                                       {
                                         setState(() {

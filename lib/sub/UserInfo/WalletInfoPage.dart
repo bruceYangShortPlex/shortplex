@@ -295,7 +295,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
                   _option(400018, WalletHistoryType.BONUS),
                   _option(400019, WalletHistoryType.SPEND),
                   _option(400020, WalletHistoryType.NONE, true),
-                  Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+                  Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
                 ],
               ),
             ),
@@ -341,7 +341,7 @@ class _WalletInfoPageState extends State<WalletInfoPage>
         mainAxisAlignment: MainAxisAlignment.center,
         children:
         [
-          Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+          Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
           Row
           (
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

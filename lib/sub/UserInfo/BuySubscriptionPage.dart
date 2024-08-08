@@ -212,7 +212,7 @@ class BuySubscriptionPage extends StatelessWidget
                     alignment: Alignment.center,
                     children:
                     [
-                      Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
+                      Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
                       Container
                         (
                         color: Colors.black,

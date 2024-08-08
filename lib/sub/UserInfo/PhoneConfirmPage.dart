@@ -135,7 +135,7 @@ class _PhoneConfirmPageState extends State<PhoneConfirmPage>
               (
                 children:
                 [
-                  Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+                  Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
                   numberConfirmTitle(),
                   SizedBox(height: 20,),
                   numberInput(),

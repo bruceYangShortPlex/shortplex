@@ -192,8 +192,7 @@ class HistoryPage extends StatefulWidget
                         }
                         else if (historyType == WalletHistoryType.BONUS)
                         {
-                          MainBottomNavgationBarController.to.selectedIndex.value = MainPageType.RewardPage.index;
-                          Get.offAll(CupertinoMain());
+                          Get.offAll(() => CupertinoMain(), arguments: MainPageType.RewardPage.index);
                         }
                         else if (historyType == WalletHistoryType.SPEND)
                         {

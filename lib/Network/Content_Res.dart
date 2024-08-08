@@ -305,7 +305,21 @@ class Episode {
   String get altImgUrlSd => _altImgUrlSd;
   String get thumbnailImgUrlFhd => _thumbnailImgUrlFhd;
   String get thumbnailImgUrlHd => _thumbnailImgUrlHd;
-  String get thumbnailImgUrlSd => _thumbnailImgUrlSd;
+  String get thumbnailImg
+  {
+    var result = _thumbnailImgUrlFhd;
+    if (result.isEmpty)
+    {
+      result = _thumbnailImgUrlHd;
+    }
+
+    if (result.isEmpty)
+    {
+      result = _thumbnailImgUrlSd;
+    }
+
+    return result;
+  }
   String get priceAmt => _priceAmt;
   String get shareLink => _shareLink;
   String get contentId => _contentId;

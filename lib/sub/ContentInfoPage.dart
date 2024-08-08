@@ -1065,6 +1065,9 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                 {
                   if(HttpProtocolManager.to.connecting)
                   {
+                    if (kDebugMode) {
+                      print('Server connecting return');
+                    }
                     return;
                   }
 
@@ -1108,6 +1111,9 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                   else
                   {
                     //공짜~
+                    if (kDebugMode) {
+                      print('play contente Episode id : ${list[i].id} / episode no ${list[i].no}');
+                    }
                     Get.to(() => ContentPlayer(), arguments: list[i].no);
                   }
                 },
@@ -1126,8 +1132,8 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                       (
                           borderRadius: BorderRadius.circular(7),
                           child:
-                        list[i].thumbnailImgUrlSd.isEmpty
-                        ? SizedBox() : Image.network(list[i].thumbnailImgUrlSd, fit: BoxFit.cover,),
+                        list[i].thumbnailImg.isEmpty
+                        ? SizedBox() : Image.network(list[i].thumbnailImg, fit: BoxFit.cover,),
                       ),
                     ),
                     Obx(()
@@ -1509,7 +1515,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
               alignment: Alignment.center,
               children:
               [
-                Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
+                const Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
                 Container
                 (
                   color: Colors.black,

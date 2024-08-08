@@ -129,6 +129,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
   Future<OAuthRes?> Send_OAuthLogin(OAuthLogin _oauthLogin) async
   {
+    connecting = true;
     try
     {
       var heads = {'apikey':ApiKey, 'Content-Type':'application/json'};
@@ -141,6 +142,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       if (res.statusCode == 200)
       {
         var data =  OAuthRes.fromJson(jsonDecode(res.body));
+        connecting = false;
         return data;
       }
     }
@@ -148,7 +150,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     {
       print('sendOAuthLogin error : ${e}');
     }
-
+    connecting = false;
     return null;
   }
 
@@ -1125,6 +1127,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       if (res.statusCode == 200)
       {
+        connecting = false;
         return true;
       }
       else
@@ -1157,6 +1160,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       if (res.statusCode == 200)
       {
         var data = PropertiesRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        connecting = false;
         return data;
       }
       else

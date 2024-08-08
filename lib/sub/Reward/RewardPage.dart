@@ -11,7 +11,6 @@ import 'package:shortplex/Util/AdsManager.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
 import 'package:shortplex/sub/Home/SearchPage.dart';
 import 'package:shortplex/sub/Reward/BonusPage.dart';
-import 'package:shortplex/sub/Reward/RewardHistoryPage.dart';
 import 'package:shortplex/sub/Reward/TitleSchoolPage.dart';
 
 import '../../Util/ShortplexTools.dart';
@@ -731,39 +730,39 @@ Widget mainWidget(BuildContext context)=>
                   ),
                 ),
               ),
-              Expanded
-              (
-                child:
-                Container
-                (
-                  padding: EdgeInsets.only(bottom: 2),
-                  alignment: Alignment.centerRight,
-                  //color: Colors.red,
-                  child:
-                  Text
-                  (
-                    StringTable().Table![300007]!,
-                    style:
-                    TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ),
-              ),
-              Container
-              (
-                alignment: Alignment.centerRight,
-                child:
-                IconButton
-                (
-                    alignment: Alignment.center,
-                    color: Colors.white,
-                    iconSize: 20,
-                    icon: const Icon(Icons.arrow_forward_ios),
-                    onPressed: ()
-                    {
-                      Get.to(() => RewardHistory(PageTitle: StringTable().Table![300007]!, historyType: WalletHistoryType.REWARD,));
-                    }
-                ),
-              )
+              // Expanded
+              // (
+              //   child:
+              //   Container
+              //   (
+              //     padding: EdgeInsets.only(bottom: 2),
+              //     alignment: Alignment.centerRight,
+              //     //color: Colors.red,
+              //     child:
+              //     Text
+              //     (
+              //       StringTable().Table![300007]!,
+              //       style:
+              //       TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+              //     ),
+              //   ),
+              // ),
+              // Container
+              // (
+              //   alignment: Alignment.centerRight,
+              //   child:
+              //   IconButton
+              //   (
+              //       alignment: Alignment.center,
+              //       color: Colors.white,
+              //       iconSize: 20,
+              //       icon: const Icon(Icons.arrow_forward_ios),
+              //       onPressed: ()
+              //       {
+              //         Get.to(() => RewardHistory(PageTitle: StringTable().Table![300007]!, historyType: WalletHistoryType.REWARD,));
+              //       }
+              //   ),
+              // )
             ],
           ),
           Container

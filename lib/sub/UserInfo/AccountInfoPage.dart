@@ -197,7 +197,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> with TickerProviderSt
                   _option(400050, AccountInfoSubPageType.BIRTHDAY),
                   _option(400051, AccountInfoSubPageType.COUNTRY),
                   _option(400052, AccountInfoSubPageType.PHONENUMBER_INPUT),
-                  Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+                  Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
                   Padding
                   (
                     padding: EdgeInsets.all(20),

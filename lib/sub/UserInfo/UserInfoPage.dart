@@ -186,7 +186,7 @@ class _UserInfoPageState extends State<UserInfoPage>
               SizedBox(height: 10,),
               _walletInfo(),
               SizedBox(height: 10,),
-              Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 0.5,),
+              const Divider(height: 2, color: Colors.grey, indent: 10, endIndent: 10, thickness: 0.5,),
               _mainListView(),
             ],
           ),
@@ -495,7 +495,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                 ],
               ),
             ),
-            Divider(height: 10, color: Colors.white54, indent: 10, endIndent: 10, thickness: 1,),
+            const Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
             Row
             (
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -803,8 +803,8 @@ class _UserInfoPageState extends State<UserInfoPage>
                   ],
                 ),
               ),
-              Divider(height: 10,
-                color: Colors.white,
+              const Divider(height: 10,
+                color: Colors.grey,
                 indent: 10,
                 endIndent: 10,
                 thickness: 1,),
@@ -868,12 +868,12 @@ class _UserInfoPageState extends State<UserInfoPage>
                 ),
               ],
             ),
-            _list.length == 0 ? contetntAnnounce(_contents1id,_contents2id,_icon == CupertinoIcons.bell_fill)
+            _list.isEmpty ? contetntAnnounce(_contents1id,_contents2id,_icon == CupertinoIcons.bell_fill)
             : contentsView(_list, _icon == CupertinoIcons.bell_fill),
-            Padding
+            const Padding
             (
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Divider(height: 2, color: Colors.white, indent: 10, endIndent: 10, thickness: 1,),
+              padding: EdgeInsets.only(top: 20.0),
+              child: Divider(height: 2, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
             ),
           ],
         ),

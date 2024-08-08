@@ -605,7 +605,7 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
             ),
           ),
           SizedBox(height: 30,),
-          Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+          Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
           Container
           (
               width: 330,
@@ -637,14 +637,14 @@ class _TitleSchoolPageState extends State<TitleSchoolPage>
                 ],
               )
           ),
-          Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+          Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
           SizedBox(height: 30,),
           Stack
           (
             alignment: Alignment.center,
             children:
             [
-              Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
+              Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
               Container
               (
                 color: Colors.black,

@@ -66,6 +66,11 @@ class CupertinoMain extends StatelessWidget{
     // Get.put : 수명이 페이지와 같음
     Get.put(MainBottomNavgationBarController());
 
+    if (Get.arguments is int)
+    {
+      MainBottomNavgationBarController.to.selectedIndex.value = Get.arguments;
+    }
+
     return
     Scaffold
     (

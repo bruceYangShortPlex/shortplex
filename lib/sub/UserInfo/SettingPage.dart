@@ -139,7 +139,7 @@ class _SettingPageState extends State<SettingPage>
                     return
                     Visibility(visible: UserData.to.isLogin.value, child:_option(400047, SettingSubPageType.LOG_OUT),);
                   },),
-                  Divider(height: 10, color: Colors.white.withOpacity(0.6), indent: 10, endIndent: 10, thickness: 1,),
+                  Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
                   Text
                   (
                     'Ver 1.00' ,
@@ -161,7 +161,7 @@ class _SettingPageState extends State<SettingPage>
     mainAxisAlignment: MainAxisAlignment.center,
     children:
     [
-      Divider(height: 10, color: Colors.white38, indent: 10, endIndent: 10, thickness: 1,),
+      Divider(height: 10, color: Colors.grey, indent: 10, endIndent: 10, thickness: 1,),
       Row
       (
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -65,7 +65,6 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
           print('item.description : ${item.description!}');
           print('item.userId : ${item.userId!}');
         }
-
       }
 
       for(var item in mapData.values)

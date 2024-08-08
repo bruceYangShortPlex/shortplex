@@ -83,10 +83,10 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
         contentData!.releaseAt = contentRes!.data!.releaseAt;
         mapEpisodeData[0] = contentRes!.data!.episode!;
 
-        for(var data in contentRes!.data!.episode!)
-        {
-          print('${data.id} / ${data.no} / ${data.owned}');
-        }
+        // for(var data in contentRes!.data!.episode!)
+        // {
+        //   print('${data.id} / ${data.no} / ${data.owned}');
+        // }
 
         HomeData.to.listEpisode.addAll(contentRes!.data!.episode!);
 
@@ -132,8 +132,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
             100033, ['$endIndex'],)}');
         }
 
-        episodeGroupSelections =
-            List.generate(episodeGroupList.length, (_) => false);
+        episodeGroupSelections = List.generate(episodeGroupList.length, (_) => false);
         episodeGroupSelections[0] = true;
 
         setState(() {
@@ -151,11 +150,14 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
 
             mapEpisodeData[i] = value.data!.episode!;
 
-            for(var data in value.data!.episode!)
-            {
-              print('${data.id} / ${data.no} / ${data.owned}');
-            }
+            // for(var data in value.data!.episode!)
+            // {
+            //   print('${data.id} / ${data.no} / ${data.owned}');
+            // }
             HomeData.to.listEpisode.addAll(value.data!.episode!);
+
+            //내림차순 정렬
+            HomeData.to.listEpisode.sort((a, b) => a.no.compareTo(b.no));
           });
         }
       });

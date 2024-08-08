@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
@@ -28,7 +29,7 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
   @override
   void initState()
   {
-    HttpProtocolManager.to.Get_WalletHistory(WalletHistoryType.CHARGE).then((value)
+    HttpProtocolManager.to.Get_WalletHistory(WalletHistoryType.CHARGE, 0).then((value)
     {
       if (value == null)
       {
@@ -40,7 +41,6 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
         var historyData = HistoryData();
         historyData.content1 = HomeData.to.GetPrice(item.productId!); //임시 과거의 값을 알수 없기때문에 서버에서 받아야한다.
         //historyData.content2 = item.description!;
-        print('item.description! : ${item.description!}');
         historyData.title = SetStringArgument(item.description!, [item.credit!]);
         historyData.time = GetReleaseTime(item.createdAt!);
         historyData.iconUrl = HomeData.to.GetShopIcon(item.credit!, false);
@@ -59,6 +59,13 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
           list.add(historyData);
           mapData[historyData.GetKey()] = list;
         }
+
+        if (kDebugMode) {
+          print('item.productId : ${item.productId!}');
+          print('item.description : ${item.description!}');
+          print('item.userId : ${item.userId!}');
+        }
+
       }
 
       for(var item in mapData.values)

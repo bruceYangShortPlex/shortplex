@@ -690,12 +690,17 @@ class _HomePageState extends State<HomePage>
                 {
                   GetEpisodeData(_data.id!).then((value)
                   {
-                    if (kDebugMode) {
-                      print('_data.watchingEpisode : ${_data
-                        .watchingEpisode} / episode length : ${value?.length}');
+                    if (value == null) {
+                      return;
                     }
-                    Get.to(() => ContentPlayer(),
-                        arguments: [_data.watchingEpisode, value]);
+
+                    HomeData.to.listEpisode.value = value;
+
+                    if (kDebugMode)
+                    {
+                        print('_data.watchingEpisode : ${_data.watchingEpisode} / episode length : ${value.length}');
+                    }
+                    Get.to(() => ContentPlayer(), arguments: _data.watchingEpisode);
                     buttonEnable = true;
                   },);
                 }

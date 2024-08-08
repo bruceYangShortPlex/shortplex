@@ -161,13 +161,13 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
     currentPopcorn = UserData.to.popcornCount.value;
 
-    try
+    if(HomeData.to.listEpisode.any((element) => element.no == selectedEpisodeNo))
     {
-      episodeData = HomeData.to.listEpisode.firstWhere((item) => item.no == selectedEpisodeNo);
+      episodeData = HomeData.to.listEpisode.firstWhere((item) => item.no ==
+          selectedEpisodeNo);
     }
-    catch(e)
-    {
-      print(e);
+    else{
+      print('not found episode no : $selectedEpisodeNo');
     }
 
     //팝콘이 부족하지 않은지 확인.
@@ -1083,12 +1083,13 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               (
                 onTap: ()
                 {
-                  if (videoController == null) {
-                    return;
-                  }
 
                   if (showCheck() == false)
                   {
+                    return;
+                  }
+
+                  if (videoController == null) {
                     return;
                   }
 

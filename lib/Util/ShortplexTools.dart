@@ -21,8 +21,8 @@ void showDialogTwoButton(String _titie, String _content, VoidCallback _callback,
     TextStyle
     (
       fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-    titlePadding: EdgeInsets.only(top: 30),
-    contentPadding: _content == '' ? EdgeInsets.only(top: 0) : EdgeInsets.only(top: 30),
+    titlePadding: const EdgeInsets.only(top: 30, left: 10, right: 10),
+    contentPadding: _content == '' ? EdgeInsets.zero : const EdgeInsets.only(top: 30, left: 10, right: 10),
     content :
     Text
     (

@@ -75,6 +75,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   var episodeGroupSelections = <bool>[];
   late Map<int, List<Episode>> mapEpisodeData = {};
   var episodeGroupScrollController = ScrollController();
+  var currentPopcorn = 0;
 
   void initVideoController()
   {
@@ -158,6 +159,8 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
     isShowContent = false;
 
+    currentPopcorn = UserData.to.popcornCount.value;
+
     try
     {
       episodeData = HomeData.to.listEpisode.firstWhere((item) => item.no == selectedEpisodeNo);
@@ -228,8 +231,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       print('play content 2');
       isShowContent = true;
     }
-
-    //print('check cost isShowContent : $isShowContent');
 
     if (isShowContent == true)
     {
@@ -1281,6 +1282,7 @@ Widget contentPlayMain()
                   {
                     //print('on changed index : $index');
                     tweenTime = 0;
+                    //WidgetsBinding.instance.addPostFrameCallback((_) {};
                     setState(()
                     {
                       selectedEpisodeNo = index + 1;
@@ -1440,16 +1442,31 @@ Widget contentPlayMain()
                       isShowContent == false ?
                       Obx(()
                       {
-                        //상점에서 구매후 팝콘이 많아진경우.
-                        if (UserData.to.popcornCount.value > episodeData!.cost )
+                        // 상점에서 구매 후 팝콘이 많아진 경우.
+                        if (currentPopcorn != UserData.to.popcornCount.value && UserData.to.popcornCount.value > episodeData!.cost)
                         {
-                          print('Play jumto page');
-                          pagecontroller.jumpToPage(selectedEpisodeNo);
+                          currentPopcorn = UserData.to.popcornCount.value;
+
+                          WidgetsBinding.instance.addPostFrameCallback((_)
+                          {
+                            setState(()
+                            {
+                              bottomOffset = -844.h;
+                              tweenTime = 0;
+                              initContent();
+                              downCompletePage = 0;
+                              episodeCommentList.clear();
+                              commentSortType = CommentSortType.created_at;
+                              getCommentsData();
+                            });
+                          });
+
+                          return const SizedBox();
                         }
 
-                       return
-                       showShop();
-                      }) :
+                        return showShop();
+                      })
+                      :
                       Stack
                       (
                         children:
@@ -2289,6 +2306,13 @@ Widget contentPlayMain()
                                   return;
                                 }
                               }
+
+                              setState(()
+                              {
+                                bottomOffset = -844.h;
+                                tweenTime = 0;
+                              });
+
                               pagecontroller.nextPage();
                             },
                             child:
@@ -2368,7 +2392,7 @@ Widget contentPlayMain()
                                       visible: UserData.to.isSubscription.value == false && episode.isLock,
                                       child:
                                       Container
-                                        (
+                                      (
                                         width: 77,
                                         height: 107,
                                         color: Colors.black.withOpacity(0.7),
@@ -2416,11 +2440,11 @@ Widget contentPlayMain()
 
   Widget episodeGroup(String _title, bool _select) =>
       Padding
-        (
+      (
         padding: const EdgeInsets.only(left: 5, right: 5),
         child: _select ?
         Container
-          (
+        (
           width: 73,
           height: 26,
           decoration: ShapeDecoration

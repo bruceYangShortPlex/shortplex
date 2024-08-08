@@ -1975,10 +1975,10 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var req = BuyEpisodeReq(paymentData: data, paymentProvider: "shortplex");
       //print('stat : ${stat.value}');
       var bodys = jsonEncode(req.toJson());
-      print('Send_BonusPlay send url : $url');
+      print('Send_BuyEpisode send url : $url');
       print('Send body : $bodys');
       var res = await http.patch(Uri.parse(url), headers: heads, body: bodys);
-      print('Send_BonusPlay res.body ${res.body}');
+      print('Send_BuyEpisode res.body ${res.body}');
 
       if (res.statusCode == 200)
       {
@@ -1988,12 +1988,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       }
       else
       {
-        print('Send_BonusPlay FAILD : ${res.statusCode}');
+        print('Send_BuyEpisode FAILD : ${res.statusCode}');
       }
     }
     catch (e)
     {
-      print('Send_BonusPlay error : $e');
+      print('Send_BuyEpisode error : $e');
     }
 
     connecting = false;

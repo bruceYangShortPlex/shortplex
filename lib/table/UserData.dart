@@ -210,7 +210,7 @@ class ContentData
 {
   String? id;
   String? title;
-  String? themeTitle;
+  String themeTitle = '';
   String? imagePath;
   String? thumbNail;
   bool isWatching = false;

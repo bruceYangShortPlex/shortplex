@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage>
               landScapeImageUrl: item.posterLandscapeImgUrl,
               rank: item.topten,
           );
-
+          data.themeTitle = value.data!.title ?? '';
           data.contentTitle = item.subtitle ?? '';
           pageList.add(data);
         }
@@ -92,6 +92,7 @@ class _HomePageState extends State<HomePage>
           );
 
           data.contentTitle = item.subtitle ?? '';
+          data.themeTitle = value.data!.title ?? '';
           rankContentsDataList.add(data);
         }
 
@@ -123,6 +124,8 @@ class _HomePageState extends State<HomePage>
             landScapeImageUrl: '',
             rank: false,
           );
+
+          data.themeTitle =  StringTable().Table![100009]!;
           data.isWatching = true;
           data.watchingEpisode = item.no ;
           data.contentTitle = item.title ?? '';
@@ -142,7 +145,7 @@ class _HomePageState extends State<HomePage>
           var data = ContentData
           (
             id: item.id,
-            title: value.data!.title,
+            title: item.title ?? '',
             imagePath: item.posterPortraitImgUrl,
             cost: 0,
             releaseAt: item.releaseAt,
@@ -150,6 +153,7 @@ class _HomePageState extends State<HomePage>
             rank: item.topten,
           );
           data.contentTitle = item.subtitle ?? '';
+          data.themeTitle = value.data!.title!;
           recentList.add(data);
         }
         setState(() {
@@ -179,7 +183,7 @@ class _HomePageState extends State<HomePage>
               var data = ContentData
               (
                 id: item.id,
-                title: item.theme_title,
+                title: item.title,
                 imagePath: item.posterPortraitImgUrl,
                 cost: 0,
                 releaseAt: item.releaseAt,
@@ -188,6 +192,7 @@ class _HomePageState extends State<HomePage>
               );
 
               data.contentTitle = item.subtitle ?? '';
+              data.themeTitle = item.theme_title;
               list.add(data);
             }
             themesList[themse.id!] = list;
@@ -496,9 +501,9 @@ class _HomePageState extends State<HomePage>
               SizedBox(width: 10,),
               Text
               (
-                _list[0].title!,
+                _list[0].themeTitle,
                 style:
-                const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                const TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
               ),
               SizedBox(height: 10,),
               SizedBox
@@ -561,11 +566,16 @@ class _HomePageState extends State<HomePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children:
         [
-          Text
+          Padding
           (
-            _list[0].title!,
-            style:
-            const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+            padding: const EdgeInsets.only(left: 10),
+            child:
+            Text
+            (
+              _list[0].themeTitle,
+              style:
+              const TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+            ),
           ),
           SizedBox(height: 10,),
           SingleChildScrollView
@@ -750,7 +760,7 @@ class _HomePageState extends State<HomePage>
                 ),
                 Visibility
                 (
-                  visible: _data.isNew,
+                  visible: _data.isWatching == false && _data.isNew,
                   child:
                   Container
                   (
@@ -768,7 +778,7 @@ class _HomePageState extends State<HomePage>
                   child:
                   Visibility
                   (
-                    visible: _data.rank,
+                    visible: _data.isWatching == false && _data.rank,
                     child:
                     Container
                     (

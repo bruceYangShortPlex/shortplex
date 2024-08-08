@@ -233,7 +233,7 @@ class ContentItems {
   bool _featured = false;
   bool _topten = false;
   String? _createdAt;
-  String? _theme_title;
+  String _theme_title = '';
   String? content_id;
   int no = 0;
 
@@ -259,7 +259,7 @@ class ContentItems {
   bool get featured => _featured;
   bool get topten => _topten;
   String? get createdAt => _createdAt;
-  String? get theme_title => _theme_title;
+  String get theme_title => _theme_title;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

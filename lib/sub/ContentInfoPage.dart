@@ -78,15 +78,15 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
         contentRes = value;
         contentData!.title = contentRes!.data!.title;
         contentData!.landScapeImageUrl = contentRes!.data!.posterLandscapeImgUrl;
-        contentData?.shareUrl = contentRes!.data!.shareLink;
+        contentData!.shareUrl = contentRes!.data!.shareLink;
+        contentData!.rank = contentRes!.data!.topten;
+        contentData!.releaseAt = contentRes!.data!.releaseAt;
         mapEpisodeData[0] = contentRes!.data!.episode!;
 
-        // for(var data in contentRes!.data!.episode!)
-        // {
-        //   print('fhd : ${data.thumbnailImgUrlFhd}');
-        //   print('hd : ${data.thumbnailImgUrlHd}');
-        //   print('sd : ${data.thumbnailImgUrlSd}');
-        // }
+        for(var data in contentRes!.data!.episode!)
+        {
+          print('${data.id} / ${data.no} / ${data.owned}');
+        }
 
         HomeData.to.listEpisode.addAll(contentRes!.data!.episode!);
 
@@ -143,8 +143,18 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
         for (int i = 1; i <= contentRes!.data!.episodeMaxpage; ++i)
         {
           HttpProtocolManager.to.Get_EpisodeGroup(contentData!.id!, i).then((
-              value) {
-            mapEpisodeData[i] = value!.data!.episode!;
+              value)
+          {
+            if (value == null) {
+              return;
+            }
+
+            mapEpisodeData[i] = value.data!.episode!;
+
+            for(var data in value.data!.episode!)
+            {
+              print('${data.id} / ${data.no} / ${data.owned}');
+            }
             HomeData.to.listEpisode.addAll(value.data!.episode!);
           });
         }
@@ -434,7 +444,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
             //color: Colors.white,
             child:
             Text
-              (
+            (
               contentData!.title!,
               style:
               TextStyle(fontSize: 20,
@@ -466,7 +476,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
                   Visibility(
                       visible: contentData!.isNew, child: SizedBox(width: 12,)),
                   Visibility
-                    (
+                  (
                     visible: contentData!.rank,
                     child:
                     SvgPicture.asset

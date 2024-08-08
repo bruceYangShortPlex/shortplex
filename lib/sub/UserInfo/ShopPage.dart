@@ -228,18 +228,18 @@ Widget ShopGoods([bool _visibleTap = true])
           }
 
           return
-            Row
-            (
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children:
-              [
-                for(int i = 0; i < products.length; ++i)
-                  Goods(SetStringArgument(products[i].name,[products[i].popcorns.toString()]),
-                      products[i].bonus == 0 ? '' : SetTableStringArgument(400008, [products[i].bonus.toString()]),
-                      HomeData.to.GetShopIcon(products[i].popcorns.toString(), false), HomeData.to.GetPrice(products[i].id),
-                      products[i].bonusrate == '0' ? '' :SetTableStringArgument(400028, [products[i].bonusrate]), products[i].id),
-              ],
-            );
+          Row
+          (
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children:
+            [
+              for(int i = 0; i < products.length; ++i)
+                Goods(SetStringArgument(products[i].name,[products[i].popcorns.toString()]),
+                    products[i].bonus == 0 ? '' : SetTableStringArgument(400008, [products[i].bonus.toString()]),
+                    HomeData.to.GetShopIcon(products[i].popcorns.toString(), false), HomeData.to.GetPrice(products[i].id),
+                    products[i].bonusrate == '0' ? '' :SetTableStringArgument(400028, [products[i].bonusrate]), products[i].id),
+            ],
+          );
         },),
         SizedBox(height: 20,),
         Container
@@ -318,7 +318,7 @@ Widget ShopGoods([bool _visibleTap = true])
             //color: Colors.blueGrey,
             child:
             Text
-              (
+            (
               StringTable().Table![400033]!,
               style:
               TextStyle(fontSize: 13,
@@ -418,7 +418,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
                 ),
               ),
               Padding
-                (
+              (
                 padding: const EdgeInsets.only(bottom: 0),
                 child:
                 Container
@@ -428,7 +428,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
                   //color: Colors.white,
                   child:
                   Image.asset
-                    (
+                  (
                     _iconPath,
                   ),
                 ),
@@ -437,7 +437,7 @@ Widget Goods(String _title, String _bonus, String _iconPath, String _price, Stri
           ),
         ),
         Padding
-          (
+        (
           padding: const EdgeInsets.only(top: 95.0),
           child:
           Container

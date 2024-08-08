@@ -936,15 +936,15 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<void> Send_WatchData(String _episodeID, String _start_date, String _endDate, double _duration) async
+  Future<void> Send_WatchData(String _episodeID) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
       var url = 'https://www.quadra-system.com/api/v1/profile/watching';
 
-      var data =  WatchedData(startTime: _start_date, endTime: _endDate, duration: _duration.toString());
-      var req = WatchReq(episodeID: _episodeID, data: data);
+      //var data =  WatchedData(startTime: '', endTime: '', duration: '');
+      var req = WatchReq(episodeID: _episodeID);
       //print('stat : ${stat.value}');
       var bodys = jsonEncode(req.toJson());
       if (kDebugMode) {

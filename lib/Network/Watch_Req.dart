@@ -7,7 +7,7 @@ class WatchReq
   (
     {
       required String episodeID,
-      required WatchedData data,
+      //required WatchedData data,
     }
   )
   {
@@ -18,7 +18,7 @@ class WatchReq
   WatchReq.fromJson(dynamic json)
   {
     _episodeId = json['episode_id'];
-    _data = (json['data'] != null ? WatchedData.fromJson(json['data']) : null)!;
+    //_data = (json['data'] != null ? WatchedData.fromJson(json['data']) : null)!;
   }
 
   String? _episodeId;

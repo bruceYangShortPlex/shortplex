@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -11,6 +12,7 @@ import 'package:share/share.dart';
 import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/Content_Res.dart';
 import 'package:shortplex/Util/HttpProtocolManager.dart';
+import 'package:shortplex/sub/LogoPage.dart';
 import 'package:shortplex/sub/UserInfo/LoginPage.dart';
 import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 import 'package:shortplex/table/UserData.dart';
@@ -87,18 +89,27 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
 
     HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd).then((value)
     {
+      if (value.isEmpty)
+      {
+        Get.offAll(LogoPage());
+        return;
+      }
+
       //print('Play Url : $value');
       videoController = VideoPlayerController.networkUrl(Uri.parse(value))
         ..initialize().then((_)
       {
         if (isShowContent)
         {
+          HttpProtocolManager.to.Send_WatchData(episodeData!.id);
+
           setState(()
           {
             initialized = true;
             videoController!.setVolume(1);
             videoController!.play();
           });
+
           videoController!.addListener(eventListener);
         }
       });
@@ -142,7 +153,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       print(e);
     }
 
-    //팝콘이 부족하지 않은지 확인. 콘텐츠 비용은 어디서 받아와야할지 생각해보자.
+    //팝콘이 부족하지 않은지 확인.
     //이번회차의 가격을 알아온다.
     if (episodeData!.isLock)
     {
@@ -1431,7 +1442,17 @@ Widget contentPlayMain()
                       color: Colors.black,
                       child:
                       isShowContent == false ?
-                      showShop() :
+                      Obx(()
+                      {
+                        //상점에서 구매후 팝콘이 많아진경우.
+                        if (UserData.to.popcornCount.value > episodeData!.cost )
+                        {
+                          initContent();
+                        }
+
+                       return
+                       showShop();
+                      }) :
                       Stack
                       (
                         children:
@@ -1925,7 +1946,7 @@ Widget contentPlayMain()
     return
     Padding
     (
-      padding: EdgeInsets.only(top: 30),
+      padding: const EdgeInsets.only(top: 30),
       child:
       SingleChildScrollView
       (
@@ -2056,9 +2077,11 @@ Widget contentPlayMain()
                 ),
               ),
               ShopGoods(false),
-              Padding(
+              Padding
+              (
                 padding: const EdgeInsets.only(bottom: 20.0),
-                child: Row
+                child:
+                Row
                 (
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:
@@ -2243,7 +2266,7 @@ Widget contentPlayMain()
                     Container
                     (
                       height: 137,
-                      width: 390.w / 5,
+                      width: MediaQuery.of(context).size.width / 5,
                       //color: Colors.grey,
                       child:
                       Column
@@ -2256,16 +2279,21 @@ Widget contentPlayMain()
                           (
                             onTap: ()
                             {
+                              if(HttpProtocolManager.to.connecting)
+                              {
+                                return;
+                              }
+
                               if (list[i].no > selectedEpisodeNo)
                               {
                                 var value = list[i].no - selectedEpisodeNo;
                                 if (value > 1)
                                 {
-                                  print('전화차만 시청가능');
+                                  print('전 회치만 시청가능');
                                   return;
                                 }
                               }
-
+                              //일단 다음회차로 초기화하면 상점뜨던지 할거다.
                               isShowContent = false;
                               selectedEpisodeNo = list[i].no;
                               initContent();

@@ -299,7 +299,7 @@ class LoginMananger
   UserData SetUserData(LoginType _loginType)
   {
     var userData = UserData.to;
-    var providerid = _loginType.toString().replaceAll('LoginType.', '');
+    var providerid = _loginType.name;
     userData.providerid = providerid;
     if (_loginType == LoginType.kakao)
     {

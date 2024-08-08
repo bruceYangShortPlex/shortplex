@@ -3,10 +3,11 @@ class OAuthLogin
 {
   String? email;
   String? displayname;
-  String? providerid ='google';
+  String providerid ='google';
   String? provideruserid;
   String? privacypolicies;
   String? photourl;
+  String platform = 'shortplex';
 
   OAuthLogin({
     required this.email,
@@ -36,6 +37,7 @@ class OAuthLogin
     map['provideruserid'] = provideruserid;
     map['privacypolicies'] = privacypolicies;
     map['photourl'] = photourl;
+    map['platform'] = platform;
     return map;
   }
 }

@@ -57,6 +57,7 @@ dependencies:
   intl_phone_number_field: ^0.2.0
   in_app_purchase: ^3.2.0
   app_settings: ^5.1.1
+  restart_app: ^1.2.1
 
 dev_dependencies:
   flutter_test:

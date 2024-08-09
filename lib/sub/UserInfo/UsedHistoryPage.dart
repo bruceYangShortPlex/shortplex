@@ -54,7 +54,7 @@ class _UsedHistoryPageState extends State<UsedHistoryPage>
 
   Future<bool> GetItems(int _page) async
   {
-    HttpProtocolManager.to.Get_WalletHistory(WalletHistoryType.CHARGE, _page).then((value)
+    HttpProtocolManager.to.Get_WalletHistory(WalletHistoryType.SPEND, _page).then((value)
     {
       if (value == null)
       {

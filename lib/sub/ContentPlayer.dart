@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:share/share.dart';
 import 'package:shortplex/Network/Comment_Res.dart';
 import 'package:shortplex/Network/Content_Res.dart';
@@ -62,6 +63,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   bool prevLogin = false;
   bool initialized = false;
   bool buttonDisable = false;
+  bool snackBarComplete = true;
 
   TextEditingController textEditingController = TextEditingController();
   FocusNode textFocusNode = FocusNode();
@@ -92,7 +94,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     {
       if (value.isEmpty)
       {
-        Get.offAll(LogoPage());
+        Restart.restartApp();
         return;
       }
 
@@ -575,7 +577,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       {
         await HttpProtocolManager.to.Send_edit_reply
           (
-            episodeData!.id!, textEditingController.text, commentData!.ID, editReplyID, Comment_CD_Type.episode).then((value) {
+            episodeData!.id, textEditingController.text, commentData!.ID, editReplyID, Comment_CD_Type.episode).then((value) {
           for(var item in value!.data!.items!)
           {
             for(int i = 0 ; i < replyList.length; ++i)
@@ -1066,11 +1068,11 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               alignment: Alignment.topCenter,
               width: MediaQuery.of(context).size.width,
               //height: 50,
-              //color: Colors.blue,
+              color: Colors.black54,
               child:
               Row
               (
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children:
                 [
                   CupertinoNavigationBarBackButton
@@ -1081,6 +1083,13 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                       //print(Get.isPopGestureEnable);
                       Get.back();
                     },
+                  ),
+                  const SizedBox(width: 10,),
+                  Text
+                  (
+                    '${episodeData!.title}\n${SetTableStringArgument(100033, [episodeData!.no.toString()])}',
+                    style:
+                    const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
                   ),
                 ],
               ),
@@ -2315,7 +2324,17 @@ Widget contentPlayMain()
                                 var value = list[i].no - selectedEpisodeNo;
                                 if (value > 1)
                                 {
-                                  print('전 회치만 시청가능');
+                                  if (snackBarComplete == false) {
+                                    return;
+                                  }
+
+                                  snackBarComplete = false;
+
+                                  ShowCustomSnackbar(StringTable().Table![300063]!, SnackPosition.TOP, ()
+                                  {
+                                    snackBarComplete = true;
+                                  });
+
                                   return;
                                 }
                               }

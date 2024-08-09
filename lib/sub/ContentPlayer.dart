@@ -1070,7 +1070,6 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               //height: 50,
               //color: Colors.black54,
               child:
-
               Container
               (
                 width: MediaQuery.of(context).size.width,
@@ -1216,7 +1215,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   }
 
 Widget contentPlayMain()
-  {
+{
     return
     GestureDetector
     (
@@ -1248,19 +1247,24 @@ Widget contentPlayMain()
       child:
       Stack
       (
-        //mainAxisAlignment: MainAxisAlignment.center,
+        alignment: Alignment.center,
         children: <Widget>
         [
-          Center
+          AspectRatio
           (
+            aspectRatio: 9/16,
             child:
-            videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
-            VideoPlayer(videoController!) :
             Center
             (
               child:
-              Image.network(episodeData!.altImgUrlHd),
-              //CircularProgressIndicator()
+              videoController != null && isShowContent == true && videoController!.value.isInitialized == true ?
+              VideoPlayer(videoController!) :
+              Center
+              (
+                child:
+                Image.network(episodeData!.altImgUrlHd),
+                //CircularProgressIndicator()
+              ),
             ),
           ),
           FadeTransition
@@ -1323,7 +1327,8 @@ Widget contentPlayMain()
                       getCommentsData();
                     });
                   },
-                  aspectRatio: 9 / 16,
+                  height: MediaQuery.of(context).size.height,
+                  //aspectRatio: 9 / 16,
                   viewportFraction: 1,
                   //enlargeCenterPage: true,
                   scrollDirection: Axis.vertical,

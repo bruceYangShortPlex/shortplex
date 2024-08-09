@@ -58,7 +58,7 @@ class _ChargeHistoryPageState extends State<ChargeHistoryPage>
 
   Future<bool> GetItems(int _page) async
   {
-    HttpProtocolManager.to.Get_WalletHistory(WalletHistoryType.CHARGE, _page).then((value)
+    HttpProtocolManager.to.Get_WalletHistory(_page).then((value)
     {
       if (value == null)
       {

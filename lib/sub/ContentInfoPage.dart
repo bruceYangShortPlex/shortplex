@@ -296,7 +296,7 @@ class _ContentInfoPageState extends State<ContentInfoPage> with WidgetsBindingOb
     contentData!.title = '';
     GetContentData();
     getFavorite();
-    //GetCommentsData();
+    GetCommentsData();
 
     setState(() {
       selections[0] = true;

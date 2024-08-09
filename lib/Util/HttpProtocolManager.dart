@@ -14,6 +14,7 @@ import 'package:shortplex/Network/Preorder_Res.dart';
 import 'package:shortplex/Network/Properties_Res.dart';
 import 'package:shortplex/Network/Stat_Req.dart';
 import 'package:shortplex/Network/Stat_Res.dart';
+import 'package:shortplex/Network/UsedHistory_Res.dart';
 import 'package:shortplex/Network/UserInfo_Res.dart';
 import 'package:shortplex/Network/WalletHistory_Res.dart';
 import 'package:shortplex/Network/Wallet_Res.dart';
@@ -402,14 +403,11 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       var url = Uri.parse('https://www.quadra-system.com/api/v1/vod/content/$_contentID/comments?page=$_page&itemsPerPage=20&sortkey=$_sortKey&sortorder=desc');
       print('Get_Comments url : $url');
       var res = await http.get(url, headers: heads);
-
       // print('get_CommentData heads = $heads');
        print('get_CommentData res.body = ${res.body}');
-
       if (res.statusCode == 200)
       {
         var data =  CommentRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
-        print('get_CommentData data = ${data}');
         return data;
       }
       else
@@ -1304,36 +1302,12 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<WalletHistoryRes?> Get_WalletHistory(WalletHistoryType _type, int _page) async
+  Future<WalletHistoryRes?> Get_WalletHistory(int _page) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = '';
-
-      switch(_type)
-      {
-        case WalletHistoryType.CHARGE:
-          {
-            url = 'https://www.quadra-system.com/api/v1/profile/wallet/credit?page=$_page&sortkey=created_at&sortorder=desc';
-          }
-          break;
-        case WalletHistoryType.SPEND:
-          {
-            url = 'https://www.quadra-system.com/api/v1/profile/wallet/debit';
-          }
-          break;
-        case WalletHistoryType.BONUS:
-          {
-            url = 'https://www.quadra-system.com/api/v1/profile/wallet/bonus?sortkey=created_at&sortorder=desc';
-          }
-          break;
-        default:
-          {
-            print('Not Found WalletHistoryType : $_type');
-          }
-          break;
-      }
+      var url = 'https://www.quadra-system.com/api/v1/profile/wallet/credit?page=$_page&sortkey=created_at&sortorder=desc';
 
       print('Get_WalletHistory send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
@@ -1356,6 +1330,36 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
     return null;
   }
+
+  Future<UsedHistoryRes?> Get_WalletUsedHistory(int _page) async
+  {
+    try
+    {
+      var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
+      var url = 'https://www.quadra-system.com/api/v1/profile/wallet/debit?page=$_page&sortkey=created_at&sortorder=desc';
+
+      print('Get_WalletUsedHistory send url : $url');
+      var res = await http.get(Uri.parse(url), headers: heads);
+      print('Get_WalletUsedHistory res.body ${res.body}');
+
+      if (res.statusCode == 200)
+      {
+        var data =  UsedHistoryRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+        return data;
+      }
+      else
+      {
+        print('Get_WalletUsedHistory FAILD : ${res.statusCode}');
+      }
+    }
+    catch (e)
+    {
+      print('Get_WalletUsedHistory error : $e');
+    }
+
+    return null;
+  }
+
 
   Future<ProductRes?> Get_Products() async
   {

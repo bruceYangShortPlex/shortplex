@@ -367,7 +367,9 @@ class HistoryPage extends StatefulWidget
                             width: 50,
                             height: 50,
                             child:
-                            Image.asset(_data.iconUrl, fit: BoxFit.scaleDown,)
+                            _data.iconUrl.isNotEmpty ?
+                            Image.asset(_data.iconUrl, fit: BoxFit.scaleDown,) :
+                            Image.network(_data.networkImage),
                           ),
                           SizedBox(width: 10,),
                           Container
@@ -431,24 +433,31 @@ class HistoryPage extends StatefulWidget
                     (
                       children:
                       [
-                        Container
+                        Visibility
                         (
-                          height: 25,
-                          //color: Colors.blue,
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.only(right: 20),
+                          visible: _data.content1.isNotEmpty,
                           child:
-                          Text
+                          Container
                           (
-                            _data.content1,
-                            style:
-                            TextStyle(
-                              fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                            height: 25,
+                            //color: Colors.blue,
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.only(right: 20),
+                            child:
+                            Text
+                            (
+                              _data.content1,
+                              style:
+                              const TextStyle
+                              (
+                                fontSize: 15, color: Color(0xFF00FFBF), fontFamily: 'NotoSans', fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                         Visibility
                         (
-                          visible: !_data.content2.isEmpty,
+                          visible: _data.content2.isNotEmpty,
                           child:
                           Container
                           (
@@ -661,9 +670,10 @@ class _HistoryPageState extends State<HistoryPage>
 class HistoryData
 {
   String date = '05월 2024';
-  String iconUrl = 'assets/images/user/my_bonus.png';
+  String iconUrl = '';
   String title = '황후마마';
   int episode = 0;
+  String networkImage = '';
   String time = '1분 전';
   String content1 = '';
   String content2 = '';

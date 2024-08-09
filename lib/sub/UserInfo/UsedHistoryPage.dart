@@ -54,7 +54,7 @@ class _UsedHistoryPageState extends State<UsedHistoryPage>
 
   Future<bool> GetItems(int _page) async
   {
-    HttpProtocolManager.to.Get_WalletHistory(WalletHistoryType.SPEND, _page).then((value)
+    HttpProtocolManager.to.Get_WalletUsedHistory(_page).then((value)
     {
       if (value == null)
       {
@@ -67,14 +67,14 @@ class _UsedHistoryPageState extends State<UsedHistoryPage>
       for(var item in value.data!.items!)
       {
         var historyData = HistoryData();
-        historyData.content1 = item.paymentAmt.isEmpty ? HomeData.to.GetPrice(item.productId!) :  item.paymentAmt;//임시 과거의 값을 알수 없기때문에 서버에서 받아야한다.
-        //historyData.content2 = item.description!;
-        historyData.title = SetStringArgument(item.description!, [item.credit!]);
-        historyData.time = GetReleaseTime(item.createdAt!);
-        historyData.iconUrl = HomeData.to.GetShopIcon(item.credit!, false);
-        //historyData.episode = 1;
-        historyData.createdAt = item.createdAt!;
-        historyData.date = '${GetDateString(item.createdAt!).$1} ${GetDateString(item.createdAt!).$2}'; // '5월 2024';
+        historyData.content1 = item.popcorns.isEmpty ? '' : SetTableStringArgument(400077, [item.popcorns]);//임시 과거의 값을 알수 없기때문에 서버에서 받아야한다.
+        historyData.content2 = item.bonus.isEmpty ? '' : SetTableStringArgument(400078, [item.bonus]);
+        historyData.title = item.title;
+        historyData.time = GetReleaseTime(item.createdAt);
+        historyData.networkImage = item.posterPortraitImgUrl;
+        historyData.episode = item.episodeNo;
+        historyData.createdAt = item.createdAt;
+        historyData.date = '${GetDateString(item.createdAt).$1} ${GetDateString(item.createdAt).$2}'; // '5월 2024';
 
         if (mapData.containsKey(historyData.GetKey()))
         {
@@ -86,14 +86,6 @@ class _UsedHistoryPageState extends State<UsedHistoryPage>
           List<HistoryData> list = <HistoryData>[];
           list.add(historyData);
           mapData[historyData.GetKey()] = list;
-        }
-
-        if (kDebugMode)
-        {
-          print('item.productId : ${item.productId!}');
-          print('item.description : ${item.description!}');
-          print('item.userId : ${item.userId!}');
-          print('item.paymentAmt : ${item.paymentAmt}');
         }
       }
 
@@ -110,10 +102,49 @@ class _UsedHistoryPageState extends State<UsedHistoryPage>
     return false;
   }
 
+  testData()
+  {
+    Map<int,List<HistoryData>> mapData = {};
+    for(int i = 0 ; i < 20 ; ++i)
+    {
+      var historyData = HistoryData();
+      historyData.content1 = '몇개 썻냐';//임시 과거의 값을 알수 없기때문에 서버에서 받아야한다.
+      historyData.content2 = '썻다';
+      historyData.title = '글쎄다';
+      historyData.time = GetReleaseTime(DateTime.now().toIso8601String());
+      historyData.iconUrl = HomeData.to.GetShopIcon('20', false);
+      historyData.episode = 1;
+      historyData.createdAt = DateTime.now().toIso8601String();
+      historyData.date = '${GetDateString(DateTime.now().toIso8601String()).$1} ${GetDateString(DateTime.now().toIso8601String()).$2}'; // '5월 2024';
+
+      if (mapData.containsKey(historyData.GetKey()))
+      {
+        var value = mapData[historyData.GetKey()];
+        value?.add(historyData);
+      }
+      else
+      {
+        List<HistoryData> list = <HistoryData>[];
+        list.add(historyData);
+        mapData[historyData.GetKey()] = list;
+      }
+    }
+
+    for(var item in mapData.values)
+    {
+      widget.mainlist.add(item);
+    }
+
+    setState(() {
+      widget.loadingComplete = true;
+    });
+  }
 
   @override
-  void initState() {
-    widget.loadingComplete = true;
+  void initState()
+  {
+    GetItems(widget.downCompletePage);
+    //testData();
     super.initState();
   }
 

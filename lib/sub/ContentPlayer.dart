@@ -428,7 +428,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
     {
       if (UserData.to.usedPopcorn != 0)
       {
-        ShowCustomSnackbar(StringTable().Table![100047]!, SnackPosition.BOTTOM);
+        ShowCustomSnackbar(SetTableStringArgument(100047, [UserData.to.usedPopcorn.toString()]), SnackPosition.BOTTOM);
         UserData.to.usedPopcorn = 0;
       }
     });

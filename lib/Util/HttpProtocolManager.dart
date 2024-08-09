@@ -753,14 +753,15 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<String> Get_streamUrl(String _fileName) async
+  Future<String> Get_streamUrl(String _fileName, String _epid) async
   {
     try
     {
       var heads = {'apikey':ApiKey, 'Authorization': 'Bearer ${UserData.to.id}','Content-Type':'application/json'};
-      var url = 'https://www.quadra-system.com/api/v1/vod/stream/direct/$_fileName';
+      var url = 'https://www.quadra-system.com/api/v1/vod/stream/direct/$_fileName?episode_id=$_epid';
+      print('Get_streamUrl send url : $url');
       var res = await http.get(Uri.parse(url), headers: heads);
-      //print('get_streamUrl res.body ${res.body}');
+      print('Get_streamUrl get_streamUrl res.body ${res.body}');
 
       if (res.statusCode == 200)
       {

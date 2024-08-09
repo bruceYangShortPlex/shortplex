@@ -631,6 +631,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
 
   Widget remainTimer()
   {
+    double boardHeight = trans ? destHeigh / scaleRatio :  650;
     return
     Row
     (
@@ -641,7 +642,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         (
           //color: Colors.white,
           width: 310,
-          height: trans ? destHeigh / scaleRatio :  650,
+          height: boardHeight,
           alignment: Alignment.topRight,
           child:
           Container
@@ -664,16 +665,19 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
               ),
             ),
             child:
-            Padding
+            Center
             (
-              padding: const EdgeInsets.only(top: 4, left: 8, right: 8, bottom: 32),
-              child:
-              Text
+              child: Padding
               (
-                //textAlign: TextAlign.center,
-                endTime != null ? SetTableStringArgument(800007, [SubstringDuration(difference!).$1,SubstringDuration(difference!).$2]) : '',
-                style:
-                TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                padding: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 38),
+                child:
+                Text
+                (
+                  //textAlign: TextAlign.center,
+                  endTime != null ? SetTableStringArgument(800007, [SubstringDuration(difference!).$1,SubstringDuration(difference!).$2]) : '',
+                  style:
+                  TextStyle(fontSize: 14, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                ),
               ),
             ),
           ),

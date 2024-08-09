@@ -57,6 +57,7 @@ class _FeaturedPageState extends State<FeaturedPage>
             data.description = item.description;
             data.contentUrl = item.episode != null ? item.episode!.episodeHd : '';
             data.thumbNail = item.thumbnailImgUrl;
+            data.episodeID = item.episode!.id;
 
             //pageList.add(ShortsPlayer(shortsUrl: data.contentUrl!,prevImage: data.imagePath!));
             //precacheImage(NetworkImage(data.imagePath!), context);
@@ -129,7 +130,7 @@ class _FeaturedPageState extends State<FeaturedPage>
                   itemCount: dataList.length,
                   itemBuilder: (context, index, realIndex)
                   {
-                    return currentIndex == index ? ShortsPlayer(shortsUrl: dataList[index].contentUrl!, prevImage: dataList[index].imagePath!,) : Image.network(dataList[index].imagePath!);;
+                    return currentIndex == index ? ShortsPlayer(shortsUrl: dataList[index].contentUrl!, prevImage: dataList[index].imagePath!, id: dataList[index].episodeID,) : Image.network(dataList[index].imagePath!);;
                   },
                 ),
                 Align

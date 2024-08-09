@@ -228,6 +228,7 @@ class ContentData
   bool isAlarmCheck = false;
   String? shareUrl = '';
   int TotalEpisodeCount = 0;
+  String episodeID = '';
 
   ContentData
   (

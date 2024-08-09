@@ -8,7 +8,8 @@ import 'HttpProtocolManager.dart';
 class ShortsPlayer extends StatefulWidget {
   final String shortsUrl;
   final String prevImage;
-  const ShortsPlayer({super.key, required this.shortsUrl, required this.prevImage});
+  final String id;
+  const ShortsPlayer({super.key, required this.shortsUrl, required this.prevImage, required this.id});
 
   @override
   State<ShortsPlayer> createState() => _ShortsPlayerState();
@@ -23,12 +24,18 @@ class _ShortsPlayerState extends State<ShortsPlayer>
   @override
   void initState()
   {
+    print('Start Shorts play init');
     super.initState();
   }
 
   Future<VideoPlayerController> controllerInit() async
   {
-    var url = await HttpProtocolManager.to.Get_streamUrl(widget.shortsUrl);
+    print('start controllerInit');
+
+    var url = await HttpProtocolManager.to.Get_streamUrl(widget.shortsUrl, widget.id);
+
+    print('shorts url : $url');
+
     if (url.isNotEmpty && shortsUrl == url)
     {
       return videoPlayerController;
@@ -49,7 +56,9 @@ class _ShortsPlayerState extends State<ShortsPlayer>
   @override
   void dispose()
   {
-    videoPlayerController.dispose();
+    if (isInit) {
+      videoPlayerController.dispose();
+    }
     super.dispose();
   }
 

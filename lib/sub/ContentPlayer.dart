@@ -90,7 +90,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       videoController!.dispose();
     }
 
-    HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd).then((value)
+    HttpProtocolManager.to.Get_streamUrl(episodeData!.episodeHd, episodeData!.id).then((value)
     {
       if (value.isEmpty)
       {
@@ -599,14 +599,14 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
       {
         await HttpProtocolManager.to.Send_Reply
           (
-            episodeData!.id!, textEditingController.text, commentData!.ID, Comment_CD_Type.episode).then((value)
+            episodeData!.id, textEditingController.text, commentData!.ID, Comment_CD_Type.episode).then((value)
         {
           CommentRefresh(value, true);
           print('send_Reply result $value');
           connecting = false;
 
           //comment replise count update.
-          HttpProtocolManager.to.Get_Comment(episodeData!.id!, commentData!.ID).then((value1)
+          HttpProtocolManager.to.Get_Comment(episodeData!.id, commentData!.ID).then((value1)
           {
             for(var item in value1!.data!.items!)
             {
@@ -791,7 +791,7 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
   {
     try
     {
-      await HttpProtocolManager.to.Send_delete_reply(episodeData!.id!,commentData!.ID, _replyID).then((value)
+      await HttpProtocolManager.to.Send_delete_reply(episodeData!.id,commentData!.ID, _replyID).then((value)
       {
         for(var item  in value!.data!.items!)
         {
@@ -966,12 +966,12 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
                     return;
                   }
 
-                  if (episodeData!.shareLink!.isEmpty) {
+                  if (episodeData!.shareLink.isEmpty) {
                     return;
                   }
 
                   buttonDisable = true;
-                  Share.share(episodeData!.shareLink!);
+                  Share.share(episodeData!.shareLink);
                   if (kDebugMode) {
                     print('tap share');
                   }
@@ -1068,30 +1068,37 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
               alignment: Alignment.topCenter,
               width: MediaQuery.of(context).size.width,
               //height: 50,
-              color: Colors.black54,
+              //color: Colors.black54,
               child:
-              Row
+
+              Container
               (
-                mainAxisAlignment: MainAxisAlignment.start,
-                children:
-                [
-                  CupertinoNavigationBarBackButton
-                  (
-                    color: Colors.white,
-                    onPressed: ()
-                    {
-                      //print(Get.isPopGestureEnable);
-                      Get.back();
-                    },
-                  ),
-                  const SizedBox(width: 10,),
-                  Text
-                  (
-                    '${episodeData!.title}\n${SetTableStringArgument(100033, [episodeData!.no.toString()])}',
-                    style:
-                    const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                  ),
-                ],
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+                color: Colors.black54,
+                child: Row
+                (
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:
+                  [
+                    CupertinoNavigationBarBackButton
+                    (
+                      color: Colors.white,
+                      onPressed: ()
+                      {
+                        //print(Get.isPopGestureEnable);
+                        Get.back();
+                      },
+                    ),
+                    const SizedBox(width: 10,),
+                    Text
+                    (
+                      '${episodeData!.title}\n${SetTableStringArgument(100033, [episodeData!.no.toString()])}',
+                      style:
+                      const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1252,7 +1259,7 @@ Widget contentPlayMain()
             Center
             (
               child:
-              Image.network(episodeData!.altImgUrlHd!),
+              Image.network(episodeData!.altImgUrlHd),
               //CircularProgressIndicator()
             ),
           ),
@@ -1349,7 +1356,7 @@ Widget contentPlayMain()
           (
             aspectRatio: 9/16,
             child:
-            Image.network(episodeData!.altImgUrlHd!)
+            Image.network(episodeData!.altImgUrlHd)
           ),
           CircularProgressIndicator(),
           Container
@@ -2324,7 +2331,9 @@ Widget contentPlayMain()
                                 var value = list[i].no - selectedEpisodeNo;
                                 if (value > 1)
                                 {
-                                  if (snackBarComplete == false) {
+                                  if (snackBarComplete == false)
+                                  {
+                                    print('snack bar retur');
                                     return;
                                   }
 

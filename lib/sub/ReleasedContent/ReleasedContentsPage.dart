@@ -44,7 +44,7 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
           (
             id: item.id,
             title: item.title,
-            imagePath: item.episode != null ? item.episode!.altImgUrlHd! : '',
+            imagePath: item.episode != null ? item.episode!.altImgUrlHd : '',
             cost: 0,
             releaseAt: item.previewStartAt ?? '',
             landScapeImageUrl: item.posterLandscapeImgUrl,
@@ -56,6 +56,7 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
           data.thumbNail = item.thumbnailImgUrl;
           data.genre = item.genre;
           data.shareUrl = item.shareLink;
+          data.episodeID = item.episode!.id;
 
           for(var info in item.stat!)
           {
@@ -140,12 +141,12 @@ class _ReleasedContentsPageState extends State<ReleasedContentsPage> with Ticker
       (
         borderRadius: BorderRadius.circular(7),
         child:
-        dataList.length != 0 ?
+        dataList.isNotEmpty ?
         AspectRatio
         (
             aspectRatio: 9/16,
             child:
-            ShortsPlayer(shortsUrl: dataList[selectedIndex].contentUrl!,prevImage: dataList[selectedIndex].imagePath!)
+            ShortsPlayer(shortsUrl: dataList[selectedIndex].contentUrl!,prevImage: dataList[selectedIndex].imagePath!, id: dataList[selectedIndex].episodeID)
         ) : SizedBox(),
       )
     );

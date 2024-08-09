@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -39,12 +40,12 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   PopcornAnimationState animationState = PopcornAnimationState.START;
   int playCount = 0;
   int remainCount = 0;
+  int stackCount = 0;
   late Timer eventTimer;
   DateTime? endTime;
   Duration? difference;
   bool isOpenInfo = false;
   bool isOpenResult = false;
-  int stackCount = 0;
   int bonusResult = 2;
   var pageList = <Widget>[];
   late AnimationController tweenController;
@@ -55,6 +56,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   Prize? serverTable;
   String resultBonus = '';
   String resultRate = '';
+  int prevPopcornCount = 0;
 
   void startTimer()
   {
@@ -96,20 +98,23 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     );
   }
 
-  getInfo()
+  Future getInfo() async
   {
     //현재 플레이 가능한 티켓수.
     playCount = 0;
     //이미 사용해서 올라간 단계
     stackCount = 0;
 
-    HttpProtocolManager.to.Get_BonusPageInfo().then((value)
+    var usedCount = 0;
+    await HttpProtocolManager.to.Get_BonusPageInfo().then((value)
     {
-      if (value == null) {
+      if (value == null)
+      {
         return;
       }
 
-      if (value.data!.expiredAt.isNotEmpty) {
+      if (value.data!.expiredAt.isNotEmpty)
+      {
         endTime = DateTime.parse(value.data!.expiredAt);
       }
 
@@ -131,9 +136,13 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
       {
         if (item.userId != UserData.to.userId)
         {
+          if (kDebugMode) {
+            print('continue');
+          }
           continue;
         }
 
+        print('item.bonus / ${item.bonus}');
         //사용하지 않은거.
         if (item.bonus == 0)
         {
@@ -142,20 +151,21 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
         }
         else
         {
-          ++stackCount;
-          if(stackCount >= Event2table().tableData.length)
-          {
-            stackCount = Event2table().tableData.length -1;
-          }
+          ++usedCount;
+        }
+
+        ++stackCount;
+        if(stackCount >= Event2table().tableData.length)
+        {
+          stackCount = Event2table().tableData.length - 1;
         }
       }
 
       startTimer();
       setState(()
       {
+        remainCount = Event2table().tableData.length - (playCount + usedCount);
         createBonusInfoScroll();
-        //남은 횟수.
-        remainCount = Event2table().tableData.length - playCount;
       });
     },);
   }
@@ -163,6 +173,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   @override
   void initState()
   {
+    prevPopcornCount = UserData.to.popcornCount.value;
     Get.lazyPut(() => Event2table());
 
     controller1 = GifController(vsync: this);
@@ -444,12 +455,12 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
     scaleRatio = destHeigh / 650;
     var remainSpace = screen_height - (700 * scaleRatio); //650 + 50 을 뺀다.
 
-    if (kDebugMode) {
-      print('screen_height : $screen_height');
-      print('screen_width : ${MediaQuery.of(context).size.width}');
-      print('scaleRatio : $scaleRatio');
-      print('remainSpace : $remainSpace');
-    }
+    // if (kDebugMode) {
+    //   print('screen_height : $screen_height');
+    //   print('screen_width : ${MediaQuery.of(context).size.width}');
+    //   print('scaleRatio : $scaleRatio');
+    //   print('remainSpace : $remainSpace');
+    // }
 
     double bottomOffset = 0;
     if (remainSpace >= 0)
@@ -720,6 +731,8 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   {
     var tableData = Event2table().tableData[stackCount];
 
+    //print('stackCount : $stackCount');
+
     return
     Container
     (
@@ -784,61 +797,85 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
           (
             padding: const EdgeInsets.only(top: 286),
             child:
-            Container
-            (
-              width: 320,
-              height: 60,
-              //color: Colors.red,
-              child:
-              Row
+            Obx
+            (()
+            {
+              if (UserData.to.popcornCount.value != prevPopcornCount)
+              {
+                prevPopcornCount = UserData.to.popcornCount.value;
+                getInfo();
+              }
+
+              return
+              Container
               (
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:
-                [
-                  Container
-                  (
-                    padding: const EdgeInsets.only(left: 8),
-                    alignment: Alignment.center,
-                    width: 248,
-                    height: 60,
-                    //color: Colors.green,
-                    child:
-                    Text
-                    (
-                      SetTableStringArgument(800012, ['${tableData.condition}']),
-                      style:
-                      TextStyle(fontSize: 13, color: Colors.white, fontFamily: 'NotoSans', fontWeight: FontWeight.w500,),
+                width: 320,
+                height: 60,
+                //color: Colors.red,
+                child:
+                Row
+                (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:
+                  [
+                    Container
+                      (
+                      padding: const EdgeInsets.only(left: 8),
+                      alignment: Alignment.center,
+                      width: 248,
+                      height: 60,
+                      //color: Colors.green,
+                      child:
+                      Text
+                      (
+                        SetTableStringArgument(800012, ['${tableData.condition}']),
+                        style:
+                        TextStyle(fontSize: 13,
+                          color: Colors.white,
+                          fontFamily: 'NotoSans',
+                          fontWeight: FontWeight.w500,),
+                      ),
                     ),
-                  ),
-                  Container
-                  (
-                    padding: const EdgeInsets.only(top: 6),
-                    width: 58,
-                    height: 60,
-                    //color: Colors.yellow,
-                    child:
-                    Column
-                    (
-                      children:
-                      [
-                        Text
+                    Container
+                      (
+                      padding: const EdgeInsets.only(top: 6),
+                      width: 58,
+                      height: 60,
+                      //color: Colors.yellow,
+                      child:
+                      Column
                         (
-                          StringTable().Table![800005]!,
-                          style:
-                          TextStyle(fontSize: 11, color: remainCount > 0 ? Color(0xFF00FFBF) : Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                        ),
-                        Text
-                        (
-                          '$remainCount',
-                          style:
-                          TextStyle(fontSize: 25, color: remainCount > 0 ? Color(0xFF00FFBF) : Colors.grey, fontFamily: 'NotoSans', fontWeight: FontWeight.bold,),
-                        ),
-                      ],
+                        children:
+                        [
+                          Text
+                            (
+                            StringTable().Table![800005]!,
+                            style:
+                            TextStyle(fontSize: 11,
+                              color: remainCount > 0
+                                  ? Color(0xFF00FFBF)
+                                  : Colors.grey,
+                              fontFamily: 'NotoSans',
+                              fontWeight: FontWeight.bold,),
+                          ),
+                          Text
+                            (
+                            '$remainCount',
+                            style:
+                            TextStyle(fontSize: 25,
+                              color: remainCount > 0
+                                  ? Color(0xFF00FFBF)
+                                  : Colors.grey,
+                              fontFamily: 'NotoSans',
+                              fontWeight: FontWeight.bold,),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            }),
           ),
           Padding
           (
@@ -898,17 +935,25 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
                           return;
                         }
 
-                        for(var item in value.data!.items!)
+                        print('value.userId : ${value.userId} / UserData.to.userId : ${UserData.to.userId}');
+                        print('ticketID : ${ticketID} / value.id : ${value.id}');
+
+                        if (value.userId == UserData.to.userId && ticketID == value.id)
                         {
-                          if (item.userId == UserData.to.userId && ticketID == item.id)
-                          {
-                            print('used ticket id : ${item.id}');
-                            bonusResult = getResultIndex(item.conditionSum, item.bonus);
-                            resultBonus = item.bonus.toString();
-                            resultRate = item.percentage.split('.')[0];
-                            ticketID = '';
-                            break;
-                          }
+                          print('used ticket id : ${value.id}');
+
+                          setState(() {
+                            bonusResult = getResultIndex(value.conditionSum, value.bonus);
+                            resultBonus = value.bonus.toString();
+                            resultRate = value.percentage.split('.')[0];
+                          });
+
+                          print('bonusResult : $bonusResult');
+                          print('resultBonus : $resultBonus');
+                          print('resultRate : $resultRate');
+
+
+                          ticketID = '';
                         }
 
                         if (animationState == PopcornAnimationState.START)
@@ -1275,6 +1320,7 @@ class _BonusPageState extends State<BonusPage> with TickerProviderStateMixin
   Widget bonusResultPopup()
   {
     //var resultBonus = getResultPoint(bonusResult);
+
     return
     Visibility
     (

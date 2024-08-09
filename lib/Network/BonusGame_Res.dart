@@ -24,9 +24,13 @@ class BonusGameData
   BonusGameData.fromJson(dynamic json)
   {
     _count = json['count'] ?? 0;
+    //print('BonusGameData 1');
     _total = json['total'] ?? 0;
+    //print('BonusGameData 2');
     _itemsPerPage = json['itemsPerPage'] ?? 0;
+    //print('BonusGameData 3');
     _page = json['page'] ?? 0;
+    //print('BonusGameData 4');
     _maxPage = json['max_page'] ?? 0;
     if (json['items'] != null) {
       _items = [];
@@ -116,27 +120,45 @@ class BonusTableData
 
 class BonusItems
 {
-  BonusItems.fromJson(dynamic json) {
-    _id = json['id'];
-    _userId = json['user_id'];
-    _condition = json['condition'];
-    _conditionSum = json['condition_sum'];
-    _bonus = json['bonus'];
-    _percentage = json['percentage'];
+  BonusItems.fromJson(dynamic json)
+  {
+    //print('BonusGameData 5');
+    _id = json['id'] ?? '';
+    //print('BonusGameData 6');
+    _userId = json['user_id'] ?? '';
+    //print('BonusGameData 7');
+    _condition = json['condition'] ?? 0;
+    //print('BonusGameData 8');
+    _conditionSum = json['condition_sum'] ?? 0;
+    //print('BonusGameData 9');
+    _bonus = json['bonus'] ?? '';
+    //print('BonusGameData 10');
+    _percentage = json['percentage'] ?? '';
+    //print('BonusGameData 11');
   }
 
   String _id = '';
   String _userId = '';
   int _condition = 0;
   int _conditionSum = 0;
-  int _bonus = 0;
+  String _bonus = '';
   String _percentage = '';
 
   String get id => _id;
   String get userId => _userId;
   int get condition => _condition;
   int get conditionSum => _conditionSum;
-  int get bonus => _bonus;
+  int get bonus
+  {
+    int r = 0;
+    String b = _bonus.split('.')[0];
+    if (int.tryParse(b) != null)
+    {
+      r = int.parse(b);
+    }
+
+    return r;
+  }
   String get percentage => _percentage;
 
   Map<String, dynamic> toJson()

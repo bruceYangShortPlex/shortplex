@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage>
         watchingContentsDataList.clear();
         for (var item in value.data!.episode!)
         {
-          //print('watching episode id ${item.id}');
+          print('watching episode id ${item.id}');
 
           var data = ContentData
           (

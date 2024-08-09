@@ -19,6 +19,7 @@ import 'package:shortplex/Network/WalletHistory_Res.dart';
 import 'package:shortplex/Network/Wallet_Res.dart';
 import 'package:shortplex/Network/Watch_Req.dart';
 
+import '../Network/BonusGameResult_Res.dart';
 import '../Network/BuyEpisode_Req.dart';
 import '../Network/BuyEpisode_Res.dart';
 import '../Network/Comment_Req.dart';
@@ -1896,7 +1897,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
     return null;
   }
 
-  Future<BonusGameRes?> Send_BonusPlay(String _ticketID) async
+  Future<BonusGameResultRes?> Send_BonusPlay(String _ticketID) async
   {
     connecting = true;
     try
@@ -1914,9 +1915,48 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
 
       if (res.statusCode == 200)
       {
-        var data =  BonusGameRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+
+        List<dynamic> jsonData = jsonDecode(utf8.decode(res.bodyBytes));;
+
+        BonusGameResultRes? bonusGameResultRes;
+        for (var item in jsonData)
+        {
+          String seq = item['seq'] ?? '';
+          String id = item['id'] ?? '';
+          String userId = item['user_id'] ?? '';
+          int condition = item['condition'] ?? 0;
+          int conditionSum = item['condition_sum'] ?? 0;
+          String bonus = item['bonus'] ?? '';
+          String rate = item['rate'] ?? '';
+          String percentage = item['percentage'] ?? '';
+          String createdAt = item['created_at'] ?? '';
+          String createdBy = item['created_by'] ?? '';
+          String updatedAt = item['updated_at'] ?? '';
+          String updatedBy = item['updated_by'] ?? '';
+          String deletedAt = item['deleted_at'] ?? '';
+          String deletedBy = item['deleted_by'] ?? '';
+          String remark = item['remark'] ?? '';
+
+          bonusGameResultRes =
+          BonusGameResultRes
+          (
+            seq: seq,
+            id: id,
+            userID: userId,
+            condition: condition,
+            conditionSum: conditionSum,
+            bonus: bonus,
+            rate: rate,
+            percentage: percentage,
+          );
+
+          //print('Parsed JSON data:');
+         // print('seq: $seq, id: $id, user_id: $userId, condition: $condition, condition_sum: $conditionSum, bonus: $bonus, rate: $rate, percentage: $percentage, created_at: $createdAt, created_by: $createdBy, updated_at: $updatedAt, updated_by: $updatedBy, deleted_at: $deletedAt, deleted_by: $deletedBy, remark: $remark');
+        }
+
+        //var data =  BonusGameResultRes.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
         connecting = false;
-        return data;
+        return bonusGameResultRes;
       }
       else
       {

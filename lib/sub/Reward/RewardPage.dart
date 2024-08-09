@@ -37,7 +37,7 @@ class RewardPage extends StatefulWidget
 
 class _RewardPageState extends State<RewardPage>
 {
-  late Timer eventTimer;
+  Timer? eventTimer;
   late TextEditingController textEditingController;
   late FocusNode textFieldFocusNode;
 
@@ -68,6 +68,7 @@ class _RewardPageState extends State<RewardPage>
       {
         var end = DateTime.parse(value.data!.expiredAt);
         bool hasPassed =  DateTime.now().isAfter(end);
+        //print('hasPassed : $hasPassed');
         if (hasPassed == false)
         {
           var eventData = ShortPlexEventData();
@@ -78,7 +79,9 @@ class _RewardPageState extends State<RewardPage>
           eventData.difference = end.difference(DateTime.now());
           eventList.add(eventData);
           eventTimerList.add(eventData);
-          startTimer();
+          setState(() {
+            startTimer();
+          });
         }
       }
     },);
@@ -237,8 +240,9 @@ class _RewardPageState extends State<RewardPage>
   }
 
   @override
-  void dispose() {
-    eventTimer.cancel();
+  void dispose()
+  {
+    eventTimer?.cancel();
     textFieldFocusNode.removeListener(onFocusChange);
     textFieldFocusNode.dispose();
     textEditingController.dispose();

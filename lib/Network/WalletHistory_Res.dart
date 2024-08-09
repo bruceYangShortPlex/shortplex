@@ -37,11 +37,11 @@ class WalletHistoryRes
 class WalletHistoryData
 {
   WalletHistoryData({
-     required num count,
-    required num total,
-    required num itemsPerPage,
-    required num page,
-    required num maxPage,
+     required int count,
+    required int total,
+    required int itemsPerPage,
+    required int page,
+    required int maxPage,
     required List<WalletHistoryItems>? items,}){
     _count = count;
     _total = total;
@@ -52,11 +52,11 @@ class WalletHistoryData
 }
 
   WalletHistoryData.fromJson(dynamic json) {
-    _count = json['count'];
-    _total = json['total'];
-    _itemsPerPage = json['itemsPerPage'];
-    _page = json['page'];
-    _maxPage = json['max_page'];
+    _count = json['count'] ?? 0;
+    _total = json['total'] ?? 0;
+    _itemsPerPage = json['itemsPerPage'] ?? 0;
+    _page = json['page'] ?? 0;
+    _maxPage = json['max_page'] ?? 0;
     if (json['items'] != null) {
       _items = [];
       json['items'].forEach((v) {
@@ -64,18 +64,18 @@ class WalletHistoryData
       });
     }
   }
-  num _count = 0;
-  num _total = 0;
-  num _itemsPerPage = 0;
-  num _page = 0;
-  num _maxPage = 0;
+  int _count = 0;
+  int _total = 0;
+  int _itemsPerPage = 0;
+  int _page = 0;
+  int _maxPage = 0;
   List<WalletHistoryItems>? _items;
 
-  num get count => _count;
-  num get total => _total;
-  num get itemsPerPage => _itemsPerPage;
-  num get page => _page;
-  num get maxPage => _maxPage;
+  int get count => _count;
+  int get total => _total;
+  int get itemsPerPage => _itemsPerPage;
+  int get page => _page;
+  int get maxPage => _maxPage;
   List<WalletHistoryItems>? get items => _items;
 
   Map<String, dynamic> toJson() {
@@ -156,8 +156,8 @@ class WalletHistoryItems
   String? _paymentProvider;
   String? _paymentTransactionId;
   WalletPaymentData? _paymentData;
-  String? _paymentCurrency;
-  String? _paymentAmt;
+  String _paymentCurrency = '';
+  String _paymentAmt = '';
   String? _debit;
   String? _credit;
   String? _balance;
@@ -180,8 +180,8 @@ class WalletHistoryItems
   String? get paymentProvider => _paymentProvider;
   String? get paymentTransactionId => _paymentTransactionId;
   WalletPaymentData? get paymentData => _paymentData;
-  String? get paymentCurrency => _paymentCurrency;
-  String? get paymentAmt => _paymentAmt;
+  String get paymentCurrency => _paymentCurrency;
+  String get paymentAmt => _paymentAmt;
   String? get debit => _debit;
   String? get credit
   {

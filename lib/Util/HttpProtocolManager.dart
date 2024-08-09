@@ -1313,7 +1313,7 @@ class HttpProtocolManager extends GetxController with GetSingleTickerProviderSta
       {
         case WalletHistoryType.CHARGE:
           {
-            url = 'https://www.quadra-system.com/api/v1/profile/wallet/popcorns?page=$_page&sortkey=created_at&sortorder=desc';
+            url = 'https://www.quadra-system.com/api/v1/profile/wallet/credit?page=$_page&sortkey=created_at&sortorder=desc';
           }
           break;
         case WalletHistoryType.SPEND:

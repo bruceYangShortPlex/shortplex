@@ -9,6 +9,7 @@ import 'package:shortplex/sub/UserInfo/ShopPage.dart';
 
 import '../../Util/HttpProtocolManager.dart';
 import '../../table/StringTable.dart';
+import '../Home/HomeData.dart';
 
 
 class HistoryPage extends StatefulWidget
@@ -18,8 +19,11 @@ class HistoryPage extends StatefulWidget
   final String PageTitle;
   final WalletHistoryType historyType;
   bool loadingComplete = false;
-
+  ScrollController scrollController = ScrollController();
   List<List<HistoryData>> mainlist = <List<HistoryData>>[];
+
+  int downCompletePage = 0;
+  int maxPage = 0;
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -143,7 +147,7 @@ class HistoryPage extends StatefulWidget
                   .width,
               //color: Colors.yellow,
               child:
-              mainlist.length == 0 && loadingComplete ?
+              mainlist.isEmpty && loadingComplete ?
               Container
                 (
                 width: MediaQuery
@@ -228,10 +232,12 @@ class HistoryPage extends StatefulWidget
               )
                   :
               ListView.builder
-                (
+              (
+                controller: scrollController,
                 padding: EdgeInsets.all(0),
                 itemCount: mainlist.length,
-                itemBuilder: (context, index) {
+                itemBuilder: (context, index)
+                {
                   return historyMain(mainlist[index]);
                 },
               ),
@@ -360,7 +366,8 @@ class HistoryPage extends StatefulWidget
                             //color: Colors.red,
                             width: 50,
                             height: 50,
-                            child: Image.asset(_data.iconUrl, fit: BoxFit.scaleDown,)
+                            child:
+                            Image.asset(_data.iconUrl, fit: BoxFit.scaleDown,)
                           ),
                           SizedBox(width: 10,),
                           Container
@@ -637,6 +644,12 @@ class HistoryPage extends StatefulWidget
 
 class _HistoryPageState extends State<HistoryPage>
 {
+  @override
+  void dispose() {
+    widget.scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context)
   {

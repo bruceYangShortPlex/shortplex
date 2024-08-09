@@ -650,24 +650,37 @@ class _ContentPlayerState extends State<ContentPlayer> with TickerProviderStateM
         return;
       }
 
-      GetComment(downCompletePage).then((value) => downCompletePage++);
+      GetComment(downCompletePage).then((value)
+      {
+        if (value) {
+          downCompletePage++;
+        }
+      });
     }
   }
 
-  Future GetComment(int _page) async
+  Future<bool> GetComment(int _page) async
   {
     try
     {
       await HttpProtocolManager.to.Get_EpisodeComments(episodeData!.id, _page, commentSortType.name).then((value)
       {
-        maxPage = value!.data!.maxPage;
+        if (value == null)
+        {
+          return false;
+        }
+
+        maxPage = value.data!.maxPage;
         CommentRefresh(value, false);
+        return true;
       });
     }
     catch(e)
     {
       print('send Comment error : $e');
     }
+
+    return false;
   }
 
   void CommentRefresh(CommentRes? _data, bool _isReply)
@@ -1347,7 +1360,6 @@ Widget contentPlayMain()
           ),
         ],
       );
-
     }
   }
 
